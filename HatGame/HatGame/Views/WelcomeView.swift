@@ -48,6 +48,17 @@ struct WelcomeView: View {
                     }
                     .padding(.horizontal, DesignBook.Spacing.lg)
                     
+                    VStack(spacing: DesignBook.Spacing.md) {
+                        PrimaryButton(title: "Start Game") {
+                            gameManager.state = .teamSetup
+                        }
+                        
+                        SecondaryButton(title: "Developer Info") {
+                            // TODO: Show developer info
+                        }
+                    }
+                    .padding(.horizontal, DesignBook.Spacing.lg)
+                    
                     GameCard {
                         VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
                             Toggle(
@@ -67,17 +78,6 @@ struct WelcomeView: View {
                                 }
                             }
                             .toggleStyle(SwitchToggleStyle(tint: DesignBook.Color.Text.accent))
-                        }
-                    }
-                    .padding(.horizontal, DesignBook.Spacing.lg)
-                    
-                    VStack(spacing: DesignBook.Spacing.md) {
-                        PrimaryButton(title: "Start Game") {
-                            gameManager.state = .teamSetup
-                        }
-                        
-                        SecondaryButton(title: "Developer Info") {
-                            // TODO: Show developer info
                         }
                     }
                     .padding(.horizontal, DesignBook.Spacing.lg)
