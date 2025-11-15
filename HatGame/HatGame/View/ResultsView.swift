@@ -26,25 +26,18 @@ struct ResultsView {
 extension ResultsView: View {
     var body: some View {
         NavigationStack {
-            ZStack {
-                backgroundLayer
-                content
-            }
-            .navigationTitle(isFinal ? "Game Over" : "Round Results")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                nonFinalToolbar
-            }
+            content
+                .setDefaultBackground()
+                .navigationTitle(isFinal ? "Game Over" : "Round Results")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    nonFinalToolbar
+                }
         }
     }
 }
 
 private extension ResultsView {
-    var backgroundLayer: some View {
-        DesignBook.Color.Background.primary
-            .ignoresSafeArea()
-    }
-    
     var content: some View {
         ScrollView {
             VStack(spacing: DesignBook.Spacing.xl) {
@@ -99,22 +92,12 @@ private extension ResultsView {
     var actionSection: some View {
         if isFinal {
             newGameButton
-        } else {
-            continueButton
         }
     }
     
     var newGameButton: some View {
         PrimaryButton(title: "New Game") {
             handleNewGame()
-        }
-        .padding(.horizontal, DesignBook.Spacing.lg)
-        .padding(.bottom, DesignBook.Spacing.lg)
-    }
-    
-    var continueButton: some View {
-        PrimaryButton(title: "Continue to Next Round") {
-            handleNextRound()
         }
         .padding(.horizontal, DesignBook.Spacing.lg)
         .padding(.bottom, DesignBook.Spacing.lg)
@@ -149,16 +132,6 @@ private extension ResultsView {
     func handleNewGame() {
         gameManager.resetGame()
         navigator.dismissToRoot()
-    }
-    
-    func handleNextRound() {
-        gameManager.startNextRound()
-        if let nextRound = gameManager.currentRound,
-           let nextTeamIndex = gameManager.currentTeamIndex {
-            navigator.push(.playing(round: nextRound, currentTeamIndex: nextTeamIndex))
-        } else {
-            navigator.push(.finalResults)
-        }
     }
     
     @ToolbarContentBuilder

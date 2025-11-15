@@ -41,27 +41,21 @@ struct WordInputView: View {
     }
     
     var body: some View {
-        ZStack {
-            backgroundLayer
-            content
-        }
-        .onAppear {
-            prepareCurrentPlayer()
-        }
-        .onChange(of: currentPlayerIndex) { _, _ in
-            prepareCurrentPlayer()
-        }
-        .navigationTitle("Add Words")
-        .navigationBarTitleDisplayMode(.inline)
-        .closeButtonToolbar()
+        content
+            .setDefaultBackground()
+            .onAppear {
+                prepareCurrentPlayer()
+            }
+            .onChange(of: currentPlayerIndex) { _, _ in
+                prepareCurrentPlayer()
+            }
+            .navigationTitle("Add Words")
+            .navigationBarTitleDisplayMode(.inline)
+            .closeButtonToolbar()
     }
 }
 
 private extension WordInputView {
-    var backgroundLayer: some View {
-        DesignBook.Color.Background.primary
-            .ignoresSafeArea()
-    }
     
     var content: some View {
         VStack(spacing: DesignBook.Spacing.lg) {

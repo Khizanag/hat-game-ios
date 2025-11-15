@@ -17,19 +17,12 @@ struct NextTeamView: View {
     let onContinue: () -> Void
     
     var body: some View {
-        ZStack {
-            backgroundLayer
-            content
-        }
+        content
+            .setDefaultBackground()
     }
 }
 
 private extension NextTeamView {
-    var backgroundLayer: some View {
-        DesignBook.Color.Background.primary
-            .ignoresSafeArea()
-    }
-    
     var content: some View {
         VStack(spacing: DesignBook.Spacing.xl) {
             Spacer()

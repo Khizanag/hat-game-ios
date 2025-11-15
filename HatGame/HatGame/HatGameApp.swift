@@ -17,6 +17,7 @@ struct HatGameApp: App {
                 Page.welcome.view()
             }
             .environment(appConfiguration)
+            .presentationBackground(Color.red)
         }
     }
 }

@@ -102,5 +102,12 @@ extension View {
     func applyShadow(_ style: DesignBook.Shadow.ShadowStyle) -> some View {
         self.shadow(color: style.color, radius: style.radius, x: style.x, y: style.y)
     }
+    
+    func setDefaultBackground() -> some View {
+        background(
+            DesignBook.Color.Background.primary
+                .ignoresSafeArea()
+        )
+    }
 }
 

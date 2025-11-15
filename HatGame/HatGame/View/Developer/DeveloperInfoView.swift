@@ -23,7 +23,7 @@ struct DeveloperInfoView: View {
         .navigationTitle("Developer Info")
         .navigationBarTitleDisplayMode(.inline)
         .closeButtonToolbar()
-        .background(DesignBook.Color.Background.primary.ignoresSafeArea())
+        .setDefaultBackground()
     }
 }
 

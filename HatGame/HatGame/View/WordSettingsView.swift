@@ -10,28 +10,19 @@ import SwiftUI
 struct WordSettingsView: View {
     @Environment(GameManager.self) private var gameManager
     @Environment(Navigator.self) private var navigator
-    @Environment(\.dismiss) private var dismiss
+    
     @State private var selectedWordCount: Int = 10
     
     var body: some View {
-        NavigationStack {
-            ZStack {
-                backgroundLayer
-                content
-            }
+        content
+            .setDefaultBackground()
             .navigationTitle("Word Settings")
             .navigationBarTitleDisplayMode(.inline)
             .closeButtonToolbar()
-        }
     }
 }
 
 private extension WordSettingsView {
-    var backgroundLayer: some View {
-        DesignBook.Color.Background.primary
-            .ignoresSafeArea()
-    }
-    
     var content: some View {
         VStack(spacing: DesignBook.Spacing.lg) {
             descriptionCard
