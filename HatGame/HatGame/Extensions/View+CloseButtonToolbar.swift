@@ -47,4 +47,3 @@ extension View {
         environment(\.needsCloseButton, value)
     }
 }
-

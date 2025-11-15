@@ -7,6 +7,7 @@
 
 import Foundation
 import Observation
+import SwiftUI
 
 @Observable
 final class GameManager {
@@ -43,7 +44,15 @@ final class GameManager {
     var allWordsGuessed: Bool {
         shuffledWords.allSatisfy { $0.guessed }
     }
-    
+
+    // MARK: - Init
+    init() {
+        // TODO: Refactor
+        if UserDefaults.standard.bool(forKey: "HatGame.isTestMode") {
+            applyTestData()
+        }
+    }
+
     func addTeam(name: String) {
         let team = Team(name: name)
         teams.append(team)
@@ -251,19 +260,22 @@ final class GameManager {
     func updateDefaultWords(_ words: [String], for playerId: UUID) {
         testWordsByPlayer[playerId] = words
     }
-    
+}
+
+// MARK: - Test
+private extension GameManager {
     func applyTestData() {
         resetGame()
         wordsPerPlayer = 5
         roundDuration = 5
-        
+
         let sampleTeams = [
             ("Orion", ["Alex", "Maya"]),
             ("Nova", ["Leo", "Sara"])
         ]
-        
+
         var generatedTeams: [Team] = []
-        var wordPool = [
+        let wordPool = [
             "Galaxy","Comet","Nebula","Orbit","Meteor",
             "Starlight","Eclipse","Gravity","Rocket","Cosmos",
             "Aurora","Planet","Photon","Quasar","Launch",
@@ -272,13 +284,13 @@ final class GameManager {
             "Pulse","Nova","Drift","Horizon","Spark"
         ]
         var poolIndex = 0
-        
+
         for sample in sampleTeams {
             let teamId = UUID()
             let players = sample.1.map { Player(name: $0, teamId: teamId) }
             let team = Team(id: teamId, name: sample.0, players: players)
             generatedTeams.append(team)
-            
+
             for player in players {
                 var words: [String] = []
                 for _ in 0..<wordsPerPlayer {
@@ -289,7 +301,7 @@ final class GameManager {
                 testWordsByPlayer[player.id] = words
             }
         }
-        
+
         teams = generatedTeams
     }
 }

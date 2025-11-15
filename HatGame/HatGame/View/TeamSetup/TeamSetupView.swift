@@ -10,6 +10,7 @@ import SwiftUI
 struct TeamSetupView: View {
     @Environment(GameManager.self) private var gameManager
     @Environment(Navigator.self) private var navigator
+
     @State private var newTeamName: String = ""
     @State private var showingAddPlayer: Bool = false
     @State private var selectedTeamId: UUID?
@@ -20,7 +21,9 @@ struct TeamSetupView: View {
     private let playersPerTeam = 2
 
     private var canContinue: Bool {
-        gameManager.teams.count >= 2 && gameManager.teams.allSatisfy { $0.players.count == playersPerTeam }
+        gameManager.teams.count >= 2 && gameManager.teams.allSatisfy {
+            $0.players.count == playersPerTeam
+        }
     }
 
     private var selectedTeamPlayersCount: Int {
@@ -29,10 +32,11 @@ struct TeamSetupView: View {
     }
     
     var body: some View {
-        ZStack {
-            backgroundLayer
-            content
-        }
+        content
+            .background(
+                DesignBook.Color.Background.primary
+                    .ignoresSafeArea()
+            )
         .navigationTitle("Setup Teams")
         .navigationBarTitleDisplayMode(.inline)
         .closeButtonToolbar()
@@ -42,7 +46,7 @@ struct TeamSetupView: View {
         .sheet(isPresented: editTeamBinding) {
             editTeamSheet
         }
-        .alert("Delete Team", isPresented: deleteAlertBinding) {
+        .alert("Delete Team", isPresented: isDeleteTeamAlertPresented) {
             deleteTeamAlertActions
         } message: {
             deleteTeamAlertMessage
@@ -51,11 +55,6 @@ struct TeamSetupView: View {
 }
 
 private extension TeamSetupView {
-    var backgroundLayer: some View {
-        DesignBook.Color.Background.primary
-            .ignoresSafeArea()
-    }
-    
     var content: some View {
         VStack(spacing: DesignBook.Spacing.lg) {
             headerCard
@@ -168,7 +167,7 @@ private extension TeamSetupView {
         }
     }
     
-    var deleteAlertBinding: Binding<Bool> {
+    var isDeleteTeamAlertPresented: Binding<Bool> {
         Binding(
             get: { teamToDelete != nil },
             set: { if !$0 { teamToDelete = nil } }
