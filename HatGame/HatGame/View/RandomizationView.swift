@@ -21,9 +21,7 @@ struct RandomizationView: View {
             }
             .navigationTitle("Randomize")
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                navigationToolbar
-            }
+            .closeButtonToolbar()
         }
     }
 }
@@ -119,18 +117,6 @@ private extension RandomizationView {
             shuffleAndStart()
         }
         .padding(.horizontal, DesignBook.Spacing.lg)
-    }
-    
-    @ToolbarContentBuilder
-    var navigationToolbar: some ToolbarContent {
-        ToolbarItem(placement: .navigationBarLeading) {
-            Button {
-                navigator.dismiss()
-            } label: {
-                Image(systemName: "xmark")
-                    .foregroundColor(DesignBook.Color.Text.primary)
-            }
-        }
     }
     
     func shuffleAndStart() {

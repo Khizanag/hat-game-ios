@@ -35,7 +35,10 @@ extension Page {
         case .welcome:
             WelcomeView()
         case .teamSetup:
-            TeamSetupView()
+            NavigationView {
+                TeamSetupView()
+            }
+            .needsCloseButton()
         case .wordSettings:
             WordSettingsView()
         case .timerSettings:

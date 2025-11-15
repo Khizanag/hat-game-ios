@@ -25,9 +25,7 @@ struct NavigationView<RootContent: View>: View {
         }
         .environment(navigator)
         .fullScreenCover(item: $navigator.presentedPage) { page in
-//            NavigationView {
                 page.view()
-//            }
         }
         .onReceive(navigator.pleaseDismissViewPublisher) {
             dismiss()
@@ -40,5 +38,6 @@ struct NavigationView<RootContent: View>: View {
         Page.welcome.view()
     }
     .environment(GameManager())
+    .environment(AppConfiguration())
 }
 

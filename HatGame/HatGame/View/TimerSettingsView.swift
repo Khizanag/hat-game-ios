@@ -1,5 +1,5 @@
 //
-//  WordSettingsView.swift
+//  TimerSettingsView.swift
 //  HatGame
 //
 //  Created by Giga Khizanishvili on 15.11.25.
@@ -7,10 +7,10 @@
 
 import SwiftUI
 
-struct WordSettingsView: View {
+struct TimerSettingsView: View {
     @Environment(GameManager.self) private var gameManager
     @Environment(Navigator.self) private var navigator
-    @State private var selectedWordCount: Int = 10
+    @State private var selectedDuration: Int = 60
     
     var body: some View {
         NavigationStack {
@@ -18,16 +18,14 @@ struct WordSettingsView: View {
                 backgroundLayer
                 content
             }
-            .navigationTitle("Word Settings")
+            .navigationTitle("Timer Settings")
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                navigationToolbar
-            }
+            .closeButtonToolbar()
         }
     }
 }
 
-private extension WordSettingsView {
+private extension TimerSettingsView {
     var backgroundLayer: some View {
         DesignBook.Color.Background.primary
             .ignoresSafeArea()
@@ -45,11 +43,11 @@ private extension WordSettingsView {
     var descriptionCard: some View {
         GameCard {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
-                Text("How many words?")
+                Text("Round timer")
                     .font(DesignBook.Font.title2)
                     .foregroundColor(DesignBook.Color.Text.primary)
                 
-                Text("Every player will add the same number of words. Choose what feels right for today's game.")
+                Text("Each team gets the same amount of time per turn. Choose how intense you want the round to be.")
                     .font(DesignBook.Font.body)
                     .foregroundColor(DesignBook.Color.Text.secondary)
             }
@@ -61,48 +59,49 @@ private extension WordSettingsView {
     var controlsCard: some View {
         GameCard {
             VStack(spacing: DesignBook.Spacing.md) {
-                header
-                slider
-                stepper
-                legendTags
+                durationHeader
+                durationSlider
+                durationStepper
+                timerTags
             }
         }
         .padding(.horizontal, DesignBook.Spacing.lg)
     }
     
-    var header: some View {
+    var durationHeader: some View {
         HStack {
-            Text("Words per player")
+            Text("Seconds per team")
                 .font(DesignBook.Font.headline)
                 .foregroundColor(DesignBook.Color.Text.primary)
             
             Spacer()
             
-            Text("\(selectedWordCount)")
+            Text("\(selectedDuration)s")
                 .font(DesignBook.Font.title2)
                 .foregroundColor(DesignBook.Color.Text.accent)
         }
     }
     
-    var slider: some View {
-        Slider(value: wordCountBinding, in: 3...20, step: 1)
+    var durationSlider: some View {
+        Slider(value: durationBinding, in: 5...120, step: 5)
             .tint(DesignBook.Color.Text.accent)
     }
     
-    var stepper: some View {
-        Stepper(value: $selectedWordCount, in: 3...20) {
+    var durationStepper: some View {
+        Stepper(value: $selectedDuration, in: 5...120, step: 5) {
             Text("Tap or hold to adjust")
                 .font(DesignBook.Font.caption)
                 .foregroundColor(DesignBook.Color.Text.secondary)
         }
     }
     
-    var legendTags: some View {
+    var timerTags: some View {
         HStack(spacing: DesignBook.Spacing.md) {
-            LegendTag(title: "Short & speedy", range: "3-7", isHighlighted: selectedWordCount.isBetween(3, and: 7))
-            LegendTag(title: "Balanced", range: "8-12", isHighlighted: selectedWordCount.isBetween(8, and: 12))
-            LegendTag(title: "Epic round", range: "13-20", isHighlighted: selectedWordCount.isBetween(13, and: 20))
+            TimerTag(title: "Lightning", range: "5-30s", isHighlighted: selectedDuration.isBetween(5, and: 30))
+            TimerTag(title: "Classic", range: "60s", isHighlighted: selectedDuration == 60)
+            TimerTag(title: "Marathon", range: "90-120s", isHighlighted: selectedDuration.isBetween(90, and: 120))
         }
+        .padding(.horizontal, -DesignBook.Spacing.md)
     }
     
     var continueButton: some View {
@@ -113,28 +112,16 @@ private extension WordSettingsView {
         .padding(.bottom, DesignBook.Spacing.lg)
     }
     
-    var wordCountBinding: Binding<Double> {
+    var durationBinding: Binding<Double> {
         Binding(
-            get: { Double(selectedWordCount) },
-            set: { selectedWordCount = Int($0) }
+            get: { Double(selectedDuration) },
+            set: { selectedDuration = Int($0) }
         )
     }
     
-    @ToolbarContentBuilder
-    var navigationToolbar: some ToolbarContent {
-        ToolbarItem(placement: .navigationBarLeading) {
-            Button {
-                navigator.dismiss()
-            } label: {
-                Image(systemName: "xmark")
-                    .foregroundColor(DesignBook.Color.Text.primary)
-            }
-        }
-    }
-    
     func handleContinue() {
-        gameManager.wordsPerPlayer = selectedWordCount
-        navigator.push(.timerSettings)
+        gameManager.roundDuration = selectedDuration
+        navigator.push(.wordInput)
     }
 }
 
@@ -144,7 +131,7 @@ private extension Int {
     }
 }
 
-private struct LegendTag: View {
+private struct TimerTag: View {
     let title: String
     let range: String
     let isHighlighted: Bool
@@ -169,7 +156,7 @@ private struct LegendTag: View {
 // MARK: - Preview
 #Preview {
     NavigationView {
-        Page.wordSettings.view()
+        Page.timerSettings.view()
     }
     .environment(GameManager())
 }

@@ -10,8 +10,6 @@ import Observation
 
 @Observable
 final class GameManager {
-    private static let testModeKey = "HatGame.isTestMode"
-    
     var teams: [Team] = []
     var allWords: [Word] = []
     var shuffledWords: [Word] = []
@@ -23,36 +21,12 @@ final class GameManager {
     var startingTeamIndex: Int = 0
     var currentRound: GameRound?
     var currentTeamIndex: Int?
-    var isTestMode: Bool {
-        didSet {
-            UserDefaults.standard.set(isTestMode, forKey: Self.testModeKey)
-            // Only apply/reset if not initializing
-            if !isInitializing {
-                if isTestMode {
-                    applyTestData()
-                } else {
-                    resetGame()
-                }
-            }
-        }
-    }
-    private var isInitializing: Bool = true
+    
     var currentTurnStartWordIndex: Int = 0
     var currentTeamTurnIndex: Int = 0
     var currentTurnNumber: Int = 0
     
     private var testWordsByPlayer: [UUID: [String]] = [:]
-    
-    init() {
-        // Load test mode from UserDefaults
-        isInitializing = true
-        self.isTestMode = UserDefaults.standard.bool(forKey: Self.testModeKey)
-        // Apply test data if test mode was previously enabled
-        if isTestMode {
-            applyTestData()
-        }
-        isInitializing = false
-    }
     
     var currentWord: Word? {
         let unguessedWords = shuffledWords.filter { !$0.guessed }
@@ -240,8 +214,7 @@ final class GameManager {
         teams[teamIndex].score += 1
     }
     
-    func resetGame(preserveTestMode: Bool = false) {
-        let keepTestModeActive = preserveTestMode && isTestMode
+    func resetGame() {
         currentRound = nil
         currentTeamIndex = nil
         teams = []
@@ -254,12 +227,6 @@ final class GameManager {
         roundDuration = 60
         startingTeamIndex = 0
         testWordsByPlayer = [:]
-        if !keepTestModeActive {
-            // Temporarily disable didSet to avoid triggering applyTestData/resetGame
-            isInitializing = true
-            isTestMode = false
-            isInitializing = false
-        }
     }
     
     func getTeamScore(teamId: UUID) -> Int {
@@ -277,11 +244,6 @@ final class GameManager {
         return sorted.first
     }
     
-    func setTestMode(_ enabled: Bool) {
-        isTestMode = enabled
-        // The didSet will handle saving to UserDefaults and applying/resetting data
-    }
-    
     func defaultWords(for playerId: UUID) -> [String]? {
         testWordsByPlayer[playerId]
     }
@@ -290,9 +252,8 @@ final class GameManager {
         testWordsByPlayer[playerId] = words
     }
     
-    private func applyTestData() {
-        resetGame(preserveTestMode: true)
-        isTestMode = true
+    func applyTestData() {
+        resetGame()
         wordsPerPlayer = 5
         roundDuration = 5
         
