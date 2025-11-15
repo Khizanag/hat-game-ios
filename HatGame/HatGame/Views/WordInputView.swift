@@ -102,9 +102,10 @@ struct WordInputView: View {
                                                 
                                                 Spacer()
                                                 
-                                                Button(action: {
-                                                    playerWords.remove(at: index)
-                                                }) {
+                                            Button(action: {
+                                                playerWords.remove(at: index)
+                                                persistDefaultWords()
+                                            }) {
                                                     Image(systemName: "xmark.circle.fill")
                                                         .foregroundColor(DesignBook.Color.Status.error)
                                                 }
@@ -157,9 +158,28 @@ struct WordInputView: View {
         .onAppear {
             if currentPlayer != nil {
                 playerWords = []
+                loadDefaultWordsIfNeeded()
                 isWordFieldFocused = true
             }
         }
+        .onChange(of: currentPlayerIndex) { _, _ in
+            playerWords = []
+            loadDefaultWordsIfNeeded()
+            isWordFieldFocused = true
+        }
+    }
+    
+    private func loadDefaultWordsIfNeeded() {
+        guard let player = currentPlayer else { return }
+        guard playerWords.isEmpty else { return }
+        if gameManager.isTestMode, let defaults = gameManager.defaultWords(for: player.id) {
+            playerWords = defaults
+        }
+    }
+    
+    private func persistDefaultWords() {
+        guard let player = currentPlayer, gameManager.isTestMode else { return }
+        gameManager.updateDefaultWords(playerWords, for: player.id)
     }
     
     private func addWord() {
@@ -167,6 +187,7 @@ struct WordInputView: View {
         guard !trimmedWord.isEmpty, playerWords.count < wordsPerPlayer else { return }
         guard !trimmedWord.isEmpty, !playerWords.contains(trimmedWord) else { return }
         playerWords.append(trimmedWord)
+        persistDefaultWords()
         currentWord = ""
         isWordFieldFocused = true
     }
