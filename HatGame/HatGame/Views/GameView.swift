@@ -12,6 +12,8 @@ struct GameView: View {
     @State private var timer: Timer?
     @State private var remainingSeconds: Int = 0
     @State private var showingResults: Bool = false
+    @State private var showingTeamTransition: Bool = false
+    @State private var nextTeamIndex: Int?
     
     var currentTeam: Team? {
         guard let index = gameManager.currentTeamIndex, index < gameManager.teams.count else { return nil }
@@ -142,6 +144,22 @@ struct GameView: View {
         .sheet(isPresented: $showingResults) {
             ResultsView(gameManager: gameManager, isFinal: false)
         }
+        .fullScreenCover(isPresented: $showingTeamTransition) {
+            if let nextIndex = nextTeamIndex,
+               nextIndex < gameManager.teams.count,
+               let round = currentRound,
+               let current = currentTeam {
+                TeamTransitionView(
+                    currentTeam: current,
+                    nextTeam: gameManager.teams[nextIndex],
+                    nextTeamIndex: nextIndex,
+                    round: round,
+                    onContinue: {
+                        proceedToNextTeam()
+                    }
+                )
+            }
+        }
     }
     
     private func startTimer() {
@@ -181,10 +199,21 @@ struct GameView: View {
         if gameManager.allWordsGuessed {
             finishRound()
         } else {
-            gameManager.moveToNextTeam()
-            gameManager.currentWordIndex = 0
-            startTimer()
+            // Calculate next team index
+            guard let currentIndex = gameManager.currentTeamIndex else { return }
+            let nextIndex = (currentIndex + 1) % gameManager.teams.count
+            nextTeamIndex = nextIndex
+            showingTeamTransition = true
         }
+    }
+    
+    private func proceedToNextTeam() {
+        guard let nextIndex = nextTeamIndex else { return }
+        showingTeamTransition = false
+        gameManager.moveToNextTeam()
+        gameManager.currentWordIndex = 0
+        nextTeamIndex = nil
+        startTimer()
     }
     
     private func markAsGuessed() {
