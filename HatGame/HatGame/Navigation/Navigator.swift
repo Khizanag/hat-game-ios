@@ -5,13 +5,21 @@
 //  Created by Giga Khizanishvili on 15.11.25.
 //
 
+import Combine
 import SwiftUI
 import Observation
 
 @Observable
 final class Navigator {
     var navigationPath = NavigationPath()
-    
+    var presentedPage: Page?
+
+    private var pleaseDismissViewSubject = PassthroughSubject<Void, Never>()
+
+    var pleaseDismissViewPublisher: AnyPublisher<Void, Never> {
+        pleaseDismissViewSubject.eraseToAnyPublisher()
+    }
+
     // MARK: - Navigation Methods
     
     func push(_ page: Page) {
@@ -19,19 +27,19 @@ final class Navigator {
     }
     
     func present(_ page: Page) {
-        // For modal presentation, we'll use sheets/fullScreenCovers in views
-        // This method can be extended for modal presentation if needed
-        push(page)
+        presentedPage = page
     }
     
     func dismiss() {
-        if !navigationPath.isEmpty {
-            navigationPath.removeLast()
-        }
+        pleaseDismissViewSubject.send()
+    }
+    
+    func dismissPresented() {
+        presentedPage = nil
     }
     
     func dismissToRoot() {
-        navigationPath.removeLast(navigationPath.count)
+        navigationPath = []
     }
     
     func popToRoot() {

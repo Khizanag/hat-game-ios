@@ -7,11 +7,10 @@
 
 import SwiftUI
 
-struct ResultsView: View {
+struct ResultsView {
     @Environment(GameManager.self) private var gameManager
     let round: GameRound?
     let isFinal: Bool
-    @Environment(\.dismiss) private var dismiss
     @Environment(Navigator.self) private var navigator
     
     var sortedTeams: [Team] {
@@ -21,140 +20,231 @@ struct ResultsView: View {
     var winner: Team? {
         gameManager.getWinner()
     }
-    
+}
+
+// MARK: - View
+extension ResultsView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                DesignBook.Color.Background.primary
-                    .ignoresSafeArea()
-                
-                ScrollView {
-                    VStack(spacing: DesignBook.Spacing.xl) {
-                        if isFinal, let winner = winner {
-                            GameCard {
-                                VStack(spacing: DesignBook.Spacing.md) {
-                                    Text("🏆")
-                                        .font(.system(size: 80))
-                                    
-                                    Text("Winner!")
-                                        .font(DesignBook.Font.title2)
-                                        .foregroundColor(DesignBook.Color.Text.primary)
-                                    
-                                    Text(winner.name)
-                                        .font(DesignBook.Font.largeTitle)
-                                        .foregroundColor(DesignBook.Color.Team.color(for: gameManager.teams.firstIndex(where: { $0.id == winner.id }) ?? 0))
-                                    
-                                    Text("\(winner.score) points")
-                                        .font(DesignBook.Font.headline)
-                                        .foregroundColor(DesignBook.Color.Text.secondary)
-                                }
-                            }
-                            .padding(.horizontal, DesignBook.Spacing.lg)
-                            .padding(.top, DesignBook.Spacing.lg)
-                        }
-                        
-                        GameCard {
-                            VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
-                                Text(isFinal ? "Final Standings" : "Current Standings")
-                                    .font(DesignBook.Font.title3)
-                                    .foregroundColor(DesignBook.Color.Text.primary)
-                                
-                                VStack(spacing: DesignBook.Spacing.sm) {
-                                    ForEach(Array(sortedTeams.enumerated()), id: \.element.id) { index, team in
-                                        TeamScoreRow(
-                                            team: team,
-                                            rank: index + 1,
-                                            isWinner: winner?.id == team.id,
-                                            teamColor: DesignBook.Color.Team.color(for: gameManager.teams.firstIndex(where: { $0.id == team.id }) ?? 0)
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                        .padding(.horizontal, DesignBook.Spacing.lg)
-                        
-                        if isFinal {
-                            PrimaryButton(title: "New Game") {
-                                gameManager.resetGame()
-                                navigator.dismissToRoot()
-                            }
-                            .padding(.horizontal, DesignBook.Spacing.lg)
-                            .padding(.bottom, DesignBook.Spacing.lg)
-                        } else {
-                            VStack(spacing: DesignBook.Spacing.md) {
-                                PrimaryButton(title: "Continue to Next Round") {
-                                    gameManager.startNextRound()
-                                    if let nextRound = gameManager.currentRound, let nextTeamIndex = gameManager.currentTeamIndex {
-                                        navigator.push(.playing(round: nextRound, currentTeamIndex: nextTeamIndex))
-                                    } else {
-                                        navigator.push(.finalResults)
-                                    }
-                                }
-                            }
-                            .padding(.horizontal, DesignBook.Spacing.lg)
-                            .padding(.bottom, DesignBook.Spacing.lg)
-                        }
-                    }
-                }
+                backgroundLayer
+                content
             }
             .navigationTitle(isFinal ? "Game Over" : "Round Results")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                if !isFinal {
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Button("Done") {
-                            dismiss()
-                        }
-                        .foregroundColor(DesignBook.Color.Text.accent)
-                    }
-                }
+                nonFinalToolbar
             }
         }
     }
 }
 
-private struct TeamScoreRow: View {
+private extension ResultsView {
+    var backgroundLayer: some View {
+        DesignBook.Color.Background.primary
+            .ignoresSafeArea()
+    }
+    
+    var content: some View {
+        ScrollView {
+            VStack(spacing: DesignBook.Spacing.xl) {
+                winnerSection
+                standingsSection
+                actionSection
+            }
+        }
+    }
+    
+    @ViewBuilder
+    var winnerSection: some View {
+        if isFinal, let winner = winner {
+            GameCard {
+                winnerCardContent(for: winner)
+            }
+            .padding(.horizontal, DesignBook.Spacing.lg)
+            .padding(.top, DesignBook.Spacing.lg)
+        }
+    }
+    
+    var standingsSection: some View {
+        GameCard {
+            VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
+                standingsHeader
+                teamScoreRows
+            }
+        }
+        .padding(.horizontal, DesignBook.Spacing.lg)
+    }
+    
+    var standingsHeader: some View {
+        Text(isFinal ? "Final Standings" : "Current Standings")
+            .font(DesignBook.Font.title3)
+            .foregroundColor(DesignBook.Color.Text.primary)
+    }
+    
+    var teamScoreRows: some View {
+        VStack(spacing: DesignBook.Spacing.sm) {
+            ForEach(Array(sortedTeams.enumerated()), id: \.element.id) { index, team in
+                TeamScoreRow(
+                    team: team,
+                    rank: index + 1,
+                    isWinner: winner?.id == team.id,
+                    teamColor: teamColor(for: team)
+                )
+            }
+        }
+    }
+    
+    @ViewBuilder
+    var actionSection: some View {
+        if isFinal {
+            newGameButton
+        } else {
+            continueButton
+        }
+    }
+    
+    var newGameButton: some View {
+        PrimaryButton(title: "New Game") {
+            handleNewGame()
+        }
+        .padding(.horizontal, DesignBook.Spacing.lg)
+        .padding(.bottom, DesignBook.Spacing.lg)
+    }
+    
+    var continueButton: some View {
+        PrimaryButton(title: "Continue to Next Round") {
+            handleNextRound()
+        }
+        .padding(.horizontal, DesignBook.Spacing.lg)
+        .padding(.bottom, DesignBook.Spacing.lg)
+    }
+    
+    @ViewBuilder
+    func winnerCardContent(for winner: Team) -> some View {
+        VStack(spacing: DesignBook.Spacing.md) {
+            Text("🏆")
+                .font(.system(size: 80))
+            
+            Text("Winner!")
+                .font(DesignBook.Font.title2)
+                .foregroundColor(DesignBook.Color.Text.primary)
+            
+            Text(winner.name)
+                .font(DesignBook.Font.largeTitle)
+                .foregroundColor(teamColor(for: winner))
+            
+            Text("\(winner.score) points")
+                .font(DesignBook.Font.headline)
+                .foregroundColor(DesignBook.Color.Text.secondary)
+        }
+    }
+    
+    func teamColor(for team: Team) -> Color {
+        DesignBook.Color.Team.color(
+            for: gameManager.teams.firstIndex(where: { $0.id == team.id }) ?? 0
+        )
+    }
+    
+    func handleNewGame() {
+        gameManager.resetGame()
+        navigator.dismissToRoot()
+    }
+    
+    func handleNextRound() {
+        gameManager.startNextRound()
+        if let nextRound = gameManager.currentRound,
+           let nextTeamIndex = gameManager.currentTeamIndex {
+            navigator.push(.playing(round: nextRound, currentTeamIndex: nextTeamIndex))
+        } else {
+            navigator.push(.finalResults)
+        }
+    }
+    
+    @ToolbarContentBuilder
+    var nonFinalToolbar: some ToolbarContent {
+        if !isFinal {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button("Done") {
+                    navigator.dismiss()
+                }
+                .foregroundColor(DesignBook.Color.Text.accent)
+            }
+        }
+    }
+}
+
+private struct TeamScoreRow {
     let team: Team
     let rank: Int
     let isWinner: Bool
-    let teamColor: SwiftUI.Color
-    
+    let teamColor: Color
+}
+
+// MARK: - View
+extension TeamScoreRow: View {
     var body: some View {
         HStack {
-            Text("\(rank)")
-                .font(DesignBook.Font.title3)
-                .foregroundColor(rank <= 3 ? teamColor : DesignBook.Color.Text.tertiary)
-                .frame(width: 40)
-            
-            Circle()
-                .fill(teamColor)
-                .frame(width: 12, height: 12)
-            
-            Text(team.name)
-                .font(DesignBook.Font.headline)
-                .foregroundColor(DesignBook.Color.Text.primary)
-            
+            rankView
+            indicator
+            nameView
             Spacer()
-            
-            Text("\(team.score)")
-                .font(DesignBook.Font.title3)
-                .foregroundColor(isWinner ? teamColor : DesignBook.Color.Text.secondary)
-            
-            if isWinner {
-                Image(systemName: "crown.fill")
-                    .foregroundColor(teamColor)
-            }
+            scoreView
+            crownView
         }
         .padding(DesignBook.Spacing.md)
-        .background(isWinner ? teamColor.opacity(0.1) : DesignBook.Color.Background.secondary)
+        .background(rowBackgroundColor)
         .cornerRadius(DesignBook.Size.smallCardCornerRadius)
     }
 }
 
+private extension TeamScoreRow {
+    var rankView: some View {
+        Text("\(rank)")
+            .font(DesignBook.Font.title3)
+            .foregroundColor(rankColor)
+            .frame(width: 40)
+    }
+    
+    var indicator: some View {
+        Circle()
+            .fill(teamColor)
+            .frame(width: 12, height: 12)
+    }
+    
+    var nameView: some View {
+        Text(team.name)
+            .font(DesignBook.Font.headline)
+            .foregroundColor(DesignBook.Color.Text.primary)
+    }
+    
+    var scoreView: some View {
+        Text("\(team.score)")
+            .font(DesignBook.Font.title3)
+            .foregroundColor(isWinner ? teamColor : DesignBook.Color.Text.secondary)
+    }
+    
+    @ViewBuilder
+    var crownView: some View {
+        if isWinner {
+            Image(systemName: "crown.fill")
+                .foregroundColor(teamColor)
+        }
+    }
+    
+    var rowBackgroundColor: Color {
+        isWinner ? teamColor.opacity(0.1) : DesignBook.Color.Background.secondary
+    }
+    
+    var rankColor: Color {
+        rank <= 3 ? teamColor : DesignBook.Color.Text.tertiary
+    }
+}
+
+// MARK: - Preview
 #Preview {
     NavigationView {
         Page.finalResults.view()
     }
     .environment(GameManager())
 }
-

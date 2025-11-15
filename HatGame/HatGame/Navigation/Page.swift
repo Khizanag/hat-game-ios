@@ -18,7 +18,17 @@ enum Page: Hashable {
     case playing(round: GameRound, currentTeamIndex: Int)
     case roundResults(round: GameRound)
     case finalResults
-    
+}
+
+// MARK: - Identifiable
+extension Page: Identifiable {
+    var id: Page {
+        self
+    }
+}
+
+// MARK: - View
+extension Page {
     @ViewBuilder
     func view() -> some View {
         switch self {
@@ -43,4 +53,3 @@ enum Page: Hashable {
         }
     }
 }
-

@@ -7,10 +7,13 @@
 
 import SwiftUI
 
-struct PrimaryButton: View {
+struct PrimaryButton {
     let title: String
     let action: () -> Void
-    
+}
+
+// MARK: - View
+extension PrimaryButton: View {
     var body: some View {
         Button(action: action) {
             Text(title)
@@ -25,6 +28,7 @@ struct PrimaryButton: View {
     }
 }
 
+// MARK: - Preview
 #Preview {
     PrimaryButton(title: "Start Game") {}
         .padding()

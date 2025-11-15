@@ -9,14 +9,11 @@ import SwiftUI
 
 @main
 struct HatGameApp: App {
-    @State private var gameManager = GameManager()
-    
     var body: some Scene {
         WindowGroup {
             NavigationView {
                 Page.welcome.view()
             }
-            .environment(gameManager)
         }
     }
 }
