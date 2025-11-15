@@ -140,7 +140,7 @@ private extension TeamSetupView {
                 navigator.push(.wordSettings)
             }
             .disabled(!canContinue)
-            .opacity(canContinue ? 1 : 0.4)
+            .opacity(canContinue ? DesignBook.Opacity.enabled : DesignBook.Opacity.disabled)
 
             if !canContinue {
                 requirementText
