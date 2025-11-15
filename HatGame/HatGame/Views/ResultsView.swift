@@ -8,9 +8,11 @@
 import SwiftUI
 
 struct ResultsView: View {
-    @Bindable var gameManager: GameManager
+    @Environment(GameManager.self) private var gameManager
+    let round: GameRound?
     let isFinal: Bool
     @Environment(\.dismiss) private var dismiss
+    @Environment(Navigator.self) private var navigator
     
     var sortedTeams: [Team] {
         gameManager.getSortedTeamsByScore()
@@ -74,6 +76,7 @@ struct ResultsView: View {
                         if isFinal {
                             PrimaryButton(title: "New Game") {
                                 gameManager.resetGame()
+                                navigator.dismissToRoot()
                             }
                             .padding(.horizontal, DesignBook.Spacing.lg)
                             .padding(.bottom, DesignBook.Spacing.lg)
@@ -81,6 +84,11 @@ struct ResultsView: View {
                             VStack(spacing: DesignBook.Spacing.md) {
                                 PrimaryButton(title: "Continue to Next Round") {
                                     gameManager.startNextRound()
+                                    if let nextRound = gameManager.currentRound, let nextTeamIndex = gameManager.currentTeamIndex {
+                                        navigator.push(.playing(round: nextRound, currentTeamIndex: nextTeamIndex))
+                                    } else {
+                                        navigator.push(.finalResults)
+                                    }
                                 }
                             }
                             .padding(.horizontal, DesignBook.Spacing.lg)
@@ -144,11 +152,9 @@ private struct TeamScoreRow: View {
 }
 
 #Preview {
-    let manager = GameManager()
-    manager.addTeam(name: "Team 1")
-    manager.teams[0].score = 10
-    manager.addTeam(name: "Team 2")
-    manager.teams[1].score = 8
-    return ResultsView(gameManager: manager, isFinal: true)
+    NavigationView {
+        Page.finalResults.view()
+    }
+    .environment(GameManager())
 }
 

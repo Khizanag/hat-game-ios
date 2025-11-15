@@ -8,7 +8,11 @@
 import SwiftUI
 
 struct GameView: View {
-    @Bindable var gameManager: GameManager
+    let round: GameRound
+    let teamIndex: Int
+    
+    @Environment(GameManager.self) private var gameManager
+    @Environment(Navigator.self) private var navigator
     @State private var timer: Timer?
     @State private var remainingSeconds: Int = 0
     @State private var showingResults: Bool = false
@@ -16,14 +20,15 @@ struct GameView: View {
     @State private var showingNextTeam: Bool = false
     @State private var nextTeamIndex: Int?
     @State private var nextTeamRound: GameRound?
+    @State private var showingGiveUpConfirmation: Bool = false
     
     var currentTeam: Team? {
-        guard let index = gameManager.currentTeamIndex, index < gameManager.teams.count else { return nil }
-        return gameManager.teams[index]
+        guard teamIndex < gameManager.teams.count else { return nil }
+        return gameManager.teams[teamIndex]
     }
     
-    var currentRound: GameRound? {
-        gameManager.currentRound
+    var currentRound: GameRound {
+        round
     }
     
     var body: some View {
@@ -32,7 +37,7 @@ struct GameView: View {
                 .ignoresSafeArea()
             
             VStack(spacing: DesignBook.Spacing.lg) {
-                if let round = currentRound, let team = currentTeam {
+                if let team = currentTeam {
                     GameCard {
                         VStack(spacing: DesignBook.Spacing.md) {
                             Text(round.title)
@@ -46,7 +51,7 @@ struct GameView: View {
                             
                             Text("Current Team: \(team.name)")
                                 .font(DesignBook.Font.headline)
-                                .foregroundColor(DesignBook.Color.Team.color(for: gameManager.currentTeamIndex ?? 0))
+                                .foregroundColor(DesignBook.Color.Team.color(for: teamIndex))
                             
                             Text("Time left: \(formatTime(remainingSeconds))")
                                 .font(DesignBook.Font.bodyBold)
@@ -65,21 +70,22 @@ struct GameView: View {
                                     .multilineTextAlignment(.center)
                                     .frame(minHeight: 200)
                                 
-                                VStack(spacing: DesignBook.Spacing.md) {
-                                    PrimaryButton(title: "Got It!") {
-                                        markAsGuessed()
-                                    }
-                                    
+                                HStack(spacing: DesignBook.Spacing.md) {
                                     Button(action: {
-                                        giveUpWord()
+                                        showingGiveUpConfirmation = true
                                     }) {
                                         Text("Give Up")
                                             .font(DesignBook.Font.body)
-                                            .foregroundColor(DesignBook.Color.Text.secondary)
-                                            .frame(maxWidth: .infinity)
-                                            .frame(height: 40)
-                                            .background(DesignBook.Color.Background.secondary)
+                                            .foregroundColor(DesignBook.Color.Text.primary)
+                                            .frame(width: 120)
+                                            .frame(height: DesignBook.Size.buttonHeight)
+                                            .background(DesignBook.Color.Status.error.opacity(0.6))
                                             .cornerRadius(DesignBook.Size.smallCardCornerRadius)
+                                    }
+                                    .applyShadow(DesignBook.Shadow.small)
+                                    
+                                    PrimaryButton(title: "Got It!") {
+                                        markAsGuessed()
                                     }
                                 }
                                 .padding(.horizontal, DesignBook.Spacing.lg)
@@ -155,20 +161,29 @@ struct GameView: View {
         .onDisappear {
             stopTimer()
         }
-        .onChange(of: gameManager.currentTeamIndex) { _, _ in
+        .onChange(of: teamIndex) { _, _ in
             restartTimer()
         }
+        .alert("Give Up?", isPresented: $showingGiveUpConfirmation) {
+            Button("Cancel", role: .cancel) {
+                showingGiveUpConfirmation = false
+            }
+            Button("Give Up", role: .destructive) {
+                giveUpWord()
+                showingGiveUpConfirmation = false
+            }
+        } message: {
+            Text("Are you sure you want to skip this word? It will remain available for other teams.")
+        }
         .sheet(isPresented: $showingResults) {
-            ResultsView(gameManager: gameManager, isFinal: false)
+            ResultsView(round: round, isFinal: false)
         }
         .fullScreenCover(isPresented: $showingTeamTurnResults) {
-            if let current = currentTeam,
-               let currentIndex = gameManager.currentTeamIndex,
-               let round = currentRound {
+            if let current = currentTeam {
                 let guessedWords = gameManager.getWordsGuessedInCurrentTurn(by: current.id)
                 TeamTurnResultsView(
                     team: current,
-                    teamIndex: currentIndex,
+                    teamIndex: teamIndex,
                     guessedWords: guessedWords,
                     round: round,
                     onContinue: {
@@ -212,7 +227,7 @@ struct GameView: View {
     private func startTimer() {
         stopTimer()
         remainingSeconds = gameManager.roundDuration
-        guard gameManager.currentTeamIndex != nil else { return }
+        // Timer starts when view appears
         timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
             tickTimer()
         }
@@ -253,9 +268,7 @@ struct GameView: View {
     
     private func showNextTeam() {
         // Calculate next team index first
-        guard let currentIndex = gameManager.currentTeamIndex,
-              let round = currentRound else { return }
-        let nextIndex = (currentIndex + 1) % gameManager.teams.count
+        let nextIndex = (teamIndex + 1) % gameManager.teams.count
         nextTeamIndex = nextIndex
         nextTeamRound = round
         
@@ -270,14 +283,15 @@ struct GameView: View {
     }
     
     private func proceedToNextTeam() {
-        guard nextTeamIndex != nil else { return }
+        guard let nextIndex = nextTeamIndex else { return }
         showingNextTeam = false
-        gameManager.moveToNextTeam()
+        gameManager.currentTeamIndex = nextIndex
         gameManager.startTeamTurn()
         gameManager.currentWordIndex = 0
         nextTeamIndex = nil
         nextTeamRound = nil
-        startTimer()
+        // Navigate to new GameView with updated team index
+        navigator.replace(with: .playing(round: round, currentTeamIndex: nextIndex))
     }
     
     private func markAsGuessed() {
@@ -305,6 +319,7 @@ struct GameView: View {
     private func finishRound() {
         stopTimer()
         gameManager.finishRound()
+        navigator.push(.roundResults(round: round))
     }
 }
 
@@ -353,7 +368,9 @@ private struct NextTeamViewWrapper: View {
     let manager = GameManager()
     manager.addTeam(name: "Team 1")
     manager.shuffledWords = [Word(text: "Test")]
-    manager.state = .playing(round: .one, currentTeamIndex: 0)
-    return GameView(gameManager: manager)
+    manager.currentRound = .one
+    manager.currentTeamIndex = 0
+    return GameView(round: .one, teamIndex: 0)
+        .environment(manager)
 }
 

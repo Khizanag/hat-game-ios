@@ -8,12 +8,12 @@
 import SwiftUI
 
 struct TimerSettingsView: View {
-    @Bindable var gameManager: GameManager
+    @Environment(GameManager.self) private var gameManager
+    @Environment(Navigator.self) private var navigator
     @State private var selectedDuration: Int
     
-    init(gameManager: GameManager) {
-        self._gameManager = Bindable(gameManager)
-        _selectedDuration = State(initialValue: gameManager.roundDuration)
+    init() {
+        _selectedDuration = State(initialValue: 60)
     }
     
     var body: some View {
@@ -76,7 +76,7 @@ struct TimerSettingsView: View {
                 
                 PrimaryButton(title: "Continue") {
                     gameManager.roundDuration = selectedDuration
-                    gameManager.state = .wordInput
+                    navigator.push(.wordInput)
                 }
                 .padding(.horizontal, DesignBook.Spacing.lg)
                 .padding(.bottom, DesignBook.Spacing.lg)
@@ -107,7 +107,10 @@ private struct TimerTag: View {
 }
 
 #Preview {
-    TimerSettingsView(gameManager: GameManager())
+    NavigationView {
+        Page.timerSettings.view()
+    }
+    .environment(GameManager())
 }
 
 

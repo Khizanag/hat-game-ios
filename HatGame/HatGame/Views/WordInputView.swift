@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct WordInputView: View {
-    @Bindable var gameManager: GameManager
+    @Environment(GameManager.self) private var gameManager
+    @Environment(Navigator.self) private var navigator
     @State private var currentPlayerIndex: Int = 0
     @State private var playerWords: [String] = []
     @State private var currentWord: String = ""
@@ -200,15 +201,15 @@ struct WordInputView: View {
             currentPlayerIndex += 1
             playerWords = []
         } else {
-            gameManager.state = .randomization
+            navigator.push(.randomization)
         }
     }
 }
 
 #Preview {
-    let manager = GameManager()
-    manager.addTeam(name: "Team 1")
-    manager.addPlayer(name: "Player 1", to: manager.teams[0].id)
-    return WordInputView(gameManager: manager)
+    NavigationView {
+        Page.wordInput.view()
+    }
+    .environment(GameManager())
 }
 

@@ -14,7 +14,13 @@ struct Word: Identifiable, Codable, Hashable {
     var guessedByTeamId: UUID?
     var guessedInRound: Int?
     
-    init(id: UUID = UUID(), text: String, guessed: Bool = false, guessedByTeamId: UUID? = nil, guessedInRound: Int? = nil) {
+    init(
+        id: UUID = UUID(),
+        text: String,
+        guessed: Bool = false,
+        guessedByTeamId: UUID? = nil,
+        guessedInRound: Int? = nil
+    ) {
         self.id = id
         self.text = text
         self.guessed = guessed

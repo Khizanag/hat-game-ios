@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct TeamSetupView: View {
-    @Bindable var gameManager: GameManager
+    @Environment(GameManager.self) private var gameManager
+    @Environment(Navigator.self) private var navigator
     @State private var newTeamName: String = ""
     @State private var showingAddPlayer: Bool = false
     @State private var selectedTeamId: UUID?
@@ -82,7 +83,7 @@ struct TeamSetupView: View {
                 }
                 
                 PrimaryButton(title: "Continue") {
-                    gameManager.state = .wordSettings
+                    navigator.push(.wordSettings)
                 }
                 .padding(.horizontal, DesignBook.Spacing.lg)
                 .padding(.bottom, DesignBook.Spacing.sm)
@@ -127,7 +128,7 @@ struct TeamSetupView: View {
             }
         })) {
             if let teamId = editingTeamId {
-                TeamEditView(gameManager: gameManager, teamId: teamId)
+                TeamEditView(teamId: teamId)
             }
         }
         .alert("Delete Team", isPresented: Binding(
@@ -301,6 +302,9 @@ private struct AddPlayerSheet: View {
 }
 
 #Preview {
-    TeamSetupView(gameManager: GameManager())
+    NavigationView {
+        Page.teamSetup.view()
+    }
+    .environment(GameManager())
 }
 
