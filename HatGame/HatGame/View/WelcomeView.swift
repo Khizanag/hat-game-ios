@@ -101,7 +101,7 @@ private extension WelcomeView {
                         isTestModeExpanded.toggle()
                     }
                 } label: {
-                    HStack {
+                    HStack(alignment: .top) {
                         Text("Test Mode")
                             .font(DesignBook.Font.headline)
                             .foregroundColor(DesignBook.Color.Text.primary)

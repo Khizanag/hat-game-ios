@@ -79,6 +79,11 @@ enum DesignBook {
         static let largeIconSize: CGFloat = 48
     }
     
+    enum Opacity {
+        static let enabled: Double = 1.0
+        static let disabled: Double = 0.4
+    }
+    
     enum Shadow {
         static let small = ShadowStyle(color: .black.opacity(0.1), radius: 4, x: 0, y: 2)
         static let medium = ShadowStyle(color: .black.opacity(0.15), radius: 8, x: 0, y: 4)
