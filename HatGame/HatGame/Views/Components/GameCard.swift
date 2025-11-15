@@ -16,7 +16,7 @@ struct GameCard<Content: View>: View {
     
     var body: some View {
         content
-            .padding(DesignBook.Spacing.lg)
+            .padding(DesignBook.Spacing.md)
             .background(DesignBook.Color.Background.card)
             .cornerRadius(DesignBook.Size.cardCornerRadius)
             .applyShadow(DesignBook.Shadow.large)
