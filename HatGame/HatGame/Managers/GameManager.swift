@@ -10,6 +10,8 @@ import Observation
 
 @Observable
 final class GameManager {
+    private static let testModeKey = "HatGame.isTestMode"
+    
     var state: GameState = .welcome
     var teams: [Team] = []
     var allWords: [Word] = []
@@ -20,12 +22,36 @@ final class GameManager {
     var wordsPerPlayer: Int = 10
     var roundDuration: Int = 60
     var startingTeamIndex: Int = 0
-    var isTestMode: Bool = false
+    var isTestMode: Bool {
+        didSet {
+            UserDefaults.standard.set(isTestMode, forKey: Self.testModeKey)
+            // Only apply/reset if not initializing
+            if !isInitializing {
+                if isTestMode {
+                    applyTestData()
+                } else {
+                    resetGame()
+                }
+            }
+        }
+    }
+    private var isInitializing: Bool = true
     var currentTurnStartWordIndex: Int = 0
     var currentTeamTurnIndex: Int = 0
     var currentTurnNumber: Int = 0
     
     private var testWordsByPlayer: [UUID: [String]] = [:]
+    
+    init() {
+        // Load test mode from UserDefaults
+        isInitializing = true
+        self.isTestMode = UserDefaults.standard.bool(forKey: Self.testModeKey)
+        // Apply test data if test mode was previously enabled
+        if isTestMode {
+            applyTestData()
+        }
+        isInitializing = false
+    }
     
     var currentRound: GameRound? {
         if case .playing(let round, _) = state {
@@ -268,11 +294,8 @@ final class GameManager {
     }
     
     func setTestMode(_ enabled: Bool) {
-        if enabled {
-            applyTestData()
-        } else {
-            resetGame()
-        }
+        isTestMode = enabled
+        // The didSet will handle saving to UserDefaults and applying/resetting data
     }
     
     func defaultWords(for playerId: UUID) -> [String]? {
