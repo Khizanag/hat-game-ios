@@ -12,21 +12,21 @@
 			containerPortal = 725A481A2EC9076F00E3EB88 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 725A48212EC9076F00E3EB88;
-			remoteInfo = "HatGame";
+			remoteInfo = HatGame;
 		};
 		725A483E2EC9077100E3EB88 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 725A481A2EC9076F00E3EB88 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 725A48212EC9076F00E3EB88;
-			remoteInfo = "HatGame";
+			remoteInfo = HatGame;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		725A48222EC9076F00E3EB88 /* HatGame.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "HatGame.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		725A48332EC9077100E3EB88 /* HatGameTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "HatGameTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		725A483D2EC9077100E3EB88 /* HatGameUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "HatGameUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		725A48222EC9076F00E3EB88 /* HatGame.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HatGame.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		725A48332EC9077100E3EB88 /* HatGameTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HatGameTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		725A483D2EC9077100E3EB88 /* HatGameUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HatGameUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -45,17 +45,17 @@
 			exceptions = (
 				725A48452EC9077100E3EB88 /* Exceptions for "HatGame" folder in "HatGame" target */,
 			);
-			path = "HatGame";
+			path = HatGame;
 			sourceTree = "<group>";
 		};
 		725A48362EC9077100E3EB88 /* HatGameTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "HatGameTests";
+			path = HatGameTests;
 			sourceTree = "<group>";
 		};
 		725A48402EC9077100E3EB88 /* HatGameUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "HatGameUITests";
+			path = HatGameUITests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -123,10 +123,10 @@
 			fileSystemSynchronizedGroups = (
 				725A48242EC9076F00E3EB88 /* HatGame */,
 			);
-			name = "HatGame";
+			name = HatGame;
 			packageProductDependencies = (
 			);
-			productName = "HatGame";
+			productName = HatGame;
 			productReference = 725A48222EC9076F00E3EB88 /* HatGame.app */;
 			productType = "com.apple.product-type.application";
 		};
@@ -146,10 +146,10 @@
 			fileSystemSynchronizedGroups = (
 				725A48362EC9077100E3EB88 /* HatGameTests */,
 			);
-			name = "HatGameTests";
+			name = HatGameTests;
 			packageProductDependencies = (
 			);
-			productName = "HatGameTests";
+			productName = HatGameTests;
 			productReference = 725A48332EC9077100E3EB88 /* HatGameTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
@@ -169,10 +169,10 @@
 			fileSystemSynchronizedGroups = (
 				725A48402EC9077100E3EB88 /* HatGameUITests */,
 			);
-			name = "HatGameUITests";
+			name = HatGameUITests;
 			packageProductDependencies = (
 			);
-			productName = "HatGameUITests";
+			productName = HatGameUITests;
 			productReference = 725A483D2EC9077100E3EB88 /* HatGameUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
@@ -295,7 +295,7 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "HatGame/Info.plist";
+				INFOPLIST_FILE = HatGame/Info.plist;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -340,7 +340,7 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "HatGame/Info.plist";
+				INFOPLIST_FILE = HatGame/Info.plist;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -560,7 +560,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,7";
-				TEST_TARGET_NAME = "HatGame";
+				TEST_TARGET_NAME = HatGame;
 				XROS_DEPLOYMENT_TARGET = 26.0;
 			};
 			name = Debug;
@@ -585,7 +585,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,7";
-				TEST_TARGET_NAME = "HatGame";
+				TEST_TARGET_NAME = HatGame;
 				XROS_DEPLOYMENT_TARGET = 26.0;
 			};
 			name = Release;

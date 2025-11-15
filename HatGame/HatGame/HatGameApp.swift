@@ -1,6 +1,6 @@
 //
-//  Hat_GameApp.swift
-//  Hat Game
+//  HatGameApp.swift
+//  HatGame
 //
 //  Created by Giga Khizanishvili on 15.11.25.
 //
@@ -9,7 +9,7 @@ import SwiftUI
 import SwiftData
 
 @main
-struct Hat_GameApp: App {
+struct HatGameApp: App {
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             Item.self,
