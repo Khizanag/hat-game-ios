@@ -170,7 +170,6 @@ final class GameManager {
     func getWordsGuessedInCurrentTurn(by teamId: UUID) -> [Word] {
         // Get words guessed by this team since the turn started
         // currentTurnStartWordIndex tracks how many words were guessed total when turn started
-        let totalGuessedNow = shuffledWords.filter { $0.guessed }.count
         let wordsGuessedThisTurn = shuffledWords.filter { word in
             word.guessed && word.guessedByTeamId == teamId
         }
