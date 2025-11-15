@@ -274,7 +274,10 @@ final class GameManager {
         startingTeamIndex = 0
         testWordsByPlayer = [:]
         if !keepTestModeActive {
+            // Temporarily disable didSet to avoid triggering applyTestData/resetGame
+            isInitializing = true
             isTestMode = false
+            isInitializing = false
         }
     }
     
