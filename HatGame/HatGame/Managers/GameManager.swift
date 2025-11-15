@@ -54,7 +54,7 @@ final class GameManager {
     }
 
     func addTeam(name: String) {
-        let team = Team(name: name)
+        let team = Team(name: name, colorIndex: teams.count)
         teams.append(team)
     }
     
@@ -284,10 +284,10 @@ private extension GameManager {
         ]
         var poolIndex = 0
 
-        for sample in sampleTeams {
+        for (index, sample) in sampleTeams.enumerated() {
             let teamId = UUID()
             let players = sample.1.map { Player(name: $0, teamId: teamId) }
-            let team = Team(id: teamId, name: sample.0, players: players)
+            let team = Team(id: teamId, name: sample.0, players: players, colorIndex: index)
             generatedTeams.append(team)
 
             for player in players {

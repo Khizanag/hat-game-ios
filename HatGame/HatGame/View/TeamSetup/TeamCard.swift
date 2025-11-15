@@ -10,7 +10,6 @@ import SwiftUI
 struct TeamCard: View {
     let team: Team
     let playersPerTeam: Int
-    @Bindable var gameManager: GameManager
     let onAddPlayer: () -> Void
     let onRemoveTeam: () -> Void
     let onEditTeam: () -> Void
@@ -28,9 +27,7 @@ struct TeamCard: View {
 
 private extension TeamCard {
     var teamColor: Color {
-        DesignBook.Color.Team.color(
-            for: gameManager.teams.firstIndex(where: { $0.id == team.id }) ?? 0
-        )
+        DesignBook.Color.Team.color(for: team.colorIndex)
     }
     
     var header: some View {

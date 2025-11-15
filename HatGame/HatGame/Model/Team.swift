@@ -12,12 +12,20 @@ struct Team: Identifiable, Codable, Hashable {
     var name: String
     var players: [Player]
     var score: Int
+    var colorIndex: Int
     
-    init(id: UUID = UUID(), name: String, players: [Player] = [], score: Int = 0) {
+    init(
+        id: UUID = UUID(),
+        name: String,
+        players: [Player] = [],
+        score: Int = 0,
+        colorIndex: Int = 0
+    ) {
         self.id = id
         self.name = name
         self.players = players
         self.score = score
+        self.colorIndex = colorIndex
     }
 }
 
