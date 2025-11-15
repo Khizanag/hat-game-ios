@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct TeamEditView: View {
-    @Bindable var gameManager: GameManager
+    @Environment(GameManager.self) private var gameManager
     let teamId: UUID
     @Environment(\.dismiss) private var dismiss
     @State private var teamName: String = ""
@@ -136,7 +136,8 @@ struct TeamEditView: View {
     let teamId = manager.teams[0].id
     manager.addPlayer(name: "Alex", to: teamId)
     manager.addPlayer(name: "Maya", to: teamId)
-    return TeamEditView(gameManager: manager, teamId: teamId)
+    return TeamEditView(teamId: teamId)
+        .environment(manager)
 }
 
 

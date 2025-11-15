@@ -8,12 +8,12 @@
 import SwiftUI
 
 struct WordSettingsView: View {
-    @Bindable var gameManager: GameManager
+    @Environment(GameManager.self) private var gameManager
+    @Environment(Navigator.self) private var navigator
     @State private var selectedWordCount: Int
     
-    init(gameManager: GameManager) {
-        self._gameManager = Bindable(gameManager)
-        _selectedWordCount = State(initialValue: gameManager.wordsPerPlayer)
+    init() {
+        _selectedWordCount = State(initialValue: 10)
     }
     
     var body: some View {
@@ -75,7 +75,7 @@ struct WordSettingsView: View {
                 
                 PrimaryButton(title: "Continue") {
                     gameManager.wordsPerPlayer = selectedWordCount
-                    gameManager.state = .timerSettings
+                    navigator.push(.timerSettings)
                 }
                 .padding(.horizontal, DesignBook.Spacing.lg)
                 .padding(.bottom, DesignBook.Spacing.lg)
@@ -106,7 +106,10 @@ private struct LegendTag: View {
 }
 
 #Preview {
-    WordSettingsView(gameManager: GameManager())
+    NavigationView {
+        Page.wordSettings.view()
+    }
+    .environment(GameManager())
 }
 
 

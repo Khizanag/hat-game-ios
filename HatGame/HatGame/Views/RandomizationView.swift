@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct RandomizationView: View {
-    @Bindable var gameManager: GameManager
+    @Environment(GameManager.self) private var gameManager
+    @Environment(Navigator.self) private var navigator
     @State private var isShuffling: Bool = false
     @State private var selectedStartingTeamIndex: Int = 0
     
@@ -87,15 +88,16 @@ struct RandomizationView: View {
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
             gameManager.shuffleWords()
             gameManager.startRound(.one, startingTeamIndex: selectedStartingTeamIndex)
+            // Coordinator will sync from gameManager state change
+            navigator.push(.playing(round: .one, currentTeamIndex: selectedStartingTeamIndex))
         }
     }
 }
 
 #Preview {
-    let manager = GameManager()
-    manager.addTeam(name: "Team 1")
-    manager.addTeam(name: "Team 2")
-    manager.allWords = [Word(text: "Test"), Word(text: "Word")]
-    return RandomizationView(gameManager: manager)
+    NavigationView {
+        Page.randomization.view()
+    }
+    .environment(GameManager())
 }
 

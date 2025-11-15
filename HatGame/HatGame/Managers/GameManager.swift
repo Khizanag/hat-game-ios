@@ -12,7 +12,6 @@ import Observation
 final class GameManager {
     private static let testModeKey = "HatGame.isTestMode"
     
-    var state: GameState = .welcome
     var teams: [Team] = []
     var allWords: [Word] = []
     var shuffledWords: [Word] = []
@@ -22,6 +21,8 @@ final class GameManager {
     var wordsPerPlayer: Int = 10
     var roundDuration: Int = 60
     var startingTeamIndex: Int = 0
+    var currentRound: GameRound?
+    var currentTeamIndex: Int?
     var isTestMode: Bool {
         didSet {
             UserDefaults.standard.set(isTestMode, forKey: Self.testModeKey)
@@ -51,23 +52,6 @@ final class GameManager {
             applyTestData()
         }
         isInitializing = false
-    }
-    
-    var currentRound: GameRound? {
-        if case .playing(let round, _) = state {
-            return round
-        }
-        if case .roundResults(let round) = state {
-            return round
-        }
-        return nil
-    }
-    
-    var currentTeamIndex: Int? {
-        if case .playing(_, let index) = state {
-            return index
-        }
-        return nil
     }
     
     var currentWord: Word? {
@@ -136,8 +120,9 @@ final class GameManager {
     
     func startRound(_ round: GameRound, startingTeamIndex: Int) {
         self.startingTeamIndex = startingTeamIndex
+        self.currentRound = round
+        self.currentTeamIndex = startingTeamIndex
         roundStartTime = Date()
-        state = .playing(round: round, currentTeamIndex: startingTeamIndex)
         resetWordGuessedState()
         currentTeamTurnIndex = 0
         currentTurnStartWordIndex = shuffledWords.filter { $0.guessed }.count
@@ -194,12 +179,9 @@ final class GameManager {
     func moveToNextTeam() {
         guard let currentIndex = currentTeamIndex else { return }
         let nextIndex = (currentIndex + 1) % teams.count
-        
-        if case .playing(let round, _) = state {
-            state = .playing(round: round, currentTeamIndex: nextIndex)
-            currentTeamTurnIndex += 1
-            currentTurnStartWordIndex = shuffledWords.filter { $0.guessed }.count
-        }
+        currentTeamIndex = nextIndex
+        currentTeamTurnIndex += 1
+        currentTurnStartWordIndex = shuffledWords.filter { $0.guessed }.count
     }
     
     func getWordsGuessedInCurrentTurn(by teamId: UUID) -> [Word] {
@@ -238,16 +220,14 @@ final class GameManager {
     
     func finishRound() {
         roundEndTime = Date()
-        if let round = currentRound {
-            state = .roundResults(round: round)
-        }
     }
     
     func startNextRound() {
         guard let currentRound = currentRound else { return }
         
         if currentRound == .three {
-            state = .finalResults
+            self.currentRound = nil
+            self.currentTeamIndex = nil
         } else {
             let nextRound = GameRound(rawValue: currentRound.rawValue + 1)!
             let nextTeamIndex = (startingTeamIndex + 1) % teams.count
@@ -262,7 +242,8 @@ final class GameManager {
     
     func resetGame(preserveTestMode: Bool = false) {
         let keepTestModeActive = preserveTestMode && isTestMode
-        state = .welcome
+        currentRound = nil
+        currentTeamIndex = nil
         teams = []
         allWords = []
         shuffledWords = []
@@ -313,12 +294,11 @@ final class GameManager {
         resetGame(preserveTestMode: true)
         isTestMode = true
         wordsPerPlayer = 5
-        roundDuration = 60
+        roundDuration = 5
         
         let sampleTeams = [
             ("Orion", ["Alex", "Maya"]),
-            ("Nova", ["Leo", "Sara"]),
-            ("Quantum", ["Nika", "David"])
+            ("Nova", ["Leo", "Sara"])
         ]
         
         var generatedTeams: [Team] = []

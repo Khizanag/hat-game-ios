@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct WelcomeView: View {
-    @Bindable var gameManager: GameManager
+    @Environment(GameManager.self) private var gameManager
+    @Environment(Navigator.self) private var navigator
     
     var body: some View {
         ZStack {
@@ -50,7 +51,7 @@ struct WelcomeView: View {
                     
                     VStack(spacing: DesignBook.Spacing.md) {
                         PrimaryButton(title: "Start Game") {
-                            gameManager.state = .teamSetup
+                            navigator.push(.teamSetup)
                         }
                         
                         SecondaryButton(title: "Developer Info") {
@@ -113,6 +114,9 @@ private struct InstructionRow: View {
 }
 
 #Preview {
-    WelcomeView(gameManager: GameManager())
+    NavigationView {
+        Page.welcome.view()
+    }
+    .environment(GameManager())
 }
 
