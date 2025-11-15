@@ -34,10 +34,6 @@ final class Navigator {
         pleaseDismissViewSubject.send()
     }
     
-    func dismissPresented() {
-        presentedPage = nil
-    }
-    
     func dismissToRoot() {
         navigationPath = []
     }

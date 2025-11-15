@@ -9,6 +9,7 @@ import SwiftUI
 
 struct WordInputView: View {
     @Environment(GameManager.self) private var gameManager
+    @Environment(AppConfiguration.self) private var appConfiguration
     @Environment(Navigator.self) private var navigator
     @State private var currentPlayerIndex: Int = 0
     @State private var playerWords: [String] = []
@@ -52,9 +53,7 @@ struct WordInputView: View {
         }
         .navigationTitle("Add Words")
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            navigationToolbar
-        }
+        .closeButtonToolbar()
     }
 }
 
@@ -212,18 +211,6 @@ private extension WordInputView {
         currentPlayerIndex < allPlayers.count - 1 ? "Next Player" : "Finish"
     }
     
-    @ToolbarContentBuilder
-    var navigationToolbar: some ToolbarContent {
-        ToolbarItem(placement: .navigationBarLeading) {
-            Button {
-                navigator.dismiss()
-            } label: {
-                Image(systemName: "xmark")
-                    .foregroundColor(DesignBook.Color.Text.primary)
-            }
-        }
-    }
-    
     func prepareCurrentPlayer() {
         guard currentPlayer != nil else { return }
         playerWords = []
@@ -234,13 +221,13 @@ private extension WordInputView {
     func loadDefaultWordsIfNeeded() {
         guard let player = currentPlayer else { return }
         guard playerWords.isEmpty else { return }
-        if gameManager.isTestMode, let defaults = gameManager.defaultWords(for: player.id) {
+        if appConfiguration.isTestMode, let defaults = gameManager.defaultWords(for: player.id) {
             playerWords = defaults
         }
     }
     
     func persistDefaultWords() {
-        guard let player = currentPlayer, gameManager.isTestMode else { return }
+        guard let player = currentPlayer, appConfiguration.isTestMode else { return }
         gameManager.updateDefaultWords(playerWords, for: player.id)
     }
     
@@ -273,5 +260,6 @@ private extension WordInputView {
         Page.wordInput.view()
     }
     .environment(GameManager())
+    .environment(AppConfiguration())
 }
 

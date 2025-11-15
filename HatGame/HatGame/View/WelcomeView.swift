@@ -9,6 +9,7 @@ import SwiftUI
 
 struct WelcomeView: View {
     @Environment(GameManager.self) private var gameManager
+    @Environment(AppConfiguration.self) private var appConfiguration
     @Environment(Navigator.self) private var navigator
     
     var body: some View {
@@ -88,8 +89,8 @@ private extension WelcomeView {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
                 Toggle(
                     isOn: Binding(
-                        get: { gameManager.isTestMode },
-                        set: { gameManager.setTestMode($0) }
+                        get: { appConfiguration.isTestMode },
+                        set: { handleTestModeChange($0) }
                     )
                 ) {
                     VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
@@ -106,6 +107,15 @@ private extension WelcomeView {
             }
         }
         .padding(.horizontal, DesignBook.Spacing.lg)
+    }
+    
+    func handleTestModeChange(_ enabled: Bool) {
+        appConfiguration.isTestMode = enabled
+        if enabled {
+            gameManager.applyTestData()
+        } else {
+            gameManager.resetGame()
+        }
     }
 }
 
@@ -137,5 +147,6 @@ private struct InstructionRow: View {
         Page.welcome.view()
     }
     .environment(GameManager())
+    .environment(AppConfiguration())
 }
 
