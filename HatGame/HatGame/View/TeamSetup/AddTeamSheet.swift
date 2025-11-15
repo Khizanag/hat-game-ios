@@ -16,12 +16,6 @@ struct AddTeamSheet: View {
     let playersPerTeam: Int
     let onCreateTeam: (String, [String]) -> Void
     
-    init(playersPerTeam: Int, onCreateTeam: @escaping (String, [String]) -> Void) {
-        self.playersPerTeam = playersPerTeam
-        self.onCreateTeam = onCreateTeam
-        _playerNames = State(initialValue: Array(repeating: "", count: playersPerTeam))
-    }
-    
     private var canCreateTeam: Bool {
         !teamName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
         playerNames.allSatisfy { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
