@@ -1,0 +1,101 @@
+//
+//  RandomizationView.swift
+//  HatGame
+//
+//  Created by Giga Khizanishvili on 15.11.25.
+//
+
+import SwiftUI
+
+struct RandomizationView: View {
+    @Bindable var gameManager: GameManager
+    @State private var isShuffling: Bool = false
+    @State private var selectedStartingTeamIndex: Int = 0
+    
+    var body: some View {
+        ZStack {
+            DesignBook.Color.Background.primary
+                .ignoresSafeArea()
+            
+            VStack(spacing: DesignBook.Spacing.xl) {
+                Spacer()
+                
+                GameCard {
+                    VStack(spacing: DesignBook.Spacing.lg) {
+                        if isShuffling {
+                            VStack(spacing: DesignBook.Spacing.md) {
+                                ProgressView()
+                                    .scaleEffect(1.5)
+                                
+                                Text("Shuffling words...")
+                                    .font(DesignBook.Font.headline)
+                                    .foregroundColor(DesignBook.Color.Text.secondary)
+                            }
+                            .frame(height: 200)
+                        } else {
+                            VStack(spacing: DesignBook.Spacing.md) {
+                                Text("🎲")
+                                    .font(.system(size: 80))
+                                
+                                Text("Randomize Words")
+                                    .font(DesignBook.Font.title2)
+                                    .foregroundColor(DesignBook.Color.Text.primary)
+                                
+                                Text("\(gameManager.allWords.count) words ready")
+                                    .font(DesignBook.Font.body)
+                                    .foregroundColor(DesignBook.Color.Text.secondary)
+                            }
+                            .frame(height: 200)
+                        }
+                    }
+                }
+                .padding(.horizontal, DesignBook.Spacing.lg)
+                
+                if !isShuffling {
+                    GameCard {
+                        VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
+                            Text("Which team starts?")
+                                .font(DesignBook.Font.headline)
+                                .foregroundColor(DesignBook.Color.Text.primary)
+                            
+                            Picker("Starting Team", selection: $selectedStartingTeamIndex) {
+                                ForEach(Array(gameManager.teams.enumerated()), id: \.offset) { index, team in
+                                    Text(team.name)
+                                        .tag(index)
+                                }
+                            }
+                            .pickerStyle(.wheel)
+                            .frame(height: 150)
+                        }
+                    }
+                    .padding(.horizontal, DesignBook.Spacing.lg)
+                    
+                    PrimaryButton(title: "Shuffle & Start") {
+                        shuffleAndStart()
+                    }
+                    .padding(.horizontal, DesignBook.Spacing.lg)
+                }
+                
+                Spacer()
+            }
+        }
+    }
+    
+    private func shuffleAndStart() {
+        isShuffling = true
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+            gameManager.shuffleWords()
+            gameManager.startRound(.one, startingTeamIndex: selectedStartingTeamIndex)
+        }
+    }
+}
+
+#Preview {
+    let manager = GameManager()
+    manager.addTeam(name: "Team 1")
+    manager.addTeam(name: "Team 2")
+    manager.allWords = [Word(text: "Test"), Word(text: "Word")]
+    return RandomizationView(gameManager: manager)
+}
+
