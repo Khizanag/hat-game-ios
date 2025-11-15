@@ -163,25 +163,33 @@ struct GameView: View {
             }
         }
         .fullScreenCover(isPresented: $showingNextTeam) {
-            if let nextIndex = nextTeamIndex,
-               nextIndex < gameManager.teams.count,
-               let round = currentRound {
-                let nextTeam = gameManager.teams[nextIndex]
-                let explainingPlayer = gameManager.getExplainingPlayer(for: nextIndex) ?? nextTeam.players[0]
-                let guessingPlayer = gameManager.getGuessingPlayer(for: nextIndex) ?? nextTeam.players[1]
-                let wordsRemaining = gameManager.remainingWords.count
-                
-                NextTeamView(
-                    team: nextTeam,
-                    teamIndex: nextIndex,
-                    round: round,
-                    wordsRemaining: wordsRemaining,
-                    explainingPlayer: explainingPlayer,
-                    guessingPlayer: guessingPlayer,
-                    onContinue: {
-                        proceedToNextTeam()
+            Group {
+                if let nextIndex = nextTeamIndex,
+                   nextIndex < gameManager.teams.count,
+                   let round = currentRound {
+                    let nextTeam = gameManager.teams[nextIndex]
+                    let wordsRemaining = gameManager.remainingWords.count
+                    
+                    // Safely get players - compute outside ViewBuilder
+                    NextTeamViewWrapper(
+                        nextTeam: nextTeam,
+                        nextIndex: nextIndex,
+                        round: round,
+                        wordsRemaining: wordsRemaining,
+                        gameManager: gameManager,
+                        onContinue: {
+                            proceedToNextTeam()
+                        }
+                    )
+                } else {
+                    // Fallback view if conditions aren't met
+                    ZStack {
+                        DesignBook.Color.Background.primary
+                            .ignoresSafeArea()
+                        Text("Error loading next team")
+                            .foregroundColor(DesignBook.Color.Text.primary)
                     }
-                )
+                }
             }
         }
     }
@@ -229,12 +237,19 @@ struct GameView: View {
     }
     
     private func showNextTeam() {
-        showingTeamTurnResults = false
-        // Calculate next team index
+        // Calculate next team index first
         guard let currentIndex = gameManager.currentTeamIndex else { return }
         let nextIndex = (currentIndex + 1) % gameManager.teams.count
         nextTeamIndex = nextIndex
-        showingNextTeam = true
+        
+        // Dismiss first cover
+        showingTeamTurnResults = false
+        
+        // Show next team view after a brief delay to ensure smooth transition
+        Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 300_000_000) // 0.3 seconds
+            showingNextTeam = true
+        }
     }
     
     private func proceedToNextTeam() {
@@ -262,6 +277,47 @@ struct GameView: View {
     private func finishRound() {
         stopTimer()
         gameManager.finishRound()
+    }
+}
+
+private struct NextTeamViewWrapper: View {
+    let nextTeam: Team
+    let nextIndex: Int
+    let round: GameRound
+    let wordsRemaining: Int
+    let gameManager: GameManager
+    let onContinue: () -> Void
+    
+    private var explainingPlayer: Player {
+        if nextTeam.players.count >= 2 {
+            return gameManager.getExplainingPlayer(for: nextIndex) ?? nextTeam.players[0]
+        } else if nextTeam.players.count == 1 {
+            return nextTeam.players[0]
+        } else {
+            return Player(name: "Player 1", teamId: nextTeam.id)
+        }
+    }
+    
+    private var guessingPlayer: Player {
+        if nextTeam.players.count >= 2 {
+            return gameManager.getGuessingPlayer(for: nextIndex) ?? nextTeam.players[1]
+        } else if nextTeam.players.count == 1 {
+            return nextTeam.players[0]
+        } else {
+            return Player(name: "Player 2", teamId: nextTeam.id)
+        }
+    }
+    
+    var body: some View {
+        NextTeamView(
+            team: nextTeam,
+            teamIndex: nextIndex,
+            round: round,
+            wordsRemaining: wordsRemaining,
+            explainingPlayer: explainingPlayer,
+            guessingPlayer: guessingPlayer,
+            onContinue: onContinue
+        )
     }
 }
 
