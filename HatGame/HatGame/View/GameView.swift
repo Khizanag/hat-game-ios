@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct GameView {
+struct GameView: View {
     let round: GameRound
     let teamIndex: Int
     
@@ -27,48 +27,37 @@ struct GameView {
         return gameManager.teams[teamIndex]
     }
     
-}
-
-// MARK: - View
-extension GameView: View {
     var body: some View {
-        ZStack {
-            backgroundLayer
-            content
-        }
-        .onAppear {
-            gameManager.startTeamTurn()
-            startTimer()
-        }
-        .onDisappear {
-            stopTimer()
-        }
-        .onChange(of: teamIndex) { _, _ in
-            restartTimer()
-        }
-        .alert("Give Up?", isPresented: $showingGiveUpConfirmation) {
-            giveUpAlertActions
-        } message: {
-            giveUpAlertMessage
-        }
-        .sheet(isPresented: $showingResults) {
-            resultsSheet
-        }
-        .fullScreenCover(isPresented: $showingTeamTurnResults) {
-            teamTurnResultsContent
-        }
-        .fullScreenCover(isPresented: $showingNextTeam) {
-            nextTeamContent
-        }
+        content
+            .setDefaultBackground()
+            .onAppear {
+                gameManager.startTeamTurn()
+                startTimer()
+            }
+            .onDisappear {
+                stopTimer()
+            }
+            .onChange(of: teamIndex) { _, _ in
+                restartTimer()
+            }
+            .alert("Give Up?", isPresented: $showingGiveUpConfirmation) {
+                giveUpAlertActions
+            } message: {
+                giveUpAlertMessage
+            }
+            .sheet(isPresented: $showingResults) {
+                resultsSheet
+            }
+            .fullScreenCover(isPresented: $showingTeamTurnResults) {
+                teamTurnResultsContent
+            }
+            .fullScreenCover(isPresented: $showingNextTeam) {
+                nextTeamContent
+            }
     }
 }
 
 private extension GameView {
-    var backgroundLayer: some View {
-        DesignBook.Color.Background.primary
-            .ignoresSafeArea()
-    }
-    
     var content: some View {
         VStack(spacing: DesignBook.Spacing.lg) {
             currentTeamSection

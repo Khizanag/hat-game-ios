@@ -15,7 +15,7 @@ struct WelcomeView: View {
     
     var body: some View {
         content
-            .background(DesignBook.Color.Background.primary.ignoresSafeArea())
+            .setDefaultBackground()
     }
 }
 
@@ -140,7 +140,7 @@ private extension WelcomeView {
 private struct InstructionRow: View {
     let number: String
     let text: String
-
+    
     var body: some View {
         HStack(alignment: .top, spacing: DesignBook.Spacing.md) {
             Text(number)

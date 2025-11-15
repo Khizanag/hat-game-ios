@@ -16,18 +16,14 @@ struct TeamTurnResultsView: View {
     
     var body: some View {
         ZStack {
-            backgroundLayer
             resultsScroll
             continueButton
         }
+        .setDefaultBackground()
     }
 }
 
 private extension TeamTurnResultsView {
-    var backgroundLayer: some View {
-        DesignBook.Color.Background.primary
-            .ignoresSafeArea()
-    }
     
     var resultsScroll: some View {
         ScrollView {

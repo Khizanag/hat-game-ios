@@ -20,10 +20,8 @@ struct AddPlayerSheet: View {
     
     var body: some View {
         NavigationStack {
-            ZStack {
-                backgroundLayer
-                content
-            }
+            content
+                .setDefaultBackground()
             .navigationTitle("Add Player")
             .navigationBarTitleDisplayMode(.inline)
         }
@@ -32,11 +30,6 @@ struct AddPlayerSheet: View {
 }
 
 private extension AddPlayerSheet {
-    var backgroundLayer: some View {
-        DesignBook.Color.Background.primary
-            .ignoresSafeArea()
-    }
-    
     var content: some View {
         VStack(spacing: DesignBook.Spacing.lg) {
             title

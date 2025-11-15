@@ -13,24 +13,15 @@ struct TimerSettingsView: View {
     @State private var selectedDuration: Int = 60
     
     var body: some View {
-        NavigationStack {
-            ZStack {
-                backgroundLayer
-                content
-            }
+        content
+            .setDefaultBackground()
             .navigationTitle("Timer Settings")
             .navigationBarTitleDisplayMode(.inline)
             .closeButtonToolbar()
-        }
     }
 }
 
 private extension TimerSettingsView {
-    var backgroundLayer: some View {
-        DesignBook.Color.Background.primary
-            .ignoresSafeArea()
-    }
-    
     var content: some View {
         VStack(spacing: DesignBook.Spacing.lg) {
             descriptionCard

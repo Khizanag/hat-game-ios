@@ -15,19 +15,12 @@ struct TeamTransitionView: View {
     let onContinue: () -> Void
     
     var body: some View {
-        ZStack {
-            backgroundLayer
-            content
-        }
+        content
+            .setDefaultBackground()
     }
 }
 
 private extension TeamTransitionView {
-    var backgroundLayer: some View {
-        DesignBook.Color.Background.primary
-            .ignoresSafeArea()
-    }
-    
     var content: some View {
         VStack(spacing: DesignBook.Spacing.xl) {
             Spacer()

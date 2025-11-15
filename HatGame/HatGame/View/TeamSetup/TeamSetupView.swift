@@ -34,10 +34,7 @@ struct TeamSetupView: View {
 
     var body: some View {
         content
-            .background(
-                DesignBook.Color.Background.primary
-                    .ignoresSafeArea()
-            )
+            .setDefaultBackground()
             .navigationTitle("Setup Teams")
             .navigationBarTitleDisplayMode(.inline)
             .closeButtonToolbar()
@@ -146,7 +143,6 @@ private extension TeamSetupView {
                 requirementText
             }
         }
-        .padding(.bottom, DesignBook.Spacing.lg)
     }
 
     var requirementText: some View {

@@ -31,26 +31,18 @@ struct TeamEditView: View {
     }
     
     var body: some View {
-        NavigationStack {
-            ZStack {
-                backgroundLayer
-                content
-            }
+        content
+            .setDefaultBackground()
             .navigationTitle("Edit group")
             .navigationBarTitleDisplayMode(.inline)
             .onAppear {
                 loadDataIfNeeded()
             }
-        }
-        .presentationDetents([.large])
+            .presentationDetents([.large])
     }
 }
 
 private extension TeamEditView {
-    var backgroundLayer: some View {
-        DesignBook.Color.Background.primary
-            .ignoresSafeArea()
-    }
     
     @ViewBuilder
     var content: some View {

@@ -14,24 +14,14 @@ struct RandomizationView: View {
     @State private var selectedStartingTeamIndex: Int = 0
     
     var body: some View {
-        NavigationStack {
-            ZStack {
-                backgroundLayer
-                content
-            }
+        content
+            .setDefaultBackground()
             .navigationTitle("Randomize")
-            .navigationBarTitleDisplayMode(.inline)
-            .closeButtonToolbar()
-        }
+            .navigationBarBackButtonHidden()
     }
 }
 
 private extension RandomizationView {
-    var backgroundLayer: some View {
-        DesignBook.Color.Background.primary
-            .ignoresSafeArea()
-    }
-    
     var content: some View {
         VStack(spacing: DesignBook.Spacing.xl) {
             Spacer()
