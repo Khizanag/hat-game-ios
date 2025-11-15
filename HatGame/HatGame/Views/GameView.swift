@@ -65,8 +65,22 @@ struct GameView: View {
                                     .multilineTextAlignment(.center)
                                     .frame(minHeight: 200)
                                 
-                                PrimaryButton(title: "Got It!") {
-                                    markAsGuessed()
+                                VStack(spacing: DesignBook.Spacing.md) {
+                                    PrimaryButton(title: "Got It!") {
+                                        markAsGuessed()
+                                    }
+                                    
+                                    Button(action: {
+                                        giveUpWord()
+                                    }) {
+                                        Text("Give Up")
+                                            .font(DesignBook.Font.body)
+                                            .foregroundColor(DesignBook.Color.Text.secondary)
+                                            .frame(maxWidth: .infinity)
+                                            .frame(height: 40)
+                                            .background(DesignBook.Color.Background.secondary)
+                                            .cornerRadius(DesignBook.Size.smallCardCornerRadius)
+                                    }
                                 }
                                 .padding(.horizontal, DesignBook.Spacing.lg)
                             }
@@ -270,6 +284,16 @@ struct GameView: View {
         guard let team = currentTeam else { return }
         gameManager.markWordAsGuessed(by: team.id)
         
+        if gameManager.allWordsGuessed {
+            stopTimer()
+            finishRound()
+        } else {
+            gameManager.skipToNextWord()
+        }
+    }
+    
+    private func giveUpWord() {
+        // Skip to next word without marking current word as guessed
         if gameManager.allWordsGuessed {
             stopTimer()
             finishRound()
