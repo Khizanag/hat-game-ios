@@ -12,6 +12,7 @@ struct TeamSetupView: View {
     @State private var newTeamName: String = ""
     @State private var showingAddPlayer: Bool = false
     @State private var selectedTeamId: UUID?
+    @State private var editingTeamId: UUID?
     @State private var newPlayerName: String = ""
     
     private let playersPerTeam = 2
@@ -58,6 +59,9 @@ struct TeamSetupView: View {
                                 },
                                 onRemoveTeam: {
                                     gameManager.removeTeam(team.id)
+                                },
+                                onEditTeam: {
+                                    editingTeamId = team.id
                                 }
                             )
                         }
@@ -119,6 +123,15 @@ struct TeamSetupView: View {
                 }
             )
         }
+        .sheet(isPresented: Binding(get: { editingTeamId != nil }, set: { newValue in
+            if !newValue {
+                editingTeamId = nil
+            }
+        })) {
+            if let teamId = editingTeamId {
+                TeamEditView(gameManager: gameManager, teamId: teamId)
+            }
+        }
     }
 }
 
@@ -128,6 +141,7 @@ private struct TeamCard: View {
     @Bindable var gameManager: GameManager
     let onAddPlayer: () -> Void
     let onRemoveTeam: () -> Void
+    let onEditTeam: () -> Void
     
     var body: some View {
         GameCard {
@@ -170,6 +184,12 @@ private struct TeamCard: View {
                     .disabled(team.players.count >= playersPerTeam)
                     
                     Spacer()
+                    
+                    Button(action: onEditTeam) {
+                        Image(systemName: "pencil.circle")
+                            .foregroundColor(DesignBook.Color.Text.accent)
+                            .font(DesignBook.Font.body)
+                    }
                     
                     Button(action: onRemoveTeam) {
                         Image(systemName: "trash")

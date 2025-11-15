@@ -136,7 +136,7 @@ struct GameView: View {
         .onDisappear {
             stopTimer()
         }
-        .onChange(of: gameManager.currentTeamIndex) { _ in
+        .onChange(of: gameManager.currentTeamIndex) { _, _ in
             restartTimer()
         }
         .sheet(isPresented: $showingResults) {

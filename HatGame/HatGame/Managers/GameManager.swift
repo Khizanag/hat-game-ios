@@ -68,6 +68,20 @@ final class GameManager {
         teams[teamIndex].players.append(player)
     }
     
+    func updateTeamName(teamId: UUID, name: String) {
+        guard let teamIndex = teams.firstIndex(where: { $0.id == teamId }) else { return }
+        teams[teamIndex].name = name
+    }
+    
+    func updatePlayerName(playerId: UUID, name: String) {
+        for teamIndex in teams.indices {
+            if let playerIndex = teams[teamIndex].players.firstIndex(where: { $0.id == playerId }) {
+                teams[teamIndex].players[playerIndex].name = name
+                break
+            }
+        }
+    }
+    
     func removeTeam(_ teamId: UUID) {
         teams.removeAll { $0.id == teamId }
     }
