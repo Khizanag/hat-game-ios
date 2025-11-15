@@ -12,50 +12,50 @@
 			containerPortal = 725A481A2EC9076F00E3EB88 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 725A48212EC9076F00E3EB88;
-			remoteInfo = "Hat Game";
+			remoteInfo = "HatGame";
 		};
 		725A483E2EC9077100E3EB88 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 725A481A2EC9076F00E3EB88 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 725A48212EC9076F00E3EB88;
-			remoteInfo = "Hat Game";
+			remoteInfo = "HatGame";
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		725A48222EC9076F00E3EB88 /* Hat Game.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Hat Game.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		725A48332EC9077100E3EB88 /* Hat GameTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Hat GameTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		725A483D2EC9077100E3EB88 /* Hat GameUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Hat GameUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		725A48222EC9076F00E3EB88 /* HatGame.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "HatGame.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		725A48332EC9077100E3EB88 /* HatGameTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "HatGameTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		725A483D2EC9077100E3EB88 /* HatGameUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "HatGameUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		725A48452EC9077100E3EB88 /* Exceptions for "Hat Game" folder in "Hat Game" target */ = {
+		725A48452EC9077100E3EB88 /* Exceptions for "HatGame" folder in "HatGame" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
-			target = 725A48212EC9076F00E3EB88 /* Hat Game */;
+			target = 725A48212EC9076F00E3EB88 /* HatGame */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		725A48242EC9076F00E3EB88 /* Hat Game */ = {
+		725A48242EC9076F00E3EB88 /* HatGame */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				725A48452EC9077100E3EB88 /* Exceptions for "Hat Game" folder in "Hat Game" target */,
+				725A48452EC9077100E3EB88 /* Exceptions for "HatGame" folder in "HatGame" target */,
 			);
-			path = "Hat Game";
+			path = "HatGame";
 			sourceTree = "<group>";
 		};
-		725A48362EC9077100E3EB88 /* Hat GameTests */ = {
+		725A48362EC9077100E3EB88 /* HatGameTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "Hat GameTests";
+			path = "HatGameTests";
 			sourceTree = "<group>";
 		};
-		725A48402EC9077100E3EB88 /* Hat GameUITests */ = {
+		725A48402EC9077100E3EB88 /* HatGameUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "Hat GameUITests";
+			path = "HatGameUITests";
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -88,9 +88,9 @@
 		725A48192EC9076F00E3EB88 = {
 			isa = PBXGroup;
 			children = (
-				725A48242EC9076F00E3EB88 /* Hat Game */,
-				725A48362EC9077100E3EB88 /* Hat GameTests */,
-				725A48402EC9077100E3EB88 /* Hat GameUITests */,
+				725A48242EC9076F00E3EB88 /* HatGame */,
+				725A48362EC9077100E3EB88 /* HatGameTests */,
+				725A48402EC9077100E3EB88 /* HatGameUITests */,
 				725A48232EC9076F00E3EB88 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -98,9 +98,9 @@
 		725A48232EC9076F00E3EB88 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				725A48222EC9076F00E3EB88 /* Hat Game.app */,
-				725A48332EC9077100E3EB88 /* Hat GameTests.xctest */,
-				725A483D2EC9077100E3EB88 /* Hat GameUITests.xctest */,
+				725A48222EC9076F00E3EB88 /* HatGame.app */,
+				725A48332EC9077100E3EB88 /* HatGameTests.xctest */,
+				725A483D2EC9077100E3EB88 /* HatGameUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -108,9 +108,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		725A48212EC9076F00E3EB88 /* Hat Game */ = {
+		725A48212EC9076F00E3EB88 /* HatGame */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 725A48462EC9077100E3EB88 /* Build configuration list for PBXNativeTarget "Hat Game" */;
+			buildConfigurationList = 725A48462EC9077100E3EB88 /* Build configuration list for PBXNativeTarget "HatGame" */;
 			buildPhases = (
 				725A481E2EC9076F00E3EB88 /* Sources */,
 				725A481F2EC9076F00E3EB88 /* Frameworks */,
@@ -121,18 +121,18 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				725A48242EC9076F00E3EB88 /* Hat Game */,
+				725A48242EC9076F00E3EB88 /* HatGame */,
 			);
-			name = "Hat Game";
+			name = "HatGame";
 			packageProductDependencies = (
 			);
-			productName = "Hat Game";
-			productReference = 725A48222EC9076F00E3EB88 /* Hat Game.app */;
+			productName = "HatGame";
+			productReference = 725A48222EC9076F00E3EB88 /* HatGame.app */;
 			productType = "com.apple.product-type.application";
 		};
-		725A48322EC9077100E3EB88 /* Hat GameTests */ = {
+		725A48322EC9077100E3EB88 /* HatGameTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 725A484B2EC9077100E3EB88 /* Build configuration list for PBXNativeTarget "Hat GameTests" */;
+			buildConfigurationList = 725A484B2EC9077100E3EB88 /* Build configuration list for PBXNativeTarget "HatGameTests" */;
 			buildPhases = (
 				725A482F2EC9077100E3EB88 /* Sources */,
 				725A48302EC9077100E3EB88 /* Frameworks */,
@@ -144,18 +144,18 @@
 				725A48352EC9077100E3EB88 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				725A48362EC9077100E3EB88 /* Hat GameTests */,
+				725A48362EC9077100E3EB88 /* HatGameTests */,
 			);
-			name = "Hat GameTests";
+			name = "HatGameTests";
 			packageProductDependencies = (
 			);
-			productName = "Hat GameTests";
-			productReference = 725A48332EC9077100E3EB88 /* Hat GameTests.xctest */;
+			productName = "HatGameTests";
+			productReference = 725A48332EC9077100E3EB88 /* HatGameTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		725A483C2EC9077100E3EB88 /* Hat GameUITests */ = {
+		725A483C2EC9077100E3EB88 /* HatGameUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 725A484E2EC9077100E3EB88 /* Build configuration list for PBXNativeTarget "Hat GameUITests" */;
+			buildConfigurationList = 725A484E2EC9077100E3EB88 /* Build configuration list for PBXNativeTarget "HatGameUITests" */;
 			buildPhases = (
 				725A48392EC9077100E3EB88 /* Sources */,
 				725A483A2EC9077100E3EB88 /* Frameworks */,
@@ -167,13 +167,13 @@
 				725A483F2EC9077100E3EB88 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				725A48402EC9077100E3EB88 /* Hat GameUITests */,
+				725A48402EC9077100E3EB88 /* HatGameUITests */,
 			);
-			name = "Hat GameUITests";
+			name = "HatGameUITests";
 			packageProductDependencies = (
 			);
-			productName = "Hat GameUITests";
-			productReference = 725A483D2EC9077100E3EB88 /* Hat GameUITests.xctest */;
+			productName = "HatGameUITests";
+			productReference = 725A483D2EC9077100E3EB88 /* HatGameUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -199,7 +199,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 725A481D2EC9076F00E3EB88 /* Build configuration list for PBXProject "Hat Game" */;
+			buildConfigurationList = 725A481D2EC9076F00E3EB88 /* Build configuration list for PBXProject "HatGame" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -213,9 +213,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				725A48212EC9076F00E3EB88 /* Hat Game */,
-				725A48322EC9077100E3EB88 /* Hat GameTests */,
-				725A483C2EC9077100E3EB88 /* Hat GameUITests */,
+				725A48212EC9076F00E3EB88 /* HatGame */,
+				725A48322EC9077100E3EB88 /* HatGameTests */,
+				725A483C2EC9077100E3EB88 /* HatGameUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -271,12 +271,12 @@
 /* Begin PBXTargetDependency section */
 		725A48352EC9077100E3EB88 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 725A48212EC9076F00E3EB88 /* Hat Game */;
+			target = 725A48212EC9076F00E3EB88 /* HatGame */;
 			targetProxy = 725A48342EC9077100E3EB88 /* PBXContainerItemProxy */;
 		};
 		725A483F2EC9077100E3EB88 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 725A48212EC9076F00E3EB88 /* Hat Game */;
+			target = 725A48212EC9076F00E3EB88 /* HatGame */;
 			targetProxy = 725A483E2EC9077100E3EB88 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -295,7 +295,7 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "Hat Game/Info.plist";
+				INFOPLIST_FILE = "HatGame/Info.plist";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -340,7 +340,7 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "Hat Game/Info.plist";
+				INFOPLIST_FILE = "HatGame/Info.plist";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -509,7 +509,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,7";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Hat Game.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Hat Game";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/HatGame.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/HatGame";
 				XROS_DEPLOYMENT_TARGET = 26.0;
 			};
 			name = Debug;
@@ -535,7 +535,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,7";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Hat Game.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Hat Game";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/HatGame.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/HatGame";
 				XROS_DEPLOYMENT_TARGET = 26.0;
 			};
 			name = Release;
@@ -560,7 +560,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,7";
-				TEST_TARGET_NAME = "Hat Game";
+				TEST_TARGET_NAME = "HatGame";
 				XROS_DEPLOYMENT_TARGET = 26.0;
 			};
 			name = Debug;
@@ -585,7 +585,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,7";
-				TEST_TARGET_NAME = "Hat Game";
+				TEST_TARGET_NAME = "HatGame";
 				XROS_DEPLOYMENT_TARGET = 26.0;
 			};
 			name = Release;
@@ -593,7 +593,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		725A481D2EC9076F00E3EB88 /* Build configuration list for PBXProject "Hat Game" */ = {
+		725A481D2EC9076F00E3EB88 /* Build configuration list for PBXProject "HatGame" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				725A48492EC9077100E3EB88 /* Debug */,
@@ -602,7 +602,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		725A48462EC9077100E3EB88 /* Build configuration list for PBXNativeTarget "Hat Game" */ = {
+		725A48462EC9077100E3EB88 /* Build configuration list for PBXNativeTarget "HatGame" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				725A48472EC9077100E3EB88 /* Debug */,
@@ -611,7 +611,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		725A484B2EC9077100E3EB88 /* Build configuration list for PBXNativeTarget "Hat GameTests" */ = {
+		725A484B2EC9077100E3EB88 /* Build configuration list for PBXNativeTarget "HatGameTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				725A484C2EC9077100E3EB88 /* Debug */,
@@ -620,7 +620,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		725A484E2EC9077100E3EB88 /* Build configuration list for PBXNativeTarget "Hat GameUITests" */ = {
+		725A484E2EC9077100E3EB88 /* Build configuration list for PBXNativeTarget "HatGameUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				725A484F2EC9077100E3EB88 /* Debug */,
