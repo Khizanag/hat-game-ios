@@ -11,6 +11,7 @@ struct WelcomeView: View {
     @Environment(AppConfiguration.self) private var appConfiguration
     @Environment(Navigator.self) private var navigator
     @SceneStorage("WelcomeView.isHowToPlayExpanded") private var isHowToPlayExpanded: Bool = true
+    @SceneStorage("WelcomeView.isTestModeExpanded") private var isTestModeExpanded: Bool = true
     
     var body: some View {
         content
@@ -36,6 +37,7 @@ private extension WelcomeView {
         VStack(spacing: DesignBook.Spacing.md) {
             Text("🎩")
                 .font(.system(size: 80))
+                .padding(.top, DesignBook.Spacing.md)
             
             Text("Hat Game")
                 .font(DesignBook.Font.largeTitle)
@@ -71,7 +73,7 @@ private extension WelcomeView {
                         InstructionRow(number: "6", text: "Round 3: Gestures and miming only")
                         InstructionRow(number: "7", text: "Team with most points wins!")
                     }
-                    .transition(.opacity.combined(with: .slide))
+                    .transition(.opacity.combined(with: .move(edge: .top)))
                 }
             }
         }
@@ -85,7 +87,7 @@ private extension WelcomeView {
             }
             
             SecondaryButton(title: "Developer Info") {
-                // TODO: Show developer info
+                navigator.push(.developerInfo)
             }
         }
         .padding(.horizontal, DesignBook.Spacing.lg)
@@ -94,23 +96,37 @@ private extension WelcomeView {
     var testModeCard: some View {
         GameCard {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
-                Toggle(
-                    isOn: Binding(
-                        get: { appConfiguration.isTestMode },
-                        set: { handleTestModeChange($0) }
-                    )
-                ) {
-                    VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
-                        Text("Quick Test Mode")
+                Button {
+                    withAnimation(.easeInOut) {
+                        isTestModeExpanded.toggle()
+                    }
+                } label: {
+                    HStack {
+                        Text("Test Mode")
                             .font(DesignBook.Font.headline)
                             .foregroundColor(DesignBook.Color.Text.primary)
-                        
-                        Text("Prefill teams, players, and sample words so you can explore the flow instantly. You can still edit everything after enabling it.")
-                            .font(DesignBook.Font.body)
+                        Spacer()
+                        Image(systemName: isTestModeExpanded ? "chevron.up" : "chevron.down")
                             .foregroundColor(DesignBook.Color.Text.secondary)
                     }
                 }
-                .toggleStyle(SwitchToggleStyle(tint: DesignBook.Color.Text.accent))
+                
+                if isTestModeExpanded {
+                    VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
+                        Toggle(
+                            isOn: Binding(
+                                get: { appConfiguration.isTestMode },
+                                set: { handleTestModeChange($0) }
+                            )
+                        ) {
+                            Text("Prefill teams, players, and sample words so you can explore the flow instantly. You can still edit everything after enabling it.")
+                                .font(DesignBook.Font.body)
+                                .foregroundColor(DesignBook.Color.Text.secondary)
+                        }
+                        .toggleStyle(SwitchToggleStyle(tint: DesignBook.Color.Text.accent))
+                    }
+                    .transition(.opacity.combined(with: .move(edge: .top)))
+                }
             }
         }
         .padding(.horizontal, DesignBook.Spacing.lg)
@@ -124,7 +140,7 @@ private extension WelcomeView {
 private struct InstructionRow: View {
     let number: String
     let text: String
-    
+
     var body: some View {
         HStack(alignment: .top, spacing: DesignBook.Spacing.md) {
             Text(number)
