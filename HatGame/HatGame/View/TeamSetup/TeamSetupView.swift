@@ -11,6 +11,7 @@ struct TeamSetupView: View {
     @Environment(GameManager.self) private var gameManager
     @Environment(Navigator.self) private var navigator
 
+    @State private var isAddTeamSheetPresented: Bool = false
     @State private var newTeamName: String = ""
     @State private var showingAddPlayer: Bool = false
     @State private var selectedTeamId: UUID?
@@ -40,6 +41,18 @@ struct TeamSetupView: View {
         .navigationTitle("Setup Teams")
         .navigationBarTitleDisplayMode(.inline)
         .closeButtonToolbar()
+        .sheet(isPresented: $isAddTeamSheetPresented) {
+            AddTeamSheet(
+                playersPerTeam: playersPerTeam,
+                onCreateTeam: { name, players in
+                    gameManager.addTeam(name: name)
+                    guard let teamId = gameManager.teams.last?.id else { return }
+                    players.forEach { playerName in
+                        gameManager.addPlayer(name: playerName, to: teamId)
+                    }
+                }
+            )
+        }
         .sheet(isPresented: $showingAddPlayer) {
             addPlayerSheet
         }
@@ -101,14 +114,21 @@ private extension TeamSetupView {
                 }
                 
                 if gameManager.teams.count < 6 {
-                    AddTeamCard(
-                        teamName: $newTeamName,
-                        onAdd: {
-                            guard !newTeamName.isEmpty else { return }
-                            gameManager.addTeam(name: newTeamName)
-                            newTeamName = ""
+                    Button {
+                        newTeamName = ""
+                        isAddTeamSheetPresented = true
+                    } label: {
+                        HStack(spacing: DesignBook.Spacing.sm) {
+                            Image(systemName: "plus.circle.fill")
+                            Text("Add Team")
                         }
-                    )
+                        .font(DesignBook.Font.body)
+                        .foregroundColor(DesignBook.Color.Text.accent)
+                        .frame(maxWidth: .infinity)
+                        .padding(DesignBook.Spacing.md)
+                        .background(DesignBook.Color.Background.secondary)
+                        .cornerRadius(DesignBook.Size.smallCardCornerRadius)
+                    }
                 }
             }
             .padding(.horizontal, DesignBook.Spacing.lg)
@@ -306,41 +326,6 @@ private extension TeamCard {
         }
     }
 }
-
-private struct AddTeamCard: View {
-    @Binding var teamName: String
-    let onAdd: () -> Void
-    
-    var body: some View {
-        GameCard {
-            HStack {
-                teamNameField
-                addButton
-            }
-        }
-    }
-}
-
-private extension AddTeamCard {
-    var teamNameField: some View {
-        TextField("Team Name", text: $teamName)
-            .textFieldStyle(.plain)
-            .font(DesignBook.Font.body)
-            .foregroundColor(DesignBook.Color.Text.primary)
-            .padding(DesignBook.Spacing.md)
-            .background(DesignBook.Color.Background.secondary)
-            .cornerRadius(DesignBook.Size.smallCardCornerRadius)
-    }
-    
-    var addButton: some View {
-        Button(action: onAdd) {
-            Image(systemName: "plus.circle.fill")
-                .font(.system(size: 32))
-                .foregroundColor(DesignBook.Color.Button.primary)
-        }
-    }
-}
-
 // MARK: - Preview
 #Preview {
     NavigationView {
