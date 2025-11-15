@@ -20,6 +20,9 @@ final class GameManager {
     var wordsPerPlayer: Int = 10
     var roundDuration: Int = 60
     var startingTeamIndex: Int = 0
+    var isTestMode: Bool = false
+    
+    private var testWordsByPlayer: [UUID: [String]] = [:]
     
     var currentRound: GameRound? {
         if case .playing(let round, _) = state {
@@ -190,7 +193,8 @@ final class GameManager {
         teams[teamIndex].score += 1
     }
     
-    func resetGame() {
+    func resetGame(preserveTestMode: Bool = false) {
+        let keepTestModeActive = preserveTestMode && isTestMode
         state = .welcome
         teams = []
         allWords = []
@@ -199,7 +203,12 @@ final class GameManager {
         roundStartTime = nil
         roundEndTime = nil
         wordsPerPlayer = 10
+        roundDuration = 60
         startingTeamIndex = 0
+        testWordsByPlayer = [:]
+        if !keepTestModeActive {
+            isTestMode = false
+        }
     }
     
     func getTeamScore(teamId: UUID) -> Int {
@@ -215,6 +224,65 @@ final class GameManager {
         let sorted = getSortedTeamsByScore()
         guard let topScore = sorted.first?.score, topScore > 0 else { return nil }
         return sorted.first
+    }
+    
+    func setTestMode(_ enabled: Bool) {
+        if enabled {
+            applyTestData()
+        } else {
+            resetGame()
+        }
+    }
+    
+    func defaultWords(for playerId: UUID) -> [String]? {
+        testWordsByPlayer[playerId]
+    }
+    
+    func updateDefaultWords(_ words: [String], for playerId: UUID) {
+        testWordsByPlayer[playerId] = words
+    }
+    
+    private func applyTestData() {
+        resetGame(preserveTestMode: true)
+        isTestMode = true
+        wordsPerPlayer = 5
+        roundDuration = 60
+        
+        let sampleTeams = [
+            ("Orion", ["Alex", "Maya"]),
+            ("Nova", ["Leo", "Sara"]),
+            ("Quantum", ["Nika", "David"])
+        ]
+        
+        var generatedTeams: [Team] = []
+        var wordPool = [
+            "Galaxy","Comet","Nebula","Orbit","Meteor",
+            "Starlight","Eclipse","Gravity","Rocket","Cosmos",
+            "Aurora","Planet","Photon","Quasar","Launch",
+            "Module","Astro","Signal","Beacon","Zenith",
+            "Lunar","Solar","Module","Vector","Halo",
+            "Pulse","Nova","Drift","Horizon","Spark"
+        ]
+        var poolIndex = 0
+        
+        for sample in sampleTeams {
+            let teamId = UUID()
+            let players = sample.1.map { Player(name: $0, teamId: teamId) }
+            let team = Team(id: teamId, name: sample.0, players: players)
+            generatedTeams.append(team)
+            
+            for player in players {
+                var words: [String] = []
+                for _ in 0..<wordsPerPlayer {
+                    let word = wordPool[poolIndex % wordPool.count]
+                    words.append(word)
+                    poolIndex += 1
+                }
+                testWordsByPlayer[player.id] = words
+            }
+        }
+        
+        teams = generatedTeams
     }
 }
 

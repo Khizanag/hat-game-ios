@@ -18,7 +18,7 @@ struct WelcomeView: View {
             ScrollView {
                 VStack(spacing: DesignBook.Spacing.xl) {
                     Spacer()
-                        .frame(height: DesignBook.Spacing.xxl)
+                        .frame(height: DesignBook.Spacing.md)
                     
                     VStack(spacing: DesignBook.Spacing.md) {
                         Text("🎩")
@@ -44,6 +44,29 @@ struct WelcomeView: View {
                                 InstructionRow(number: "6", text: "Round 3: Gestures and miming only")
                                 InstructionRow(number: "7", text: "Team with most points wins!")
                             }
+                        }
+                    }
+                    .padding(.horizontal, DesignBook.Spacing.lg)
+                    
+                    GameCard {
+                        VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
+                            Toggle(
+                                isOn: Binding(
+                                    get: { gameManager.isTestMode },
+                                    set: { gameManager.setTestMode($0) }
+                                )
+                            ) {
+                                VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
+                                    Text("Quick Test Mode")
+                                        .font(DesignBook.Font.headline)
+                                        .foregroundColor(DesignBook.Color.Text.primary)
+                                    
+                                    Text("Prefill teams, players, and sample words so you can explore the flow instantly. You can still edit everything after enabling it.")
+                                        .font(DesignBook.Font.body)
+                                        .foregroundColor(DesignBook.Color.Text.secondary)
+                                }
+                            }
+                            .toggleStyle(SwitchToggleStyle(tint: DesignBook.Color.Text.accent))
                         }
                     }
                     .padding(.horizontal, DesignBook.Spacing.lg)
