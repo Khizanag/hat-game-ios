@@ -53,17 +53,17 @@ struct TimerSettingsView: View {
                         Slider(value: Binding(
                             get: { Double(selectedDuration) },
                             set: { selectedDuration = Int($0) }
-                        ), in: 30...120, step: 5)
+                        ), in: 5...120, step: 5)
                         .tint(DesignBook.Color.Text.accent)
                         
-                        Stepper(value: $selectedDuration, in: 30...120, step: 5) {
+                        Stepper(value: $selectedDuration, in: 5...120, step: 5) {
                             Text("Tap or hold to adjust")
                                 .font(DesignBook.Font.caption)
                                 .foregroundColor(DesignBook.Color.Text.secondary)
                         }
                         
                         HStack(spacing: DesignBook.Spacing.md) {
-                            TimerTag(title: "Sprint", range: "30-45s")
+                            TimerTag(title: "Lightning", range: "5-30s")
                             TimerTag(title: "Classic", range: "60s")
                             TimerTag(title: "Marathon", range: "90-120s")
                         }
