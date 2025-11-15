@@ -18,6 +18,7 @@ enum Page: Hashable {
     case playing(round: GameRound, currentTeamIndex: Int)
     case roundResults(round: GameRound)
     case finalResults
+    case developerInfo
 }
 
 // MARK: - Identifiable
@@ -54,6 +55,8 @@ extension Page {
             ResultsView(round: round, isFinal: false)
         case .finalResults:
             ResultsView(round: nil, isFinal: true)
+        case .developerInfo:
+            DeveloperInfoView()
         }
     }
 }
