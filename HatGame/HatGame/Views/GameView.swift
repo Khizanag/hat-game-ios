@@ -253,7 +253,7 @@ struct GameView: View {
     }
     
     private func proceedToNextTeam() {
-        guard let nextIndex = nextTeamIndex else { return }
+        guard nextTeamIndex != nil else { return }
         showingNextTeam = false
         gameManager.moveToNextTeam()
         gameManager.startTeamTurn()
