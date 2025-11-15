@@ -7,15 +7,12 @@
 
 import SwiftUI
 
-struct RandomizationView {
+struct RandomizationView: View {
     @Environment(GameManager.self) private var gameManager
     @Environment(Navigator.self) private var navigator
     @State private var isShuffling: Bool = false
     @State private var selectedStartingTeamIndex: Int = 0
-}
-
-// MARK: - View
-extension RandomizationView: View {
+    
     var body: some View {
         NavigationStack {
             ZStack {

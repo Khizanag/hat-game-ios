@@ -7,16 +7,13 @@
 
 import SwiftUI
 
-struct GameCard<Content: View> {
+struct GameCard<Content: View>: View {
     let content: Content
     
     init(@ViewBuilder content: () -> Content) {
         self.content = content()
     }
-}
-
-// MARK: - View
-extension GameCard: View {
+    
     var body: some View {
         content
             .padding(DesignBook.Spacing.md)

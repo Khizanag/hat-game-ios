@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct TeamSetupView {
+struct TeamSetupView: View {
     @Environment(GameManager.self) private var gameManager
     @Environment(Navigator.self) private var navigator
     @State private var newTeamName: String = ""
@@ -27,11 +27,7 @@ struct TeamSetupView {
         guard let id = selectedTeamId else { return 0 }
         return gameManager.teams.first(where: { $0.id == id })?.players.count ?? 0
     }
-
-}
-
-// MARK: - View
-extension TeamSetupView: View {
+    
     var body: some View {
         ZStack {
             backgroundLayer
@@ -232,17 +228,14 @@ private extension TeamSetupView {
     }
 }
 
-private struct TeamCard {
+private struct TeamCard: View {
     let team: Team
     let playersPerTeam: Int
     @Bindable var gameManager: GameManager
     let onAddPlayer: () -> Void
     let onRemoveTeam: () -> Void
     let onEditTeam: () -> Void
-}
-
-// MARK: - View
-extension TeamCard: View {
+    
     var body: some View {
         GameCard {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
@@ -329,13 +322,10 @@ private extension TeamCard {
     }
 }
 
-private struct AddTeamCard {
+private struct AddTeamCard: View {
     @Binding var teamName: String
     let onAdd: () -> Void
-}
-
-// MARK: - View
-extension AddTeamCard: View {
+    
     var body: some View {
         GameCard {
             HStack {
@@ -366,7 +356,7 @@ private extension AddTeamCard {
     }
 }
 
-private struct AddPlayerSheet {
+private struct AddPlayerSheet: View {
     @Binding var playerName: String
     let playersAddedProvider: () -> Int
     let playersPerTeam: Int
@@ -376,11 +366,7 @@ private struct AddPlayerSheet {
     private var playersAdded: Int {
         playersAddedProvider()
     }
-
-}
-
-// MARK: - View
-extension AddPlayerSheet: View {
+    
     var body: some View {
         NavigationStack {
             ZStack {

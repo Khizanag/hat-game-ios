@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct TeamEditView {
+struct TeamEditView: View {
     @Environment(GameManager.self) private var gameManager
     @Environment(Navigator.self) private var navigator
     let teamId: UUID
@@ -17,10 +17,7 @@ struct TeamEditView {
     var team: Team? {
         gameManager.teams.first(where: { $0.id == teamId })
     }
-}
-
-// MARK: - View
-extension TeamEditView: View {
+    
     var body: some View {
         NavigationStack {
             ZStack {

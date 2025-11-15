@@ -7,14 +7,11 @@
 
 import SwiftUI
 
-struct TimerSettingsView {
+struct TimerSettingsView: View {
     @Environment(GameManager.self) private var gameManager
     @Environment(Navigator.self) private var navigator
     @State private var selectedDuration: Int = 60
-}
-
-// MARK: - View
-extension TimerSettingsView: View {
+    
     var body: some View {
         NavigationStack {
             ZStack {
@@ -148,14 +145,11 @@ private extension Int {
     }
 }
 
-private struct TimerTag {
+private struct TimerTag: View {
     let title: String
     let range: String
     let isHighlighted: Bool
-}
-
-// MARK: - View
-extension TimerTag: View {
+    
     var body: some View {
         VStack(spacing: DesignBook.Spacing.xs) {
             Text(title)

@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct NextTeamView {
+struct NextTeamView: View {
     let team: Team
     let teamIndex: Int
     let round: GameRound
@@ -15,10 +15,7 @@ struct NextTeamView {
     let explainingPlayer: Player
     let guessingPlayer: Player
     let onContinue: () -> Void
-}
-
-// MARK: - View
-extension NextTeamView: View {
+    
     var body: some View {
         ZStack {
             backgroundLayer

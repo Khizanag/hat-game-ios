@@ -7,13 +7,10 @@
 
 import SwiftUI
 
-struct PrimaryButton {
+struct PrimaryButton: View {
     let title: String
     let action: () -> Void
-}
-
-// MARK: - View
-extension PrimaryButton: View {
+    
     var body: some View {
         Button(action: action) {
             Text(title)

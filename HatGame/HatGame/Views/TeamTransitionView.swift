@@ -7,16 +7,13 @@
 
 import SwiftUI
 
-struct TeamTransitionView {
+struct TeamTransitionView: View {
     let currentTeam: Team
     let nextTeam: Team
     let nextTeamIndex: Int
     let round: GameRound
     let onContinue: () -> Void
-}
-
-// MARK: - View
-extension TeamTransitionView: View {
+    
     var body: some View {
         ZStack {
             backgroundLayer
