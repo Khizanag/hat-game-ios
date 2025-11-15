@@ -9,7 +9,6 @@ import SwiftUI
 
 @main
 struct HatGameApp: App {
-    @State private var gameManager = GameManager()
     @State private var appConfiguration = AppConfiguration()
     
     var body: some Scene {
@@ -17,7 +16,6 @@ struct HatGameApp: App {
             NavigationView {
                 Page.welcome.view()
             }
-            .environment(gameManager)
             .environment(appConfiguration)
         }
     }

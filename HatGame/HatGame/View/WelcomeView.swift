@@ -8,24 +8,16 @@
 import SwiftUI
 
 struct WelcomeView: View {
-    @Environment(GameManager.self) private var gameManager
     @Environment(AppConfiguration.self) private var appConfiguration
     @Environment(Navigator.self) private var navigator
     
     var body: some View {
-        ZStack {
-            backgroundLayer
-            content
-        }
+        content
+            .background(DesignBook.Color.Background.primary.ignoresSafeArea())
     }
 }
 
 private extension WelcomeView {
-    var backgroundLayer: some View {
-        DesignBook.Color.Background.primary
-            .ignoresSafeArea()
-    }
-    
     var content: some View {
         ScrollView {
             VStack(spacing: DesignBook.Spacing.xl) {
@@ -111,11 +103,6 @@ private extension WelcomeView {
     
     func handleTestModeChange(_ enabled: Bool) {
         appConfiguration.isTestMode = enabled
-        if enabled {
-            gameManager.applyTestData()
-        } else {
-            gameManager.resetGame()
-        }
     }
 }
 

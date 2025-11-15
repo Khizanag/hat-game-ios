@@ -38,6 +38,7 @@ extension Page {
             NavigationView {
                 TeamSetupView()
             }
+            .environment(GameManager())
             .needsCloseButton()
         case .wordSettings:
             WordSettingsView()
