@@ -14,6 +14,18 @@ struct TeamEditView: View {
     @State private var teamName: String = ""
     @State private var playerNames: [UUID: String] = [:]
     
+    private var trimmedTeamName: String {
+        teamName.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+    
+    private var canSaveChanges: Bool {
+        guard let team else { return false }
+        guard !trimmedTeamName.isEmpty else { return false }
+        return team.players.allSatisfy { player in
+            !currentName(for: player).trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        }
+    }
+    
     var team: Team? {
         gameManager.teams.first(where: { $0.id == teamId })
     }
@@ -118,6 +130,8 @@ private extension TeamEditView {
                 handleSaveChanges()
                 navigator.dismiss()
             }
+            .disabled(!canSaveChanges)
+            .opacity(canSaveChanges ? 1 : 0.4)
             
             SecondaryButton(title: "Cancel") {
                 navigator.dismiss()
@@ -133,9 +147,13 @@ private extension TeamEditView {
     
     func playerBinding(for player: Player) -> Binding<String> {
         Binding(
-            get: { playerNames[player.id] ?? player.name },
+            get: { currentName(for: player) },
             set: { playerNames[player.id] = $0 }
         )
+    }
+    
+    func currentName(for player: Player) -> String {
+        playerNames[player.id] ?? player.name
     }
     
     func playerIndex(in team: Team, player: Player) -> Int? {
@@ -156,7 +174,6 @@ private extension TeamEditView {
     }
     
     func applyTeamNameChange() {
-        let trimmedTeamName = teamName.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedTeamName.isEmpty else { return }
         gameManager.updateTeamName(teamId: teamId, name: trimmedTeamName)
     }
@@ -164,7 +181,7 @@ private extension TeamEditView {
     func applyPlayerNameChanges() {
         guard let team else { return }
         team.players.forEach { player in
-            let trimmedName = playerNames[player.id]?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+            let trimmedName = currentName(for: player).trimmingCharacters(in: .whitespacesAndNewlines)
             guard !trimmedName.isEmpty, trimmedName != player.name else { return }
             gameManager.updatePlayerName(playerId: player.id, name: trimmedName)
         }
