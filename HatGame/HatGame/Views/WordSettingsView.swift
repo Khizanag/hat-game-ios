@@ -7,14 +7,11 @@
 
 import SwiftUI
 
-struct WordSettingsView {
+struct WordSettingsView: View {
     @Environment(GameManager.self) private var gameManager
     @Environment(Navigator.self) private var navigator
     @State private var selectedWordCount: Int = 10
-}
-
-// MARK: - View
-extension WordSettingsView: View {
+    
     var body: some View {
         NavigationStack {
             ZStack {
@@ -147,14 +144,11 @@ private extension Int {
     }
 }
 
-private struct LegendTag {
+private struct LegendTag: View {
     let title: String
     let range: String
     let isHighlighted: Bool
-}
-
-// MARK: - View
-extension LegendTag: View {
+    
     var body: some View {
         VStack(spacing: DesignBook.Spacing.xs) {
             Text(title)

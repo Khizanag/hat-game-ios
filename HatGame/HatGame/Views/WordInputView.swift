@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct WordInputView {
+struct WordInputView: View {
     @Environment(GameManager.self) private var gameManager
     @Environment(Navigator.self) private var navigator
     @State private var currentPlayerIndex: Int = 0
@@ -39,10 +39,6 @@ struct WordInputView {
         return Double(currentPlayerIndex) / Double(allPlayers.count)
     }
     
-}
-
-// MARK: - View
-extension WordInputView: View {
     var body: some View {
         ZStack {
             backgroundLayer

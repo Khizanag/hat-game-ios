@@ -7,16 +7,13 @@
 
 import SwiftUI
 
-struct TeamTurnResultsView {
+struct TeamTurnResultsView: View {
     let team: Team
     let teamIndex: Int
     let guessedWords: [Word]
     let round: GameRound
     let onContinue: () -> Void
-}
-
-// MARK: - View
-extension TeamTurnResultsView: View {
+    
     var body: some View {
         ZStack {
             backgroundLayer

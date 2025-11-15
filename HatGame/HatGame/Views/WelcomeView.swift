@@ -7,13 +7,10 @@
 
 import SwiftUI
 
-struct WelcomeView {
+struct WelcomeView: View {
     @Environment(GameManager.self) private var gameManager
     @Environment(Navigator.self) private var navigator
-}
-
-// MARK: - View
-extension WelcomeView: View {
+    
     var body: some View {
         ZStack {
             backgroundLayer
@@ -112,13 +109,10 @@ private extension WelcomeView {
     }
 }
 
-private struct InstructionRow {
+private struct InstructionRow: View {
     let number: String
     let text: String
-}
-
-// MARK: - View
-extension InstructionRow: View {
+    
     var body: some View {
         HStack(alignment: .top, spacing: DesignBook.Spacing.md) {
             Text(number)
