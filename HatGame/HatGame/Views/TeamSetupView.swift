@@ -14,6 +14,7 @@ struct TeamSetupView: View {
     @State private var selectedTeamId: UUID?
     @State private var editingTeamId: UUID?
     @State private var newPlayerName: String = ""
+    @State private var teamToDelete: UUID?
     
     private let playersPerTeam = 2
     
@@ -58,7 +59,7 @@ struct TeamSetupView: View {
                                     showingAddPlayer = true
                                 },
                                 onRemoveTeam: {
-                                    gameManager.removeTeam(team.id)
+                                    teamToDelete = team.id
                                 },
                                 onEditTeam: {
                                     editingTeamId = team.id
@@ -130,6 +131,25 @@ struct TeamSetupView: View {
         })) {
             if let teamId = editingTeamId {
                 TeamEditView(gameManager: gameManager, teamId: teamId)
+            }
+        }
+        .alert("Delete Team", isPresented: Binding(
+            get: { teamToDelete != nil },
+            set: { if !$0 { teamToDelete = nil } }
+        )) {
+            Button("Cancel", role: .cancel) {
+                teamToDelete = nil
+            }
+            Button("Delete", role: .destructive) {
+                if let teamId = teamToDelete {
+                    gameManager.removeTeam(teamId)
+                    teamToDelete = nil
+                }
+            }
+        } message: {
+            if let teamId = teamToDelete,
+               let team = gameManager.teams.first(where: { $0.id == teamId }) {
+                Text("Are you sure you want to delete \"\(team.name)\"? This action cannot be undone.")
             }
         }
     }
