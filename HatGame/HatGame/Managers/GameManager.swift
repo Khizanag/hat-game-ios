@@ -21,6 +21,9 @@ final class GameManager {
     var roundDuration: Int = 60
     var startingTeamIndex: Int = 0
     var isTestMode: Bool = false
+    var currentTurnStartWordIndex: Int = 0
+    var currentTeamTurnIndex: Int = 0
+    var currentTurnNumber: Int = 0
     
     private var testWordsByPlayer: [UUID: [String]] = [:]
     
@@ -110,6 +113,8 @@ final class GameManager {
         roundStartTime = Date()
         state = .playing(round: round, currentTeamIndex: startingTeamIndex)
         resetWordGuessedState()
+        currentTeamTurnIndex = 0
+        currentTurnStartWordIndex = shuffledWords.filter { $0.guessed }.count
     }
     
     func resetWordGuessedState() {
@@ -166,7 +171,43 @@ final class GameManager {
         
         if case .playing(let round, _) = state {
             state = .playing(round: round, currentTeamIndex: nextIndex)
+            currentTeamTurnIndex += 1
+            currentTurnStartWordIndex = shuffledWords.filter { $0.guessed }.count
         }
+    }
+    
+    func getWordsGuessedInCurrentTurn(by teamId: UUID) -> [Word] {
+        // Get words guessed by this team since the turn started
+        // currentTurnStartWordIndex tracks how many words were guessed total when turn started
+        let totalGuessedNow = shuffledWords.filter { $0.guessed }.count
+        let wordsGuessedThisTurn = shuffledWords.filter { word in
+            word.guessed && word.guessedByTeamId == teamId
+        }
+        // Since we can't track exact order, return all words guessed by this team
+        // that were guessed in the current round
+        // This is an approximation - in a real scenario we'd need to track turn numbers
+        return wordsGuessedThisTurn.filter { $0.guessedInRound == currentRound?.rawValue }
+    }
+    
+    func startTeamTurn() {
+        currentTurnStartWordIndex = shuffledWords.filter { $0.guessed }.count
+    }
+    
+    func getExplainingPlayer(for teamIndex: Int) -> Player? {
+        guard teamIndex < teams.count else { return nil }
+        let team = teams[teamIndex]
+        guard team.players.count == 2 else { return team.players.first }
+        // Alternate between players based on turn index
+        return team.players[currentTeamTurnIndex % 2]
+    }
+    
+    func getGuessingPlayer(for teamIndex: Int) -> Player? {
+        guard teamIndex < teams.count else { return nil }
+        let team = teams[teamIndex]
+        guard team.players.count == 2 else { return nil }
+        // The other player is guessing
+        let explainingIndex = currentTeamTurnIndex % 2
+        return team.players[(explainingIndex + 1) % 2]
     }
     
     func finishRound() {

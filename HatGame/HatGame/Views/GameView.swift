@@ -12,7 +12,8 @@ struct GameView: View {
     @State private var timer: Timer?
     @State private var remainingSeconds: Int = 0
     @State private var showingResults: Bool = false
-    @State private var showingTeamTransition: Bool = false
+    @State private var showingTeamTurnResults: Bool = false
+    @State private var showingNextTeam: Bool = false
     @State private var nextTeamIndex: Int?
     
     var currentTeam: Team? {
@@ -133,6 +134,7 @@ struct GameView: View {
             }
         }
         .onAppear {
+            gameManager.startTeamTurn()
             startTimer()
         }
         .onDisappear {
@@ -144,16 +146,38 @@ struct GameView: View {
         .sheet(isPresented: $showingResults) {
             ResultsView(gameManager: gameManager, isFinal: false)
         }
-        .fullScreenCover(isPresented: $showingTeamTransition) {
+        .fullScreenCover(isPresented: $showingTeamTurnResults) {
+            if let current = currentTeam,
+               let currentIndex = gameManager.currentTeamIndex,
+               let round = currentRound {
+                let guessedWords = gameManager.getWordsGuessedInCurrentTurn(by: current.id)
+                TeamTurnResultsView(
+                    team: current,
+                    teamIndex: currentIndex,
+                    guessedWords: guessedWords,
+                    round: round,
+                    onContinue: {
+                        showNextTeam()
+                    }
+                )
+            }
+        }
+        .fullScreenCover(isPresented: $showingNextTeam) {
             if let nextIndex = nextTeamIndex,
                nextIndex < gameManager.teams.count,
-               let round = currentRound,
-               let current = currentTeam {
-                TeamTransitionView(
-                    currentTeam: current,
-                    nextTeam: gameManager.teams[nextIndex],
-                    nextTeamIndex: nextIndex,
+               let round = currentRound {
+                let nextTeam = gameManager.teams[nextIndex]
+                let explainingPlayer = gameManager.getExplainingPlayer(for: nextIndex) ?? nextTeam.players[0]
+                let guessingPlayer = gameManager.getGuessingPlayer(for: nextIndex) ?? nextTeam.players[1]
+                let wordsRemaining = gameManager.remainingWords.count
+                
+                NextTeamView(
+                    team: nextTeam,
+                    teamIndex: nextIndex,
                     round: round,
+                    wordsRemaining: wordsRemaining,
+                    explainingPlayer: explainingPlayer,
+                    guessingPlayer: guessingPlayer,
                     onContinue: {
                         proceedToNextTeam()
                     }
@@ -199,18 +223,25 @@ struct GameView: View {
         if gameManager.allWordsGuessed {
             finishRound()
         } else {
-            // Calculate next team index
-            guard let currentIndex = gameManager.currentTeamIndex else { return }
-            let nextIndex = (currentIndex + 1) % gameManager.teams.count
-            nextTeamIndex = nextIndex
-            showingTeamTransition = true
+            // Show results for current team's turn
+            showingTeamTurnResults = true
         }
+    }
+    
+    private func showNextTeam() {
+        showingTeamTurnResults = false
+        // Calculate next team index
+        guard let currentIndex = gameManager.currentTeamIndex else { return }
+        let nextIndex = (currentIndex + 1) % gameManager.teams.count
+        nextTeamIndex = nextIndex
+        showingNextTeam = true
     }
     
     private func proceedToNextTeam() {
         guard let nextIndex = nextTeamIndex else { return }
-        showingTeamTransition = false
+        showingNextTeam = false
         gameManager.moveToNextTeam()
+        gameManager.startTeamTurn()
         gameManager.currentWordIndex = 0
         nextTeamIndex = nil
         startTimer()
