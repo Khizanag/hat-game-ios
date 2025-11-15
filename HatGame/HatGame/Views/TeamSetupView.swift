@@ -96,9 +96,6 @@ struct TeamSetupView: View {
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, DesignBook.Spacing.lg)
                         .padding(.bottom, DesignBook.Spacing.lg)
-                } else {
-                    Spacer()
-                        .frame(height: DesignBook.Spacing.lg)
                 }
             }
         }
