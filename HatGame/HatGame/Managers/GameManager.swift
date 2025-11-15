@@ -18,6 +18,7 @@ final class GameManager {
     var roundStartTime: Date?
     var roundEndTime: Date?
     var wordsPerPlayer: Int = 10
+    var roundDuration: Int = 60
     var startingTeamIndex: Int = 0
     
     var currentRound: GameRound? {
@@ -58,8 +59,11 @@ final class GameManager {
         teams.append(team)
     }
     
-    func addPlayer(name: String, to teamId: UUID) {
+    func addPlayer(name: String, to teamId: UUID, limit: Int? = nil) {
         guard let teamIndex = teams.firstIndex(where: { $0.id == teamId }) else { return }
+        if let limit, teams[teamIndex].players.count >= limit {
+            return
+        }
         let player = Player(name: name, teamId: teamId)
         teams[teamIndex].players.append(player)
     }

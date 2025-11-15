@@ -10,7 +10,7 @@ import SwiftUI
 struct GameView: View {
     @Bindable var gameManager: GameManager
     @State private var timer: Timer?
-    @State private var elapsedTime: TimeInterval = 0
+    @State private var remainingSeconds: Int = 0
     @State private var showingResults: Bool = false
     
     var currentTeam: Team? {
@@ -43,6 +43,10 @@ struct GameView: View {
                             Text("Current Team: \(team.name)")
                                 .font(DesignBook.Font.headline)
                                 .foregroundColor(DesignBook.Color.Team.color(for: gameManager.currentTeamIndex ?? 0))
+                            
+                            Text("Time left: \(formatTime(remainingSeconds))")
+                                .font(DesignBook.Font.bodyBold)
+                                .foregroundColor(DesignBook.Color.Text.accent)
                         }
                     }
                     .padding(.horizontal, DesignBook.Spacing.lg)
@@ -57,14 +61,8 @@ struct GameView: View {
                                     .multilineTextAlignment(.center)
                                     .frame(minHeight: 200)
                                 
-                                HStack(spacing: DesignBook.Spacing.lg) {
-                                    SecondaryButton(title: "Pass") {
-                                        passToNextTeam()
-                                    }
-                                    
-                                    PrimaryButton(title: "Got It!") {
-                                        markAsGuessed()
-                                    }
+                                PrimaryButton(title: "Got It!") {
+                                    markAsGuessed()
                                 }
                                 .padding(.horizontal, DesignBook.Spacing.lg)
                             }
@@ -80,7 +78,8 @@ struct GameView: View {
                                     .font(DesignBook.Font.title2)
                                     .foregroundColor(DesignBook.Color.Text.primary)
                                 
-                                Text("Time: \(formatTime(elapsedTime))")
+                                let timeUsed = max(gameManager.roundDuration - remainingSeconds, 0)
+                                Text("Time: \(formatTime(timeUsed))")
                                     .font(DesignBook.Font.headline)
                                     .foregroundColor(DesignBook.Color.Text.secondary)
                             }
@@ -137,15 +136,34 @@ struct GameView: View {
         .onDisappear {
             stopTimer()
         }
+        .onChange(of: gameManager.currentTeamIndex) { _ in
+            restartTimer()
+        }
         .sheet(isPresented: $showingResults) {
             ResultsView(gameManager: gameManager, isFinal: false)
         }
     }
     
     private func startTimer() {
-        timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { _ in
-            elapsedTime += 0.1
+        stopTimer()
+        remainingSeconds = gameManager.roundDuration
+        guard gameManager.currentTeamIndex != nil else { return }
+        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
+            tickTimer()
         }
+    }
+    
+    private func restartTimer() {
+        startTimer()
+    }
+    
+    private func tickTimer() {
+        guard remainingSeconds > 0 else {
+            stopTimer()
+            timeExpired()
+            return
+        }
+        remainingSeconds -= 1
     }
     
     private func stopTimer() {
@@ -153,10 +171,20 @@ struct GameView: View {
         timer = nil
     }
     
-    private func formatTime(_ time: TimeInterval) -> String {
-        let minutes = Int(time) / 60
-        let seconds = Int(time) % 60
-        return String(format: "%02d:%02d", minutes, seconds)
+    private func formatTime(_ seconds: Int) -> String {
+        let minutes = seconds / 60
+        let remainder = seconds % 60
+        return String(format: "%02d:%02d", minutes, remainder)
+    }
+    
+    private func timeExpired() {
+        if gameManager.allWordsGuessed {
+            finishRound()
+        } else {
+            gameManager.moveToNextTeam()
+            gameManager.currentWordIndex = 0
+            startTimer()
+        }
     }
     
     private func markAsGuessed() {
@@ -168,18 +196,6 @@ struct GameView: View {
             finishRound()
         } else {
             gameManager.skipToNextWord()
-            if gameManager.currentWord == nil {
-                passToNextTeam()
-            }
-        }
-    }
-    
-    private func passToNextTeam() {
-        if gameManager.allWordsGuessed {
-            stopTimer()
-            finishRound()
-        } else {
-            gameManager.moveToNextTeam()
         }
     }
     

@@ -14,8 +14,15 @@ struct TeamSetupView: View {
     @State private var selectedTeamId: UUID?
     @State private var newPlayerName: String = ""
     
+    private let playersPerTeam = 2
+    
     private var canContinue: Bool {
-        gameManager.teams.count >= 2 && gameManager.teams.allSatisfy { !$0.players.isEmpty }
+        gameManager.teams.count >= 2 && gameManager.teams.allSatisfy { $0.players.count == playersPerTeam }
+    }
+    
+    private var selectedTeamPlayersCount: Int {
+        guard let id = selectedTeamId else { return 0 }
+        return gameManager.teams.first(where: { $0.id == id })?.players.count ?? 0
     }
     
     var body: some View {
@@ -43,6 +50,7 @@ struct TeamSetupView: View {
                         ForEach(gameManager.teams) { team in
                             TeamCard(
                                 team: team,
+                                playersPerTeam: playersPerTeam,
                                 gameManager: gameManager,
                                 onAddPlayer: {
                                     selectedTeamId = team.id
@@ -69,7 +77,7 @@ struct TeamSetupView: View {
                 }
                 
                 PrimaryButton(title: "Continue") {
-                    gameManager.state = .wordInput
+                    gameManager.state = .wordSettings
                 }
                 .padding(.horizontal, DesignBook.Spacing.lg)
                 .padding(.bottom, DesignBook.Spacing.sm)
@@ -77,7 +85,7 @@ struct TeamSetupView: View {
                 .opacity(canContinue ? 1 : 0.4)
                 
                 if !canContinue {
-                    Text("Add at least two teams and one player in each team to continue.")
+                    Text("Add at least two teams and make sure each team has exactly two players to continue.")
                         .font(DesignBook.Font.caption)
                         .foregroundColor(DesignBook.Color.Text.secondary)
                         .multilineTextAlignment(.center)
@@ -92,15 +100,22 @@ struct TeamSetupView: View {
         .sheet(isPresented: $showingAddPlayer) {
             AddPlayerSheet(
                 playerName: $newPlayerName,
+                playersAddedProvider: { selectedTeamPlayersCount },
+                playersPerTeam: playersPerTeam,
                 onAdd: {
                     guard let teamId = selectedTeamId, !newPlayerName.isEmpty else { return }
-                    gameManager.addPlayer(name: newPlayerName, to: teamId)
+                    gameManager.addPlayer(name: newPlayerName, to: teamId, limit: playersPerTeam)
                     newPlayerName = ""
-                    showingAddPlayer = false
+                    
+                    if selectedTeamPlayersCount >= playersPerTeam {
+                        showingAddPlayer = false
+                        selectedTeamId = nil
+                    }
                 },
                 onCancel: {
                     newPlayerName = ""
                     showingAddPlayer = false
+                    selectedTeamId = nil
                 }
             )
         }
@@ -109,6 +124,7 @@ struct TeamSetupView: View {
 
 private struct TeamCard: View {
     let team: Team
+    let playersPerTeam: Int
     @Bindable var gameManager: GameManager
     let onAddPlayer: () -> Void
     let onRemoveTeam: () -> Void
@@ -123,11 +139,9 @@ private struct TeamCard: View {
                     
                     Spacer()
                     
-                    Button(action: onRemoveTeam) {
-                        Image(systemName: "trash")
-                            .foregroundColor(DesignBook.Color.Status.error)
-                            .font(DesignBook.Font.body)
-                    }
+                    Text("\(team.players.count)/\(playersPerTeam)")
+                        .font(DesignBook.Font.captionBold)
+                        .foregroundColor(DesignBook.Color.Text.secondary)
                 }
                 
                 VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
@@ -144,13 +158,24 @@ private struct TeamCard: View {
                     }
                 }
                 
-                Button(action: onAddPlayer) {
-                    HStack {
-                        Image(systemName: "plus.circle.fill")
-                        Text("Add Player")
+                HStack {
+                    Button(action: onAddPlayer) {
+                        HStack {
+                            Image(systemName: "plus.circle.fill")
+                            Text(team.players.count < playersPerTeam ? "Add Player" : "Team is full")
+                        }
+                        .font(DesignBook.Font.body)
+                        .foregroundColor(team.players.count < playersPerTeam ? DesignBook.Color.Text.accent : DesignBook.Color.Text.tertiary)
                     }
-                    .font(DesignBook.Font.body)
-                    .foregroundColor(DesignBook.Color.Text.accent)
+                    .disabled(team.players.count >= playersPerTeam)
+                    
+                    Spacer()
+                    
+                    Button(action: onRemoveTeam) {
+                        Image(systemName: "trash")
+                            .foregroundColor(DesignBook.Color.Status.error)
+                            .font(DesignBook.Font.body)
+                    }
                 }
             }
         }
@@ -184,8 +209,14 @@ private struct AddTeamCard: View {
 
 private struct AddPlayerSheet: View {
     @Binding var playerName: String
+    let playersAddedProvider: () -> Int
+    let playersPerTeam: Int
     let onAdd: () -> Void
     let onCancel: () -> Void
+    
+    private var playersAdded: Int {
+        playersAddedProvider()
+    }
     
     var body: some View {
         NavigationStack {
@@ -194,6 +225,10 @@ private struct AddPlayerSheet: View {
                     .ignoresSafeArea()
                 
                 VStack(spacing: DesignBook.Spacing.lg) {
+                    Text("Player \(playersAdded + 1) of \(playersPerTeam)")
+                        .font(DesignBook.Font.headline)
+                        .foregroundColor(DesignBook.Color.Text.secondary)
+                    
                     TextField("Player Name", text: $playerName)
                         .textFieldStyle(.plain)
                         .font(DesignBook.Font.headline)
@@ -211,6 +246,7 @@ private struct AddPlayerSheet: View {
                         PrimaryButton(title: "Add Player") {
                             onAdd()
                         }
+                        .disabled(playerName.trimmingCharacters(in: .whitespaces).isEmpty || playersAdded >= playersPerTeam)
                         
                         SecondaryButton(title: "Cancel") {
                             onCancel()

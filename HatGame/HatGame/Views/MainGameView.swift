@@ -17,6 +17,10 @@ struct MainGameView: View {
                 WelcomeView(gameManager: gameManager)
             case .teamSetup:
                 TeamSetupView(gameManager: gameManager)
+            case .wordSettings:
+                WordSettingsView(gameManager: gameManager)
+            case .timerSettings:
+                TimerSettingsView(gameManager: gameManager)
             case .wordInput:
                 WordInputView(gameManager: gameManager)
             case .randomization:
