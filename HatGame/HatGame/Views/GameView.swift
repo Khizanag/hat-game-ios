@@ -15,6 +15,7 @@ struct GameView: View {
     @State private var showingTeamTurnResults: Bool = false
     @State private var showingNextTeam: Bool = false
     @State private var nextTeamIndex: Int?
+    @State private var nextTeamRound: GameRound?
     
     var currentTeam: Team? {
         guard let index = gameManager.currentTeamIndex, index < gameManager.teams.count else { return nil }
@@ -166,7 +167,7 @@ struct GameView: View {
             Group {
                 if let nextIndex = nextTeamIndex,
                    nextIndex < gameManager.teams.count,
-                   let round = currentRound {
+                   let round = nextTeamRound {
                     let nextTeam = gameManager.teams[nextIndex]
                     let wordsRemaining = gameManager.remainingWords.count
                     
@@ -238,9 +239,11 @@ struct GameView: View {
     
     private func showNextTeam() {
         // Calculate next team index first
-        guard let currentIndex = gameManager.currentTeamIndex else { return }
+        guard let currentIndex = gameManager.currentTeamIndex,
+              let round = currentRound else { return }
         let nextIndex = (currentIndex + 1) % gameManager.teams.count
         nextTeamIndex = nextIndex
+        nextTeamRound = round
         
         // Dismiss first cover
         showingTeamTurnResults = false
@@ -259,6 +262,7 @@ struct GameView: View {
         gameManager.startTeamTurn()
         gameManager.currentWordIndex = 0
         nextTeamIndex = nil
+        nextTeamRound = nil
         startTimer()
     }
     
