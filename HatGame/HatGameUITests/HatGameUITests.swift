@@ -1,13 +1,13 @@
 //
-//  Hat_GameUITests.swift
-//  Hat GameUITests
+//  HatGameUITests.swift
+//  HatGameUITests
 //
 //  Created by Giga Khizanishvili on 15.11.25.
 //
 
 import XCTest
 
-final class Hat_GameUITests: XCTestCase {
+final class HatGameUITests: XCTestCase {
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.

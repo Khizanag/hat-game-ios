@@ -1,13 +1,13 @@
 //
-//  Hat_GameUITestsLaunchTests.swift
-//  Hat GameUITests
+//  HatGameUITestsLaunchTests.swift
+//  HatGameUITests
 //
 //  Created by Giga Khizanishvili on 15.11.25.
 //
 
 import XCTest
 
-final class Hat_GameUITestsLaunchTests: XCTestCase {
+final class HatGameUITestsLaunchTests: XCTestCase {
 
     override class var runsForEachTargetApplicationUIConfiguration: Bool {
         true
