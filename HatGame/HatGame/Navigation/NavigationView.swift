@@ -9,8 +9,9 @@ import SwiftUI
 
 struct NavigationView<RootContent: View>: View {
     @State private var navigator = Navigator()
-    let rootContent: () -> RootContent
-    
+    @ViewBuilder private let rootContent: () -> RootContent
+    @Environment(\.dismiss) private var dismiss
+
     init(@ViewBuilder rootContent: @escaping () -> RootContent) {
         self.rootContent = rootContent
     }
@@ -23,6 +24,14 @@ struct NavigationView<RootContent: View>: View {
                 }
         }
         .environment(navigator)
+        .fullScreenCover(item: $navigator.presentedPage) { page in
+//            NavigationView {
+                page.view()
+//            }
+        }
+        .onReceive(navigator.pleaseDismissViewPublisher) {
+            dismiss()
+        }
     }
 }
 

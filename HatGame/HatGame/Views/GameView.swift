@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct GameView: View {
+struct GameView {
     let round: GameRound
     let teamIndex: Int
     
@@ -27,132 +27,14 @@ struct GameView: View {
         return gameManager.teams[teamIndex]
     }
     
-    var currentRound: GameRound {
-        round
-    }
-    
+}
+
+// MARK: - View
+extension GameView: View {
     var body: some View {
         ZStack {
-            DesignBook.Color.Background.primary
-                .ignoresSafeArea()
-            
-            VStack(spacing: DesignBook.Spacing.lg) {
-                if let team = currentTeam {
-                    GameCard {
-                        VStack(spacing: DesignBook.Spacing.md) {
-                            Text(round.title)
-                                .font(DesignBook.Font.title3)
-                                .foregroundColor(DesignBook.Color.Text.primary)
-                            
-                            Text(round.description)
-                                .font(DesignBook.Font.body)
-                                .foregroundColor(DesignBook.Color.Text.secondary)
-                                .multilineTextAlignment(.center)
-                            
-                            Text("Current Team: \(team.name)")
-                                .font(DesignBook.Font.headline)
-                                .foregroundColor(DesignBook.Color.Team.color(for: teamIndex))
-                            
-                            Text("Time left: \(formatTime(remainingSeconds))")
-                                .font(DesignBook.Font.bodyBold)
-                                .foregroundColor(DesignBook.Color.Text.accent)
-                        }
-                    }
-                    .padding(.horizontal, DesignBook.Spacing.lg)
-                    .padding(.top, DesignBook.Spacing.lg)
-                    
-                    if let word = gameManager.currentWord, !word.guessed {
-                        GameCard {
-                            VStack(spacing: DesignBook.Spacing.xl) {
-                                Text(word.text)
-                                    .font(DesignBook.Font.largeTitle)
-                                    .foregroundColor(DesignBook.Color.Text.primary)
-                                    .multilineTextAlignment(.center)
-                                    .frame(minHeight: 200)
-                                
-                                HStack(spacing: DesignBook.Spacing.md) {
-                                    Button(action: {
-                                        showingGiveUpConfirmation = true
-                                    }) {
-                                        Text("Give Up")
-                                            .font(DesignBook.Font.body)
-                                            .foregroundColor(DesignBook.Color.Text.primary)
-                                            .frame(width: 120)
-                                            .frame(height: DesignBook.Size.buttonHeight)
-                                            .background(DesignBook.Color.Status.error.opacity(0.6))
-                                            .cornerRadius(DesignBook.Size.smallCardCornerRadius)
-                                    }
-                                    .applyShadow(DesignBook.Shadow.small)
-                                    
-                                    PrimaryButton(title: "Got It!") {
-                                        markAsGuessed()
-                                    }
-                                }
-                                .padding(.horizontal, DesignBook.Spacing.lg)
-                            }
-                        }
-                        .padding(.horizontal, DesignBook.Spacing.lg)
-                    } else if gameManager.allWordsGuessed {
-                        GameCard {
-                            VStack(spacing: DesignBook.Spacing.md) {
-                                Text("🎉")
-                                    .font(.system(size: 80))
-                                
-                                Text("All words guessed!")
-                                    .font(DesignBook.Font.title2)
-                                    .foregroundColor(DesignBook.Color.Text.primary)
-                                
-                                let timeUsed = max(gameManager.roundDuration - remainingSeconds, 0)
-                                Text("Time: \(formatTime(timeUsed))")
-                                    .font(DesignBook.Font.headline)
-                                    .foregroundColor(DesignBook.Color.Text.secondary)
-                            }
-                        }
-                        .padding(.horizontal, DesignBook.Spacing.lg)
-                        
-                        PrimaryButton(title: "Finish Round") {
-                            finishRound()
-                        }
-                        .padding(.horizontal, DesignBook.Spacing.lg)
-                    }
-                    
-                    GameCard {
-                        VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
-                            HStack {
-                                Text("Progress")
-                                    .font(DesignBook.Font.headline)
-                                    .foregroundColor(DesignBook.Color.Text.primary)
-                                
-                                Spacer()
-                                
-                                Text("\(gameManager.shuffledWords.filter { $0.guessed }.count)/\(gameManager.shuffledWords.count)")
-                                    .font(DesignBook.Font.headline)
-                                    .foregroundColor(DesignBook.Color.Text.accent)
-                            }
-                            
-                            ProgressView(
-                                value: Double(gameManager.shuffledWords.filter { $0.guessed }.count),
-                                total: Double(gameManager.shuffledWords.count)
-                            )
-                            .tint(DesignBook.Color.Text.accent)
-                            
-                            Button(action: {
-                                showingResults = true
-                            }) {
-                                HStack {
-                                    Image(systemName: "chart.bar.fill")
-                                    Text("View Results")
-                                }
-                                .font(DesignBook.Font.body)
-                                .foregroundColor(DesignBook.Color.Text.accent)
-                            }
-                        }
-                    }
-                    .padding(.horizontal, DesignBook.Spacing.lg)
-                }
-                
-                Spacer()
-            }
+            backgroundLayer
+            content
         }
         .onAppear {
             gameManager.startTeamTurn()
@@ -165,79 +47,276 @@ struct GameView: View {
             restartTimer()
         }
         .alert("Give Up?", isPresented: $showingGiveUpConfirmation) {
-            Button("Cancel", role: .cancel) {
-                showingGiveUpConfirmation = false
-            }
-            Button("Give Up", role: .destructive) {
-                giveUpWord()
-                showingGiveUpConfirmation = false
-            }
+            giveUpAlertActions
         } message: {
-            Text("Are you sure you want to skip this word? It will remain available for other teams.")
+            giveUpAlertMessage
         }
         .sheet(isPresented: $showingResults) {
-            ResultsView(round: round, isFinal: false)
+            resultsSheet
         }
         .fullScreenCover(isPresented: $showingTeamTurnResults) {
-            if let current = currentTeam {
-                let guessedWords = gameManager.getWordsGuessedInCurrentTurn(by: current.id)
-                TeamTurnResultsView(
-                    team: current,
-                    teamIndex: teamIndex,
-                    guessedWords: guessedWords,
-                    round: round,
-                    onContinue: {
-                        showNextTeam()
-                    }
-                )
-            }
+            teamTurnResultsContent
         }
         .fullScreenCover(isPresented: $showingNextTeam) {
-            Group {
-                if let nextIndex = nextTeamIndex,
-                   nextIndex < gameManager.teams.count,
-                   let round = nextTeamRound {
-                    let nextTeam = gameManager.teams[nextIndex]
-                    let wordsRemaining = gameManager.remainingWords.count
-                    
-                    // Safely get players - compute outside ViewBuilder
-                    NextTeamViewWrapper(
-                        nextTeam: nextTeam,
-                        nextIndex: nextIndex,
-                        round: round,
-                        wordsRemaining: wordsRemaining,
-                        gameManager: gameManager,
-                        onContinue: {
-                            proceedToNextTeam()
-                        }
-                    )
-                } else {
-                    // Fallback view if conditions aren't met
-                    ZStack {
-                        DesignBook.Color.Background.primary
-                            .ignoresSafeArea()
-                        Text("Error loading next team")
-                            .foregroundColor(DesignBook.Color.Text.primary)
-                    }
-                }
-            }
+            nextTeamContent
+        }
+    }
+}
+
+private extension GameView {
+    var backgroundLayer: some View {
+        DesignBook.Color.Background.primary
+            .ignoresSafeArea()
+    }
+    
+    var content: some View {
+        VStack(spacing: DesignBook.Spacing.lg) {
+            currentTeamSection
+            Spacer()
         }
     }
     
-    private func startTimer() {
+    @ViewBuilder
+    var currentTeamSection: some View {
+        if let team = currentTeam {
+            VStack(spacing: DesignBook.Spacing.lg) {
+                roundInfoCard(for: team)
+                wordSection
+                progressCard
+            }
+            .padding(.top, DesignBook.Spacing.lg)
+        } else {
+            missingTeamView
+        }
+    }
+    
+    func roundInfoCard(for team: Team) -> some View {
+        GameCard {
+            VStack(spacing: DesignBook.Spacing.md) {
+                Text(round.title)
+                    .font(DesignBook.Font.title3)
+                    .foregroundColor(DesignBook.Color.Text.primary)
+                
+                Text(round.description)
+                    .font(DesignBook.Font.body)
+                    .foregroundColor(DesignBook.Color.Text.secondary)
+                    .multilineTextAlignment(.center)
+                
+                Text("Current Team: \(team.name)")
+                    .font(DesignBook.Font.headline)
+                    .foregroundColor(DesignBook.Color.Team.color(for: teamIndex))
+                
+                Text("Time left: \(formatTime(remainingSeconds))")
+                    .font(DesignBook.Font.bodyBold)
+                    .foregroundColor(DesignBook.Color.Text.accent)
+            }
+        }
+        .padding(.horizontal, DesignBook.Spacing.lg)
+    }
+    
+    @ViewBuilder
+    var wordSection: some View {
+        if let word = gameManager.currentWord, !word.guessed {
+            activeWordCard(for: word)
+        } else if gameManager.allWordsGuessed {
+            allWordsGuessedSection
+        }
+    }
+    
+    func activeWordCard(for word: Word) -> some View {
+        GameCard {
+            VStack(spacing: DesignBook.Spacing.xl) {
+                Text(word.text)
+                    .font(DesignBook.Font.largeTitle)
+                    .foregroundColor(DesignBook.Color.Text.primary)
+                    .multilineTextAlignment(.center)
+                    .frame(minHeight: 200)
+                
+                HStack(spacing: DesignBook.Spacing.md) {
+                    giveUpButton
+                    PrimaryButton(title: "Got It!") {
+                        markAsGuessed()
+                    }
+                }
+                .padding(.horizontal, DesignBook.Spacing.lg)
+            }
+        }
+        .padding(.horizontal, DesignBook.Spacing.lg)
+    }
+    
+    var giveUpButton: some View {
+        Button {
+            showingGiveUpConfirmation = true
+        } label: {
+            Text("Give Up")
+                .font(DesignBook.Font.body)
+                .foregroundColor(DesignBook.Color.Text.primary)
+                .frame(width: 120)
+                .frame(height: DesignBook.Size.buttonHeight)
+                .background(DesignBook.Color.Status.error.opacity(0.6))
+                .cornerRadius(DesignBook.Size.smallCardCornerRadius)
+        }
+        .applyShadow(DesignBook.Shadow.small)
+    }
+    
+    var allWordsGuessedSection: some View {
+        VStack(spacing: DesignBook.Spacing.md) {
+            GameCard {
+                VStack(spacing: DesignBook.Spacing.md) {
+                    Text("🎉")
+                        .font(.system(size: 80))
+                    
+                    Text("All words guessed!")
+                        .font(DesignBook.Font.title2)
+                        .foregroundColor(DesignBook.Color.Text.primary)
+                    
+                    Text("Time: \(formatTime(timeUsed))")
+                        .font(DesignBook.Font.headline)
+                        .foregroundColor(DesignBook.Color.Text.secondary)
+                }
+            }
+            .padding(.horizontal, DesignBook.Spacing.lg)
+            
+            PrimaryButton(title: "Finish Round") {
+                finishRound()
+            }
+            .padding(.horizontal, DesignBook.Spacing.lg)
+        }
+    }
+    
+    var progressCard: some View {
+        GameCard {
+            VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
+                HStack {
+                    Text("Progress")
+                        .font(DesignBook.Font.headline)
+                        .foregroundColor(DesignBook.Color.Text.primary)
+                    
+                    Spacer()
+                    
+                    Text("\(guessedWordsCount)/\(totalWordsCount)")
+                        .font(DesignBook.Font.headline)
+                        .foregroundColor(DesignBook.Color.Text.accent)
+                }
+                
+                ProgressView(
+                    value: Double(guessedWordsCount),
+                    total: Double(totalWordsCount)
+                )
+                .tint(DesignBook.Color.Text.accent)
+                
+                Button {
+                    showingResults = true
+                } label: {
+                    HStack {
+                        Image(systemName: "chart.bar.fill")
+                        Text("View Results")
+                    }
+                    .font(DesignBook.Font.body)
+                    .foregroundColor(DesignBook.Color.Text.accent)
+                }
+            }
+        }
+        .padding(.horizontal, DesignBook.Spacing.lg)
+        .padding(.bottom, DesignBook.Spacing.lg)
+    }
+    
+    var missingTeamView: some View {
+        Text("Team not found")
+            .font(DesignBook.Font.body)
+            .foregroundColor(DesignBook.Color.Text.secondary)
+    }
+    
+    var guessedWordsCount: Int {
+        gameManager.shuffledWords.filter { $0.guessed }.count
+    }
+    
+    var totalWordsCount: Int {
+        gameManager.shuffledWords.count
+    }
+    
+    var timeUsed: Int {
+        max(gameManager.roundDuration - remainingSeconds, 0)
+    }
+    
+    @ViewBuilder
+    var resultsSheet: some View {
+        ResultsView(round: round, isFinal: false)
+    }
+    
+    @ViewBuilder
+    var teamTurnResultsContent: some View {
+        if let current = currentTeam {
+            let guessedWords = gameManager.getWordsGuessedInCurrentTurn(by: current.id)
+            TeamTurnResultsView(
+                team: current,
+                teamIndex: teamIndex,
+                guessedWords: guessedWords,
+                round: round,
+                onContinue: {
+                    showNextTeam()
+                }
+            )
+        }
+    }
+    
+    @ViewBuilder
+    var nextTeamContent: some View {
+        if let nextIndex = nextTeamIndex,
+           nextIndex < gameManager.teams.count,
+           let round = nextTeamRound {
+            NextTeamViewWrapper(
+                nextTeam: gameManager.teams[nextIndex],
+                nextIndex: nextIndex,
+                round: round,
+                wordsRemaining: gameManager.remainingWords.count,
+                gameManager: gameManager,
+                onContinue: {
+                    proceedToNextTeam()
+                }
+            )
+        } else {
+            nextTeamErrorView
+        }
+    }
+    
+    var nextTeamErrorView: some View {
+        ZStack {
+            DesignBook.Color.Background.primary
+                .ignoresSafeArea()
+            Text("Error loading next team")
+                .foregroundColor(DesignBook.Color.Text.primary)
+        }
+    }
+    
+    @ViewBuilder
+    var giveUpAlertActions: some View {
+        Button("Cancel", role: .cancel) {
+            showingGiveUpConfirmation = false
+        }
+        Button("Give Up", role: .destructive) {
+            giveUpWord()
+            showingGiveUpConfirmation = false
+        }
+    }
+    
+    var giveUpAlertMessage: some View {
+        Text("Are you sure you want to skip this word? It will remain available for other teams.")
+    }
+    
+    func startTimer() {
         stopTimer()
         remainingSeconds = gameManager.roundDuration
-        // Timer starts when view appears
         timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
             tickTimer()
         }
     }
     
-    private func restartTimer() {
+    func restartTimer() {
         startTimer()
     }
     
-    private func tickTimer() {
+    func tickTimer() {
         guard remainingSeconds > 0 else {
             stopTimer()
             timeExpired()
@@ -246,43 +325,38 @@ struct GameView: View {
         remainingSeconds -= 1
     }
     
-    private func stopTimer() {
+    func stopTimer() {
         timer?.invalidate()
         timer = nil
     }
     
-    private func formatTime(_ seconds: Int) -> String {
+    func formatTime(_ seconds: Int) -> String {
         let minutes = seconds / 60
         let remainder = seconds % 60
         return String(format: "%02d:%02d", minutes, remainder)
     }
     
-    private func timeExpired() {
+    func timeExpired() {
         if gameManager.allWordsGuessed {
             finishRound()
         } else {
-            // Show results for current team's turn
             showingTeamTurnResults = true
         }
     }
     
-    private func showNextTeam() {
-        // Calculate next team index first
+    func showNextTeam() {
         let nextIndex = (teamIndex + 1) % gameManager.teams.count
         nextTeamIndex = nextIndex
         nextTeamRound = round
-        
-        // Dismiss first cover
         showingTeamTurnResults = false
         
-        // Show next team view after a brief delay to ensure smooth transition
         Task { @MainActor in
-            try? await Task.sleep(nanoseconds: 300_000_000) // 0.3 seconds
+            try? await Task.sleep(nanoseconds: 300_000_000)
             showingNextTeam = true
         }
     }
     
-    private func proceedToNextTeam() {
+    func proceedToNextTeam() {
         guard let nextIndex = nextTeamIndex else { return }
         showingNextTeam = false
         gameManager.currentTeamIndex = nextIndex
@@ -290,11 +364,10 @@ struct GameView: View {
         gameManager.currentWordIndex = 0
         nextTeamIndex = nil
         nextTeamRound = nil
-        // Navigate to new GameView with updated team index
         navigator.replace(with: .playing(round: round, currentTeamIndex: nextIndex))
     }
     
-    private func markAsGuessed() {
+    func markAsGuessed() {
         guard let team = currentTeam else { return }
         gameManager.markWordAsGuessed(by: team.id)
         
@@ -306,8 +379,7 @@ struct GameView: View {
         }
     }
     
-    private func giveUpWord() {
-        // Skip to next word without marking current word as guessed
+    func giveUpWord() {
         if gameManager.allWordsGuessed {
             stopTimer()
             finishRound()
@@ -316,41 +388,24 @@ struct GameView: View {
         }
     }
     
-    private func finishRound() {
+    func finishRound() {
         stopTimer()
         gameManager.finishRound()
         navigator.push(.roundResults(round: round))
     }
 }
 
-private struct NextTeamViewWrapper: View {
+private struct NextTeamViewWrapper {
     let nextTeam: Team
     let nextIndex: Int
     let round: GameRound
     let wordsRemaining: Int
     let gameManager: GameManager
     let onContinue: () -> Void
-    
-    private var explainingPlayer: Player {
-        if nextTeam.players.count >= 2 {
-            return gameManager.getExplainingPlayer(for: nextIndex) ?? nextTeam.players[0]
-        } else if nextTeam.players.count == 1 {
-            return nextTeam.players[0]
-        } else {
-            return Player(name: "Player 1", teamId: nextTeam.id)
-        }
-    }
-    
-    private var guessingPlayer: Player {
-        if nextTeam.players.count >= 2 {
-            return gameManager.getGuessingPlayer(for: nextIndex) ?? nextTeam.players[1]
-        } else if nextTeam.players.count == 1 {
-            return nextTeam.players[0]
-        } else {
-            return Player(name: "Player 2", teamId: nextTeam.id)
-        }
-    }
-    
+}
+
+// MARK: - View
+extension NextTeamViewWrapper: View {
     var body: some View {
         NextTeamView(
             team: nextTeam,
@@ -364,6 +419,29 @@ private struct NextTeamViewWrapper: View {
     }
 }
 
+private extension NextTeamViewWrapper {
+    var explainingPlayer: Player {
+        if nextTeam.players.count >= 2 {
+            return gameManager.getExplainingPlayer(for: nextIndex) ?? nextTeam.players[0]
+        } else if nextTeam.players.count == 1 {
+            return nextTeam.players[0]
+        } else {
+            return Player(name: "Player 1", teamId: nextTeam.id)
+        }
+    }
+    
+    var guessingPlayer: Player {
+        if nextTeam.players.count >= 2 {
+            return gameManager.getGuessingPlayer(for: nextIndex) ?? nextTeam.players[1]
+        } else if nextTeam.players.count == 1 {
+            return nextTeam.players[0]
+        } else {
+            return Player(name: "Player 2", teamId: nextTeam.id)
+        }
+    }
+}
+
+// MARK: - Preview
 #Preview {
     let manager = GameManager()
     manager.addTeam(name: "Team 1")

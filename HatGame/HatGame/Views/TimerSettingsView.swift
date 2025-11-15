@@ -7,105 +7,173 @@
 
 import SwiftUI
 
-struct TimerSettingsView: View {
+struct TimerSettingsView {
     @Environment(GameManager.self) private var gameManager
     @Environment(Navigator.self) private var navigator
-    @State private var selectedDuration: Int
-    
-    init() {
-        _selectedDuration = State(initialValue: 60)
-    }
-    
+    @State private var selectedDuration: Int = 60
+}
+
+// MARK: - View
+extension TimerSettingsView: View {
     var body: some View {
-        ZStack {
-            DesignBook.Color.Background.primary
-                .ignoresSafeArea()
-            
-            VStack(spacing: DesignBook.Spacing.lg) {
-                GameCard {
-                    VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
-                        Text("Round timer")
-                            .font(DesignBook.Font.title2)
-                            .foregroundColor(DesignBook.Color.Text.primary)
-                        
-                        Text("Each team gets the same amount of time per turn. Choose how intense you want the round to be.")
-                            .font(DesignBook.Font.body)
-                            .foregroundColor(DesignBook.Color.Text.secondary)
-                    }
-                }
-                .padding(.horizontal, DesignBook.Spacing.lg)
-                .padding(.top, DesignBook.Spacing.lg)
-                
-                GameCard {
-                    VStack(spacing: DesignBook.Spacing.md) {
-                        HStack {
-                            Text("Seconds per team")
-                                .font(DesignBook.Font.headline)
-                                .foregroundColor(DesignBook.Color.Text.primary)
-                            
-                            Spacer()
-                            
-                            Text("\(selectedDuration)s")
-                                .font(DesignBook.Font.title2)
-                                .foregroundColor(DesignBook.Color.Text.accent)
-                        }
-                        
-                        Slider(value: Binding(
-                            get: { Double(selectedDuration) },
-                            set: { selectedDuration = Int($0) }
-                        ), in: 5...120, step: 5)
-                        .tint(DesignBook.Color.Text.accent)
-                        
-                        Stepper(value: $selectedDuration, in: 5...120, step: 5) {
-                            Text("Tap or hold to adjust")
-                                .font(DesignBook.Font.caption)
-                                .foregroundColor(DesignBook.Color.Text.secondary)
-                        }
-                        
-                        HStack(spacing: DesignBook.Spacing.md) {
-                            TimerTag(title: "Lightning", range: "5-30s")
-                            TimerTag(title: "Classic", range: "60s")
-                            TimerTag(title: "Marathon", range: "90-120s")
-                        }
-                        .padding(.horizontal, -DesignBook.Spacing.md)
-                    }
-                }
-                .padding(.horizontal, DesignBook.Spacing.lg)
-                
-                Spacer()
-                
-                PrimaryButton(title: "Continue") {
-                    gameManager.roundDuration = selectedDuration
-                    navigator.push(.wordInput)
-                }
-                .padding(.horizontal, DesignBook.Spacing.lg)
-                .padding(.bottom, DesignBook.Spacing.lg)
+        NavigationStack {
+            ZStack {
+                backgroundLayer
+                content
+            }
+            .navigationTitle("Timer Settings")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                navigationToolbar
             }
         }
     }
 }
 
-private struct TimerTag: View {
+private extension TimerSettingsView {
+    var backgroundLayer: some View {
+        DesignBook.Color.Background.primary
+            .ignoresSafeArea()
+    }
+    
+    var content: some View {
+        VStack(spacing: DesignBook.Spacing.lg) {
+            descriptionCard
+            controlsCard
+            Spacer()
+            continueButton
+        }
+    }
+    
+    var descriptionCard: some View {
+        GameCard {
+            VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
+                Text("Round timer")
+                    .font(DesignBook.Font.title2)
+                    .foregroundColor(DesignBook.Color.Text.primary)
+                
+                Text("Each team gets the same amount of time per turn. Choose how intense you want the round to be.")
+                    .font(DesignBook.Font.body)
+                    .foregroundColor(DesignBook.Color.Text.secondary)
+            }
+        }
+        .padding(.horizontal, DesignBook.Spacing.lg)
+        .padding(.top, DesignBook.Spacing.lg)
+    }
+    
+    var controlsCard: some View {
+        GameCard {
+            VStack(spacing: DesignBook.Spacing.md) {
+                durationHeader
+                durationSlider
+                durationStepper
+                timerTags
+            }
+        }
+        .padding(.horizontal, DesignBook.Spacing.lg)
+    }
+    
+    var durationHeader: some View {
+        HStack {
+            Text("Seconds per team")
+                .font(DesignBook.Font.headline)
+                .foregroundColor(DesignBook.Color.Text.primary)
+            
+            Spacer()
+            
+            Text("\(selectedDuration)s")
+                .font(DesignBook.Font.title2)
+                .foregroundColor(DesignBook.Color.Text.accent)
+        }
+    }
+    
+    var durationSlider: some View {
+        Slider(value: durationBinding, in: 5...120, step: 5)
+            .tint(DesignBook.Color.Text.accent)
+    }
+    
+    var durationStepper: some View {
+        Stepper(value: $selectedDuration, in: 5...120, step: 5) {
+            Text("Tap or hold to adjust")
+                .font(DesignBook.Font.caption)
+                .foregroundColor(DesignBook.Color.Text.secondary)
+        }
+    }
+    
+    var timerTags: some View {
+        HStack(spacing: DesignBook.Spacing.md) {
+            TimerTag(title: "Lightning", range: "5-30s", isHighlighted: selectedDuration.isBetween(5, and: 30))
+            TimerTag(title: "Classic", range: "60s", isHighlighted: selectedDuration == 60)
+            TimerTag(title: "Marathon", range: "90-120s", isHighlighted: selectedDuration.isBetween(90, and: 120))
+        }
+        .padding(.horizontal, -DesignBook.Spacing.md)
+    }
+    
+    var continueButton: some View {
+        PrimaryButton(title: "Continue") {
+            handleContinue()
+        }
+        .padding(.horizontal, DesignBook.Spacing.lg)
+        .padding(.bottom, DesignBook.Spacing.lg)
+    }
+    
+    var durationBinding: Binding<Double> {
+        Binding(
+            get: { Double(selectedDuration) },
+            set: { selectedDuration = Int($0) }
+        )
+    }
+    
+    @ToolbarContentBuilder
+    var navigationToolbar: some ToolbarContent {
+        ToolbarItem(placement: .navigationBarLeading) {
+            Button {
+                navigator.dismiss()
+            } label: {
+                Image(systemName: "xmark")
+                    .foregroundColor(DesignBook.Color.Text.primary)
+            }
+        }
+    }
+    
+    func handleContinue() {
+        gameManager.roundDuration = selectedDuration
+        navigator.push(.wordInput)
+    }
+}
+
+private extension Int {
+    func isBetween(_ lower: Int, and upper: Int) -> Bool {
+        self >= lower && self <= upper
+    }
+}
+
+private struct TimerTag {
     let title: String
     let range: String
-    
+    let isHighlighted: Bool
+}
+
+// MARK: - View
+extension TimerTag: View {
     var body: some View {
         VStack(spacing: DesignBook.Spacing.xs) {
             Text(title)
                 .font(DesignBook.Font.captionBold)
-                .foregroundColor(DesignBook.Color.Text.primary)
+                .foregroundColor(isHighlighted ? DesignBook.Color.Text.accent : DesignBook.Color.Text.primary)
             Text(range)
                 .font(DesignBook.Font.caption)
-                .foregroundColor(DesignBook.Color.Text.secondary)
+                .foregroundColor(isHighlighted ? DesignBook.Color.Text.accent : DesignBook.Color.Text.secondary)
         }
         .padding(.vertical, DesignBook.Spacing.sm)
         .padding(.horizontal, DesignBook.Spacing.md)
-        .background(DesignBook.Color.Background.secondary)
+        .background(isHighlighted ? DesignBook.Color.Text.accent.opacity(0.2) : DesignBook.Color.Background.secondary)
         .cornerRadius(DesignBook.Size.smallCardCornerRadius)
         .frame(maxWidth: .infinity)
     }
 }
 
+// MARK: - Preview
 #Preview {
     NavigationView {
         Page.timerSettings.view()

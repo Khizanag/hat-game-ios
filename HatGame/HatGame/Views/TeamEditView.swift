@@ -7,89 +7,25 @@
 
 import SwiftUI
 
-struct TeamEditView: View {
+struct TeamEditView {
     @Environment(GameManager.self) private var gameManager
+    @Environment(Navigator.self) private var navigator
     let teamId: UUID
-    @Environment(\.dismiss) private var dismiss
     @State private var teamName: String = ""
     @State private var playerNames: [UUID: String] = [:]
     
-    private var team: Team? {
+    var team: Team? {
         gameManager.teams.first(where: { $0.id == teamId })
     }
-    
+}
+
+// MARK: - View
+extension TeamEditView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                DesignBook.Color.Background.primary
-                    .ignoresSafeArea()
-                
-                if let team {
-                    ScrollView {
-                        VStack(spacing: DesignBook.Spacing.lg) {
-                            GameCard {
-                                VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
-                                    Text("Team name")
-                                        .font(DesignBook.Font.captionBold)
-                                        .foregroundColor(DesignBook.Color.Text.secondary)
-                                    
-                                    TextField("Team name", text: $teamName)
-                                        .textFieldStyle(.plain)
-                                        .font(DesignBook.Font.headline)
-                                        .foregroundColor(DesignBook.Color.Text.primary)
-                                        .padding(DesignBook.Spacing.md)
-                                        .background(DesignBook.Color.Background.secondary)
-                                        .cornerRadius(DesignBook.Size.smallCardCornerRadius)
-                                }
-                            }
-                            
-                            GameCard {
-                                VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
-                                    Text("Players")
-                                        .font(DesignBook.Font.captionBold)
-                                        .foregroundColor(DesignBook.Color.Text.secondary)
-                                    
-                                    ForEach(team.players) { player in
-                                        VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
-                                            Text("Player \(index(of: player) + 1)")
-                                                .font(DesignBook.Font.caption)
-                                                .foregroundColor(DesignBook.Color.Text.secondary)
-                                            
-                                            TextField("Player name", text: Binding(
-                                                get: { playerNames[player.id] ?? player.name },
-                                                set: { playerNames[player.id] = $0 }
-                                            ))
-                                            .textFieldStyle(.plain)
-                                            .font(DesignBook.Font.body)
-                                            .foregroundColor(DesignBook.Color.Text.primary)
-                                            .padding(DesignBook.Spacing.md)
-                                            .background(DesignBook.Color.Background.secondary)
-                                            .cornerRadius(DesignBook.Size.smallCardCornerRadius)
-                                        }
-                                    }
-                                }
-                            }
-                            
-                            VStack(spacing: DesignBook.Spacing.md) {
-                                PrimaryButton(title: "Save changes") {
-                                    applyChanges()
-                                    dismiss()
-                                }
-                                
-                                SecondaryButton(title: "Cancel") {
-                                    dismiss()
-                                }
-                            }
-                            .padding(.bottom, DesignBook.Spacing.lg)
-                        }
-                        .padding(.horizontal, DesignBook.Spacing.lg)
-                        .padding(.top, DesignBook.Spacing.lg)
-                    }
-                } else {
-                    Text("Team not found")
-                        .font(DesignBook.Font.body)
-                        .foregroundColor(DesignBook.Color.Text.secondary)
-                }
+                backgroundLayer
+                content
             }
             .navigationTitle("Edit group")
             .navigationBarTitleDisplayMode(.inline)
@@ -99,37 +35,146 @@ struct TeamEditView: View {
         }
         .presentationDetents([.large])
     }
+}
+
+private extension TeamEditView {
+    var backgroundLayer: some View {
+        DesignBook.Color.Background.primary
+            .ignoresSafeArea()
+    }
     
-    private func loadDataIfNeeded() {
-        guard let team, teamName.isEmpty else { return }
-        teamName = team.name
-        for player in team.players {
-            playerNames[player.id] = player.name
+    @ViewBuilder
+    var content: some View {
+        if let team {
+            teamContent(for: team)
+        } else {
+            missingTeamView
         }
     }
     
-    private func applyChanges() {
-        let trimmedTeamName = teamName.trimmingCharacters(in: .whitespacesAndNewlines)
-        if !trimmedTeamName.isEmpty {
-            gameManager.updateTeamName(teamId: teamId, name: trimmedTeamName)
+    func teamContent(for team: Team) -> some View {
+        ScrollView {
+            VStack(spacing: DesignBook.Spacing.lg) {
+                teamNameCard
+                playersCard(for: team)
+                actionSection
+            }
+            .padding(.horizontal, DesignBook.Spacing.lg)
+            .padding(.top, DesignBook.Spacing.lg)
+            .padding(.bottom, DesignBook.Spacing.lg)
         }
-        
-        if let team {
-            for player in team.players {
-                if let newName = playerNames[player.id]?.trimmingCharacters(in: .whitespacesAndNewlines),
-                   !newName.isEmpty,
-                   newName != player.name {
-                    gameManager.updatePlayerName(playerId: player.id, name: newName)
+    }
+    
+    var teamNameCard: some View {
+        GameCard {
+            VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
+                Text("Team name")
+                    .font(DesignBook.Font.captionBold)
+                    .foregroundColor(DesignBook.Color.Text.secondary)
+                
+                TextField("Team name", text: $teamName)
+                    .textFieldStyle(.plain)
+                    .font(DesignBook.Font.headline)
+                    .foregroundColor(DesignBook.Color.Text.primary)
+                    .padding(DesignBook.Spacing.md)
+                    .background(DesignBook.Color.Background.secondary)
+                    .cornerRadius(DesignBook.Size.smallCardCornerRadius)
+            }
+        }
+    }
+    
+    func playersCard(for team: Team) -> some View {
+        GameCard {
+            VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
+                Text("Players")
+                    .font(DesignBook.Font.captionBold)
+                    .foregroundColor(DesignBook.Color.Text.secondary)
+                
+                ForEach(team.players) { player in
+                    playerField(for: player, index: playerIndex(in: team, player: player))
                 }
             }
         }
     }
     
-    private func index(of player: Player) -> Int {
-        gameManager.teams.first(where: { $0.id == teamId })?.players.firstIndex(where: { $0.id == player.id }) ?? 0
+    func playerField(for player: Player, index: Int?) -> some View {
+        VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
+            if let index {
+                Text("Player \(index + 1)")
+                    .font(DesignBook.Font.caption)
+                    .foregroundColor(DesignBook.Color.Text.secondary)
+            }
+            
+            TextField("Player name", text: playerBinding(for: player))
+                .textFieldStyle(.plain)
+                .font(DesignBook.Font.body)
+                .foregroundColor(DesignBook.Color.Text.primary)
+                .padding(DesignBook.Spacing.md)
+                .background(DesignBook.Color.Background.secondary)
+                .cornerRadius(DesignBook.Size.smallCardCornerRadius)
+        }
+    }
+    
+    var actionSection: some View {
+        VStack(spacing: DesignBook.Spacing.md) {
+            PrimaryButton(title: "Save changes") {
+                handleSaveChanges()
+                navigator.dismiss()
+            }
+            
+            SecondaryButton(title: "Cancel") {
+                navigator.dismiss()
+            }
+        }
+    }
+    
+    var missingTeamView: some View {
+        Text("Team not found")
+            .font(DesignBook.Font.body)
+            .foregroundColor(DesignBook.Color.Text.secondary)
+    }
+    
+    func playerBinding(for player: Player) -> Binding<String> {
+        Binding(
+            get: { playerNames[player.id] ?? player.name },
+            set: { playerNames[player.id] = $0 }
+        )
+    }
+    
+    func playerIndex(in team: Team, player: Player) -> Int? {
+        team.players.firstIndex(where: { $0.id == player.id })
+    }
+    
+    func loadDataIfNeeded() {
+        guard let team, teamName.isEmpty else { return }
+        teamName = team.name
+        team.players.forEach { player in
+            playerNames[player.id] = player.name
+        }
+    }
+    
+    func handleSaveChanges() {
+        applyTeamNameChange()
+        applyPlayerNameChanges()
+    }
+    
+    func applyTeamNameChange() {
+        let trimmedTeamName = teamName.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedTeamName.isEmpty else { return }
+        gameManager.updateTeamName(teamId: teamId, name: trimmedTeamName)
+    }
+    
+    func applyPlayerNameChanges() {
+        guard let team else { return }
+        team.players.forEach { player in
+            let trimmedName = playerNames[player.id]?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+            guard !trimmedName.isEmpty, trimmedName != player.name else { return }
+            gameManager.updatePlayerName(playerId: player.id, name: trimmedName)
+        }
     }
 }
 
+// MARK: - Preview
 #Preview {
     let manager = GameManager()
     manager.addTeam(name: "Orion")
@@ -139,5 +184,3 @@ struct TeamEditView: View {
     return TeamEditView(teamId: teamId)
         .environment(manager)
 }
-
-
