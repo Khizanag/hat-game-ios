@@ -11,7 +11,7 @@ import Observation
 
 @Observable
 final class Navigator {
-    var navigationPath = NavigationPath()
+    var navigationPath: [Page] = []
     var presentedPage: Page?
 
     private var pleaseDismissViewSubject = PassthroughSubject<Void, Never>()
