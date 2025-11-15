@@ -10,6 +10,7 @@ import SwiftUI
 struct WelcomeView: View {
     @Environment(AppConfiguration.self) private var appConfiguration
     @Environment(Navigator.self) private var navigator
+    @SceneStorage("WelcomeView.isHowToPlayExpanded") private var isHowToPlayExpanded: Bool = true
     
     var body: some View {
         content
@@ -44,19 +45,33 @@ private extension WelcomeView {
     
     var howToPlayCard: some View {
         GameCard {
-            VStack(alignment: .leading, spacing: DesignBook.Spacing.lg) {
-                Text("How to Play")
-                    .font(DesignBook.Font.title3)
-                    .foregroundColor(DesignBook.Color.Text.primary)
+            VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
+                Button {
+                    withAnimation(.easeInOut) {
+                        isHowToPlayExpanded.toggle()
+                    }
+                } label: {
+                    HStack {
+                        Text("How to Play")
+                            .font(DesignBook.Font.title3)
+                            .foregroundColor(DesignBook.Color.Text.primary)
+                        Spacer()
+                        Image(systemName: isHowToPlayExpanded ? "chevron.up" : "chevron.down")
+                            .foregroundColor(DesignBook.Color.Text.secondary)
+                    }
+                }
                 
-                VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
-                    InstructionRow(number: "1", text: "Create teams and add players")
-                    InstructionRow(number: "2", text: "Each player adds words to the hat")
-                    InstructionRow(number: "3", text: "Words are randomized")
-                    InstructionRow(number: "4", text: "Round 1: No restrictions - guess as many as you can")
-                    InstructionRow(number: "5", text: "Round 2: One word only to describe")
-                    InstructionRow(number: "6", text: "Round 3: Gestures and miming only")
-                    InstructionRow(number: "7", text: "Team with most points wins!")
+                if isHowToPlayExpanded {
+                    VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
+                        InstructionRow(number: "1", text: "Create teams and add players")
+                        InstructionRow(number: "2", text: "Each player adds words to the hat")
+                        InstructionRow(number: "3", text: "Words are randomized")
+                        InstructionRow(number: "4", text: "Round 1: No restrictions - guess as many as you can")
+                        InstructionRow(number: "5", text: "Round 2: One word only to describe")
+                        InstructionRow(number: "6", text: "Round 3: Gestures and miming only")
+                        InstructionRow(number: "7", text: "Team with most points wins!")
+                    }
+                    .transition(.opacity.combined(with: .slide))
                 }
             }
         }

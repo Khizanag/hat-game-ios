@@ -101,7 +101,6 @@ private extension TeamSetupView {
                 TeamCard(
                     team: team,
                     playersPerTeam: playersPerTeam,
-                    gameManager: gameManager,
                     onAddPlayer: {
                         selectedTeamId = team.id
                         showingAddPlayer = true
