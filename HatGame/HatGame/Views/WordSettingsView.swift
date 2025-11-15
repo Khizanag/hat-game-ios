@@ -67,7 +67,6 @@ struct WordSettingsView: View {
                             LegendTag(title: "Balanced", range: "8-12")
                             LegendTag(title: "Epic round", range: "13-20")
                         }
-                        .padding(.horizontal, -DesignBook.Spacing.md)
                     }
                 }
                 .padding(.horizontal, DesignBook.Spacing.lg)
