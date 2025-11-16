@@ -8,38 +8,36 @@
 import SwiftUI
 
 struct AddTeamSheet: View {
-    @Environment(\.dismiss) private var dismiss
-    
+    @Environment(Navigator.self) private var navigator
+
     @State private var teamName: String = ""
     @State private var playerNames: [String]
     
     let playersPerTeam: Int
-    let onCreateTeam: (String, [String]) -> Void
-    
-    init(playersPerTeam: Int, onCreateTeam: @escaping (String, [String]) -> Void) {
+    let onTeamCreate: (Team) -> Void
+
+    init(playersPerTeam: Int, onTeamCreate: @escaping (Team) -> Void) {
         self.playersPerTeam = playersPerTeam
-        self.onCreateTeam = onCreateTeam
-        _playerNames = State(initialValue: Array(repeating: "", count: playersPerTeam))
+        self.onTeamCreate = onTeamCreate
+        self._playerNames = State(initialValue: Array(repeating: "", count: playersPerTeam))
     }
     
     private var canCreateTeam: Bool {
         !teamName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
         playerNames.allSatisfy { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
     }
-    
+
     var body: some View {
-        NavigationView {
-            VStack(spacing: DesignBook.Spacing.lg) {
-                teamNameField
-                playersSection
-                Spacer()
-                actionButtons
-            }
-            .padding(.horizontal, DesignBook.Spacing.lg)
-            .padding(.top, DesignBook.Spacing.lg)
-            .navigationTitle("New Team")
-            .navigationBarTitleDisplayMode(.inline)
+        VStack(spacing: DesignBook.Spacing.lg) {
+            teamNameField
+            playersSection
+            Spacer()
+            actionButtons
         }
+        .padding(.horizontal, DesignBook.Spacing.lg)
+        .padding(.top, DesignBook.Spacing.lg)
+        .navigationTitle("New Team")
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
 
@@ -94,13 +92,17 @@ private extension AddTeamSheet {
     var actionButtons: some View {
         VStack(spacing: DesignBook.Spacing.md) {
             PrimaryButton(title: "Create Team") {
-                onCreateTeam(teamName, playerNames)
-                dismiss()
+                var team = Team(name: teamName, color: .pink)
+                team.players = playerNames.map { playerName in
+                    .init(name: playerName, teamId: team.id)
+                }
+                onTeamCreate(team)
+                navigator.dismiss()
             }
             .disabled(!canCreateTeam)
             
             DestructiveButton(title: "Cancel") {
-                dismiss()
+                navigator.dismiss()
             }
         }
         .padding(.bottom, DesignBook.Spacing.lg)

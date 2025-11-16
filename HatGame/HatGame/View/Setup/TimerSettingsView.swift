@@ -10,8 +10,9 @@ import SwiftUI
 struct TimerSettingsView: View {
     @Environment(GameManager.self) private var gameManager
     @Environment(Navigator.self) private var navigator
-    @State private var selectedDuration: Int = 60
-    
+
+    @State private var selectedDuration: Int = 10
+
     var body: some View {
         content
             .setDefaultBackground()
@@ -21,15 +22,21 @@ struct TimerSettingsView: View {
     }
 }
 
+// MARK: - Components
 private extension TimerSettingsView {
     var content: some View {
-        VStack(spacing: DesignBook.Spacing.lg) {
-            headerCard
-            controlsCard
-            Spacer()
-            continueButton
+        ScrollView {
+            VStack(spacing: DesignBook.Spacing.lg) {
+                headerCard
+                controlsCard
+            }
+            .padding(.horizontal, DesignBook.Spacing.lg)
+
         }
-        .padding(.horizontal, DesignBook.Spacing.lg)
+        .overlay(alignment: .bottom) {
+            continueButton
+                .padding(.horizontal, DesignBook.Spacing.lg)
+        }
     }
     
     var headerCard: some View {
@@ -117,5 +124,3 @@ private extension Int {
     }
     .environment(GameManager())
 }
-
-
