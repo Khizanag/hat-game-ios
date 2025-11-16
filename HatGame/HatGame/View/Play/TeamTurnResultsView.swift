@@ -30,12 +30,11 @@ private extension TeamTurnResultsView {
                 header
                 resultsCard
                 wordsSection
-                Spacer()
-                    .frame(height: DesignBook.Spacing.xl)
             }
             .padding(.horizontal, DesignBook.Spacing.lg)
+            .padding(.bottom, DesignBook.Spacing.xxl)
         }
-        .overlay(alignment: .bottom) {
+        .safeAreaInset(edge: .bottom) {
             continueButton
                 .padding(.horizontal, DesignBook.Spacing.lg)
         }

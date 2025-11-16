@@ -27,8 +27,9 @@ private extension WordSettingsView {
                 controlsCard
             }
             .padding(.horizontal, DesignBook.Spacing.lg)
+            .padding(.bottom, DesignBook.Spacing.xxl)
         }
-        .overlay(alignment: .bottom) {
+        .safeAreaInset(edge: .bottom) {
             continueButton
                 .padding(.horizontal, DesignBook.Spacing.lg)
         }

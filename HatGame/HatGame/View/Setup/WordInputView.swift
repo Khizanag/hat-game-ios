@@ -61,8 +61,9 @@ private extension WordInputView {
                 wordEntrySection
             }
             .padding(.horizontal, DesignBook.Spacing.lg)
+            .padding(.bottom, DesignBook.Spacing.xxl)
         }
-        .overlay(alignment: .bottom) {
+        .safeAreaInset(edge: .bottom) {
             actionButton
                 .padding(.horizontal, DesignBook.Spacing.lg)
         }

@@ -55,9 +55,12 @@ private extension TeamSetupView {
             VStack(spacing: DesignBook.Spacing.lg) {
                 headerCard
                 teamsList
-                continueSection
             }
             .padding(.horizontal, DesignBook.Spacing.lg)
+        }
+        .safeAreaInset(edge: .bottom) {
+            continueSection
+                .padding(.horizontal, DesignBook.Spacing.lg)
         }
     }
 
@@ -158,19 +161,6 @@ private extension TeamSetupView {
         if let deletingTeam {
             Text("Are you sure you want to delete \"\(deletingTeam.name)\"? This action cannot be undone.")
         }
-    }
-
-    func handleAddPlayer() {
-//        guard let teamId = selectedTeamId,
-//              let team = gameManager.configuration.teams.first(where: { $0.id == teamId }),
-//              !newPlayerName.isEmpty else { return }
-//        gameManager.addPlayer(name: newPlayerName, to: team, limit: playersPerTeam)
-//        newPlayerName = ""
-//
-//        if selectedTeamPlayersCount >= playersPerTeam {
-//            showingAddPlayer = false
-//            selectedTeamId = nil
-//        }
     }
 
     func handleCancelAddPlayer() {
