@@ -24,6 +24,8 @@ struct TeamEditView: View {
             teamColor: $teamColor,
             title: "Edit group",
             primaryButtonTitle: "Save changes",
+            existingTeams: gameManager.configuration.teams,
+            currentTeamId: team.id,
             onPrimaryAction: {
                 handleSaveChanges()
                 navigator.dismiss()
