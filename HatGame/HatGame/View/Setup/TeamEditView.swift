@@ -167,7 +167,8 @@ private extension TeamEditView {
     
     func applyTeamNameChange() {
         guard !trimmedTeamName.isEmpty else { return }
-        gameManager.updateTeamName(teamId: teamId, name: trimmedTeamName)
+        guard let team = team else { return }
+        gameManager.updateTeamName(team: team, name: trimmedTeamName)
     }
     
     func applyPlayerNameChanges() {
