@@ -43,9 +43,9 @@ struct TeamSetupView: View {
                     playersPerTeam: playersPerTeam,
                     onCreateTeam: { name, players in
                         gameManager.addTeam(name: name)
-                        guard let teamId = gameManager.configuration.teams.last?.id else { return }
+                        guard let team = gameManager.configuration.teams.last else { return }
                         players.forEach { playerName in
-                            gameManager.addPlayer(name: playerName, to: teamId)
+                            gameManager.addPlayer(name: playerName, to: team)
                         }
                     }
                 )
@@ -176,8 +176,9 @@ private extension TeamSetupView {
             teamToDelete = nil
         }
         Button("Delete", role: .destructive) {
-            if let teamId = teamToDelete {
-                gameManager.removeTeam(teamId)
+            if let teamId = teamToDelete,
+               let team = gameManager.configuration.teams.first(where: { $0.id == teamId }) {
+                gameManager.removeTeam(team)
                 teamToDelete = nil
             }
         }
@@ -192,8 +193,10 @@ private extension TeamSetupView {
     }
 
     func handleAddPlayer() {
-        guard let teamId = selectedTeamId, !newPlayerName.isEmpty else { return }
-        gameManager.addPlayer(name: newPlayerName, to: teamId, limit: playersPerTeam)
+        guard let teamId = selectedTeamId,
+              let team = gameManager.configuration.teams.first(where: { $0.id == teamId }),
+              !newPlayerName.isEmpty else { return }
+        gameManager.addPlayer(name: newPlayerName, to: team, limit: playersPerTeam)
         newPlayerName = ""
 
         if selectedTeamPlayersCount >= playersPerTeam {

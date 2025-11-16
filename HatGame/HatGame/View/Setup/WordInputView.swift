@@ -208,29 +208,15 @@ private extension WordInputView {
     func prepareCurrentPlayer() {
         guard currentPlayer != nil else { return }
         playerWords = []
-        loadDefaultWordsIfNeeded()
         isWordFieldFocused = true
     }
     
-    func loadDefaultWordsIfNeeded() {
-        guard let player = currentPlayer else { return }
-        guard playerWords.isEmpty else { return }
-        if appConfiguration.isTestMode, let defaults = gameManager.defaultWords(for: player.id) {
-            playerWords = defaults
-        }
-    }
-    
-    func persistDefaultWords() {
-        guard let player = currentPlayer, appConfiguration.isTestMode else { return }
-        gameManager.updateDefaultWords(playerWords, for: player.id)
-    }
     
     func handleAddWord() {
         let trimmedWord = currentWord.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedWord.isEmpty, playerWords.count < wordsPerPlayer else { return }
         guard !playerWords.contains(trimmedWord) else { return }
         playerWords.append(trimmedWord)
-        persistDefaultWords()
         currentWord = ""
         isWordFieldFocused = true
     }

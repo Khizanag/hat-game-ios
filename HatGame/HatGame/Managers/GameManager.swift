@@ -23,35 +23,38 @@ final class GameManager {
     var currentRound: GameRound?
     var currentTeamIndex: Int?
     
-    var currentTurnStartWordIndex: Int = 0
-    var currentTeamTurnIndex: Int = 0
-    var currentTurnNumber: Int = 0
+    // Track explaining player index for each team
+    private var explainingPlayerIndexByTeam: [Team: Int] = [:]
     
-    private var testWordsByPlayer: [UUID: [String]] = [:]
+    private var currentTurnStartWordIndex: Int = 0
+    private var currentTeamTurnIndex: Int = 0
     
     // Track word guessing state
-    private var guessedWords: Set<UUID> = []
-    private var guessedByTeam: [UUID: UUID] = [:]
-    private var guessedInRound: [UUID: Int] = [:]
+    // guessedWords: words guessed in the current round (reset each round)
+    private var guessedWords: Set<Word> = []
+    // guessedByTeam: tracks which team guessed each word in current round
+    private var guessedByTeam: [Word: Team] = [:]
+    // guessedInRounds: tracks which rounds each word was guessed in (persists across rounds)
+    private var guessedInRounds: [Word: Set<Int>] = [:]
     
     var currentWord: Word? {
-        let unguessedWords = shuffledWords.filter { !guessedWords.contains($0.id) }
+        let unguessedWords = shuffledWords.filter { !guessedWords.contains($0) }
         guard !unguessedWords.isEmpty else { return nil }
         guard currentWordIndex < shuffledWords.count else { return unguessedWords.first }
         let word = shuffledWords[currentWordIndex]
-        return guessedWords.contains(word.id) ? unguessedWords.first : word
+        return guessedWords.contains(word) ? unguessedWords.first : word
     }
     
     var remainingWords: [Word] {
-        shuffledWords.filter { !guessedWords.contains($0.id) }
+        shuffledWords.filter { !guessedWords.contains($0) }
     }
     
     var allWordsGuessed: Bool {
-        shuffledWords.allSatisfy { guessedWords.contains($0.id) }
+        shuffledWords.allSatisfy { guessedWords.contains($0) }
     }
     
     func isWordGuessed(_ word: Word) -> Bool {
-        guessedWords.contains(word.id)
+        guessedWords.contains(word)
     }
 
     // MARK: - Init
@@ -69,18 +72,18 @@ final class GameManager {
         configuration.teams.append(team)
     }
     
-    func addPlayer(name: String, to teamId: UUID, limit: Int? = nil) {
-        guard let teamIndex = configuration.teams.firstIndex(where: { $0.id == teamId }) else { return }
+    func addPlayer(name: String, to team: Team, limit: Int? = nil) {
+        guard let teamIndex = configuration.teams.firstIndex(where: { $0.id == team.id }) else { return }
         let maxLimit = limit ?? configuration.maxTeamMembers
         if configuration.teams[teamIndex].players.count >= maxLimit {
             return
         }
-        let player = Player(name: name, teamId: teamId)
+        let player = Player(name: name, teamId: team.id)
         configuration.teams[teamIndex].players.append(player)
     }
     
-    func updateTeamName(teamId: UUID, name: String) {
-        guard let teamIndex = configuration.teams.firstIndex(where: { $0.id == teamId }) else { return }
+    func updateTeamName(team: Team, name: String) {
+        guard let teamIndex = configuration.teams.firstIndex(where: { $0.id == team.id }) else { return }
         configuration.teams[teamIndex].name = name
     }
     
@@ -98,8 +101,8 @@ final class GameManager {
         }
     }
     
-    func removeTeam(_ teamId: UUID) {
-        configuration.teams.removeAll { $0.id == teamId }
+    func removeTeam(_ team: Team) {
+        configuration.teams.removeAll { $0.id == team.id }
     }
     
     func removePlayer(_ playerId: UUID) {
@@ -113,9 +116,15 @@ final class GameManager {
         configuration.words.append(contentsOf: newWords)
     }
     
+    // MARK: - Word Management
+    
     func shuffleWords() {
         shuffledWords = configuration.words.shuffled()
         currentWordIndex = 0
+    }
+    
+    func nextWord() {
+        skipToNextWord()
     }
     
     func startRound(_ round: GameRound, startingTeamIndex: Int) {
@@ -126,95 +135,146 @@ final class GameManager {
         resetWordGuessedState()
         currentTeamTurnIndex = 0
         currentTurnStartWordIndex = guessedWords.count
+        initializeExplainingPlayerIndex()
+    }
+    
+    private func initializeExplainingPlayerIndex() {
+        guard let teamIndex = currentTeamIndex,
+              teamIndex < configuration.teams.count else { return }
+        let team = configuration.teams[teamIndex]
+        // Initialize explaining player index to 0 if not set
+        if explainingPlayerIndexByTeam[team] == nil {
+            explainingPlayerIndexByTeam[team] = 0
+        }
     }
     
     func resetWordGuessedState() {
+        // Only clear current round's guesses, keep history of rounds
         guessedWords.removeAll()
         guessedByTeam.removeAll()
-        guessedInRound.removeAll()
+        // guessedInRounds persists across rounds to track all rounds a word was guessed
     }
     
-    func markWordAsGuessed(by teamId: UUID) {
+    // MARK: - Gameplay
+    
+    func markCurrentWordAsGuessed(by team: Team) {
         guard currentWordIndex < shuffledWords.count else { return }
-        let wordId = shuffledWords[currentWordIndex].id
-        guessedWords.insert(wordId)
-        guessedByTeam[wordId] = teamId
+        let word = shuffledWords[currentWordIndex]
+        guessedWords.insert(word)
+        guessedByTeam[word] = team
         if let round = currentRound {
-            guessedInRound[wordId] = round.rawValue
+            // Track that this word was guessed in this round
+            if guessedInRounds[word] == nil {
+                guessedInRounds[word] = []
+            }
+            guessedInRounds[word]?.insert(round.rawValue)
         }
         
-        updateTeamScore(teamId: teamId)
+        updateTeamScore(team: team)
     }
     
     func skipToNextWord() {
-        let unguessedWords = shuffledWords.filter { !guessedWords.contains($0.id) }
+        let unguessedWords = shuffledWords.filter { !guessedWords.contains($0) }
         guard !unguessedWords.isEmpty else { return }
         
         guard currentWordIndex < shuffledWords.count else {
-            if let firstUnguessed = unguessedWords.first, let index = shuffledWords.firstIndex(where: { $0.id == firstUnguessed.id }) {
+            if let firstUnguessed = unguessedWords.first, let index = shuffledWords.firstIndex(of: firstUnguessed) {
                 currentWordIndex = index
             }
             return
         }
         
         let currentWordAtIdx = shuffledWords[currentWordIndex]
-        if guessedWords.contains(currentWordAtIdx.id) {
-            if let firstUnguessed = unguessedWords.first, let index = shuffledWords.firstIndex(where: { $0.id == firstUnguessed.id }) {
+        if guessedWords.contains(currentWordAtIdx) {
+            if let firstUnguessed = unguessedWords.first, let index = shuffledWords.firstIndex(of: firstUnguessed) {
                 currentWordIndex = index
             }
         } else {
             var nextIndex = (currentWordIndex + 1) % shuffledWords.count
             var attempts = 0
-            while guessedWords.contains(shuffledWords[nextIndex].id) && attempts < shuffledWords.count {
+            while guessedWords.contains(shuffledWords[nextIndex]) && attempts < shuffledWords.count {
                 nextIndex = (nextIndex + 1) % shuffledWords.count
                 attempts += 1
             }
-            if !guessedWords.contains(shuffledWords[nextIndex].id) {
+            if !guessedWords.contains(shuffledWords[nextIndex]) {
                 currentWordIndex = nextIndex
             }
         }
     }
     
-    func moveToNextTeam() {
-        guard let currentIndex = currentTeamIndex else { return }
+    func finishTeamTurn() {
+        guard let currentIndex = currentTeamIndex,
+              currentIndex < configuration.teams.count else { return }
+        
+        // Increment explaining player index for current team
+        let currentTeam = configuration.teams[currentIndex]
+        let currentExplainingIndex = explainingPlayerIndexByTeam[currentTeam] ?? 0
+        let nextExplainingIndex = (currentExplainingIndex + 1) % max(currentTeam.players.count, 1)
+        explainingPlayerIndexByTeam[currentTeam] = nextExplainingIndex
+        
+        // Move to next team
         let nextIndex = (currentIndex + 1) % configuration.teams.count
+        moveToNextTeam(nextIndex)
+    }
+    
+    private func moveToNextTeam(_ nextIndex: Int) {
         currentTeamIndex = nextIndex
         currentTeamTurnIndex += 1
         currentTurnStartWordIndex = guessedWords.count
+        initializeExplainingPlayerIndex()
     }
     
-    func getWordsGuessedInCurrentTurn(by teamId: UUID) -> [Word] {
+    func getWordsGuessedInCurrentTurn(by team: Team) -> [Word] {
         // Get words guessed by this team since the turn started
         // currentTurnStartWordIndex tracks how many words were guessed total when turn started
         let wordsGuessedThisTurn = shuffledWords.filter { word in
-            guessedWords.contains(word.id) && guessedByTeam[word.id] == teamId
+            guessedWords.contains(word) && guessedByTeam[word]?.id == team.id
         }
-        // Since we can't track exact order, return all words guessed by this team
-        // that were guessed in the current round
-        // This is an approximation - in a real scenario we'd need to track turn numbers
+        // Return words guessed by this team in the current round
         guard let currentRoundValue = currentRound?.rawValue else { return [] }
-        return wordsGuessedThisTurn.filter { guessedInRound[$0.id] == currentRoundValue }
+        return wordsGuessedThisTurn.filter { guessedInRounds[$0]?.contains(currentRoundValue) == true }
+    }
+    
+    func wasWordGuessedInRound(_ word: Word, round: GameRound) -> Bool {
+        guessedInRounds[word]?.contains(round.rawValue) ?? false
+    }
+    
+    func getRoundsWordWasGuessed(_ word: Word) -> Set<Int> {
+        guessedInRounds[word] ?? []
     }
     
     func startTeamTurn() {
         currentTurnStartWordIndex = guessedWords.count
+        initializeExplainingPlayerIndex()
     }
     
     func getExplainingPlayer(for teamIndex: Int) -> Player? {
         guard teamIndex < configuration.teams.count else { return nil }
         let team = configuration.teams[teamIndex]
-        guard team.players.count == 2 else { return team.players.first }
-        // Alternate between players based on turn index
-        return team.players[currentTeamTurnIndex % 2]
+        guard !team.players.isEmpty else { return nil }
+        
+        let explainingIndex = explainingPlayerIndexByTeam[team] ?? 0
+        return team.players[explainingIndex % team.players.count]
     }
     
     func getGuessingPlayer(for teamIndex: Int) -> Player? {
         guard teamIndex < configuration.teams.count else { return nil }
         let team = configuration.teams[teamIndex]
-        guard team.players.count == 2 else { return nil }
-        // The other player is guessing
-        let explainingIndex = currentTeamTurnIndex % 2
-        return team.players[(explainingIndex + 1) % 2]
+        guard team.players.count >= 2 else { return nil }
+        
+        let explainingIndex = explainingPlayerIndexByTeam[team] ?? 0
+        let guessingIndex = (explainingIndex + 1) % team.players.count
+        return team.players[guessingIndex]
+    }
+    
+    var currentExplainingPlayer: Player? {
+        guard let teamIndex = currentTeamIndex else { return nil }
+        return getExplainingPlayer(for: teamIndex)
+    }
+    
+    var currentGuessingPlayer: Player? {
+        guard let teamIndex = currentTeamIndex else { return nil }
+        return getGuessingPlayer(for: teamIndex)
     }
     
     func finishRound() {
@@ -234,8 +294,8 @@ final class GameManager {
         }
     }
     
-    func updateTeamScore(teamId: UUID) {
-        guard let teamIndex = configuration.teams.firstIndex(where: { $0.id == teamId }) else { return }
+    func updateTeamScore(team: Team) {
+        guard let teamIndex = configuration.teams.firstIndex(where: { $0.id == team.id }) else { return }
         configuration.teams[teamIndex].score += 1
     }
     
@@ -251,14 +311,15 @@ final class GameManager {
         configuration.wordsPerPlayer = 10
         configuration.roundDuration = 60
         startingTeamIndex = 0
-        testWordsByPlayer = [:]
         guessedWords.removeAll()
         guessedByTeam.removeAll()
-        guessedInRound.removeAll()
+        guessedInRounds.removeAll()
+        explainingPlayerIndexByTeam.removeAll()
+        currentTeamTurnIndex = 0
     }
     
-    func getTeamScore(teamId: UUID) -> Int {
-        configuration.teams.first(where: { $0.id == teamId })?.score ?? 0
+    func getTeamScore(team: Team) -> Int {
+        configuration.teams.first(where: { $0.id == team.id })?.score ?? 0
     }
     
     func getSortedTeamsByScore() -> [Team] {
@@ -270,14 +331,6 @@ final class GameManager {
         let sorted = getSortedTeamsByScore()
         guard let topScore = sorted.first?.score, topScore > 0 else { return nil }
         return sorted.first
-    }
-    
-    func defaultWords(for playerId: UUID) -> [String]? {
-        testWordsByPlayer[playerId]
-    }
-    
-    func updateDefaultWords(_ words: [String], for playerId: UUID) {
-        testWordsByPlayer[playerId] = words
     }
 }
 
@@ -318,11 +371,10 @@ private extension GameManager {
                     words.append(word)
                     poolIndex += 1
                 }
-                testWordsByPlayer[player.id] = words
+                addWords(words, for: player.id)
             }
         }
 
         configuration.teams = generatedTeams
     }
 }
-

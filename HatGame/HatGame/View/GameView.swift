@@ -241,7 +241,7 @@ private extension GameView {
     @ViewBuilder
     var teamTurnResultsContent: some View {
         if let current = currentTeam {
-            let guessedWords = gameManager.getWordsGuessedInCurrentTurn(by: current.id)
+            let guessedWords = gameManager.getWordsGuessedInCurrentTurn(by: current)
             TeamTurnResultsView(
                 team: current,
                 teamIndex: teamIndex,
@@ -371,13 +371,13 @@ private extension GameView {
 
     func markAsGuessed() {
         guard let team = currentTeam else { return }
-        gameManager.markWordAsGuessed(by: team.id)
+        gameManager.markCurrentWordAsGuessed(by: team)
 
         if gameManager.allWordsGuessed {
             stopTimer()
             finishRound()
         } else {
-            gameManager.skipToNextWord()
+            gameManager.nextWord()
         }
     }
 
@@ -386,7 +386,7 @@ private extension GameView {
             stopTimer()
             finishRound()
         } else {
-            gameManager.skipToNextWord()
+            gameManager.nextWord()
         }
     }
 
