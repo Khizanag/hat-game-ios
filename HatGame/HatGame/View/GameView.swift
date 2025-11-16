@@ -130,7 +130,7 @@ private extension GameView {
 
     @ViewBuilder
     var wordSection: some View {
-        if let word = gameManager.currentWord, !word.guessed {
+        if let word = gameManager.currentWord {
             activeWordCard(for: word)
         } else if gameManager.allWordsGuessed {
             allWordsGuessedSection
@@ -227,7 +227,7 @@ private extension GameView {
     }
 
     var guessedWordsCount: Int {
-        gameManager.shuffledWords.filter { $0.guessed }.count
+        gameManager.shuffledWords.filter { gameManager.isWordGuessed($0) }.count
     }
 
     var totalWordsCount: Int {
