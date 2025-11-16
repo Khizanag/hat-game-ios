@@ -43,16 +43,13 @@ struct WordInputView: View {
     
     var body: some View {
         content
-            .setDefaultBackground()
+            .setDefaultStyle(title: "Add Words")
             .onAppear {
                 prepareCurrentPlayer()
             }
             .onChange(of: currentPlayerIndex) { _, _ in
                 prepareCurrentPlayer()
             }
-            .navigationTitle("Add Words")
-            .navigationBarTitleDisplayMode(.inline)
-            .closeButtonToolbar()
     }
 }
 

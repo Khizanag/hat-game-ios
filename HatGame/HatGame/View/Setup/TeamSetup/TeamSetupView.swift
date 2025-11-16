@@ -27,10 +27,7 @@ struct TeamSetupView: View {
 
     var body: some View {
         content
-            .setDefaultBackground()
-            .navigationTitle("Setup Teams")
-            .navigationBarTitleDisplayMode(.inline)
-            .closeButtonToolbar()
+            .setDefaultStyle(title: "Setup Teams")
             .sheet(isPresented: $isAddTeamSheetPresented) {
                 NavigationView {
                     AddTeamView(

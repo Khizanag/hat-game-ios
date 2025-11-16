@@ -14,4 +14,21 @@ extension View {
                 .ignoresSafeArea()
         )
     }
+    
+    @ViewBuilder
+    func setDefaultStyle(title: String? = nil) -> some View {
+        if let title {
+            self
+                .setDefaultBackground()
+                .navigationTitle(title)
+                .navigationBarTitleDisplayMode(.inline)
+                .needsCloseButton()
+                .closeButtonToolbar()
+        } else {
+            self
+                .setDefaultBackground()
+                .needsCloseButton()
+                .closeButtonToolbar()
+        }
+    }
 }

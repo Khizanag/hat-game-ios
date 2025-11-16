@@ -15,10 +15,7 @@ struct TimerSettingsView: View {
 
     var body: some View {
         content
-            .setDefaultBackground()
-            .navigationTitle("Timer Settings")
-            .navigationBarTitleDisplayMode(.inline)
-            .closeButtonToolbar()
+            .setDefaultStyle(title: "Timer Settings")
     }
 }
 
