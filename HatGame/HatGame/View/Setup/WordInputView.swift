@@ -29,11 +29,11 @@ struct WordInputView: View {
     }
     
     private var wordsPerPlayer: Int {
-        gameManager.wordsPerPlayer
+        gameManager.configuration.wordsPerPlayer
     }
     
     private var allPlayers: [Player] {
-        gameManager.teams.flatMap { $0.players }
+        gameManager.configuration.teams.flatMap { $0.players }
     }
     
     private var progress: Double {

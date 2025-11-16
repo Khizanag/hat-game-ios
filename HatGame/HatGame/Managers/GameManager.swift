@@ -11,16 +11,14 @@ import SwiftUI
 
 @Observable
 final class GameManager {
-    var teams: [Team] = []
-    var allWords: [Word] = []
+    var configuration = GameConfiguration()
+    
     var shuffledWords: [Word] = []
     var currentWordIndex: Int = 0
 
     var roundStartTime: Date?
     var roundEndTime: Date?
 
-    var wordsPerPlayer: Int = 10
-    var roundDuration: Int = 60
     var startingTeamIndex: Int = 0
     var currentRound: GameRound?
     var currentTeamIndex: Int?
@@ -56,50 +54,52 @@ final class GameManager {
     }
 
     func addTeam(name: String) {
-        let team = Team(name: name, colorIndex: teams.count)
-        teams.append(team)
+        guard configuration.teams.count < configuration.maxTeams else { return }
+        let team = Team(name: name, colorIndex: configuration.teams.count)
+        configuration.teams.append(team)
     }
     
     func addPlayer(name: String, to teamId: UUID, limit: Int? = nil) {
-        guard let teamIndex = teams.firstIndex(where: { $0.id == teamId }) else { return }
-        if let limit, teams[teamIndex].players.count >= limit {
+        guard let teamIndex = configuration.teams.firstIndex(where: { $0.id == teamId }) else { return }
+        let maxLimit = limit ?? configuration.maxTeamMembers
+        if configuration.teams[teamIndex].players.count >= maxLimit {
             return
         }
         let player = Player(name: name, teamId: teamId)
-        teams[teamIndex].players.append(player)
+        configuration.teams[teamIndex].players.append(player)
     }
     
     func updateTeamName(teamId: UUID, name: String) {
-        guard let teamIndex = teams.firstIndex(where: { $0.id == teamId }) else { return }
-        teams[teamIndex].name = name
+        guard let teamIndex = configuration.teams.firstIndex(where: { $0.id == teamId }) else { return }
+        configuration.teams[teamIndex].name = name
     }
     
     func updatePlayerName(playerId: UUID, name: String) {
-        for teamIndex in teams.indices {
-            if let playerIndex = teams[teamIndex].players.firstIndex(where: { $0.id == playerId }) {
-                teams[teamIndex].players[playerIndex].name = name
+        for teamIndex in configuration.teams.indices {
+            if let playerIndex = configuration.teams[teamIndex].players.firstIndex(where: { $0.id == playerId }) {
+                configuration.teams[teamIndex].players[playerIndex].name = name
                 break
             }
         }
     }
     
     func removeTeam(_ teamId: UUID) {
-        teams.removeAll { $0.id == teamId }
+        configuration.teams.removeAll { $0.id == teamId }
     }
     
     func removePlayer(_ playerId: UUID) {
-        for index in teams.indices {
-            teams[index].players.removeAll { $0.id == playerId }
+        for index in configuration.teams.indices {
+            configuration.teams[index].players.removeAll { $0.id == playerId }
         }
     }
     
     func addWords(_ words: [String], for playerId: UUID) {
         let newWords = words.map { Word(text: $0) }
-        allWords.append(contentsOf: newWords)
+        configuration.words.append(contentsOf: newWords)
     }
     
     func shuffleWords() {
-        shuffledWords = allWords.shuffled()
+        shuffledWords = configuration.words.shuffled()
         currentWordIndex = 0
     }
     
@@ -163,7 +163,7 @@ final class GameManager {
     
     func moveToNextTeam() {
         guard let currentIndex = currentTeamIndex else { return }
-        let nextIndex = (currentIndex + 1) % teams.count
+        let nextIndex = (currentIndex + 1) % configuration.teams.count
         currentTeamIndex = nextIndex
         currentTeamTurnIndex += 1
         currentTurnStartWordIndex = shuffledWords.filter { $0.guessed }.count
@@ -186,16 +186,16 @@ final class GameManager {
     }
     
     func getExplainingPlayer(for teamIndex: Int) -> Player? {
-        guard teamIndex < teams.count else { return nil }
-        let team = teams[teamIndex]
+        guard teamIndex < configuration.teams.count else { return nil }
+        let team = configuration.teams[teamIndex]
         guard team.players.count == 2 else { return team.players.first }
         // Alternate between players based on turn index
         return team.players[currentTeamTurnIndex % 2]
     }
     
     func getGuessingPlayer(for teamIndex: Int) -> Player? {
-        guard teamIndex < teams.count else { return nil }
-        let team = teams[teamIndex]
+        guard teamIndex < configuration.teams.count else { return nil }
+        let team = configuration.teams[teamIndex]
         guard team.players.count == 2 else { return nil }
         // The other player is guessing
         let explainingIndex = currentTeamTurnIndex % 2
@@ -214,41 +214,41 @@ final class GameManager {
             self.currentTeamIndex = nil
         } else {
             let nextRound = GameRound(rawValue: currentRound.rawValue + 1)!
-            let nextTeamIndex = (startingTeamIndex + 1) % teams.count
+            let nextTeamIndex = (startingTeamIndex + 1) % configuration.teams.count
             startRound(nextRound, startingTeamIndex: nextTeamIndex)
         }
     }
     
     func updateTeamScore(teamId: UUID) {
-        guard let teamIndex = teams.firstIndex(where: { $0.id == teamId }) else { return }
-        teams[teamIndex].score += 1
+        guard let teamIndex = configuration.teams.firstIndex(where: { $0.id == teamId }) else { return }
+        configuration.teams[teamIndex].score += 1
     }
     
     func resetGame() {
         currentRound = nil
         currentTeamIndex = nil
-        teams = []
-        allWords = []
+        configuration.teams = []
+        configuration.words = []
         shuffledWords = []
         currentWordIndex = 0
         roundStartTime = nil
         roundEndTime = nil
-        wordsPerPlayer = 10
-        roundDuration = 60
+        configuration.wordsPerPlayer = 10
+        configuration.roundDuration = 60
         startingTeamIndex = 0
         testWordsByPlayer = [:]
     }
     
     func getTeamScore(teamId: UUID) -> Int {
-        teams.first(where: { $0.id == teamId })?.score ?? 0
+        configuration.teams.first(where: { $0.id == teamId })?.score ?? 0
     }
     
     func getSortedTeamsByScore() -> [Team] {
-        teams.sorted { $0.score > $1.score }
+        configuration.teams.sorted { $0.score > $1.score }
     }
     
     func getWinner() -> Team? {
-        guard !teams.isEmpty else { return nil }
+        guard !configuration.teams.isEmpty else { return nil }
         let sorted = getSortedTeamsByScore()
         guard let topScore = sorted.first?.score, topScore > 0 else { return nil }
         return sorted.first
@@ -267,8 +267,8 @@ final class GameManager {
 private extension GameManager {
     func applyTestData() {
         resetGame()
-        wordsPerPlayer = 5
-        roundDuration = 5
+        configuration.wordsPerPlayer = 5
+        configuration.roundDuration = 5
 
         let sampleTeams = [
             ("Orion", ["Alex", "Maya"]),
@@ -294,7 +294,7 @@ private extension GameManager {
 
             for player in players {
                 var words: [String] = []
-                for _ in 0..<wordsPerPlayer {
+                for _ in 0..<configuration.wordsPerPlayer {
                     let word = wordPool[poolIndex % wordPool.count]
                     words.append(word)
                     poolIndex += 1
@@ -303,7 +303,7 @@ private extension GameManager {
             }
         }
 
-        teams = generatedTeams
+        configuration.teams = generatedTeams
     }
 }
 

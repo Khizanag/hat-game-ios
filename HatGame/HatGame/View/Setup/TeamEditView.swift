@@ -27,7 +27,7 @@ struct TeamEditView: View {
     }
     
     var team: Team? {
-        gameManager.teams.first(where: { $0.id == teamId })
+        gameManager.configuration.teams.first(where: { $0.id == teamId })
     }
     
     var body: some View {
@@ -181,12 +181,13 @@ private extension TeamEditView {
 }
 
 // MARK: - Preview
-#Preview {
-    let manager = GameManager()
-    manager.addTeam(name: "Orion")
-    let teamId = manager.teams[0].id
-    manager.addPlayer(name: "Alex", to: teamId)
-    manager.addPlayer(name: "Maya", to: teamId)
-    return TeamEditView(teamId: teamId)
-        .environment(manager)
-}
+// TODO: Fix Preview
+//#Preview {
+//    let manager = GameManager()
+//    manager.addTeam(name: "Orion")
+//    let teamId = manager.teams[0].id
+//    manager.addPlayer(name: "Alex", to: teamId)
+//    manager.addPlayer(name: "Maya", to: teamId)
+//    return TeamEditView(teamId: teamId)
+//        .environment(manager)
+//}

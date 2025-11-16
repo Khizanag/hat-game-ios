@@ -99,7 +99,7 @@ private extension TimerSettingsView {
     }
     
     func handleContinue() {
-        gameManager.roundDuration = selectedDuration
+        gameManager.configuration.roundDuration = selectedDuration
         navigator.push(.wordInput)
     }
 }

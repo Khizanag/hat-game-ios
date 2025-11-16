@@ -66,7 +66,7 @@ private extension RandomizationView {
                         .font(DesignBook.Font.title2)
                         .foregroundColor(DesignBook.Color.Text.primary)
 
-                    Text("\(gameManager.allWords.count) words ready")
+                    Text("\(gameManager.configuration.words.count) words ready")
                         .font(DesignBook.Font.body)
                         .foregroundColor(DesignBook.Color.Text.secondary)
                 }
@@ -90,7 +90,7 @@ private extension RandomizationView {
                     .foregroundColor(DesignBook.Color.Text.primary)
 
                 Picker("Starting Team", selection: $selectedStartingTeamIndex) {
-                    ForEach(Array(gameManager.teams.enumerated()), id: \.offset) { index, team in
+                    ForEach(Array(gameManager.configuration.teams.enumerated()), id: \.offset) { index, team in
                         Text(team.name)
                             .tag(index)
                     }
