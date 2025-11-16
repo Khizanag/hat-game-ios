@@ -95,7 +95,7 @@ private extension GameView {
     @ViewBuilder
     var currentTeamSection: some View {
         if let team = currentTeam {
-            VStack(spacing: DesignBook.Spacing.lg) {
+            VStack(spacing: 0) {
                 roundInfoCard(for: team)
 
                 Spacer(minLength: 0)
@@ -152,13 +152,10 @@ private extension GameView {
                     .multilineTextAlignment(.center)
                     .frame(minHeight: 200)
 
-                HStack(spacing: DesignBook.Spacing.md) {
-                    // TODO: Remove stack
-                    PrimaryButton(title: "Got It!") {
-                        markAsGuessed()
-                    }
+                PrimaryButton(title: "Got It!") {
+                    markAsGuessed()
                 }
-                .padding(.horizontal, DesignBook.Spacing.sm)
+                .padding(.horizontal, DesignBook.Spacing.md)
             }
         }
         .padding(.horizontal, DesignBook.Spacing.lg)
