@@ -88,9 +88,9 @@ private extension TimerSettingsView {
     
     var timerTags: some View {
         HStack(spacing: DesignBook.Spacing.md) {
-            TimerTag(title: "Lightning", range: "5-30s", isHighlighted: selectedDuration.isBetween(5, and: 30))
-            TimerTag(title: "Classic", range: "60s", isHighlighted: selectedDuration == 60)
-            TimerTag(title: "Marathon", range: "90-120s", isHighlighted: selectedDuration.isBetween(90, and: 120))
+            LegendTag(title: "Lightning", range: "5-30s", isHighlighted: selectedDuration.isBetween(5, and: 30))
+            LegendTag(title: "Classic", range: "60s", isHighlighted: selectedDuration == 60)
+            LegendTag(title: "Marathon", range: "90-120s", isHighlighted: selectedDuration.isBetween(90, and: 120))
         }
         .padding(.horizontal, -DesignBook.Spacing.md)
     }
@@ -119,28 +119,6 @@ private extension TimerSettingsView {
 private extension Int {
     func isBetween(_ lower: Int, and upper: Int) -> Bool {
         self >= lower && self <= upper
-    }
-}
-
-private struct TimerTag: View {
-    let title: String
-    let range: String
-    let isHighlighted: Bool
-    
-    var body: some View {
-        VStack(spacing: DesignBook.Spacing.xs) {
-            Text(title)
-                .font(DesignBook.Font.captionBold)
-                .foregroundColor(isHighlighted ? DesignBook.Color.Text.accent : DesignBook.Color.Text.primary)
-            Text(range)
-                .font(DesignBook.Font.caption)
-                .foregroundColor(isHighlighted ? DesignBook.Color.Text.accent : DesignBook.Color.Text.secondary)
-        }
-        .padding(.vertical, DesignBook.Spacing.sm)
-        .padding(.horizontal, DesignBook.Spacing.md)
-        .background(isHighlighted ? DesignBook.Color.Text.accent.opacity(0.2) : DesignBook.Color.Background.secondary)
-        .cornerRadius(DesignBook.Size.smallCardCornerRadius)
-        .frame(maxWidth: .infinity)
     }
 }
 
