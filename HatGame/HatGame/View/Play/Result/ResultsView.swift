@@ -10,10 +10,13 @@ import SwiftUI
 struct ResultsView: View {
     @Environment(GameManager.self) private var gameManager
     let round: GameRound?
-    let isFinal: Bool
     @Environment(Navigator.self) private var navigator
     @State private var isTotalScoresExpanded = false
     @State private var expandedRounds: Set<GameRound> = []
+    
+    private var isFinal: Bool {
+        round == nil
+    }
     
     private var winners: [Team] {
         let sortedTeams = gameManager.getSortedTeamsByTotalScore()
@@ -21,11 +24,6 @@ struct ResultsView: View {
             return []
         }
         return sortedTeams.filter { gameManager.getTotalScore(for: $0) == topScore }
-    }
-    
-    init(round: GameRound?, isFinal: Bool) {
-        self.round = round
-        self.isFinal = isFinal
     }
 
     var body: some View {

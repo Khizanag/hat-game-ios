@@ -25,7 +25,7 @@ struct NextTeamView: View {
             .navigationBarBackButtonHidden()
             .sheet(isPresented: $isStandingsPresented) {
                 NavigationView {
-                    ResultsView(round: round, isFinal: false)
+                    ResultsView(round: round)
                 }
             }
     }

@@ -61,9 +61,9 @@ extension Page {
         case .nextTeam(let round, let team):
             NextTeamView(round: round, team: team)
         case .roundResults(let round):
-            ResultsView(round: round, isFinal: false)
+            ResultsView(round: round)
         case .finalResults:
-            ResultsView(round: nil, isFinal: true)
+            ResultsView(round: nil)
         case .developerInfo:
             DeveloperInfoView()
         }
