@@ -23,8 +23,8 @@ struct GameView: View {
     @State private var isPaused: Bool = false
 
     var currentTeam: Team? {
-        guard teamIndex < gameManager.teams.count else { return nil }
-        return gameManager.teams[teamIndex]
+        guard teamIndex < gameManager.configuration.teams.count else { return nil }
+        return gameManager.configuration.teams[teamIndex]
     }
 
     var body: some View {
@@ -240,7 +240,7 @@ private extension GameView {
     }
 
     var timeUsed: Int {
-        max(gameManager.roundDuration - remainingSeconds, 0)
+        max(gameManager.configuration.roundDuration - remainingSeconds, 0)
     }
 
     @ViewBuilder
@@ -262,10 +262,10 @@ private extension GameView {
     @ViewBuilder
     var nextTeamContent: some View {
         if let nextIndex = nextTeamIndex,
-           nextIndex < gameManager.teams.count,
+           nextIndex < gameManager.configuration.teams.count,
            let round = nextTeamRound {
             NextTeamViewWrapper(
-                nextTeam: gameManager.teams[nextIndex],
+                nextTeam: gameManager.configuration.teams[nextIndex],
                 nextIndex: nextIndex,
                 round: round,
                 wordsRemaining: gameManager.remainingWords.count,
@@ -306,7 +306,7 @@ private extension GameView {
     func startTimer() {
         stopTimer()
         isPaused = false
-        remainingSeconds = gameManager.roundDuration
+        remainingSeconds = gameManager.configuration.roundDuration
         timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
             tickTimer()
         }
@@ -352,7 +352,7 @@ private extension GameView {
     }
 
     func showNextTeam() {
-        let nextIndex = (teamIndex + 1) % gameManager.teams.count
+        let nextIndex = (teamIndex + 1) % gameManager.configuration.teams.count
         nextTeamIndex = nextIndex
         nextTeamRound = round
         showingTeamTurnResults = false

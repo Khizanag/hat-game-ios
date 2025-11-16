@@ -22,14 +22,14 @@ struct TeamSetupView: View {
     private let playersPerTeam = 2
 
     private var canContinue: Bool {
-        gameManager.teams.count >= 2 && gameManager.teams.allSatisfy {
+        gameManager.configuration.teams.count >= 2 && gameManager.configuration.teams.allSatisfy {
             $0.players.count == playersPerTeam
         }
     }
 
     private var selectedTeamPlayersCount: Int {
         guard let id = selectedTeamId else { return 0 }
-        return gameManager.teams.first(where: { $0.id == id })?.players.count ?? 0
+        return gameManager.configuration.teams.first(where: { $0.id == id })?.players.count ?? 0
     }
 
     var body: some View {
@@ -43,7 +43,7 @@ struct TeamSetupView: View {
                     playersPerTeam: playersPerTeam,
                     onCreateTeam: { name, players in
                         gameManager.addTeam(name: name)
-                        guard let teamId = gameManager.teams.last?.id else { return }
+                        guard let teamId = gameManager.configuration.teams.last?.id else { return }
                         players.forEach { playerName in
                             gameManager.addPlayer(name: playerName, to: teamId)
                         }
@@ -85,7 +85,7 @@ private extension TeamSetupView {
 
     var teamsList: some View {
         VStack(spacing: DesignBook.Spacing.md) {
-            ForEach(gameManager.teams) { team in
+            ForEach(gameManager.configuration.teams) { team in
                 TeamCard(
                     team: team,
                     playersPerTeam: playersPerTeam,
@@ -102,7 +102,7 @@ private extension TeamSetupView {
                 )
             }
             
-            if gameManager.teams.count < 6 {
+            if gameManager.configuration.teams.count < 6 {
                 SecondaryButton(title: "Add Team") {
                     newTeamName = ""
                     isAddTeamSheetPresented = true
@@ -186,7 +186,7 @@ private extension TeamSetupView {
     @ViewBuilder
     var deleteTeamAlertMessage: some View {
         if let teamId = teamToDelete,
-           let team = gameManager.teams.first(where: { $0.id == teamId }) {
+           let team = gameManager.configuration.teams.first(where: { $0.id == teamId }) {
             Text("Are you sure you want to delete \"\(team.name)\"? This action cannot be undone.")
         }
     }

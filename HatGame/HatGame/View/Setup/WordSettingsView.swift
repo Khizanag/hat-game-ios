@@ -100,7 +100,7 @@ private extension WordSettingsView {
     }
     
     func handleContinue() {
-        gameManager.wordsPerPlayer = selectedWordCount
+        gameManager.configuration.wordsPerPlayer = selectedWordCount
         navigator.push(.timerSettings)
     }
 }
