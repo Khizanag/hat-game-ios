@@ -136,29 +136,6 @@ private extension GameView {
         }
     }
 
-    var allWordsGuessedSection: some View {
-        VStack(spacing: DesignBook.Spacing.md) {
-            GameCard {
-                VStack(spacing: DesignBook.Spacing.md) {
-                    Text("🎉")
-                        .font(.system(size: 80))
-
-                    Text("All words guessed!")
-                        .font(DesignBook.Font.title2)
-                        .foregroundColor(DesignBook.Color.Text.primary)
-
-                    Text("Time: \(formatTime(timeUsed))")
-                        .font(DesignBook.Font.headline)
-                        .foregroundColor(DesignBook.Color.Text.secondary)
-                }
-            }
-
-            PrimaryButton(title: "Finish Round") {
-                finishRound()
-            }
-        }
-    }
-
     var progressCard: some View {
         GameCard {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
