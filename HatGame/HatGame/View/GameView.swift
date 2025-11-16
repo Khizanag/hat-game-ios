@@ -36,35 +36,7 @@ struct GameView: View {
                 }
             }
             .toolbar {
-                ToolbarItem(placement: .principal) {
-                    Text(formatTime(remainingSeconds))
-                        .font(DesignBook.Font.title3)
-                        .foregroundColor(DesignBook.Color.Text.accent)
-                        .monospacedDigit()
-                }
-                
-                
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button {
-                        withAnimation {
-                            togglePause()
-                        }
-                    } label: {
-                        Image(systemName: isPaused ? "play.fill" : "pause.fill")
-                            .foregroundColor(DesignBook.Color.Text.primary)
-                    }
-                }
-                
-                ToolbarItem(placement: .cancellationAction) {
-                    DestructiveButton(
-                        action: {
-                            showingGiveUpConfirmation = true
-                        },
-                        label: {
-                            Label("Give up", systemImage: "hand.raised.fill")
-                        }
-                    )
-                }
+                gameToolbar
             }
             .onAppear {
                 gameManager.startTeamTurn()
@@ -95,6 +67,36 @@ private extension GameView {
     var content: some View {
         VStack(spacing: DesignBook.Spacing.lg) {
             currentTeamSection
+        }
+    }
+    
+    @ToolbarContentBuilder
+    var gameToolbar: some ToolbarContent {
+        ToolbarItem(placement: .principal) {
+            Text(formatTime(remainingSeconds))
+                .font(DesignBook.Font.title3)
+                .foregroundColor(DesignBook.Color.Text.accent)
+                .monospacedDigit()
+        }
+        
+        ToolbarItem(placement: .navigationBarTrailing) {
+            Button {
+                togglePause()
+            } label: {
+                Image(systemName: isPaused ? "play.fill" : "pause.fill")
+                    .foregroundColor(DesignBook.Color.Text.primary)
+            }
+        }
+        
+        ToolbarItem(placement: .cancellationAction) {
+            DestructiveButton(
+                action: {
+                    showingGiveUpConfirmation = true
+                },
+                label: {
+                    Label("Give up", systemImage: "hand.raised.fill")
+                }
+            )
         }
     }
 
@@ -235,14 +237,10 @@ private extension GameView {
                     .font(DesignBook.Font.largeTitle)
                     .foregroundColor(DesignBook.Color.Text.primary)
 
-                Text("Time remaining: \(formatTime(remainingSeconds))")
-                    .font(DesignBook.Font.headline)
-                    .foregroundColor(DesignBook.Color.Text.secondary)
-
                 PrimaryButton(title: "Continue") {
                     togglePause()
                 }
-                .frame(width: 200)
+                .frame(width: 216)
             }
         }
     }
@@ -343,7 +341,9 @@ private extension GameView {
     }
 
     func togglePause() {
-        isPaused.toggle()
+        withAnimation {
+            isPaused.toggle()
+        }
     }
 
     func stopTimer() {
