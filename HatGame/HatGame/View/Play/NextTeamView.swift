@@ -37,11 +37,10 @@ private extension NextTeamView {
             VStack {
                 teamDetails
                     .padding(.horizontal, DesignBook.Spacing.lg)
-
-                Spacer().frame(height: 144) // To fix overlay button visibility
             }
+            .padding(.bottom, DesignBook.Spacing.xxl)
         }
-        .overlay(alignment: .bottom) {
+        .safeAreaInset(edge: .bottom) {
             buttonsSection
                 .padding(.horizontal, DesignBook.Spacing.lg)
         }
