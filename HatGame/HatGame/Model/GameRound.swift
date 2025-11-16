@@ -8,17 +8,17 @@
 import Foundation
 
 enum GameRound: Int, Codable, CaseIterable, Equatable {
-    case one = 1
-    case two = 2
-    case three = 3
+    case first = 1
+    case second = 2
+    case third = 3
     
     var description: String {
         switch self {
-        case .one:
+        case .first:
             "No restrictions - use any words or descriptions"
-        case .two:
+        case .second:
             "One word only - can say just one word"
-        case .three:
+        case .third:
             "No words - gestures and miming only"
         }
     }

@@ -112,8 +112,8 @@ private extension RandomizationView {
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
             gameManager.shuffleWords()
-            gameManager.startRound(.one, startingTeamIndex: selectedStartingTeamIndex)
-            navigator.push(.playing(round: .one, currentTeamIndex: selectedStartingTeamIndex))
+            gameManager.startRound(.first, startingTeamIndex: selectedStartingTeamIndex)
+            navigator.push(.playing(round: .first, currentTeamIndex: selectedStartingTeamIndex))
         }
     }
 }

@@ -453,9 +453,9 @@ private extension NextTeamViewWrapper {
     let manager = GameManager()
     manager.addTeam(name: "Team 1")
     manager.shuffledWords = [Word(text: "Test")]
-    manager.currentRound = .one
+    manager.currentRound = .first
     manager.currentTeamIndex = 0
-    return GameView(round: .one, teamIndex: 0)
+    return GameView(round: .first, teamIndex: 0)
         .environment(manager)
 }
 

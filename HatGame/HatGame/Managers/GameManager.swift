@@ -209,7 +209,7 @@ final class GameManager {
     func startNextRound() {
         guard let currentRound = currentRound else { return }
         
-        if currentRound == .three {
+        if currentRound == .third {
             self.currentRound = nil
             self.currentTeamIndex = nil
         } else {

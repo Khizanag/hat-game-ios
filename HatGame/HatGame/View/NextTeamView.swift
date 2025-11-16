@@ -129,7 +129,7 @@ private extension NextTeamView {
     return NextTeamView(
         team: team,
         teamIndex: 1,
-        round: .one,
+        round: .first,
         wordsRemaining: 15,
         explainingPlayer: team.players[0],
         guessingPlayer: team.players[1],

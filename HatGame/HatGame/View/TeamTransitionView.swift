@@ -97,7 +97,7 @@ private extension TeamTransitionView {
         currentTeam: team1,
         nextTeam: team2,
         nextTeamIndex: 1,
-        round: .one,
+        round: .first,
         onContinue: {}
     )
 }

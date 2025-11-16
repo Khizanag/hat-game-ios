@@ -133,7 +133,7 @@ private extension TeamTurnResultsView {
         team: team,
         teamIndex: 0,
         guessedWords: words,
-        round: .one,
+        round: .first,
         onContinue: {}
     )
 }
