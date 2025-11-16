@@ -49,7 +49,7 @@ private extension ResultsView {
             GameCard {
                 winnerCardContent(for: winner)
             }
-            .padding(.horizontal, DesignBook.Spacing.lg)
+            .paddingHorizontalDefault()
             .padding(.top, DesignBook.Spacing.lg)
         }
     }
@@ -61,7 +61,7 @@ private extension ResultsView {
                 teamScoreRows
             }
         }
-        .padding(.horizontal, DesignBook.Spacing.lg)
+        .paddingHorizontalDefault()
     }
     
     var standingsHeader: some View {
@@ -94,7 +94,7 @@ private extension ResultsView {
         PrimaryButton(title: "New Game") {
             handleNewGame()
         }
-        .padding(.horizontal, DesignBook.Spacing.lg)
+        .paddingHorizontalDefault()
         .padding(.bottom, DesignBook.Spacing.lg)
     }
     

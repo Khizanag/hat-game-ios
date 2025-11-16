@@ -17,7 +17,7 @@ struct DeveloperInfoView: View {
                 contactSection
                 Spacer()
             }
-            .padding(.horizontal, DesignBook.Spacing.lg)
+            .paddingHorizontalDefault()
             .padding(.vertical, DesignBook.Spacing.lg)
         }
         .setDefaultStyle(title: "Developer Info")

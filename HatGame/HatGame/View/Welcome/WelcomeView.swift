@@ -77,7 +77,7 @@ private extension WelcomeView {
                 }
             }
         }
-        .padding(.horizontal, DesignBook.Spacing.lg)
+        .paddingHorizontalDefault()
     }
     
     var actionButtons: some View {
@@ -90,7 +90,7 @@ private extension WelcomeView {
                 navigator.push(.developerInfo)
             }
         }
-        .padding(.horizontal, DesignBook.Spacing.lg)
+        .paddingHorizontalDefault()
     }
     
     var testModeCard: some View {
@@ -129,7 +129,7 @@ private extension WelcomeView {
                 }
             }
         }
-        .padding(.horizontal, DesignBook.Spacing.lg)
+        .paddingHorizontalDefault()
     }
     
     func handleTestModeChange(_ enabled: Bool) {
