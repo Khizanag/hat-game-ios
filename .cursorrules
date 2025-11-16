@@ -1,0 +1,90 @@
+# Cursor Rules for Hat Game iOS
+
+## Code Style
+
+### View Structure
+- Use `struct SomeView: View { var body: some View { ... } }` pattern
+- Do NOT use `struct SomeView { } extension SomeView: View { ... }` pattern
+- Move component creation into private extensions as computed properties to reduce body length
+- Add appropriate MARK comments to protocol conformances
+- Add appropriate MARK comments to Preview blocks
+
+### Return Statements
+- Remove `return` keyword if possible when it's a single expression (including if/else, switch, etc.)
+- If there is a single expression and `return` keyword can be omitted, omit it
+
+### File Organization
+- Keep imports in sorted order
+- Do not add extra whitelines, not at the end of the file too
+- Avoid adding several endlines at the end of the file
+
+### File Headers
+- Use current date in headers for newly created files
+- Do NOT change headers of already created files
+
+## Design System
+
+### DesignBook Usage
+- Use DesignBook for everything possible:
+  - Fonts
+  - Colors
+  - Shadows
+  - Size
+  - Spacing
+  - Opacity
+- Do NOT use custom values (e.g., 18, 16, Color.blue)
+- Use values from DesignBook (e.g., `DesignBook.Color.Text.primary`, `DesignBook.Spacing.md`)
+- If new asset is required, add it to DesignBook with a generic name (e.g., `Color.Text.Status.error` not `cardErrorTextColor`)
+
+## SwiftUI Patterns
+
+### State Management
+- Use Observation framework over ObservableObject
+- Use `@Environment` for dependency injection
+- Use `@State` for local view state
+- Use `@Binding` for two-way data flow
+
+### View Modifiers
+- Create reusable view modifiers for common patterns (e.g., `setDefaultBackground()`)
+- Move modifiers to Extensions folder when appropriate
+
+### Components
+- Create shared components for duplicated UI (e.g., `LegendTag`, `HeaderCard`, `TeamFormView`)
+- Use generic components with `@ViewBuilder` when appropriate
+
+## Data Models
+
+### Immutability
+- Use `let` for properties that should not change after initialization (e.g., `Player.name`, `Player.teamId`, `Word.text`)
+- Use `let` for team color instead of colorIndex
+
+### Model Structure
+- Keep models simple and focused
+- Avoid tracking state in models (track in managers instead)
+- Use `Hashable` when models need to be dictionary keys
+
+## Architecture
+
+### Managers
+- Use `@Observable` macro for observable objects
+- Keep game logic in GameManager
+- Keep configuration separate (e.g., GameConfiguration, AppConfiguration)
+- Track state using dictionaries when needed (e.g., `wordsGuessedByTeam: [Team: [Word]]`)
+
+### Navigation
+- Use Navigator for navigation flow
+- Use Page enum for route definitions
+- Create wrapper views when needed to access environment
+
+## Git
+
+### Commits
+- Commit with `Khizanag@gmail.com` account
+- Write descriptive commit messages
+
+## Testing
+
+### Test Mode
+- Use AppConfiguration for application-level test mode
+- Pre-fill data in test mode when appropriate
+
