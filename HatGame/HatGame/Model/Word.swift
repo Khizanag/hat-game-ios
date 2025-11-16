@@ -7,25 +7,15 @@
 
 import Foundation
 
-struct Word: Identifiable, Codable, Hashable {
+struct Word: Identifiable, Hashable {
     let id: UUID
-    var text: String
-    var guessed: Bool
-    var guessedByTeamId: UUID?
-    var guessedInRound: Int?
+    let text: String
     
     init(
         id: UUID = UUID(),
-        text: String,
-        guessed: Bool = false,
-        guessedByTeamId: UUID? = nil,
-        guessedInRound: Int? = nil
+        text: String
     ) {
         self.id = id
         self.text = text
-        self.guessed = guessed
-        self.guessedByTeamId = guessedByTeamId
-        self.guessedInRound = guessedInRound
     }
 }
-
