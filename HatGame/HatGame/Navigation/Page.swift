@@ -21,7 +21,7 @@ enum Page: Hashable {
     case play(round: GameRound)
     case teamTurnResults(guessedWords: [Word])
     case nextTeam(round: GameRound, team: Team)
-    case roundResults(round: GameRound)
+    case roundResults
 
     case finalResults
 }
@@ -60,10 +60,10 @@ extension Page {
             TeamTurnResultsView(guessedWords: guessedWords)
         case .nextTeam(let round, let team):
             NextTeamView(round: round, team: team)
-        case .roundResults(let round):
-            ResultsView(round: round)
+        case .roundResults:
+            ResultsView()
         case .finalResults:
-            ResultsView(round: nil)
+            ResultsView()
         case .developerInfo:
             DeveloperInfoView()
         }

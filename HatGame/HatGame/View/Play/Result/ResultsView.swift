@@ -14,7 +14,9 @@ struct ResultsView: View {
     @State private var isTotalScoresExpanded = false
     @State private var expandedRounds: Set<GameRound> = []
 
-    let round: GameRound?
+    private var round: GameRound? {
+        gameManager.currentRound
+    }
     
     private var isFinal: Bool {
         round == nil

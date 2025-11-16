@@ -49,7 +49,7 @@ struct GameView: View {
                 if let newValue {
                     word = newValue
                 } else {
-                    navigator.push(.roundResults(round: .first)) // TODO: Play results
+                    navigator.push(.roundResults)
                 }
             }
     }
@@ -300,7 +300,7 @@ private extension GameView {
 //            navigator.push(.finalResults)
 //        } else {
             // Show round results, then continue to next round
-            navigator.push(.roundResults(round: round))
+            navigator.push(.roundResults)
 //        }
     }
 }
