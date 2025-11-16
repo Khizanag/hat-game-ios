@@ -9,10 +9,12 @@ import SwiftUI
 
 struct ResultsView: View {
     @Environment(GameManager.self) private var gameManager
-    let round: GameRound?
     @Environment(Navigator.self) private var navigator
+
     @State private var isTotalScoresExpanded = false
     @State private var expandedRounds: Set<GameRound> = []
+
+    let round: GameRound?
     
     private var isFinal: Bool {
         round == nil
@@ -56,12 +58,14 @@ private extension ResultsView {
                     totalScoresSection
                     allRoundsSection
                 }
-                
-                actionSection
             }
             .paddingHorizontalDefault()
             .padding(.top, DesignBook.Spacing.lg)
             .padding(.bottom, DesignBook.Spacing.xxl)
+        }
+        .safeAreaInset(edge: .bottom) {
+            actionSection
+                .paddingHorizontalDefault()
         }
     }
     
