@@ -2,7 +2,7 @@
 //  GameRound.swift
 //  HatGame
 //
-//  Created by Giga Khizanishvili on 15.11.25.
+//  Created by Giga Khizanishvili on 16.11.25.
 //
 
 import Foundation
@@ -27,4 +27,3 @@ enum GameRound: Int, Codable, CaseIterable, Equatable {
         "Round \(rawValue)"
     }
 }
-
