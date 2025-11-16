@@ -11,7 +11,7 @@ struct WordSettingsView: View {
     @Environment(GameManager.self) private var gameManager
     @Environment(Navigator.self) private var navigator
     
-    @State private var selectedWordCount: Int = 10
+    @State private var selectedWordCount: Int = 3 // TODO: Update to 10
     
     var body: some View {
         content
@@ -24,13 +24,17 @@ struct WordSettingsView: View {
 
 private extension WordSettingsView {
     var content: some View {
-        VStack(spacing: DesignBook.Spacing.lg) {
-            headerCard
-            controlsCard
-            Spacer()
-            continueButton
+        ScrollView {
+            VStack(spacing: DesignBook.Spacing.lg) {
+                headerCard
+                controlsCard
+            }
+            .padding(.horizontal, DesignBook.Spacing.lg)
         }
-        .padding(.horizontal, DesignBook.Spacing.lg)
+        .overlay(alignment: .bottom) {
+            continueButton
+                .padding(.horizontal, DesignBook.Spacing.lg)
+        }
     }
     
     var headerCard: some View {

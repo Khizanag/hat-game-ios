@@ -110,10 +110,13 @@ private extension RandomizationView {
     func shuffleAndStart() {
         isShuffling = true
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-            gameManager.shuffleWords()
-            gameManager.startRound(.first, startingTeamIndex: selectedStartingTeamIndex)
-            navigator.push(.playing(round: .first, currentTeamIndex: selectedStartingTeamIndex))
+        DispatchQueue.main.asyncAfter(deadline: .now() /*+ 1.5*/) { // TODO: Revert
+            gameManager.start()
+            navigator.push(
+                .play(
+                    round: .first // TODO: Change with dynamic value
+                )
+            )
         }
     }
 }

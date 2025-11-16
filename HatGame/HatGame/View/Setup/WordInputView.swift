@@ -58,13 +58,17 @@ struct WordInputView: View {
 
 private extension WordInputView {
     var content: some View {
-        VStack(spacing: DesignBook.Spacing.lg) {
-            headerCard
-            wordEntrySection
-            Spacer(minLength: 0)
-            actionButton
+        ScrollView {
+            VStack(spacing: DesignBook.Spacing.lg) {
+                headerCard
+                wordEntrySection
+            }
+            .padding(.horizontal, DesignBook.Spacing.lg)
         }
-        .padding(.horizontal, DesignBook.Spacing.lg)
+        .overlay(alignment: .bottom) {
+            actionButton
+                .padding(.horizontal, DesignBook.Spacing.lg)
+        }
     }
     
     var headerCard: some View {
@@ -144,7 +148,6 @@ private extension WordInputView {
                         
                         Button {
                             playerWords.remove(at: index)
-                            persistDefaultWords()
                         } label: {
                             Image(systemName: "xmark.circle.fill")
                                 .foregroundColor(DesignBook.Color.Status.error)
@@ -194,11 +197,12 @@ private extension WordInputView {
     
     @ViewBuilder
     var actionButton: some View {
-        if playerWords.count >= wordsPerPlayer {
+        // TODO: Uncomment
+//        if playerWords.count >= wordsPerPlayer {
             PrimaryButton(title: actionButtonTitle) {
                 handleSaveWords()
             }
-        }
+//        }
     }
     
     var actionButtonTitle: String {
@@ -206,9 +210,14 @@ private extension WordInputView {
     }
     
     func prepareCurrentPlayer() {
-        guard currentPlayer != nil else { return }
-        playerWords = []
-        isWordFieldFocused = true
+        guard let player = currentPlayer else { return }
+//        // In test mode, pre-fill words if available
+//        if appConfiguration.isTestMode, let preFilledWords = gameManager.getWords(for: player.id) {
+//            playerWords = preFilledWords
+//        } else {
+//            playerWords = []
+//        }
+//        isWordFieldFocused = true
     }
     
     
@@ -223,8 +232,8 @@ private extension WordInputView {
     
     func handleSaveWords() {
         guard let player = currentPlayer else { return }
-        gameManager.addWords(playerWords, for: player.id)
-        
+        gameManager.addWords(playerWords, by: player)
+
         if currentPlayerIndex < allPlayers.count - 1 {
             currentPlayerIndex += 1
             playerWords = []

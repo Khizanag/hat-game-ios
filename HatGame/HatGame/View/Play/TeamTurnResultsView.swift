@@ -2,29 +2,26 @@
 //  TeamTurnResultsView.swift
 //  HatGame
 //
-//  Created by Giga Khizanishvili on 15.11.25.
+//  Created by Giga Khizanishvili on 16.11.25.
 //
 
 import SwiftUI
 
 struct TeamTurnResultsView: View {
-    let team: Team
-    let teamIndex: Int
     let guessedWords: [Word]
-    let round: GameRound
-    let onContinue: () -> Void
-    
+
+    @Environment(GameManager.self) private var gameManager
+    @Environment(Navigator.self) private var navigator
+
     var body: some View {
-        ZStack {
-            resultsScroll
-            continueButton
-        }
-        .setDefaultBackground()
+        resultsScroll
+            .setDefaultBackground()
+            .navigationBarBackButtonHidden()
     }
 }
 
+// MARK: - Private
 private extension TeamTurnResultsView {
-    
     var resultsScroll: some View {
         ScrollView {
             VStack(spacing: DesignBook.Spacing.lg) {
@@ -36,35 +33,42 @@ private extension TeamTurnResultsView {
                 Spacer()
                     .frame(height: DesignBook.Spacing.xl)
             }
+            .padding(.horizontal, DesignBook.Spacing.lg)
+        }
+        .overlay(alignment: .bottom) {
+            continueButton
+                .padding(.horizontal, DesignBook.Spacing.lg)
         }
     }
-    
+
     var header: some View {
         VStack(spacing: DesignBook.Spacing.md) {
             Text("⏱️")
                 .font(.system(size: 80))
-            
+
             Text("Time's Up!")
                 .font(DesignBook.Font.largeTitle)
                 .foregroundColor(DesignBook.Color.Text.primary)
         }
     }
-    
+
+    @ViewBuilder
     var resultsCard: some View {
+        let team = gameManager.currentTeam
+
         GameCard {
             VStack(spacing: DesignBook.Spacing.md) {
                 Text("\(team.name)'s Results")
                     .font(DesignBook.Font.title2)
-                    .foregroundColor(DesignBook.Color.Team.color(for: teamIndex))
-                
+                    .foregroundColor(team.color)
+
                 Text("Words guessed this turn: \(guessedWords.count)")
                     .font(DesignBook.Font.headline)
                     .foregroundColor(DesignBook.Color.Text.secondary)
             }
         }
-        .padding(.horizontal, DesignBook.Spacing.lg)
     }
-    
+
     @ViewBuilder
     var wordsSection: some View {
         if guessedWords.isEmpty {
@@ -73,14 +77,14 @@ private extension TeamTurnResultsView {
             guessedWordsCard
         }
     }
-    
+
     var guessedWordsCard: some View {
         GameCard {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
                 Text("Words Guessed")
                     .font(DesignBook.Font.headline)
                     .foregroundColor(DesignBook.Color.Text.primary)
-                
+
                 LazyVGrid(
                     columns: [GridItem(.flexible()), GridItem(.flexible())],
                     spacing: DesignBook.Spacing.sm
@@ -97,44 +101,29 @@ private extension TeamTurnResultsView {
                 }
             }
         }
-        .padding(.horizontal, DesignBook.Spacing.lg)
     }
-    
+
     var emptyStateCard: some View {
         GameCard {
             Text("No words guessed this turn")
                 .font(DesignBook.Font.body)
                 .foregroundColor(DesignBook.Color.Text.secondary)
         }
-        .padding(.horizontal, DesignBook.Spacing.lg)
     }
-    
+
     var continueButton: some View {
-        VStack {
-            Spacer()
-            PrimaryButton(title: "Continue") {
-                onContinue()
+        PrimaryButton(title: "Continue") {
+            if let round = gameManager.currentRound {
+                //                    gameManager.setNextTeam()
+                navigator.push(
+                    .nextTeam(
+                        round: round,
+                        team: gameManager.configuration.teams[0]/*team*/
+                    )
+                )
+            } else {
+                navigator.push(.finalResults)
             }
-            .padding(.horizontal, DesignBook.Spacing.lg)
-            .padding(.bottom, DesignBook.Spacing.lg)
         }
     }
 }
-
-// MARK: - Preview
-//#Preview {
-//    let team = Team(name: "Team Alpha")
-//    let words = [
-//        Word(text: "Apple"),
-//        Word(text: "Banana"),
-//        Word(text: "Cherry")
-//    ]
-//    return TeamTurnResultsView(
-//        team: team,
-//        teamIndex: 0,
-//        guessedWords: words,
-//        round: .first,
-//        onContinue: {}
-//    )
-//}
-//

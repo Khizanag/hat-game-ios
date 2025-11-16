@@ -7,33 +7,31 @@
 
 import SwiftUI
 
-struct ResultsView {
+struct ResultsView: View {
     @Environment(GameManager.self) private var gameManager
     let round: GameRound?
     let isFinal: Bool
     @Environment(Navigator.self) private var navigator
     
-    var sortedTeams: [Team] {
-        gameManager.getSortedTeamsByScore()
-    }
+//    var sortedTeams: [Team] {
+//        gameManager.getSortedTeamsByScore()
+//    }
     
-    var winner: Team? {
-        gameManager.getWinner()
+    private var winner: Team? {
+//        gameManager.getWinner()
+        nil
     }
-}
 
-// MARK: - View
-extension ResultsView: View {
     var body: some View {
-        NavigationStack {
-            content
-                .setDefaultBackground()
-                .navigationTitle(isFinal ? "Game Over" : "Round Results")
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    nonFinalToolbar
-                }
-        }
+        content
+            .setDefaultBackground()
+            .navigationTitle(isFinal ? "Game Over" : "Round Results")
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarBackButtonHidden()
+            .closeButtonToolbar()
+            .toolbar {
+                nonFinalToolbar
+            }
     }
 }
 
@@ -77,14 +75,14 @@ private extension ResultsView {
     
     var teamScoreRows: some View {
         VStack(spacing: DesignBook.Spacing.sm) {
-            ForEach(Array(sortedTeams.enumerated()), id: \.element.id) { index, team in
-                TeamScoreRow(
-                    team: team,
-                    rank: index + 1,
-                    isWinner: winner?.id == team.id,
-                    teamColor: teamColor(for: team)
-                )
-            }
+//            ForEach(Array(sortedTeams.enumerated()), id: \.element.id) { index, team in
+//                TeamScoreRow(
+//                    team: team,
+//                    rank: index + 1,
+//                    isWinner: winner?.id == team.id,
+//                    teamColor: teamColor(for: team)
+//                )
+//            }
         }
     }
     
@@ -117,7 +115,7 @@ private extension ResultsView {
                 .font(DesignBook.Font.largeTitle)
                 .foregroundColor(teamColor(for: winner))
             
-            Text("\(winner.score) points")
+            Text("\(/*winner.score*/3) points")
                 .font(DesignBook.Font.headline)
                 .foregroundColor(DesignBook.Color.Text.secondary)
         }
@@ -128,7 +126,6 @@ private extension ResultsView {
     }
     
     func handleNewGame() {
-        gameManager.resetGame()
         navigator.dismissToRoot()
     }
     
@@ -136,12 +133,33 @@ private extension ResultsView {
     var nonFinalToolbar: some ToolbarContent {
         if !isFinal {
             ToolbarItem(placement: .navigationBarTrailing) {
-                Button("Done") {
-                    navigator.dismiss()
+                Button("Continue") {
+                    continueToNextRound()
+                }
+                .foregroundColor(DesignBook.Color.Text.accent)
+            }
+        } else {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button("Close") {
+                    navigator.dismissToRoot()
                 }
                 .foregroundColor(DesignBook.Color.Text.accent)
             }
         }
+    }
+    
+    func continueToNextRound() {
+        guard let round = round else { return }
+//        gameManager.startNextRound()
+        
+//        if let nextRound = gameManager.currentRound,
+//           let currentTeamIndex = gameManager.currentTeamIndex {
+//            // Same team continues with next round
+//            navigator.replace(with: .playing(round: nextRound, currentTeamIndex: currentTeamIndex))
+//        } else {
+//            // All rounds finished
+//            navigator.replace(with: .finalResults)
+//        }
     }
 }
 
@@ -190,7 +208,7 @@ private extension TeamScoreRow {
     }
     
     var scoreView: some View {
-        Text("\(team.score)")
+        Text("\(/*team.score*/3)")
             .font(DesignBook.Font.title3)
             .foregroundColor(isWinner ? teamColor : DesignBook.Color.Text.secondary)
     }

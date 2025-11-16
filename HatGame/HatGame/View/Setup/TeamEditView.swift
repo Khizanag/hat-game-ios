@@ -10,24 +10,21 @@ import SwiftUI
 struct TeamEditView: View {
     @Environment(GameManager.self) private var gameManager
     @Environment(Navigator.self) private var navigator
-    let teamId: UUID
+
+    let team: Team
+
     @State private var teamName: String = ""
-    @State private var playerNames: [UUID: String] = [:]
-    
+    @State private var playerNames: [Player: String] = [:]
+
     private var trimmedTeamName: String {
         teamName.trimmingCharacters(in: .whitespacesAndNewlines)
     }
     
     private var canSaveChanges: Bool {
-        guard let team else { return false }
         guard !trimmedTeamName.isEmpty else { return false }
         return team.players.allSatisfy { player in
             !currentName(for: player).trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
         }
-    }
-    
-    var team: Team? {
-        gameManager.configuration.teams.first(where: { $0.id == teamId })
     }
     
     var body: some View {
@@ -43,21 +40,12 @@ struct TeamEditView: View {
 }
 
 private extension TeamEditView {
-    
     @ViewBuilder
     var content: some View {
-        if let team {
-            teamContent(for: team)
-        } else {
-            missingTeamView
-        }
-    }
-    
-    func teamContent(for team: Team) -> some View {
         ScrollView {
             VStack(spacing: DesignBook.Spacing.lg) {
                 teamNameCard
-                playersCard(for: team)
+                playersCard
                 actionSection
             }
             .padding(.horizontal, DesignBook.Spacing.lg)
@@ -84,15 +72,15 @@ private extension TeamEditView {
         }
     }
     
-    func playersCard(for team: Team) -> some View {
+    var playersCard: some View {
         GameCard {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
                 Text("Players")
                     .font(DesignBook.Font.captionBold)
                     .foregroundColor(DesignBook.Color.Text.secondary)
                 
-                ForEach(team.players) { player in
-                    playerField(for: player, index: playerIndex(in: team, player: player))
+                ForEach(team.players.enumerated(), id: \.offset) { (index, player) in
+                    playerField(for: player, index: index)
                 }
             }
         }
@@ -140,23 +128,19 @@ private extension TeamEditView {
     func playerBinding(for player: Player) -> Binding<String> {
         Binding(
             get: { currentName(for: player) },
-            set: { playerNames[player.id] = $0 }
+            set: { playerNames[player] = $0 }
         )
     }
     
     func currentName(for player: Player) -> String {
-        playerNames[player.id] ?? player.name
-    }
-    
-    func playerIndex(in team: Team, player: Player) -> Int? {
-        team.players.firstIndex(where: { $0.id == player.id })
+        playerNames[player] ?? player.name
     }
     
     func loadDataIfNeeded() {
-        guard let team, teamName.isEmpty else { return }
+        guard teamName.isEmpty else { return }
         teamName = team.name
         team.players.forEach { player in
-            playerNames[player.id] = player.name
+            playerNames[player] = player.name
         }
     }
     
@@ -167,28 +151,14 @@ private extension TeamEditView {
     
     func applyTeamNameChange() {
         guard !trimmedTeamName.isEmpty else { return }
-        guard let team = team else { return }
-        gameManager.updateTeamName(team: team, name: trimmedTeamName)
+//        gameManager.updateTeamName(team: team, name: trimmedTeamName)
     }
     
     func applyPlayerNameChanges() {
-        guard let team else { return }
         team.players.forEach { player in
             let trimmedName = currentName(for: player).trimmingCharacters(in: .whitespacesAndNewlines)
             guard !trimmedName.isEmpty, trimmedName != player.name else { return }
-            gameManager.updatePlayerName(playerId: player.id, name: trimmedName)
+//            gameManager.updatePlayerName(playerId: player.id, name: trimmedName)
         }
     }
 }
-
-// MARK: - Preview
-// TODO: Fix Preview
-//#Preview {
-//    let manager = GameManager()
-//    manager.addTeam(name: "Orion")
-//    let teamId = manager.teams[0].id
-//    manager.addPlayer(name: "Alex", to: teamId)
-//    manager.addPlayer(name: "Maya", to: teamId)
-//    return TeamEditView(teamId: teamId)
-//        .environment(manager)
-//}

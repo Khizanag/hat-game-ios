@@ -14,22 +14,15 @@ struct TeamSetupView: View {
     @State private var isAddTeamSheetPresented: Bool = false
     @State private var newTeamName: String = ""
     @State private var showingAddPlayer: Bool = false
-    @State private var selectedTeamId: UUID?
-    @State private var editingTeamId: UUID?
+    @State private var selectedTeam: Team?
+    @State private var editingTeam: Team?
     @State private var newPlayerName: String = ""
-    @State private var teamToDelete: UUID?
+    @State private var deletingTeam: Team?
 
     private let playersPerTeam = 2
 
     private var canContinue: Bool {
-        gameManager.configuration.teams.count >= 2 && gameManager.configuration.teams.allSatisfy {
-            $0.players.count == playersPerTeam
-        }
-    }
-
-    private var selectedTeamPlayersCount: Int {
-        guard let id = selectedTeamId else { return 0 }
-        return gameManager.configuration.teams.first(where: { $0.id == id })?.players.count ?? 0
+        gameManager.configuration.teams.count >= gameManager.configuration.maxTeams
     }
 
     var body: some View {
@@ -39,19 +32,14 @@ struct TeamSetupView: View {
             .navigationBarTitleDisplayMode(.inline)
             .closeButtonToolbar()
             .sheet(isPresented: $isAddTeamSheetPresented) {
-                AddTeamSheet(
-                    playersPerTeam: playersPerTeam,
-                    onCreateTeam: { name, players in
-                        gameManager.addTeam(name: name)
-                        guard let team = gameManager.configuration.teams.last else { return }
-                        players.forEach { playerName in
-                            gameManager.addPlayer(name: playerName, to: team)
+                NavigationView {
+                    AddTeamSheet(
+                        playersPerTeam: playersPerTeam,
+                        onTeamCreate: { team in
+                            gameManager.addTeam(team)
                         }
-                    }
-                )
-            }
-            .sheet(isPresented: $showingAddPlayer) {
-                addPlayerSheet
+                    )
+                }
             }
             .sheet(isPresented: editTeamBinding) {
                 editTeamSheet
@@ -90,14 +78,13 @@ private extension TeamSetupView {
                     team: team,
                     playersPerTeam: playersPerTeam,
                     onAddPlayer: {
-                        selectedTeamId = team.id
-                        showingAddPlayer = true
+                        selectedTeam = team
                     },
                     onRemoveTeam: {
-                        teamToDelete = team.id
+                        deletingTeam = team
                     },
                     onEditTeam: {
-                        editingTeamId = team.id
+                        editingTeam = team
                     }
                 )
             }
@@ -133,82 +120,65 @@ private extension TeamSetupView {
             .padding(.horizontal, DesignBook.Spacing.lg)
     }
 
-    var addPlayerSheet: some View {
-        AddPlayerSheet(
-            playerName: $newPlayerName,
-            playersAddedProvider: { selectedTeamPlayersCount },
-            playersPerTeam: playersPerTeam,
-            onAdd: {
-                handleAddPlayer()
-            },
-            onCancel: {
-                handleCancelAddPlayer()
-            }
-        )
-    }
-
     var editTeamBinding: Binding<Bool> {
         Binding(
-            get: { editingTeamId != nil },
-            set: { if !$0 { editingTeamId = nil } }
+            get: { editingTeam != nil },
+            set: { if !$0 { editingTeam = nil } }
         )
     }
 
     @ViewBuilder
     var editTeamSheet: some View {
-        if let teamId = editingTeamId {
+        if let team = editingTeam {
             NavigationView {
-                TeamEditView(teamId: teamId)
+                TeamEditView(team: team)
             }
         }
     }
 
     var isDeleteTeamAlertPresented: Binding<Bool> {
         Binding(
-            get: { teamToDelete != nil },
-            set: { if !$0 { teamToDelete = nil } }
+            get: { deletingTeam != nil },
+            set: { if !$0 { deletingTeam = nil } }
         )
     }
 
     @ViewBuilder
     var deleteTeamAlertActions: some View {
         Button("Cancel", role: .cancel) {
-            teamToDelete = nil
+            deletingTeam = nil
         }
         Button("Delete", role: .destructive) {
-            if let teamId = teamToDelete,
-               let team = gameManager.configuration.teams.first(where: { $0.id == teamId }) {
-                gameManager.removeTeam(team)
-                teamToDelete = nil
+            if let deletingTeam {
+                gameManager.removeTeamById(deletingTeam.id)
+                self.deletingTeam = nil
             }
         }
     }
 
     @ViewBuilder
     var deleteTeamAlertMessage: some View {
-        if let teamId = teamToDelete,
-           let team = gameManager.configuration.teams.first(where: { $0.id == teamId }) {
-            Text("Are you sure you want to delete \"\(team.name)\"? This action cannot be undone.")
+        if let deletingTeam {
+            Text("Are you sure you want to delete \"\(deletingTeam.name)\"? This action cannot be undone.")
         }
     }
 
     func handleAddPlayer() {
-        guard let teamId = selectedTeamId,
-              let team = gameManager.configuration.teams.first(where: { $0.id == teamId }),
-              !newPlayerName.isEmpty else { return }
-        gameManager.addPlayer(name: newPlayerName, to: team, limit: playersPerTeam)
-        newPlayerName = ""
-
-        if selectedTeamPlayersCount >= playersPerTeam {
-            showingAddPlayer = false
-            selectedTeamId = nil
-        }
+//        guard let teamId = selectedTeamId,
+//              let team = gameManager.configuration.teams.first(where: { $0.id == teamId }),
+//              !newPlayerName.isEmpty else { return }
+//        gameManager.addPlayer(name: newPlayerName, to: team, limit: playersPerTeam)
+//        newPlayerName = ""
+//
+//        if selectedTeamPlayersCount >= playersPerTeam {
+//            showingAddPlayer = false
+//            selectedTeamId = nil
+//        }
     }
 
     func handleCancelAddPlayer() {
         newPlayerName = ""
-        showingAddPlayer = false
-        selectedTeamId = nil
+        selectedTeam = nil
     }
 }
 

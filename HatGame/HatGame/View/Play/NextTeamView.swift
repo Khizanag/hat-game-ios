@@ -8,27 +8,55 @@
 import SwiftUI
 
 struct NextTeamView: View {
-    let team: Team
-    let teamIndex: Int
+    @Environment(Navigator.self) private var navigator
+    @Environment(GameManager.self) private var gameManager
+
+    @State private var isStandingsPresented = false
+
     let round: GameRound
-    let wordsRemaining: Int
-    let explainingPlayer: Player
-    let guessingPlayer: Player
-    let onContinue: () -> Void
-    
+    let team: Team
+
+    let explainingPlayer: Player = .init(name: "Anonymous", teamId: .init())
+    let guessingPlayer: Player = .init(name: "James", teamId: .init())
+
     var body: some View {
         content
             .setDefaultBackground()
+            .navigationBarBackButtonHidden()
+            .closeButtonToolbar()
+            .sheet(isPresented: $isStandingsPresented) {
+                NavigationView {
+                    ResultsView(round: round, isFinal: false)
+                }
+            }
     }
 }
 
 private extension NextTeamView {
     var content: some View {
-        VStack(spacing: DesignBook.Spacing.xl) {
-            Spacer()
-            teamDetails
-            Spacer()
-            startTurnButton
+        ScrollView {
+            VStack {
+                teamDetails
+                    .padding(.horizontal, DesignBook.Spacing.lg)
+
+                Spacer().frame(height: 144) // To fix overlay button visibility
+            }
+        }
+        .overlay(alignment: .bottom) {
+            buttonsSection
+                .padding(.horizontal, DesignBook.Spacing.lg)
+        }
+    }
+    
+    var buttonsSection: some View {
+        VStack(spacing: DesignBook.Spacing.md) {
+            SecondaryButton(title: "Check Standings") {
+                isStandingsPresented = true
+            }
+            
+            PrimaryButton(title: "Play") {
+                navigator.push(.play(round: round))
+            }
         }
     }
     
@@ -52,14 +80,13 @@ private extension NextTeamView {
             VStack(spacing: DesignBook.Spacing.md) {
                 Text(team.name)
                     .font(DesignBook.Font.title2)
-                    .foregroundColor(DesignBook.Color.Team.color(for: teamIndex))
+                    .foregroundColor(team.color)
                 
-                Text("Current Score: \(team.score)")
+                Text("Current Score: \(/*team.score*/3)")
                     .font(DesignBook.Font.headline)
                     .foregroundColor(DesignBook.Color.Text.accent)
             }
         }
-        .padding(.horizontal, DesignBook.Spacing.lg)
     }
     
     var roundStatusCard: some View {
@@ -73,12 +100,11 @@ private extension NextTeamView {
                     .font(DesignBook.Font.title3)
                     .foregroundColor(DesignBook.Color.Text.secondary)
                 
-                Text("Words remaining: \(wordsRemaining)")
+                Text("Words remaining: \(gameManager.remainingWordCount)")
                     .font(DesignBook.Font.body)
                     .foregroundColor(DesignBook.Color.Text.secondary)
             }
         }
-        .padding(.horizontal, DesignBook.Spacing.lg)
     }
     
     var rolesCard: some View {
@@ -94,7 +120,6 @@ private extension NextTeamView {
                 }
             }
         }
-        .padding(.horizontal, DesignBook.Spacing.lg)
     }
     
     func roleRow(icon: String, label: String, value: String) -> some View {
@@ -110,30 +135,4 @@ private extension NextTeamView {
                 .foregroundColor(DesignBook.Color.Text.primary)
         }
     }
-    
-    var startTurnButton: some View {
-        PrimaryButton(title: "Start Turn") {
-            onContinue()
-        }
-        .padding(.horizontal, DesignBook.Spacing.lg)
-        .padding(.bottom, DesignBook.Spacing.lg)
-    }
 }
-
-// MARK: - Preview
-//#Preview {
-//    let team = Team(name: "Team Beta", players: [
-//        Player(name: "Alice", teamId: UUID()),
-//        Player(name: "Bob", teamId: UUID())
-//    ])
-//    return NextTeamView(
-//        team: team,
-//        teamIndex: 1,
-//        round: .first,
-//        wordsRemaining: 15,
-//        explainingPlayer: team.players[0],
-//        guessingPlayer: team.players[1],
-//        onContinue: {}
-//    )
-//}
-//
