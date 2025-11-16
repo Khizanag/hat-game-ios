@@ -122,28 +122,6 @@ private extension Int {
     }
 }
 
-private struct LegendTag: View {
-    let title: String
-    let range: String
-    let isHighlighted: Bool
-    
-    var body: some View {
-        VStack(spacing: DesignBook.Spacing.xs) {
-            Text(title)
-                .font(DesignBook.Font.captionBold)
-                .foregroundColor(isHighlighted ? DesignBook.Color.Text.accent : DesignBook.Color.Text.primary)
-            Text(range)
-                .font(DesignBook.Font.caption)
-                .foregroundColor(isHighlighted ? DesignBook.Color.Text.accent : DesignBook.Color.Text.secondary)
-        }
-        .padding(.vertical, DesignBook.Spacing.sm)
-        .padding(.horizontal, DesignBook.Spacing.md)
-        .background(isHighlighted ? DesignBook.Color.Text.accent.opacity(0.2) : DesignBook.Color.Background.secondary)
-        .cornerRadius(DesignBook.Size.smallCardCornerRadius)
-        .frame(maxWidth: .infinity)
-    }
-}
-
 // MARK: - Preview
 #Preview {
     NavigationView {
