@@ -124,9 +124,7 @@ private extension ResultsView {
     }
     
     func teamColor(for team: Team) -> Color {
-        DesignBook.Color.Team.color(
-            for: gameManager.configuration.teams.firstIndex(where: { $0.id == team.id }) ?? 0
-        )
+        team.color
     }
     
     func handleNewGame() {

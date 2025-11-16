@@ -6,26 +6,26 @@
 //
 
 import Foundation
+import SwiftUI
 
-struct Team: Identifiable, Codable, Hashable {
+struct Team: Identifiable, Hashable {
     let id: UUID
     var name: String
     var players: [Player]
     var score: Int
-    var colorIndex: Int
+    let color: Color
     
     init(
         id: UUID = UUID(),
         name: String,
         players: [Player] = [],
         score: Int = 0,
-        colorIndex: Int = 0
+        color: Color
     ) {
         self.id = id
         self.name = name
         self.players = players
         self.score = score
-        self.colorIndex = colorIndex
+        self.color = color
     }
 }
-

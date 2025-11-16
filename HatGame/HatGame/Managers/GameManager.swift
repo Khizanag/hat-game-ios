@@ -55,7 +55,8 @@ final class GameManager {
 
     func addTeam(name: String) {
         guard configuration.teams.count < configuration.maxTeams else { return }
-        let team = Team(name: name, colorIndex: configuration.teams.count)
+        let color = configuration.teamColor(for: configuration.teams.count)
+        let team = Team(name: name, color: color)
         configuration.teams.append(team)
     }
     
@@ -294,7 +295,8 @@ private extension GameManager {
         for (index, sample) in sampleTeams.enumerated() {
             let teamId = UUID()
             let players = sample.1.map { Player(name: $0, teamId: teamId) }
-            let team = Team(id: teamId, name: sample.0, players: players, colorIndex: index)
+            let color = configuration.teamColor(for: index)
+            let team = Team(id: teamId, name: sample.0, players: players, color: color)
             generatedTeams.append(team)
 
             for player in players {

@@ -7,11 +7,11 @@
 
 import Foundation
 
-struct Player: Identifiable, Codable, Hashable {
+struct Player: Identifiable, Hashable {
     let id: UUID
     let name: String
     let teamId: UUID
-    
+
     init(id: UUID = UUID(), name: String, teamId: UUID) {
         self.id = id
         self.name = name

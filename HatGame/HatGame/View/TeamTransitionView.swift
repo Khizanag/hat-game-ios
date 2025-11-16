@@ -90,15 +90,15 @@ private extension TeamTransitionView {
 }
 
 // MARK: - Preview
-#Preview {
-    let team1 = Team(name: "Team Alpha")
-    let team2 = Team(name: "Team Beta")
-    return TeamTransitionView(
-        currentTeam: team1,
-        nextTeam: team2,
-        nextTeamIndex: 1,
-        round: .first,
-        onContinue: {}
-    )
-}
+//#Preview {
+//    let team1 = Team(name: "Team Alpha")
+//    let team2 = Team(name: "Team Beta")
+//    return TeamTransitionView(
+//        currentTeam: team1,
+//        nextTeam: team2,
+//        nextTeamIndex: 1,
+//        round: .first,
+//        onContinue: {}
+//    )
+//}
 
