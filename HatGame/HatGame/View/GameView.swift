@@ -10,24 +10,23 @@ import SwiftUI
 struct GameView: View {
     let round: GameRound
     let teamIndex: Int
-    
+
     @Environment(GameManager.self) private var gameManager
     @Environment(Navigator.self) private var navigator
     @State private var timer: Timer?
     @State private var remainingSeconds: Int = 0
-    @State private var showingResults: Bool = false
     @State private var showingTeamTurnResults: Bool = false
     @State private var showingNextTeam: Bool = false
     @State private var nextTeamIndex: Int?
     @State private var nextTeamRound: GameRound?
     @State private var showingGiveUpConfirmation: Bool = false
     @State private var isPaused: Bool = false
-    
+
     var currentTeam: Team? {
         guard teamIndex < gameManager.teams.count else { return nil }
         return gameManager.teams[teamIndex]
     }
-    
+
     var body: some View {
         content
             .setDefaultBackground()
@@ -37,12 +36,27 @@ struct GameView: View {
                 }
             }
             .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button {
-                        togglePause()
-                    } label: {
-                        Image(systemName: isPaused ? "play.fill" : "pause.fill")
-                            .foregroundColor(DesignBook.Color.Text.primary)
+                if !isPaused {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button {
+                            withAnimation {
+                                togglePause()
+                            }
+                        } label: {
+                            Image(systemName: isPaused ? "play.fill" : "pause.fill")
+                                .foregroundColor(DesignBook.Color.Text.primary)
+                        }
+                    }
+
+                    ToolbarItem(placement: .cancellationAction) {
+                        DestructiveButton(
+                            action: {
+                                showingGiveUpConfirmation = true
+                            },
+                            label: {
+                                Label("Give up", systemImage: "hand.raised.fill")
+                            }
+                        )
                     }
                 }
             }
@@ -61,15 +75,13 @@ struct GameView: View {
             } message: {
                 giveUpAlertMessage
             }
-            .sheet(isPresented: $showingResults) {
-                resultsSheet
-            }
             .fullScreenCover(isPresented: $showingTeamTurnResults) {
                 teamTurnResultsContent
             }
             .fullScreenCover(isPresented: $showingNextTeam) {
                 nextTeamContent
             }
+            .navigationBarBackButtonHidden()
     }
 }
 
@@ -77,40 +89,43 @@ private extension GameView {
     var content: some View {
         VStack(spacing: DesignBook.Spacing.lg) {
             currentTeamSection
-            Spacer()
         }
     }
-    
+
     @ViewBuilder
     var currentTeamSection: some View {
         if let team = currentTeam {
             VStack(spacing: DesignBook.Spacing.lg) {
                 roundInfoCard(for: team)
+
+                Spacer(minLength: 0)
+
                 wordSection
+
+                Spacer(minLength: 0)
+
                 progressCard
             }
             .padding(.top, DesignBook.Spacing.lg)
-        } else {
-            missingTeamView
         }
     }
-    
+
     func roundInfoCard(for team: Team) -> some View {
         GameCard {
             VStack(spacing: DesignBook.Spacing.md) {
                 Text(round.title)
                     .font(DesignBook.Font.title3)
                     .foregroundColor(DesignBook.Color.Text.primary)
-                
+
                 Text(round.description)
                     .font(DesignBook.Font.body)
                     .foregroundColor(DesignBook.Color.Text.secondary)
                     .multilineTextAlignment(.center)
-                
+
                 Text("Current Team: \(team.name)")
                     .font(DesignBook.Font.headline)
                     .foregroundColor(DesignBook.Color.Team.color(for: teamIndex))
-                
+
                 Text("Time left: \(formatTime(remainingSeconds))")
                     .font(DesignBook.Font.bodyBold)
                     .foregroundColor(DesignBook.Color.Text.accent)
@@ -118,7 +133,7 @@ private extension GameView {
         }
         .padding(.horizontal, DesignBook.Spacing.lg)
     }
-    
+
     @ViewBuilder
     var wordSection: some View {
         if let word = gameManager.currentWord, !word.guessed {
@@ -127,7 +142,7 @@ private extension GameView {
             allWordsGuessedSection
         }
     }
-    
+
     func activeWordCard(for word: Word) -> some View {
         GameCard {
             VStack(spacing: DesignBook.Spacing.xl) {
@@ -136,59 +151,44 @@ private extension GameView {
                     .foregroundColor(DesignBook.Color.Text.primary)
                     .multilineTextAlignment(.center)
                     .frame(minHeight: 200)
-                
+
                 HStack(spacing: DesignBook.Spacing.md) {
-                    giveUpButton
+                    // TODO: Remove stack
                     PrimaryButton(title: "Got It!") {
                         markAsGuessed()
                     }
                 }
-                .padding(.horizontal, DesignBook.Spacing.lg)
+                .padding(.horizontal, DesignBook.Spacing.sm)
             }
         }
         .padding(.horizontal, DesignBook.Spacing.lg)
     }
-    
-    var giveUpButton: some View {
-        Button {
-            showingGiveUpConfirmation = true
-        } label: {
-            Text("Give Up")
-                .font(DesignBook.Font.body)
-                .foregroundColor(DesignBook.Color.Text.primary)
-                .frame(width: 120)
-                .frame(height: DesignBook.Size.buttonHeight)
-                .background(DesignBook.Color.Status.error.opacity(0.6))
-                .cornerRadius(DesignBook.Size.smallCardCornerRadius)
-        }
-        .applyShadow(DesignBook.Shadow.small)
-    }
-    
+
     var allWordsGuessedSection: some View {
         VStack(spacing: DesignBook.Spacing.md) {
             GameCard {
                 VStack(spacing: DesignBook.Spacing.md) {
                     Text("🎉")
                         .font(.system(size: 80))
-                    
+
                     Text("All words guessed!")
                         .font(DesignBook.Font.title2)
                         .foregroundColor(DesignBook.Color.Text.primary)
-                    
+
                     Text("Time: \(formatTime(timeUsed))")
                         .font(DesignBook.Font.headline)
                         .foregroundColor(DesignBook.Color.Text.secondary)
                 }
             }
             .padding(.horizontal, DesignBook.Spacing.lg)
-            
+
             PrimaryButton(title: "Finish Round") {
                 finishRound()
             }
             .padding(.horizontal, DesignBook.Spacing.lg)
         }
     }
-    
+
     var progressCard: some View {
         GameCard {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
@@ -196,61 +196,50 @@ private extension GameView {
                     Text("Progress")
                         .font(DesignBook.Font.headline)
                         .foregroundColor(DesignBook.Color.Text.primary)
-                    
+
                     Spacer()
-                    
+
                     Text("\(guessedWordsCount)/\(totalWordsCount)")
                         .font(DesignBook.Font.headline)
                         .foregroundColor(DesignBook.Color.Text.accent)
                 }
-                
+
                 ProgressView(
                     value: Double(guessedWordsCount),
                     total: Double(totalWordsCount)
                 )
                 .tint(DesignBook.Color.Text.accent)
-                
-                Button {
-                    showingResults = true
-                } label: {
-                    HStack {
-                        Image(systemName: "chart.bar.fill")
-                        Text("View Results")
-                    }
-                    .font(DesignBook.Font.body)
-                    .foregroundColor(DesignBook.Color.Text.accent)
-                }
             }
         }
         .padding(.horizontal, DesignBook.Spacing.lg)
         .padding(.bottom, DesignBook.Spacing.lg)
     }
-    
+
     var missingTeamView: some View {
         Text("Team not found")
             .font(DesignBook.Font.body)
             .foregroundColor(DesignBook.Color.Text.secondary)
     }
-    
+
     var pauseOverlay: some View {
         ZStack {
             Rectangle()
                 .fill(.thinMaterial)
                 .ignoresSafeArea()
-            
+
             VStack(spacing: DesignBook.Spacing.xl) {
                 Image(systemName: "pause.circle.fill")
                     .font(.system(size: 80))
                     .foregroundColor(DesignBook.Color.Text.primary)
-                
+
                 Text("Paused")
                     .font(DesignBook.Font.largeTitle)
                     .foregroundColor(DesignBook.Color.Text.primary)
-                
+
                 Text("Time remaining: \(formatTime(remainingSeconds))")
                     .font(DesignBook.Font.headline)
                     .foregroundColor(DesignBook.Color.Text.secondary)
-                
+
                 PrimaryButton(title: "Continue") {
                     togglePause()
                 }
@@ -258,24 +247,19 @@ private extension GameView {
             }
         }
     }
-    
+
     var guessedWordsCount: Int {
         gameManager.shuffledWords.filter { $0.guessed }.count
     }
-    
+
     var totalWordsCount: Int {
         gameManager.shuffledWords.count
     }
-    
+
     var timeUsed: Int {
         max(gameManager.roundDuration - remainingSeconds, 0)
     }
-    
-    @ViewBuilder
-    var resultsSheet: some View {
-        ResultsView(round: round, isFinal: false)
-    }
-    
+
     @ViewBuilder
     var teamTurnResultsContent: some View {
         if let current = currentTeam {
@@ -291,7 +275,7 @@ private extension GameView {
             )
         }
     }
-    
+
     @ViewBuilder
     var nextTeamContent: some View {
         if let nextIndex = nextTeamIndex,
@@ -311,7 +295,7 @@ private extension GameView {
             nextTeamErrorView
         }
     }
-    
+
     var nextTeamErrorView: some View {
         ZStack {
             DesignBook.Color.Background.primary
@@ -320,7 +304,7 @@ private extension GameView {
                 .foregroundColor(DesignBook.Color.Text.primary)
         }
     }
-    
+
     @ViewBuilder
     var giveUpAlertActions: some View {
         Button("Cancel", role: .cancel) {
@@ -331,11 +315,11 @@ private extension GameView {
             showingGiveUpConfirmation = false
         }
     }
-    
+
     var giveUpAlertMessage: some View {
         Text("Are you sure you want to skip this word? It will remain available for other teams.")
     }
-    
+
     func startTimer() {
         stopTimer()
         isPaused = false
@@ -344,11 +328,11 @@ private extension GameView {
             tickTimer()
         }
     }
-    
+
     func restartTimer() {
         startTimer()
     }
-    
+
     func tickTimer() {
         guard !isPaused else { return }
         guard remainingSeconds > 0 else {
@@ -358,22 +342,22 @@ private extension GameView {
         }
         remainingSeconds -= 1
     }
-    
+
     func togglePause() {
         isPaused.toggle()
     }
-    
+
     func stopTimer() {
         timer?.invalidate()
         timer = nil
     }
-    
+
     func formatTime(_ seconds: Int) -> String {
         let minutes = seconds / 60
         let remainder = seconds % 60
         return String(format: "%02d:%02d", minutes, remainder)
     }
-    
+
     func timeExpired() {
         if gameManager.allWordsGuessed {
             finishRound()
@@ -381,19 +365,19 @@ private extension GameView {
             showingTeamTurnResults = true
         }
     }
-    
+
     func showNextTeam() {
         let nextIndex = (teamIndex + 1) % gameManager.teams.count
         nextTeamIndex = nextIndex
         nextTeamRound = round
         showingTeamTurnResults = false
-        
+
         Task { @MainActor in
             try? await Task.sleep(nanoseconds: 300_000_000)
             showingNextTeam = true
         }
     }
-    
+
     func proceedToNextTeam() {
         guard let nextIndex = nextTeamIndex else { return }
         showingNextTeam = false
@@ -404,11 +388,11 @@ private extension GameView {
         nextTeamRound = nil
         navigator.replace(with: .playing(round: round, currentTeamIndex: nextIndex))
     }
-    
+
     func markAsGuessed() {
         guard let team = currentTeam else { return }
         gameManager.markWordAsGuessed(by: team.id)
-        
+
         if gameManager.allWordsGuessed {
             stopTimer()
             finishRound()
@@ -416,7 +400,7 @@ private extension GameView {
             gameManager.skipToNextWord()
         }
     }
-    
+
     func giveUpWord() {
         if gameManager.allWordsGuessed {
             stopTimer()
@@ -425,7 +409,7 @@ private extension GameView {
             gameManager.skipToNextWord()
         }
     }
-    
+
     func finishRound() {
         stopTimer()
         gameManager.finishRound()
@@ -467,7 +451,7 @@ private extension NextTeamViewWrapper {
             return Player(name: "Player 1", teamId: nextTeam.id)
         }
     }
-    
+
     var guessingPlayer: Player {
         if nextTeam.players.count >= 2 {
             return gameManager.getGuessingPlayer(for: nextIndex) ?? nextTeam.players[1]

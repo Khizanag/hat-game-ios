@@ -33,28 +33,26 @@ private extension RandomizationView {
                             .background(Material.ultraThin)
 
                         shufflingContent
-                            .padding(.horizontal)
+
                     }
                 }
             }
     }
 
     var shufflingContent: some View {
-        VStack {
-            Spacer()
-            GameCard {
-                VStack(spacing: DesignBook.Spacing.md) {
-                    ProgressView()
-                        .scaleEffect(1.5)
+        GameCard {
+            VStack(spacing: DesignBook.Spacing.md) {
+                ProgressView()
+                    .scaleEffect(1.5)
 
-                    Text("Shuffling words...")
-                        .font(DesignBook.Font.headline)
-                        .foregroundColor(DesignBook.Color.Text.secondary)
-                }
-                .frame(height: 200)
+                Text("Shuffling words...")
+                    .font(DesignBook.Font.headline)
+                    .foregroundColor(DesignBook.Color.Text.secondary)
             }
-            Spacer()
+            .frame(height: 200)
         }
+        .padding(.horizontal, DesignBook.Spacing.lg)
+        .frame(maxHeight: .infinity)
     }
 
     var readyContent: some View {

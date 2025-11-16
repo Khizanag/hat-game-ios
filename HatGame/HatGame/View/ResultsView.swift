@@ -25,7 +25,7 @@ struct ResultsView {
 // MARK: - View
 extension ResultsView: View {
     var body: some View {
-        NavigationView {
+        NavigationStack {
             content
                 .setDefaultBackground()
                 .navigationTitle(isFinal ? "Game Over" : "Round Results")

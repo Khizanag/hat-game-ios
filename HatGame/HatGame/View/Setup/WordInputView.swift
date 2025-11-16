@@ -11,7 +11,7 @@ struct WordInputView: View {
     @Environment(GameManager.self) private var gameManager
     @Environment(AppConfiguration.self) private var appConfiguration
     @Environment(Navigator.self) private var navigator
-    
+
     @State private var currentPlayerIndex: Int = 0
     @State private var playerWords: [String] = []
     @State private var currentWord: String = ""
@@ -61,7 +61,7 @@ private extension WordInputView {
         VStack(spacing: DesignBook.Spacing.lg) {
             headerCard
             wordEntrySection
-            Spacer()
+            Spacer(minLength: 0)
             actionButton
         }
         .padding(.horizontal, DesignBook.Spacing.lg)

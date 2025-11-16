@@ -34,6 +34,7 @@ struct HeaderCard<Content: View>: View {
                 content()
             }
         }
+        .padding(.top, DesignBook.Spacing.lg)
     }
 }
 
