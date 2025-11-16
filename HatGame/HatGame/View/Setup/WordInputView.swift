@@ -60,12 +60,12 @@ private extension WordInputView {
                 headerCard
                 wordEntrySection
             }
-            .padding(.horizontal, DesignBook.Spacing.lg)
+            .paddingHorizontalDefault()
             .padding(.bottom, DesignBook.Spacing.xxl)
         }
         .safeAreaInset(edge: .bottom) {
             actionButton
-                .padding(.horizontal, DesignBook.Spacing.lg)
+                .paddingHorizontalDefault()
         }
     }
     

@@ -27,12 +27,12 @@ private extension TimerSettingsView {
                 headerCard
                 controlsCard
             }
-            .padding(.horizontal, DesignBook.Spacing.lg)
+            .paddingHorizontalDefault()
             .padding(.bottom, DesignBook.Spacing.xxl)
         }
         .safeAreaInset(edge: .bottom) {
             continueButton
-                .padding(.horizontal, DesignBook.Spacing.lg)
+                .paddingHorizontalDefault()
         }
     }
     

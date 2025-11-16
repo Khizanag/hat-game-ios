@@ -66,7 +66,7 @@ private extension GameView {
             progressCard
         }
         .padding(.top, DesignBook.Spacing.lg)
-        .padding(.horizontal, DesignBook.Spacing.lg)
+        .paddingHorizontalDefault()
     }
     
     @ToolbarContentBuilder

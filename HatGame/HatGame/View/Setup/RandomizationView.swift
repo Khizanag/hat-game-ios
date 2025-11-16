@@ -23,7 +23,7 @@ struct RandomizationView: View {
 private extension RandomizationView {
     var content: some View {
         readyContent
-            .padding(.horizontal, DesignBook.Spacing.lg)
+            .paddingHorizontalDefault()
             .overlay {
                 if isShuffling {
                     ZStack {
@@ -49,7 +49,7 @@ private extension RandomizationView {
             }
             .frame(height: 200)
         }
-        .padding(.horizontal, DesignBook.Spacing.lg)
+        .paddingHorizontalDefault()
         .frame(maxHeight: .infinity)
     }
 

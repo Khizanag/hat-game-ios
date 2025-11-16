@@ -56,11 +56,11 @@ private extension TeamSetupView {
                 headerCard
                 teamsList
             }
-            .padding(.horizontal, DesignBook.Spacing.lg)
+            .paddingHorizontalDefault()
         }
         .safeAreaInset(edge: .bottom) {
             continueSection
-                .padding(.horizontal, DesignBook.Spacing.lg)
+                .paddingHorizontalDefault()
         }
     }
 
@@ -117,7 +117,7 @@ private extension TeamSetupView {
             .font(DesignBook.Font.caption)
             .foregroundColor(DesignBook.Color.Text.secondary)
             .multilineTextAlignment(.center)
-            .padding(.horizontal, DesignBook.Spacing.lg)
+            .paddingHorizontalDefault()
     }
 
     var editTeamBinding: Binding<Bool> {

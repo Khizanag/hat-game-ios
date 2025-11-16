@@ -56,7 +56,7 @@ struct TeamFormView: View {
                 colorCard
                 playersCard
             }
-            .padding(.horizontal, DesignBook.Spacing.lg)
+            .paddingHorizontalDefault()
             .padding(.top, DesignBook.Spacing.lg)
             .padding(.bottom, DesignBook.Spacing.xxl)
         }
@@ -298,7 +298,7 @@ private extension TeamFormView {
                 onCancel()
             }
         }
-        .padding(.horizontal, DesignBook.Spacing.lg)
+        .paddingHorizontalDefault()
         .padding(.top, DesignBook.Spacing.md)
         .padding(.bottom, DesignBook.Spacing.lg)
     }

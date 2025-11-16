@@ -36,13 +36,13 @@ private extension NextTeamView {
         ScrollView {
             VStack {
                 teamDetails
-                    .padding(.horizontal, DesignBook.Spacing.lg)
+                    .paddingHorizontalDefault()
             }
             .padding(.bottom, DesignBook.Spacing.xxl)
         }
         .safeAreaInset(edge: .bottom) {
             buttonsSection
-                .padding(.horizontal, DesignBook.Spacing.lg)
+                .paddingHorizontalDefault()
         }
     }
     
