@@ -64,9 +64,17 @@ struct GameView: View {
 }
 
 private extension GameView {
+    @ViewBuilder
     var content: some View {
-        VStack(spacing: DesignBook.Spacing.lg) {
-            currentTeamSection
+        if let team = currentTeam {
+            VStack(spacing: DesignBook.Spacing.md) {
+                roundInfoCard(for: team)
+
+                wordSection
+
+                progressCard
+            }
+            .padding(.top, DesignBook.Spacing.lg)
         }
     }
     
@@ -97,24 +105,6 @@ private extension GameView {
                     Label("Give up", systemImage: "hand.raised.fill")
                 }
             )
-        }
-    }
-
-    @ViewBuilder
-    var currentTeamSection: some View {
-        if let team = currentTeam {
-            VStack(spacing: 0) {
-                roundInfoCard(for: team)
-
-                Spacer(minLength: 0)
-
-                wordSection
-
-                Spacer(minLength: 0)
-
-                progressCard
-            }
-            .padding(.top, DesignBook.Spacing.lg)
         }
     }
 
@@ -150,16 +140,18 @@ private extension GameView {
     func activeWordCard(for word: Word) -> some View {
         GameCard {
             VStack(spacing: DesignBook.Spacing.xl) {
+                Spacer()
+
                 Text(word.text)
                     .font(DesignBook.Font.largeTitle)
                     .foregroundColor(DesignBook.Color.Text.primary)
                     .multilineTextAlignment(.center)
-                    .frame(minHeight: 200)
+
+                Spacer()
 
                 PrimaryButton(title: "Got It!") {
                     markAsGuessed()
                 }
-                .padding(.horizontal, DesignBook.Spacing.md)
             }
         }
         .padding(.horizontal, DesignBook.Spacing.lg)
