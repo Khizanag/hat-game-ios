@@ -21,6 +21,7 @@ struct GameView: View {
     @State private var nextTeamIndex: Int?
     @State private var nextTeamRound: GameRound?
     @State private var showingGiveUpConfirmation: Bool = false
+    @State private var isPaused: Bool = false
     
     var currentTeam: Team? {
         guard teamIndex < gameManager.teams.count else { return nil }
@@ -30,6 +31,21 @@ struct GameView: View {
     var body: some View {
         content
             .setDefaultBackground()
+            .overlay {
+                if isPaused {
+                    pauseOverlay
+                }
+            }
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button {
+                        togglePause()
+                    } label: {
+                        Image(systemName: isPaused ? "play.fill" : "pause.fill")
+                            .foregroundColor(DesignBook.Color.Text.primary)
+                    }
+                }
+            }
             .onAppear {
                 gameManager.startTeamTurn()
                 startTimer()
@@ -216,6 +232,33 @@ private extension GameView {
             .foregroundColor(DesignBook.Color.Text.secondary)
     }
     
+    var pauseOverlay: some View {
+        ZStack {
+            Rectangle()
+                .fill(.thinMaterial)
+                .ignoresSafeArea()
+            
+            VStack(spacing: DesignBook.Spacing.xl) {
+                Image(systemName: "pause.circle.fill")
+                    .font(.system(size: 80))
+                    .foregroundColor(DesignBook.Color.Text.primary)
+                
+                Text("Paused")
+                    .font(DesignBook.Font.largeTitle)
+                    .foregroundColor(DesignBook.Color.Text.primary)
+                
+                Text("Time remaining: \(formatTime(remainingSeconds))")
+                    .font(DesignBook.Font.headline)
+                    .foregroundColor(DesignBook.Color.Text.secondary)
+                
+                PrimaryButton(title: "Continue") {
+                    togglePause()
+                }
+                .frame(width: 200)
+            }
+        }
+    }
+    
     var guessedWordsCount: Int {
         gameManager.shuffledWords.filter { $0.guessed }.count
     }
@@ -295,6 +338,7 @@ private extension GameView {
     
     func startTimer() {
         stopTimer()
+        isPaused = false
         remainingSeconds = gameManager.roundDuration
         timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
             tickTimer()
@@ -306,12 +350,17 @@ private extension GameView {
     }
     
     func tickTimer() {
+        guard !isPaused else { return }
         guard remainingSeconds > 0 else {
             stopTimer()
             timeExpired()
             return
         }
         remainingSeconds -= 1
+    }
+    
+    func togglePause() {
+        isPaused.toggle()
     }
     
     func stopTimer() {
