@@ -17,9 +17,11 @@ struct GameCard<Content: View>: View {
     var body: some View {
         content
             .padding(DesignBook.Spacing.md)
+            .frame(maxWidth: .infinity)
             .background(DesignBook.Color.Background.card)
             .cornerRadius(DesignBook.Size.cardCornerRadius)
             .applyShadow(DesignBook.Shadow.large)
+
     }
 }
 

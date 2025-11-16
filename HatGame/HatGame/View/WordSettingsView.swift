@@ -25,27 +25,19 @@ struct WordSettingsView: View {
 private extension WordSettingsView {
     var content: some View {
         VStack(spacing: DesignBook.Spacing.lg) {
-            descriptionCard
+            headerCard
             controlsCard
             Spacer()
             continueButton
         }
+        .padding(.horizontal, DesignBook.Spacing.lg)
     }
     
-    var descriptionCard: some View {
-        GameCard {
-            VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
-                Text("How many words?")
-                    .font(DesignBook.Font.title2)
-                    .foregroundColor(DesignBook.Color.Text.primary)
-                
-                Text("Every player will add the same number of words. Choose what feels right for today's game.")
-                    .font(DesignBook.Font.body)
-                    .foregroundColor(DesignBook.Color.Text.secondary)
-            }
-        }
-        .padding(.horizontal, DesignBook.Spacing.lg)
-        .padding(.top, DesignBook.Spacing.lg)
+    var headerCard: some View {
+        HeaderCard(
+            title: "How many words?",
+            description: "Every player will add the same number of words. Choose what feels right for today's game."
+        )
     }
     
     var controlsCard: some View {
@@ -57,7 +49,6 @@ private extension WordSettingsView {
                 legendTags
             }
         }
-        .padding(.horizontal, DesignBook.Spacing.lg)
     }
     
     var header: some View {
@@ -99,8 +90,6 @@ private extension WordSettingsView {
         PrimaryButton(title: "Continue") {
             handleContinue()
         }
-        .padding(.horizontal, DesignBook.Spacing.lg)
-        .padding(.bottom, DesignBook.Spacing.lg)
     }
     
     var wordCountBinding: Binding<Double> {
