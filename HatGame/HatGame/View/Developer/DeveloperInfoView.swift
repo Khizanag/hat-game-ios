@@ -20,10 +20,7 @@ struct DeveloperInfoView: View {
             .padding(.horizontal, DesignBook.Spacing.lg)
             .padding(.vertical, DesignBook.Spacing.lg)
         }
-        .navigationTitle("Developer Info")
-        .navigationBarTitleDisplayMode(.inline)
-        .closeButtonToolbar()
-        .setDefaultBackground()
+        .setDefaultStyle(title: "Developer Info")
     }
 }
 

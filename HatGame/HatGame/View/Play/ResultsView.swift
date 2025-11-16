@@ -24,11 +24,8 @@ struct ResultsView: View {
 
     var body: some View {
         content
-            .setDefaultBackground()
-            .navigationTitle(isFinal ? "Game Over" : "Round Results")
-            .navigationBarTitleDisplayMode(.inline)
+            .setDefaultStyle(title: isFinal ? "Game Over" : "Round Results")
             .navigationBarBackButtonHidden()
-            .closeButtonToolbar()
             .toolbar {
                 nonFinalToolbar
             }

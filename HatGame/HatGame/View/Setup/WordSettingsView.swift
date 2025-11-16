@@ -15,10 +15,7 @@ struct WordSettingsView: View {
     
     var body: some View {
         content
-            .setDefaultBackground()
-            .navigationTitle("Word Settings")
-            .navigationBarTitleDisplayMode(.inline)
-            .closeButtonToolbar()
+            .setDefaultStyle(title: "Word Settings")
     }
 }
 

@@ -21,9 +21,8 @@ struct NextTeamView: View {
 
     var body: some View {
         content
-            .setDefaultBackground()
+            .setDefaultStyle()
             .navigationBarBackButtonHidden()
-            .closeButtonToolbar()
             .sheet(isPresented: $isStandingsPresented) {
                 NavigationView {
                     ResultsView(round: round, isFinal: false)

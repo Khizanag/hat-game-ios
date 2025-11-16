@@ -15,10 +15,8 @@ struct RandomizationView: View {
 
     var body: some View {
         content
-            .setDefaultBackground()
-            .navigationTitle("Randomize")
+            .setDefaultStyle(title: "Randomize")
             .navigationBarBackButtonHidden()
-            .closeButtonToolbar()
     }
 }
 
