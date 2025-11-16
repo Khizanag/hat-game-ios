@@ -122,19 +122,19 @@ private extension TeamTurnResultsView {
 }
 
 // MARK: - Preview
-#Preview {
-    let team = Team(name: "Team Alpha")
-    let words = [
-        Word(text: "Apple"),
-        Word(text: "Banana"),
-        Word(text: "Cherry")
-    ]
-    return TeamTurnResultsView(
-        team: team,
-        teamIndex: 0,
-        guessedWords: words,
-        round: .first,
-        onContinue: {}
-    )
-}
-
+//#Preview {
+//    let team = Team(name: "Team Alpha")
+//    let words = [
+//        Word(text: "Apple"),
+//        Word(text: "Banana"),
+//        Word(text: "Cherry")
+//    ]
+//    return TeamTurnResultsView(
+//        team: team,
+//        teamIndex: 0,
+//        guessedWords: words,
+//        round: .first,
+//        onContinue: {}
+//    )
+//}
+//

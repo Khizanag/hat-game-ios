@@ -121,19 +121,19 @@ private extension NextTeamView {
 }
 
 // MARK: - Preview
-#Preview {
-    let team = Team(name: "Team Beta", players: [
-        Player(name: "Alice", teamId: UUID()),
-        Player(name: "Bob", teamId: UUID())
-    ])
-    return NextTeamView(
-        team: team,
-        teamIndex: 1,
-        round: .first,
-        wordsRemaining: 15,
-        explainingPlayer: team.players[0],
-        guessingPlayer: team.players[1],
-        onContinue: {}
-    )
-}
-
+//#Preview {
+//    let team = Team(name: "Team Beta", players: [
+//        Player(name: "Alice", teamId: UUID()),
+//        Player(name: "Bob", teamId: UUID())
+//    ])
+//    return NextTeamView(
+//        team: team,
+//        teamIndex: 1,
+//        round: .first,
+//        wordsRemaining: 15,
+//        explainingPlayer: team.players[0],
+//        guessingPlayer: team.players[1],
+//        onContinue: {}
+//    )
+//}
+//

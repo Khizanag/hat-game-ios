@@ -26,15 +26,11 @@ struct TeamCard: View {
 }
 
 private extension TeamCard {
-    var teamColor: Color {
-        DesignBook.Color.Team.color(for: team.colorIndex)
-    }
-    
     var header: some View {
         HStack {
             Text(team.name)
                 .font(DesignBook.Font.headline)
-                .foregroundColor(teamColor)
+                .foregroundColor(team.color)
             
             Spacer()
             
@@ -49,7 +45,7 @@ private extension TeamCard {
             ForEach(team.players) { player in
                 HStack {
                     Circle()
-                        .fill(teamColor)
+                        .fill(team.color)
                         .frame(width: 8, height: 8)
                     
                     Text(player.name)
