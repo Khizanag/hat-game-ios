@@ -15,8 +15,32 @@ struct TeamFormView: View {
     
     let title: String
     let primaryButtonTitle: String
+    let existingTeams: [Team]
+    let currentTeamId: UUID?
     let onPrimaryAction: () -> Void
     let onCancel: () -> Void
+    
+    init(
+        teamName: Binding<String>,
+        playerNames: Binding<[String]>,
+        teamColor: Binding<Color>,
+        title: String,
+        primaryButtonTitle: String,
+        existingTeams: [Team] = [],
+        currentTeamId: UUID? = nil,
+        onPrimaryAction: @escaping () -> Void,
+        onCancel: @escaping () -> Void
+    ) {
+        self._teamName = teamName
+        self._playerNames = playerNames
+        self._teamColor = teamColor
+        self.title = title
+        self.primaryButtonTitle = primaryButtonTitle
+        self.existingTeams = existingTeams
+        self.currentTeamId = currentTeamId
+        self.onPrimaryAction = onPrimaryAction
+        self.onCancel = onCancel
+    }
     
     private var canSave: Bool {
         !teamName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
@@ -116,8 +140,12 @@ private extension TeamFormView {
     }
     
     func colorOption(color: Color, index: Int) -> some View {
-        Button {
-            teamColor = color
+        let isDisabled = isColorOccupiedByOtherTeam(color)
+        
+        return Button {
+            if !isDisabled {
+                teamColor = color
+            }
         } label: {
             Circle()
                 .fill(color)
@@ -127,10 +155,17 @@ private extension TeamFormView {
                         Image(systemName: "checkmark")
                             .font(.system(size: 18, weight: .bold))
                             .foregroundColor(.white)
+                    } else if isDisabled {
+                        Image(systemName: "xmark")
+                            .font(.system(size: 14, weight: .bold))
+                            .foregroundColor(.white)
+                            .opacity(DesignBook.Opacity.disabled)
                     }
                 }
+                .opacity(isDisabled ? DesignBook.Opacity.disabled : DesignBook.Opacity.enabled)
         }
         .buttonStyle(.plain)
+        .disabled(isDisabled)
     }
     
     func isSuggestedColorSelected(_ index: Int) -> Bool {
@@ -143,6 +178,31 @@ private extension TeamFormView {
         // Compare colors by converting to UIColor and comparing components
         let uiColor1 = UIColor(teamColor)
         let uiColor2 = UIColor(color)
+        
+        var r1: CGFloat = 0, g1: CGFloat = 0, b1: CGFloat = 0, a1: CGFloat = 0
+        var r2: CGFloat = 0, g2: CGFloat = 0, b2: CGFloat = 0, a2: CGFloat = 0
+        
+        guard uiColor1.getRed(&r1, green: &g1, blue: &b1, alpha: &a1),
+              uiColor2.getRed(&r2, green: &g2, blue: &b2, alpha: &a2) else {
+            return false
+        }
+        
+        return abs(r1 - r2) < 0.01 && abs(g1 - g2) < 0.01 && abs(b1 - b2) < 0.01
+    }
+    
+    func isColorOccupiedByOtherTeam(_ color: Color) -> Bool {
+        existingTeams.contains { team in
+            // Skip the current team if editing
+            if let currentTeamId = currentTeamId, team.id == currentTeamId {
+                return false
+            }
+            return areColorsEqual(color, team.color)
+        }
+    }
+    
+    func areColorsEqual(_ color1: Color, _ color2: Color) -> Bool {
+        let uiColor1 = UIColor(color1)
+        let uiColor2 = UIColor(color2)
         
         var r1: CGFloat = 0, g1: CGFloat = 0, b1: CGFloat = 0, a1: CGFloat = 0
         var r2: CGFloat = 0, g2: CGFloat = 0, b2: CGFloat = 0, a2: CGFloat = 0

@@ -32,6 +32,7 @@ struct AddTeamView: View {
             teamColor: $teamColor,
             title: "New Team",
             primaryButtonTitle: "Create Team",
+            existingTeams: gameManager.configuration.teams,
             onPrimaryAction: {
                 var team = Team(name: teamName, color: teamColor)
                 team.players = playerNames.map { playerName in
