@@ -7,13 +7,18 @@
 
 import SwiftUI
 
-struct DestructiveButton: View {
-    let title: String
-    let action: () -> Void
+struct DestructiveButton<Label: View>: View {
+    private let action: () -> Void
+    @ViewBuilder private let label: () -> Label
+    
+    init(action: @escaping () -> Void, @ViewBuilder label: @escaping () -> Label) {
+        self.action = action
+        self.label = label
+    }
     
     var body: some View {
         Button(action: action) {
-            Text(title)
+            label()
                 .font(DesignBook.Font.headline)
                 .padding(8)
                 .frame(maxWidth: .infinity)
@@ -24,11 +29,24 @@ struct DestructiveButton: View {
     }
 }
 
+extension DestructiveButton where Label == Text {
+    init(title: String, action: @escaping () -> Void) {
+        self.action = action
+        self.label = { Text(title) }
+    }
+}
+
 // MARK: - Preview
 #Preview {
     VStack(spacing: DesignBook.Spacing.md) {
         DestructiveButton(title: "Cancel") {}
         DestructiveButton(title: "Delete") {}
+        DestructiveButton(action: {}) {
+            HStack {
+                Image(systemName: "trash")
+                Text("Delete Item")
+            }
+        }
     }
     .padding()
     .background(DesignBook.Color.Background.primary)
