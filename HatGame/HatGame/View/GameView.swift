@@ -216,12 +216,6 @@ private extension GameView {
         .padding(.bottom, DesignBook.Spacing.lg)
     }
 
-    var missingTeamView: some View {
-        Text("Team not found")
-            .font(DesignBook.Font.body)
-            .foregroundColor(DesignBook.Color.Text.secondary)
-    }
-
     var pauseOverlay: some View {
         ZStack {
             Rectangle()
