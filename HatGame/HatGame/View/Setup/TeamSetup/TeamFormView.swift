@@ -20,6 +20,8 @@ struct TeamFormView: View {
     let onPrimaryAction: () -> Void
     let onCancel: () -> Void
     
+    @State private var isColorSectionExpanded: Bool = false
+    
     init(
         teamName: Binding<String>,
         playerNames: Binding<[String]>,
@@ -93,45 +95,61 @@ private extension TeamFormView {
     var colorCard: some View {
         GameCard {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
-                HStack(spacing: DesignBook.Spacing.sm) {
-                    Image(systemName: "paintpalette.fill")
-                        .font(.system(size: DesignBook.Size.iconSize))
-                        .foregroundColor(DesignBook.Color.Text.accent)
-                    
-                    Text("Team Color")
-                        .font(DesignBook.Font.captionBold)
-                        .foregroundColor(DesignBook.Color.Text.secondary)
+                Button {
+                    withAnimation(.easeInOut) {
+                        isColorSectionExpanded.toggle()
+                    }
+                } label: {
+                    HStack(spacing: DesignBook.Spacing.sm) {
+                        Image(systemName: "paintpalette.fill")
+                            .font(.system(size: DesignBook.Size.iconSize))
+                            .foregroundColor(DesignBook.Color.Text.accent)
+                        
+                        Text("Team Color")
+                            .font(DesignBook.Font.captionBold)
+                            .foregroundColor(DesignBook.Color.Text.secondary)
+                        
+                        Spacer()
+                        
+                        if !isColorSectionExpanded {
+                            Circle()
+                                .fill(teamColor)
+                                .frame(width: 24, height: 24)
+                        }
+                        
+                        Image(systemName: isColorSectionExpanded ? "chevron.up" : "chevron.down")
+                            .foregroundColor(DesignBook.Color.Text.secondary)
+                    }
                 }
                 
-                colorPicker
+                if isColorSectionExpanded {
+                    colorPicker
+                        .transition(.opacity.combined(with: .move(edge: .top)))
+                }
             }
         }
     }
     
     var colorPicker: some View {
-        VStack(spacing: DesignBook.Spacing.md) {
-            suggestedColors
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: 44), spacing: DesignBook.Spacing.md)], spacing: DesignBook.Spacing.md) {
+            ForEach(suggestedColorOptions.indices, id: \.self) { index in
+                colorOption(color: suggestedColorOptions[index], index: index)
+            }
             
-            ColorPicker("Custom Color", selection: $teamColor, supportsOpacity: false)
+            ColorPicker("Custom Color", selection: Binding(
+                get: { teamColor },
+                set: { newColor in
+                    withAnimation(.easeInOut) {
+                        teamColor = newColor
+                        isColorSectionExpanded = false
+                    }
+                }
+            ), supportsOpacity: false)
                 .labelsHidden()
-                .frame(height: 44)
+                .frame(width: 44, height: 44)
                 .padding(DesignBook.Spacing.md)
                 .background(DesignBook.Color.Background.secondary)
                 .cornerRadius(DesignBook.Size.smallCardCornerRadius)
-        }
-    }
-    
-    var suggestedColors: some View {
-        VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
-            Text("Suggested Colors")
-                .font(DesignBook.Font.caption)
-                .foregroundColor(DesignBook.Color.Text.tertiary)
-            
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: 50))], spacing: DesignBook.Spacing.md) {
-                ForEach(suggestedColorOptions.indices, id: \.self) { index in
-                    colorOption(color: suggestedColorOptions[index], index: index)
-                }
-            }
         }
     }
     
@@ -144,7 +162,10 @@ private extension TeamFormView {
         
         return Button {
             if !isDisabled {
-                teamColor = color
+                withAnimation(.easeInOut) {
+                    teamColor = color
+                    isColorSectionExpanded = false
+                }
             }
         } label: {
             Circle()
