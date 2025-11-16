@@ -11,7 +11,7 @@ import SwiftUI
 
 @Observable
 final class GameConfiguration {
-    let minTeams = 3
+    let minTeams = 2
     let maxTeams: Int
     let maxTeamMembers: Int
     var wordsPerPlayer: Int
@@ -69,24 +69,24 @@ extension GameConfiguration {
         )
 
         return GameConfiguration(
-            maxTeams: 2,
+            maxTeams: 10,
             maxTeamMembers: 2,
             wordsPerPlayer: 3,
             roundDuration: 10,
             teams: [team1, team2],
             words: [
-                .init(text: "A"),
-                .init(text: "B"),
-                .init(text: "C"),
-                .init(text: "D"),
-                .init(text: "E"),
-                .init(text: "F"),
-                .init(text: "G"),
-                .init(text: "H"),
-                .init(text: "I"),
-                .init(text: "J"),
-                .init(text: "K"),
-                .init(text: "L"),
+                .init(text: "ვაშლი"),
+                .init(text: "მსხალი"),
+                .init(text: "მასპინძელი"),
+                .init(text: "მზე"),
+                .init(text: "ცათამბრჯენი"),
+                .init(text: "და"),
+                .init(text: "aმბასადორი"),
+                .init(text: "ალპინისტი"),
+                .init(text: "აბსტრაქცია"),
+                .init(text: "პარაცეტამოლი"),
+                .init(text: "აბსადასჯოიჯიოჯოაიასოდჯასიჯდოსაიჯდოისა"),
+                .init(text: "ასდკასპოდკასოპდკაოსპკდ"),
             ]
         )
     }

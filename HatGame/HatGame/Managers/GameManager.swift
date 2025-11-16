@@ -32,6 +32,11 @@ final class GameManager {
     // MARK: - Teams
     var currentTeam: Team { configuration.teams[currentTeamIndex] }
     private var currentTeamIndex: Int = 0
+    
+    // MARK: - Scores
+    // TODO: Replace with actual score tracking from HistoryManager
+    private var dummyScores: [Team: [GameRound: Int]] = [:]
+    private var dummyTotalScores: [Team: Int] = [:]
 
     // MARK: - Functions
     func start() {
@@ -39,6 +44,7 @@ final class GameManager {
         remainingWords = Set(configuration.words)
         currentRound = roundIterator.next()
         currentWord = remainingWords.randomElement()
+        initializeDummyScores()
     }
 
     func commitWordGuess() {
@@ -84,6 +90,61 @@ extension GameManager {
 
     func removeTeamById(_ id: UUID) {
         configuration.teams.removeAll { $0.id == id }
+    }
+}
+
+// MARK: - Scores
+extension GameManager {
+    func getScore(for team: Team, in round: GameRound) -> Int {
+        dummyScores[team]?[round] ?? 0
+    }
+    
+    func getTotalScore(for team: Team) -> Int {
+        dummyTotalScores[team] ?? 0
+    }
+    
+    func getSortedTeamsByRoundScore(for round: GameRound) -> [Team] {
+        configuration.teams.sorted { team1, team2 in
+            let score1 = getScore(for: team1, in: round)
+            let score2 = getScore(for: team2, in: round)
+            if score1 != score2 {
+                return score1 > score2
+            }
+            return team1.name < team2.name
+        }
+    }
+    
+    func getSortedTeamsByTotalScore() -> [Team] {
+        configuration.teams.sorted { team1, team2 in
+            let score1 = getTotalScore(for: team1)
+            let score2 = getTotalScore(for: team2)
+            if score1 != score2 {
+                return score1 > score2
+            }
+            return team1.name < team2.name
+        }
+    }
+    
+    private func initializeDummyScores() {
+        var scores: [Team: [GameRound: Int]] = [:]
+        var totalScores: [Team: Int] = [:]
+        
+        for team in configuration.teams {
+            var roundScores: [GameRound: Int] = [:]
+            var total = 0
+            
+            for round in GameRound.allCases {
+                let score = Int.random(in: 5...25)
+                roundScores[round] = score
+                total += score
+            }
+            
+            scores[team] = roundScores
+            totalScores[team] = total
+        }
+        
+        dummyScores = scores
+        dummyTotalScores = totalScores
     }
 }
 

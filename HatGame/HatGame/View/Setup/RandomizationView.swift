@@ -108,7 +108,7 @@ private extension RandomizationView {
     func shuffleAndStart() {
         isShuffling = true
 
-        DispatchQueue.main.asyncAfter(deadline: .now() /*+ 1.5*/) { // TODO: Revert
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             gameManager.start()
             navigator.push(
                 .play(
