@@ -75,6 +75,7 @@ private extension GameView {
                 progressCard
             }
             .padding(.top, DesignBook.Spacing.lg)
+            .padding(.horizontal, DesignBook.Spacing.lg)
         }
     }
     
@@ -125,7 +126,6 @@ private extension GameView {
                     .foregroundColor(DesignBook.Color.Team.color(for: teamIndex))
             }
         }
-        .padding(.horizontal, DesignBook.Spacing.lg)
     }
 
     @ViewBuilder
@@ -139,7 +139,7 @@ private extension GameView {
 
     func activeWordCard(for word: Word) -> some View {
         GameCard {
-            VStack(spacing: DesignBook.Spacing.xl) {
+            VStack(spacing: 0) {
                 Spacer()
 
                 Text(word.text)
@@ -154,7 +154,6 @@ private extension GameView {
                 }
             }
         }
-        .padding(.horizontal, DesignBook.Spacing.lg)
     }
 
     var allWordsGuessedSection: some View {
@@ -173,12 +172,10 @@ private extension GameView {
                         .foregroundColor(DesignBook.Color.Text.secondary)
                 }
             }
-            .padding(.horizontal, DesignBook.Spacing.lg)
 
             PrimaryButton(title: "Finish Round") {
                 finishRound()
             }
-            .padding(.horizontal, DesignBook.Spacing.lg)
         }
     }
 
@@ -204,8 +201,6 @@ private extension GameView {
                 .tint(DesignBook.Color.Text.accent)
             }
         }
-        .padding(.horizontal, DesignBook.Spacing.lg)
-        .padding(.bottom, DesignBook.Spacing.lg)
     }
 
     var pauseOverlay: some View {
