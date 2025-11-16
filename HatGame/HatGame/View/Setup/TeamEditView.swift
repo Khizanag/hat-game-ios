@@ -15,7 +15,7 @@ struct TeamEditView: View {
 
     @State private var teamName: String = ""
     @State private var playerNames: [String] = []
-    @State private var teamColor: Color = DesignBook.Color.Team.team1
+    @State private var teamColor: Color = TeamDefaultColorGenerator.defaultColors[0]
     
     var body: some View {
         TeamFormView(

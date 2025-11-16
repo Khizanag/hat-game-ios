@@ -22,7 +22,7 @@ struct AddTeamView: View {
         self.playersPerTeam = playersPerTeam
         self.onTeamCreate = onTeamCreate
         self._playerNames = State(initialValue: Array(repeating: "", count: playersPerTeam))
-        self._teamColor = State(initialValue: DesignBook.Color.Team.team1)
+        self._teamColor = State(initialValue: TeamDefaultColorGenerator.defaultColors[0])
     }
 
     var body: some View {
@@ -53,7 +53,7 @@ struct AddTeamView: View {
 // MARK: - Private
 private extension AddTeamView {
     func updateDefaultColor() {
-        let teamIndex = gameManager.configuration.teams.count
-        teamColor = DesignBook.Color.Team.color(for: teamIndex)
+        let generator = TeamDefaultColorGenerator()
+        teamColor = generator.generateDefaultColor(for: gameManager.configuration)
     }
 }
