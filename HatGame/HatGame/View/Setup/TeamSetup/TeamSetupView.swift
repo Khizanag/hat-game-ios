@@ -19,19 +19,19 @@ struct TeamSetupView: View {
     @State private var newPlayerName: String = ""
     @State private var deletingTeam: Team?
 
-    private let playersPerTeam = 2
-
     private var canContinue: Bool {
-        gameManager.configuration.teams.count >= gameManager.configuration.maxTeams
+        (gameManager.configuration.minTeams...gameManager.configuration.maxTeams)
+            .contains(gameManager.configuration.teams.count)
     }
 
+    // MARK: - Body
     var body: some View {
         content
             .setDefaultStyle(title: "Setup Teams")
             .sheet(isPresented: $isAddTeamSheetPresented) {
                 NavigationView {
                     AddTeamView(
-                        playersPerTeam: playersPerTeam,
+                        playersPerTeam: gameManager.configuration.maxTeamMembers,
                         onTeamCreate: { team in
                             gameManager.addTeam(team)
                         }
@@ -49,6 +49,7 @@ struct TeamSetupView: View {
     }
 }
 
+// MARK: - Private
 private extension TeamSetupView {
     var content: some View {
         ScrollView {
@@ -76,7 +77,7 @@ private extension TeamSetupView {
             ForEach(gameManager.configuration.teams) { team in
                 TeamCard(
                     team: team,
-                    playersPerTeam: playersPerTeam,
+                    playersPerTeam: gameManager.configuration.maxTeamMembers,
                     onAddPlayer: {
                         selectedTeam = team
                     },
@@ -113,7 +114,7 @@ private extension TeamSetupView {
     }
 
     var requirementText: some View {
-        Text("Add at least two teams and make sure each team has exactly two players to continue.")
+        Text("Add at least \(gameManager.configuration.minTeams) teams to continue.")
             .font(DesignBook.Font.caption)
             .foregroundColor(DesignBook.Color.Text.secondary)
             .multilineTextAlignment(.center)
