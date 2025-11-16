@@ -36,28 +36,34 @@ struct GameView: View {
                 }
             }
             .toolbar {
-                if !isPaused {
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Button {
-                            withAnimation {
-                                togglePause()
-                            }
-                        } label: {
-                            Image(systemName: isPaused ? "play.fill" : "pause.fill")
-                                .foregroundColor(DesignBook.Color.Text.primary)
+                ToolbarItem(placement: .principal) {
+                    Text(formatTime(remainingSeconds))
+                        .font(DesignBook.Font.title3)
+                        .foregroundColor(DesignBook.Color.Text.accent)
+                        .monospacedDigit()
+                }
+                
+                
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button {
+                        withAnimation {
+                            togglePause()
                         }
+                    } label: {
+                        Image(systemName: isPaused ? "play.fill" : "pause.fill")
+                            .foregroundColor(DesignBook.Color.Text.primary)
                     }
-
-                    ToolbarItem(placement: .cancellationAction) {
-                        DestructiveButton(
-                            action: {
-                                showingGiveUpConfirmation = true
-                            },
-                            label: {
-                                Label("Give up", systemImage: "hand.raised.fill")
-                            }
-                        )
-                    }
+                }
+                
+                ToolbarItem(placement: .cancellationAction) {
+                    DestructiveButton(
+                        action: {
+                            showingGiveUpConfirmation = true
+                        },
+                        label: {
+                            Label("Give up", systemImage: "hand.raised.fill")
+                        }
+                    )
                 }
             }
             .onAppear {
@@ -125,10 +131,6 @@ private extension GameView {
                 Text("Current Team: \(team.name)")
                     .font(DesignBook.Font.headline)
                     .foregroundColor(DesignBook.Color.Team.color(for: teamIndex))
-
-                Text("Time left: \(formatTime(remainingSeconds))")
-                    .font(DesignBook.Font.bodyBold)
-                    .foregroundColor(DesignBook.Color.Text.accent)
             }
         }
         .padding(.horizontal, DesignBook.Spacing.lg)
