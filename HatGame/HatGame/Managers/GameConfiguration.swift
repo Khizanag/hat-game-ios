@@ -11,7 +11,7 @@ import SwiftUI
 
 @Observable
 final class GameConfiguration {
-    let minTeams = 2
+    let minTeams = 3
     let maxTeams: Int
     let maxTeamMembers: Int
     var wordsPerPlayer: Int

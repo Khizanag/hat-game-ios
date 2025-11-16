@@ -22,6 +22,19 @@ struct TeamCard: View {
                 actions
             }
         }
+        .contextMenu {
+            Button {
+                onEditTeam()
+            } label: {
+                Label("Edit", systemImage: "pencil")
+            }
+            
+            Button(role: .destructive) {
+                onRemoveTeam()
+            } label: {
+                Label("Delete", systemImage: "trash")
+            }
+        }
     }
 }
 
