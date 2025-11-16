@@ -33,7 +33,7 @@ struct TeamSetupView: View {
             .closeButtonToolbar()
             .sheet(isPresented: $isAddTeamSheetPresented) {
                 NavigationView {
-                    AddTeamSheet(
+                    AddTeamView(
                         playersPerTeam: playersPerTeam,
                         onTeamCreate: { team in
                             gameManager.addTeam(team)
