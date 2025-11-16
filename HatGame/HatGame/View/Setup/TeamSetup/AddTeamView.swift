@@ -1,5 +1,5 @@
 //
-//  AddTeamSheet.swift
+//  AddTeamView.swift
 //  HatGame
 //
 //  Created by Giga Khizanishvili on 15.11.25.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct AddTeamSheet: View {
+struct AddTeamView: View {
     @Environment(Navigator.self) private var navigator
 
     @State private var teamName: String = ""
