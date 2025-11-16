@@ -151,7 +151,7 @@ private extension TeamSetupView {
         }
         Button("Delete", role: .destructive) {
             if let deletingTeam {
-                gameManager.removeTeamById(deletingTeam.id)
+                gameManager.removeTeam(deletingTeam)
                 self.deletingTeam = nil
             }
         }
