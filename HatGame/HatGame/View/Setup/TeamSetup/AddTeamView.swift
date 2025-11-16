@@ -9,9 +9,11 @@ import SwiftUI
 
 struct AddTeamView: View {
     @Environment(Navigator.self) private var navigator
+    @Environment(GameManager.self) private var gameManager
 
     @State private var teamName: String = ""
     @State private var playerNames: [String]
+    @State private var teamColor: Color
     
     let playersPerTeam: Int
     let onTeamCreate: (Team) -> Void
@@ -20,18 +22,20 @@ struct AddTeamView: View {
         self.playersPerTeam = playersPerTeam
         self.onTeamCreate = onTeamCreate
         self._playerNames = State(initialValue: Array(repeating: "", count: playersPerTeam))
+        self._teamColor = State(initialValue: DesignBook.Color.Team.team1)
     }
 
     var body: some View {
         TeamFormView(
             teamName: $teamName,
             playerNames: $playerNames,
+            teamColor: $teamColor,
             title: "New Team",
             primaryButtonTitle: "Create Team",
             onPrimaryAction: {
-                var team = Team(name: teamName, color: .pink)
+                var team = Team(name: teamName, color: teamColor)
                 team.players = playerNames.map { playerName in
-                    .init(name: playerName, teamId: team.id)
+                    Player(name: playerName, teamId: team.id)
                 }
                 onTeamCreate(team)
                 navigator.dismiss()
@@ -40,5 +44,16 @@ struct AddTeamView: View {
                 navigator.dismiss()
             }
         )
+        .onAppear {
+            updateDefaultColor()
+        }
+    }
+}
+
+// MARK: - Private
+private extension AddTeamView {
+    func updateDefaultColor() {
+        let teamIndex = gameManager.configuration.teams.count
+        teamColor = DesignBook.Color.Team.color(for: teamIndex)
     }
 }

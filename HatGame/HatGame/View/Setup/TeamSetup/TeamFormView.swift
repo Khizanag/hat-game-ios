@@ -6,10 +6,12 @@
 //
 
 import SwiftUI
+import UIKit
 
 struct TeamFormView: View {
     @Binding var teamName: String
     @Binding var playerNames: [String]
+    @Binding var teamColor: Color
     
     let title: String
     let primaryButtonTitle: String
@@ -25,6 +27,7 @@ struct TeamFormView: View {
         ScrollView {
             VStack(spacing: DesignBook.Spacing.lg) {
                 teamNameCard
+                colorCard
                 playersCard
             }
             .padding(.horizontal, DesignBook.Spacing.lg)
@@ -61,6 +64,102 @@ private extension TeamFormView {
                     .cornerRadius(DesignBook.Size.smallCardCornerRadius)
             }
         }
+    }
+    
+    var colorCard: some View {
+        GameCard {
+            VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
+                HStack(spacing: DesignBook.Spacing.sm) {
+                    Image(systemName: "paintpalette.fill")
+                        .font(.system(size: DesignBook.Size.iconSize))
+                        .foregroundColor(DesignBook.Color.Text.accent)
+                    
+                    Text("Team Color")
+                        .font(DesignBook.Font.captionBold)
+                        .foregroundColor(DesignBook.Color.Text.secondary)
+                }
+                
+                colorPicker
+            }
+        }
+    }
+    
+    var colorPicker: some View {
+        VStack(spacing: DesignBook.Spacing.md) {
+            suggestedColors
+            
+            ColorPicker("Custom Color", selection: $teamColor, supportsOpacity: false)
+                .labelsHidden()
+                .frame(height: 44)
+                .padding(DesignBook.Spacing.md)
+                .background(DesignBook.Color.Background.secondary)
+                .cornerRadius(DesignBook.Size.smallCardCornerRadius)
+        }
+    }
+    
+    var suggestedColors: some View {
+        VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
+            Text("Suggested Colors")
+                .font(DesignBook.Font.caption)
+                .foregroundColor(DesignBook.Color.Text.tertiary)
+            
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 50))], spacing: DesignBook.Spacing.md) {
+                ForEach(suggestedColorOptions.indices, id: \.self) { index in
+                    colorOption(color: suggestedColorOptions[index], index: index)
+                }
+            }
+        }
+    }
+    
+    var suggestedColorOptions: [Color] {
+        [
+            DesignBook.Color.Team.team1,
+            DesignBook.Color.Team.team2,
+            DesignBook.Color.Team.team3,
+            DesignBook.Color.Team.team4,
+            DesignBook.Color.Team.team5,
+            DesignBook.Color.Team.team6
+        ]
+    }
+    
+    func colorOption(color: Color, index: Int) -> some View {
+        Button {
+            teamColor = color
+        } label: {
+            Circle()
+                .fill(color)
+                .frame(width: 44, height: 44)
+                .overlay {
+                    if isSuggestedColorSelected(index) {
+                        Image(systemName: "checkmark")
+                            .font(.system(size: 18, weight: .bold))
+                            .foregroundColor(.white)
+                    }
+                }
+        }
+        .buttonStyle(.plain)
+    }
+    
+    func isSuggestedColorSelected(_ index: Int) -> Bool {
+        guard index < suggestedColorOptions.count else { return false }
+        let suggestedColor = suggestedColorOptions[index]
+        return isColorSelected(suggestedColor)
+    }
+    
+    func isColorSelected(_ color: Color) -> Bool {
+        // Compare colors by converting to UIColor and comparing components
+        let uiColor1 = UIColor(teamColor)
+        let uiColor2 = UIColor(color)
+        
+        var r1: CGFloat = 0, g1: CGFloat = 0, b1: CGFloat = 0, a1: CGFloat = 0
+        var r2: CGFloat = 0, g2: CGFloat = 0, b2: CGFloat = 0, a2: CGFloat = 0
+        
+        guard uiColor1.getRed(&r1, green: &g1, blue: &b1, alpha: &a1),
+              uiColor2.getRed(&r2, green: &g2, blue: &b2, alpha: &a2) else {
+            return false
+        }
+        
+        return abs(r1 - r2) < 0.01 && abs(g1 - g2) < 0.01 && abs(b1 - b2) < 0.01
     }
     
     var playersCard: some View {
