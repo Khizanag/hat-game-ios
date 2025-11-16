@@ -28,20 +28,6 @@ enum DesignBook {
             static let warning = SwiftUI.Color(red: 1.0, green: 0.7, blue: 0.2)
         }
         
-        enum Team {
-            static let team1 = SwiftUI.Color(red: 0.3, green: 0.6, blue: 1.0)
-            static let team2 = SwiftUI.Color(red: 1.0, green: 0.4, blue: 0.4)
-            static let team3 = SwiftUI.Color(red: 0.4, green: 0.8, blue: 0.4)
-            static let team4 = SwiftUI.Color(red: 1.0, green: 0.7, blue: 0.2)
-            static let team5 = SwiftUI.Color(red: 0.8, green: 0.3, blue: 0.8)
-            static let team6 = SwiftUI.Color(red: 0.2, green: 0.8, blue: 0.8)
-            
-            static func color(for index: Int) -> SwiftUI.Color {
-                let colors = [team1, team2, team3, team4, team5, team6]
-                return colors[index % colors.count]
-            }
-        }
-        
         enum Button {
             static let primary = SwiftUI.Color(red: 0.3, green: 0.6, blue: 1.0)
             static let primaryPressed = SwiftUI.Color(red: 0.2, green: 0.5, blue: 0.9)

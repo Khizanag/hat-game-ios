@@ -112,14 +112,7 @@ private extension TeamFormView {
     }
     
     var suggestedColorOptions: [Color] {
-        [
-            DesignBook.Color.Team.team1,
-            DesignBook.Color.Team.team2,
-            DesignBook.Color.Team.team3,
-            DesignBook.Color.Team.team4,
-            DesignBook.Color.Team.team5,
-            DesignBook.Color.Team.team6
-        ]
+        TeamDefaultColorGenerator.defaultColors
     }
     
     func colorOption(color: Color, index: Int) -> some View {

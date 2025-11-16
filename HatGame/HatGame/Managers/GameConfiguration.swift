@@ -19,14 +19,9 @@ final class GameConfiguration {
     var teams: [Team] = []
     var words: [Word] = []
 
-    let teamColors: [Color] = [
-        DesignBook.Color.Team.team1,
-        DesignBook.Color.Team.team2,
-        DesignBook.Color.Team.team3,
-        DesignBook.Color.Team.team4,
-        DesignBook.Color.Team.team5,
-        DesignBook.Color.Team.team6
-    ]
+    var teamColors: [Color] {
+        TeamDefaultColorGenerator.defaultColors
+    }
     
     func teamColor(for index: Int) -> Color {
         teamColors[index % teamColors.count]
@@ -60,7 +55,7 @@ extension GameConfiguration {
                 .init(name: "Alice", teamId: team1Id),
                 .init(name: "Bob", teamId: team1Id),
             ],
-            color: DesignBook.Color.Team.team1
+            color: TeamDefaultColorGenerator.defaultColors[0]
         )
 
         let team2Id = UUID()
@@ -70,7 +65,7 @@ extension GameConfiguration {
                 .init(name: "John", teamId: team2Id),
                 .init(name: "Margaret", teamId: team2Id),
             ],
-            color: DesignBook.Color.Team.team2
+            color: TeamDefaultColorGenerator.defaultColors[1]
         )
 
         return GameConfiguration(
