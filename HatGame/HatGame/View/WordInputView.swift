@@ -11,31 +11,32 @@ struct WordInputView: View {
     @Environment(GameManager.self) private var gameManager
     @Environment(AppConfiguration.self) private var appConfiguration
     @Environment(Navigator.self) private var navigator
+    
     @State private var currentPlayerIndex: Int = 0
     @State private var playerWords: [String] = []
     @State private var currentWord: String = ""
     @FocusState private var isWordFieldFocused: Bool
     
-    var currentPlayer: Player? {
+    private var currentPlayer: Player? {
         guard currentPlayerIndex < allPlayers.count else { return nil }
         return allPlayers[currentPlayerIndex]
     }
     
-    var nextPlayerName: String? {
+    private var nextPlayerName: String? {
         let nextIndex = currentPlayerIndex + 1
         guard nextIndex < allPlayers.count else { return nil }
         return allPlayers[nextIndex].name
     }
     
-    var wordsPerPlayer: Int {
+    private var wordsPerPlayer: Int {
         gameManager.wordsPerPlayer
     }
     
-    var allPlayers: [Player] {
+    private var allPlayers: [Player] {
         gameManager.teams.flatMap { $0.players }
     }
     
-    var progress: Double {
+    private var progress: Double {
         guard !allPlayers.isEmpty else { return 0 }
         return Double(currentPlayerIndex) / Double(allPlayers.count)
     }
@@ -56,7 +57,6 @@ struct WordInputView: View {
 }
 
 private extension WordInputView {
-    
     var content: some View {
         VStack(spacing: DesignBook.Spacing.lg) {
             headerCard
@@ -64,27 +64,17 @@ private extension WordInputView {
             Spacer()
             actionButton
         }
+        .padding(.horizontal, DesignBook.Spacing.lg)
     }
     
     var headerCard: some View {
-        GameCard {
-            VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
-                Text("Add Words")
-                    .font(DesignBook.Font.title2)
-                    .foregroundColor(DesignBook.Color.Text.primary)
-                
-                if let player = currentPlayer {
-                    Text("\(player.name) - Add \(wordsPerPlayer) words")
-                        .font(DesignBook.Font.body)
-                        .foregroundColor(DesignBook.Color.Text.secondary)
-                }
-                
-                ProgressView(value: progress)
-                    .tint(DesignBook.Color.Text.accent)
-            }
+        HeaderCard(
+            title: "Add Words",
+            description: currentPlayer.map { "\($0.name) - Add \(wordsPerPlayer) words" }
+        ) {
+            ProgressView(value: progress)
+                .tint(DesignBook.Color.Text.accent)
         }
-        .padding(.horizontal, DesignBook.Spacing.lg)
-        .padding(.top, DesignBook.Spacing.lg)
     }
     
     @ViewBuilder
@@ -93,7 +83,10 @@ private extension WordInputView {
             if playerWords.count < wordsPerPlayer {
                 wordInputCard
             } else {
-                completionCard
+                VStack(spacing: DesignBook.Spacing.md) {
+                    completionCard
+                    wordsListCard
+                }
             }
         }
     }
@@ -113,7 +106,6 @@ private extension WordInputView {
                 wordsList
             }
         }
-        .padding(.horizontal, DesignBook.Spacing.lg)
     }
     
     var wordTextField: some View {
@@ -164,7 +156,6 @@ private extension WordInputView {
                 }
             }
         }
-        .frame(maxHeight: 300)
     }
     
     var completionCard: some View {
@@ -187,7 +178,18 @@ private extension WordInputView {
                 }
             }
         }
-        .padding(.horizontal, DesignBook.Spacing.lg)
+    }
+    
+    var wordsListCard: some View {
+        GameCard {
+            VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
+                Text("Words added: \(playerWords.count)/\(wordsPerPlayer)")
+                    .font(DesignBook.Font.headline)
+                    .foregroundColor(DesignBook.Color.Text.primary)
+                
+                wordsList
+            }
+        }
     }
     
     @ViewBuilder
@@ -196,8 +198,6 @@ private extension WordInputView {
             PrimaryButton(title: actionButtonTitle) {
                 handleSaveWords()
             }
-            .padding(.horizontal, DesignBook.Spacing.lg)
-            .padding(.bottom, DesignBook.Spacing.lg)
         }
     }
     

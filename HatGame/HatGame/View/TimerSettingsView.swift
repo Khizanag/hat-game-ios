@@ -29,22 +29,14 @@ private extension TimerSettingsView {
             Spacer()
             continueButton
         }
+        .padding(.horizontal, DesignBook.Spacing.lg)
     }
     
     var descriptionCard: some View {
-        GameCard {
-            VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
-                Text("Round timer")
-                    .font(DesignBook.Font.title2)
-                    .foregroundColor(DesignBook.Color.Text.primary)
-                
-                Text("Each team gets the same amount of time per turn. Choose how intense you want the round to be.")
-                    .font(DesignBook.Font.body)
-                    .foregroundColor(DesignBook.Color.Text.secondary)
-            }
-        }
-        .padding(.horizontal, DesignBook.Spacing.lg)
-        .padding(.top, DesignBook.Spacing.lg)
+        HeaderCard(
+            title: "Round timer",
+            description: "Each team gets the same amount of time per turn. Choose how intense you want the round to be."
+        )
     }
     
     var controlsCard: some View {
@@ -56,7 +48,6 @@ private extension TimerSettingsView {
                 timerTags
             }
         }
-        .padding(.horizontal, DesignBook.Spacing.lg)
     }
     
     var durationHeader: some View {
@@ -92,15 +83,12 @@ private extension TimerSettingsView {
             LegendTag(title: "Classic", range: "60s", isHighlighted: selectedDuration == 60)
             LegendTag(title: "Marathon", range: "90-120s", isHighlighted: selectedDuration.isBetween(90, and: 120))
         }
-        .padding(.horizontal, -DesignBook.Spacing.md)
     }
     
     var continueButton: some View {
         PrimaryButton(title: "Continue") {
             handleContinue()
         }
-        .padding(.horizontal, DesignBook.Spacing.lg)
-        .padding(.bottom, DesignBook.Spacing.lg)
     }
     
     var durationBinding: Binding<Double> {

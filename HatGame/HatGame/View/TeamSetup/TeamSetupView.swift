@@ -73,23 +73,15 @@ private extension TeamSetupView {
                 continueSection
             }
             .padding(.horizontal, DesignBook.Spacing.lg)
+            .padding(.top, DesignBook.Spacing.lg)
         }
     }
 
     var headerCard: some View {
-        GameCard {
-            VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
-                Text("Setup Teams")
-                    .font(DesignBook.Font.title2)
-                    .foregroundColor(DesignBook.Color.Text.primary)
-
-                Text("Create teams and add players to each team")
-                    .font(DesignBook.Font.body)
-                    .foregroundColor(DesignBook.Color.Text.secondary)
-            }
-        }
-        .padding(.horizontal, DesignBook.Spacing.lg)
-        .padding(.top, DesignBook.Spacing.lg)
+        HeaderCard(
+            title: "Setup Teams",
+            description: "Create teams and add players to each team"
+        )
     }
 
     var teamsList: some View {
