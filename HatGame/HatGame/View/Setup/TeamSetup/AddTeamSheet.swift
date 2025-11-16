@@ -28,7 +28,7 @@ struct AddTeamSheet: View {
     }
     
     var body: some View {
-        NavigationStack {
+        NavigationView {
             VStack(spacing: DesignBook.Spacing.lg) {
                 teamNameField
                 playersSection
@@ -40,7 +40,6 @@ struct AddTeamSheet: View {
             .navigationTitle("New Team")
             .navigationBarTitleDisplayMode(.inline)
         }
-        .presentationDetents([.large])
     }
 }
 
@@ -100,7 +99,7 @@ private extension AddTeamSheet {
             }
             .disabled(!canCreateTeam)
             
-            SecondaryButton(title: "Cancel") {
+            DestructiveButton(title: "Cancel") {
                 dismiss()
             }
         }

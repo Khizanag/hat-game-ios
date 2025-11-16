@@ -73,7 +73,6 @@ private extension TeamSetupView {
                 continueSection
             }
             .padding(.horizontal, DesignBook.Spacing.lg)
-            .padding(.top, DesignBook.Spacing.lg)
         }
     }
 
@@ -104,20 +103,9 @@ private extension TeamSetupView {
             }
             
             if gameManager.teams.count < 6 {
-                Button {
+                SecondaryButton(title: "Add Team") {
                     newTeamName = ""
                     isAddTeamSheetPresented = true
-                } label: {
-                    HStack(spacing: DesignBook.Spacing.sm) {
-                        Image(systemName: "plus.circle.fill")
-                        Text("Add Team")
-                    }
-                    .font(DesignBook.Font.body)
-                    .foregroundColor(DesignBook.Color.Text.accent)
-                    .frame(maxWidth: .infinity)
-                    .padding(DesignBook.Spacing.md)
-                    .background(DesignBook.Color.Background.secondary)
-                    .cornerRadius(DesignBook.Size.smallCardCornerRadius)
                 }
             }
         }
@@ -169,7 +157,9 @@ private extension TeamSetupView {
     @ViewBuilder
     var editTeamSheet: some View {
         if let teamId = editingTeamId {
-            TeamEditView(teamId: teamId)
+            NavigationView {
+                TeamEditView(teamId: teamId)
+            }
         }
     }
 

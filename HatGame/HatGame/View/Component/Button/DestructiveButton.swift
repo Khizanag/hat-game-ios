@@ -1,5 +1,5 @@
 //
-//  SecondaryButton.swift
+//  DestructiveButton.swift
 //  HatGame
 //
 //  Created by Giga Khizanishvili on 15.11.25.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct SecondaryButton: View {
+struct DestructiveButton: View {
     let title: String
     let action: () -> Void
     
@@ -15,19 +15,22 @@ struct SecondaryButton: View {
         Button(action: action) {
             Text(title)
                 .font(DesignBook.Font.headline)
-                .foregroundColor(DesignBook.Color.Text.primary)
+                .padding(8)
                 .frame(maxWidth: .infinity)
-                .frame(height: DesignBook.Size.buttonHeight)
-                .background(DesignBook.Color.Button.secondary)
                 .cornerRadius(DesignBook.Size.smallCardCornerRadius)
         }
-        .applyShadow(DesignBook.Shadow.small)
+        .buttonStyle(.glassProminent)
+        .tint(DesignBook.Color.Status.error)
     }
 }
 
+// MARK: - Preview
 #Preview {
-    SecondaryButton(title: "Cancel") {}
-        .padding()
-        .background(DesignBook.Color.Background.primary)
+    VStack(spacing: DesignBook.Spacing.md) {
+        DestructiveButton(title: "Cancel") {}
+        DestructiveButton(title: "Delete") {}
+    }
+    .padding()
+    .background(DesignBook.Color.Background.primary)
 }
 

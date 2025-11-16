@@ -15,8 +15,10 @@ final class GameManager {
     var allWords: [Word] = []
     var shuffledWords: [Word] = []
     var currentWordIndex: Int = 0
+
     var roundStartTime: Date?
     var roundEndTime: Date?
+
     var wordsPerPlayer: Int = 10
     var roundDuration: Int = 60
     var startingTeamIndex: Int = 0

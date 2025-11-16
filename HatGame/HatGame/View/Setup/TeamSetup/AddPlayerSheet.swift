@@ -13,17 +13,17 @@ struct AddPlayerSheet: View {
     let playersPerTeam: Int
     let onAdd: () -> Void
     let onCancel: () -> Void
-    
+
     private var playersAdded: Int {
         playersAddedProvider()
     }
-    
+
     var body: some View {
-        NavigationStack {
+        NavigationView {
             content
                 .setDefaultBackground()
-            .navigationTitle("Add Player")
-            .navigationBarTitleDisplayMode(.inline)
+                .navigationTitle("Add Player")
+                .navigationBarTitleDisplayMode(.inline)
         }
         .presentationDetents([.medium])
     }
@@ -39,13 +39,13 @@ private extension AddPlayerSheet {
             actionButtons
         }
     }
-    
+
     var title: some View {
         Text("Player \(playersAdded + 1) of \(playersPerTeam)")
             .font(DesignBook.Font.headline)
             .foregroundColor(DesignBook.Color.Text.secondary)
     }
-    
+
     var nameField: some View {
         TextField("Player Name", text: $playerName)
             .textFieldStyle(.plain)
@@ -57,15 +57,15 @@ private extension AddPlayerSheet {
             .applyShadow(DesignBook.Shadow.medium)
             .padding(.horizontal, DesignBook.Spacing.lg)
     }
-    
+
     var actionButtons: some View {
         VStack(spacing: DesignBook.Spacing.md) {
             PrimaryButton(title: "Add Player") {
                 onAdd()
             }
             .disabled(playerName.trimmingCharacters(in: .whitespaces).isEmpty || playersAdded >= playersPerTeam)
-            
-            SecondaryButton(title: "Cancel") {
+
+            DestructiveButton(title: "Cancel") {
                 onCancel()
             }
         }
