@@ -11,7 +11,7 @@ struct NavigationView<RootContent: View>: View {
     @State private var navigator = Navigator()
     @ViewBuilder private let rootContent: () -> RootContent
     @Environment(\.dismiss) private var dismiss
-
+    
     init(@ViewBuilder rootContent: @escaping () -> RootContent) {
         self.rootContent = rootContent
     }
@@ -25,7 +25,7 @@ struct NavigationView<RootContent: View>: View {
         }
         .environment(navigator)
         .fullScreenCover(item: $navigator.presentedPage) { page in
-                page.view()
+            page.view()
         }
         .onReceive(navigator.pleaseDismissViewPublisher) {
             dismiss()

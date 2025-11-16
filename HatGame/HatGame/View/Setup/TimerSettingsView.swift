@@ -24,7 +24,7 @@ struct TimerSettingsView: View {
 private extension TimerSettingsView {
     var content: some View {
         VStack(spacing: DesignBook.Spacing.lg) {
-            descriptionCard
+            headerCard
             controlsCard
             Spacer()
             continueButton
@@ -32,7 +32,7 @@ private extension TimerSettingsView {
         .padding(.horizontal, DesignBook.Spacing.lg)
     }
     
-    var descriptionCard: some View {
+    var headerCard: some View {
         HeaderCard(
             title: "Round timer",
             description: "Each team gets the same amount of time per turn. Choose how intense you want the round to be."

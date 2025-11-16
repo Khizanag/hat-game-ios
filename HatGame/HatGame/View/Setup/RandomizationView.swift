@@ -12,83 +12,85 @@ struct RandomizationView: View {
     @Environment(Navigator.self) private var navigator
     @State private var isShuffling: Bool = false
     @State private var selectedStartingTeamIndex: Int = 0
-    
+
     var body: some View {
         content
             .setDefaultBackground()
             .navigationTitle("Randomize")
             .navigationBarBackButtonHidden()
+            .closeButtonToolbar()
     }
 }
 
 private extension RandomizationView {
     var content: some View {
-        VStack(spacing: DesignBook.Spacing.xl) {
-            Spacer()
-            shuffleCard
-            startingTeamSection
-            Spacer()
-        }
-    }
-    
-    var shuffleCard: some View {
-        GameCard {
-            VStack(spacing: DesignBook.Spacing.lg) {
+        readyContent
+            .padding(.horizontal, DesignBook.Spacing.lg)
+            .overlay {
                 if isShuffling {
-                    shufflingContent
-                } else {
-                    readyContent
+                    ZStack {
+                        Color.clear
+                            .background(Material.ultraThin)
+
+                        shufflingContent
+                            .padding(.horizontal)
+                    }
                 }
             }
-        }
-        .padding(.horizontal, DesignBook.Spacing.lg)
     }
-    
+
     var shufflingContent: some View {
-        VStack(spacing: DesignBook.Spacing.md) {
-            ProgressView()
-                .scaleEffect(1.5)
-            
-            Text("Shuffling words...")
-                .font(DesignBook.Font.headline)
-                .foregroundColor(DesignBook.Color.Text.secondary)
-        }
-        .frame(height: 200)
-    }
-    
-    var readyContent: some View {
-        VStack(spacing: DesignBook.Spacing.md) {
-            Text("🎲")
-                .font(.system(size: 80))
-            
-            Text("Randomize Words")
-                .font(DesignBook.Font.title2)
-                .foregroundColor(DesignBook.Color.Text.primary)
-            
-            Text("\(gameManager.allWords.count) words ready")
-                .font(DesignBook.Font.body)
-                .foregroundColor(DesignBook.Color.Text.secondary)
-        }
-        .frame(height: 200)
-    }
-    
-    @ViewBuilder
-    var startingTeamSection: some View {
-        if !isShuffling {
-            VStack(spacing: DesignBook.Spacing.md) {
-                startingTeamPickerCard
-                shuffleButton
+        VStack {
+            Spacer()
+            GameCard {
+                VStack(spacing: DesignBook.Spacing.md) {
+                    ProgressView()
+                        .scaleEffect(1.5)
+
+                    Text("Shuffling words...")
+                        .font(DesignBook.Font.headline)
+                        .foregroundColor(DesignBook.Color.Text.secondary)
+                }
+                .frame(height: 200)
             }
+            Spacer()
         }
     }
-    
+
+    var readyContent: some View {
+        VStack {
+            GameCard {
+                VStack(spacing: DesignBook.Spacing.md) {
+                    Text("🎲")
+                        .font(.system(size: 80))
+
+                    Text("Randomize Words")
+                        .font(DesignBook.Font.title2)
+                        .foregroundColor(DesignBook.Color.Text.primary)
+
+                    Text("\(gameManager.allWords.count) words ready")
+                        .font(DesignBook.Font.body)
+                        .foregroundColor(DesignBook.Color.Text.secondary)
+                }
+            }
+
+            Spacer()
+
+            startingTeamPickerCard
+
+            Spacer()
+
+            shuffleButton
+        }
+    }
+
     var startingTeamPickerCard: some View {
         GameCard {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
                 Text("Which team starts?")
                     .font(DesignBook.Font.headline)
                     .foregroundColor(DesignBook.Color.Text.primary)
-                
+
                 Picker("Starting Team", selection: $selectedStartingTeamIndex) {
                     ForEach(Array(gameManager.teams.enumerated()), id: \.offset) { index, team in
                         Text(team.name)
@@ -99,19 +101,17 @@ private extension RandomizationView {
                 .frame(height: 150)
             }
         }
-        .padding(.horizontal, DesignBook.Spacing.lg)
     }
-    
+
     var shuffleButton: some View {
         PrimaryButton(title: "Shuffle & Start") {
             shuffleAndStart()
         }
-        .padding(.horizontal, DesignBook.Spacing.lg)
     }
-    
+
     func shuffleAndStart() {
         isShuffling = true
-        
+
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
             gameManager.shuffleWords()
             gameManager.startRound(.one, startingTeamIndex: selectedStartingTeamIndex)
@@ -127,4 +127,3 @@ private extension RandomizationView {
     }
     .environment(GameManager())
 }
-

@@ -125,7 +125,7 @@ private extension TeamEditView {
             .disabled(!canSaveChanges)
             .opacity(canSaveChanges ? DesignBook.Opacity.enabled : DesignBook.Opacity.disabled)
             
-            SecondaryButton(title: "Cancel") {
+            DestructiveButton(title: "Cancel") {
                 navigator.dismiss()
             }
         }
