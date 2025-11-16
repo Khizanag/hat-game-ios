@@ -17,6 +17,7 @@
 - Keep imports in sorted order
 - Do not add extra whitelines, not at the end of the file too
 - Avoid adding several endlines at the end of the file
+- Files should end exactly at the last character (no trailing newline at the end)
 
 ### File Headers
 - Use current date in headers for newly created files

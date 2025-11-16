@@ -53,4 +53,3 @@ struct HeaderCard<Content: View>: View {
     }
     .setDefaultBackground()
 }
-

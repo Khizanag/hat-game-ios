@@ -51,4 +51,3 @@ extension DestructiveButton where Label == Text {
     .padding()
     .background(DesignBook.Color.Background.primary)
 }
-

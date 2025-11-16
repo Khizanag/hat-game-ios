@@ -122,5 +122,3 @@ private extension Int {
     }
     .environment(GameManager())
 }
-
-

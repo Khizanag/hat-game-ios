@@ -22,4 +22,3 @@ final class AppConfiguration {
         isTestMode = UserDefaults.standard.bool(forKey: Self.testModeKey)
     }
 }
-

@@ -40,4 +40,3 @@ struct NavigationView<RootContent: View>: View {
     .environment(GameManager())
     .environment(AppConfiguration())
 }
-

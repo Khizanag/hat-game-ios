@@ -251,4 +251,3 @@ private extension WordInputView {
     .environment(GameManager())
     .environment(AppConfiguration())
 }
-

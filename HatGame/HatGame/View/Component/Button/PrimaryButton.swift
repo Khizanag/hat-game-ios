@@ -29,4 +29,3 @@ struct PrimaryButton: View {
         .padding()
         .background(DesignBook.Color.Background.primary)
 }
-
