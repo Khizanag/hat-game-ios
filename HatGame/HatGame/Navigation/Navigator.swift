@@ -50,4 +50,3 @@ final class Navigator {
         push(page)
     }
 }
-

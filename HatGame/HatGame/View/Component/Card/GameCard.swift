@@ -34,4 +34,3 @@ struct GameCard<Content: View>: View {
     .padding()
     .background(DesignBook.Color.Background.primary)
 }
-

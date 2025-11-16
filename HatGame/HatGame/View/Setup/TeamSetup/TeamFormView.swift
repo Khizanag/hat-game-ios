@@ -98,4 +98,3 @@ private extension TeamFormView {
         .padding(.bottom, DesignBook.Spacing.lg)
     }
 }
-

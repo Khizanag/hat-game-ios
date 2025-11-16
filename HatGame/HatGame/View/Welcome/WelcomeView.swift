@@ -167,4 +167,3 @@ private struct InstructionRow: View {
     .environment(GameManager())
     .environment(AppConfiguration())
 }
-

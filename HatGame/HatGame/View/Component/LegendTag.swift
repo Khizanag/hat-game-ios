@@ -38,4 +38,3 @@ struct LegendTag: View {
     }
     .padding()
 }
-
