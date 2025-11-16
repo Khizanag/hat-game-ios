@@ -9,8 +9,8 @@ import Foundation
 
 struct Player: Identifiable, Codable, Hashable {
     let id: UUID
-    var name: String
-    var teamId: UUID
+    let name: String
+    let teamId: UUID
     
     init(id: UUID = UUID(), name: String, teamId: UUID) {
         self.id = id
@@ -18,4 +18,3 @@ struct Player: Identifiable, Codable, Hashable {
         self.teamId = teamId
     }
 }
-

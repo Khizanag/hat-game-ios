@@ -77,7 +77,12 @@ final class GameManager {
     func updatePlayerName(playerId: UUID, name: String) {
         for teamIndex in configuration.teams.indices {
             if let playerIndex = configuration.teams[teamIndex].players.firstIndex(where: { $0.id == playerId }) {
-                configuration.teams[teamIndex].players[playerIndex].name = name
+                let player = configuration.teams[teamIndex].players[playerIndex]
+                configuration.teams[teamIndex].players[playerIndex] = Player(
+                    id: player.id,
+                    name: name,
+                    teamId: player.teamId
+                )
                 break
             }
         }
