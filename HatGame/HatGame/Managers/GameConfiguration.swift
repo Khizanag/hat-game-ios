@@ -19,6 +19,8 @@ final class GameConfiguration {
     var teams: [Team] = []
     var words: [Word] = []
 
+    static let rounds: [GameRound] = [.first, .second, .third]
+
     var teamColors: [Color] {
         TeamDefaultColorGenerator.defaultColors
     }

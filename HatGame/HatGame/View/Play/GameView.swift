@@ -295,12 +295,12 @@ private extension GameView {
         gameManager.commitPlayFinish()
 
         // Check if this is the last round
-        if round == .third {
+//        if round == .third {
             // All rounds finished, go to final results
-            navigator.push(.finalResults)
-        } else {
+//            navigator.push(.finalResults)
+//        } else {
             // Show round results, then continue to next round
             navigator.push(.roundResults(round: round))
-        }
+//        }
     }
 }
