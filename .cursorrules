@@ -6,6 +6,7 @@
 - Use `struct SomeView: View { var body: some View { ... } }` pattern
 - Do NOT use `struct SomeView { } extension SomeView: View { ... }` pattern
 - Move component creation into private extensions as computed properties to reduce body length
+- Move helper functions into private extensions to keep the main struct clean
 - Add appropriate MARK comments to protocol conformances
 - Add appropriate MARK comments to Preview blocks
 - Do NOT use "Sheet" in view names - use "View" instead (e.g., `AddTeamView` not `AddTeamSheet`)
