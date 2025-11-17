@@ -80,7 +80,7 @@ private extension NextTeamView {
                     .font(DesignBook.Font.title2)
                     .foregroundColor(team.color)
                 
-                Text("Current Score: \(/*team.score*/3)")
+                Text("Current Score: \(gameManager.getTotalScore(for: team))")
                     .font(DesignBook.Font.headline)
                     .foregroundColor(DesignBook.Color.Text.accent)
             }

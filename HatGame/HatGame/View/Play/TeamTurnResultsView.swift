@@ -8,10 +8,10 @@
 import SwiftUI
 
 struct TeamTurnResultsView: View {
-    let guessedWords: [Word]
-
     @Environment(GameManager.self) private var gameManager
     @Environment(Navigator.self) private var navigator
+
+    let guessedWords: [Word]
 
     var body: some View {
         resultsScroll
@@ -113,11 +113,11 @@ private extension TeamTurnResultsView {
     var continueButton: some View {
         PrimaryButton(title: "Continue") {
             if let round = gameManager.currentRound {
-                //                    gameManager.setNextTeam()
+                gameManager.prepareForNewPlay()
                 navigator.push(
                     .nextTeam(
                         round: round,
-                        team: gameManager.configuration.teams[0]/*team*/
+                        team: gameManager.currentTeam
                     )
                 )
             } else {
