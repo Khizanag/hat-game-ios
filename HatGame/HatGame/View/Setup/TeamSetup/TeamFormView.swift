@@ -22,6 +22,12 @@ struct TeamFormView: View {
 
     private let appConfiguration = AppConfiguration.shared
     @State private var isColorSectionExpanded: Bool = false
+    @FocusState private var focusedField: Field?
+    
+    enum Field: Hashable {
+        case teamName
+        case player(Int)
+    }
 
     init(
         teamName: Binding<String>,
@@ -65,6 +71,11 @@ struct TeamFormView: View {
             actionButtons
         }
         .setDefaultStyle(title: title)
+        .onAppear {
+            if teamName.isEmpty {
+                focusedField = .teamName
+            }
+        }
     }
 }
 
@@ -89,6 +100,12 @@ private extension TeamFormView {
                     .padding(DesignBook.Spacing.md)
                     .background(DesignBook.Color.Background.secondary)
                     .cornerRadius(DesignBook.Size.smallCardCornerRadius)
+                    .focused($focusedField, equals: .teamName)
+                    .onSubmit {
+                        if !playerNames.isEmpty {
+                            focusedField = .player(0)
+                        }
+                    }
             }
         }
     }
@@ -298,6 +315,15 @@ private extension TeamFormView {
             .padding(DesignBook.Spacing.md)
             .background(DesignBook.Color.Background.secondary)
             .cornerRadius(DesignBook.Size.smallCardCornerRadius)
+            .focused($focusedField, equals: .player(index))
+            .onSubmit {
+                let nextIndex = index + 1
+                if nextIndex < playerNames.count {
+                    focusedField = .player(nextIndex)
+                } else {
+                    focusedField = nil
+                }
+            }
         }
     }
 
