@@ -30,9 +30,6 @@ struct TeamEditView: View {
             onPrimaryAction: {
                 handleSaveChanges()
                 navigator.dismiss()
-            },
-            onCancel: {
-                navigator.dismiss()
             }
         )
         .setDefaultBackground()

@@ -9,6 +9,7 @@ import SwiftUI
 import UIKit
 
 struct TeamFormView: View {
+    @Environment(Navigator.self) private var navigator
     @Binding var teamName: String
     @Binding var playerNames: [String]
     @Binding var teamColor: Color
@@ -19,7 +20,6 @@ struct TeamFormView: View {
     let existingTeams: [Team]
     let currentTeamId: UUID?
     let onPrimaryAction: () -> Void
-    let onCancel: () -> Void
 
     private let appConfiguration = AppConfiguration.shared
     @State private var isColorSectionExpanded: Bool = false
@@ -39,8 +39,7 @@ struct TeamFormView: View {
         primaryButtonIcon: String? = nil,
         existingTeams: [Team] = [],
         currentTeamId: UUID? = nil,
-        onPrimaryAction: @escaping () -> Void,
-        onCancel: @escaping () -> Void
+        onPrimaryAction: @escaping () -> Void
     ) {
         self._teamName = teamName
         self._playerNames = playerNames
@@ -51,7 +50,6 @@ struct TeamFormView: View {
         self.existingTeams = existingTeams
         self.currentTeamId = currentTeamId
         self.onPrimaryAction = onPrimaryAction
-        self.onCancel = onCancel
     }
 
     private var canSave: Bool {
@@ -332,23 +330,20 @@ private extension TeamFormView {
 
     var actionButtons: some View {
         VStack(spacing: DesignBook.Spacing.md) {
-            Group {
-
-                if let icon = primaryButtonIcon {
-                    PrimaryButton(title: primaryButtonTitle, icon: icon) {
-                        onPrimaryAction()
-                    }
-                } else {
-                    PrimaryButton(title: primaryButtonTitle) {
-                        onPrimaryAction()
-                    }
+            if let icon = primaryButtonIcon {
+                PrimaryButton(title: primaryButtonTitle, icon: icon) {
+                    onPrimaryAction()
+                }
+            } else {
+                PrimaryButton(title: primaryButtonTitle) {
+                    onPrimaryAction()
                 }
             }
             .disabled(!canSave)
             .opacity(canSave ? DesignBook.Opacity.enabled : DesignBook.Opacity.disabled)
 
             DestructiveButton(title: "Cancel") {
-                onCancel()
+                navigator.dismiss()
             }
         }
         .paddingHorizontalDefault()
