@@ -35,7 +35,7 @@ struct NavigationView<RootContent: View>: View {
 
 #Preview {
     NavigationView {
-        Page.welcome.view()
+        Page.home.view()
     }
     .environment(GameManager())
 }

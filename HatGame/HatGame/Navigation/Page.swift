@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 
 enum Page: Hashable {
-    case welcome
+    case home
     case settings
     case developerInfo
 
@@ -39,8 +39,8 @@ extension Page {
     @ViewBuilder
     func view() -> some View {
         switch self {
-        case .welcome:
-            WelcomeView()
+        case .home:
+            HomeView()
         case .settings:
             SettingsView()
         case .teamSetup:

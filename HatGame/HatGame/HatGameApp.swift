@@ -12,7 +12,7 @@ struct HatGameApp: App {
     var body: some Scene {
         WindowGroup {
             NavigationView {
-                Page.welcome.view()
+                Page.home.view()
             }
             .presentationBackground(Color.red)
         }

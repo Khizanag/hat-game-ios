@@ -179,7 +179,7 @@ private extension GameView {
                     .foregroundColor(DesignBook.Color.Text.primary)
 
                 PrimaryButton(title: "Continue", icon: "play.fill") {
-                    togglePause()
+                    isPaused = false
                 }
                 .frame(width: 216)
             }
