@@ -92,8 +92,7 @@ private extension ResultsView {
                 }
             ),
             title: round.title,
-            description: round.description,
-            animation: .spring(response: 0.3, dampingFraction: 0.8)
+            description: round.description
         ) {
             roundScores(for: round)
         }
@@ -124,8 +123,7 @@ private extension ResultsView {
     var totalScoresSection: some View {
         FoldableCard(
             isExpanded: $isTotalScoresExpanded,
-            title: "Total Scores",
-            animation: .spring(response: 0.3, dampingFraction: 0.8)
+            title: "Total Scores"
         ) {
             totalScoresContent
         }

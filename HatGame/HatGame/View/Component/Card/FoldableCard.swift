@@ -8,14 +8,30 @@
 import SwiftUI
 
 struct FoldableCard<Content: View>: View {
+    private var spacing: CGFloat = DesignBook.Spacing.md
+
     @Binding var isExpanded: Bool
     let title: String
-    var description: String?
+    var description: String? = nil
     var titleFont: Font = DesignBook.Font.title3
     var descriptionFont: Font = DesignBook.Font.body
-    var spacing: CGFloat = DesignBook.Spacing.md
-    var animation: Animation = .easeInOut
     @ViewBuilder let content: () -> Content
+    
+    init(
+        isExpanded: Binding<Bool>,
+        title: String,
+        description: String? = nil,
+        titleFont: Font = DesignBook.Font.title3,
+        descriptionFont: Font = DesignBook.Font.body,
+        @ViewBuilder content: @escaping () -> Content
+    ) {
+        self._isExpanded = isExpanded
+        self.title = title
+        self.description = description
+        self.titleFont = titleFont
+        self.descriptionFont = descriptionFont
+        self.content = content
+    }
     
     var body: some View {
         GameCard {
@@ -34,52 +50,37 @@ struct FoldableCard<Content: View>: View {
 private extension FoldableCard {
     var headerButton: some View {
         Button {
-            withAnimation(animation) {
+            withAnimation(.easeInOut) {
                 isExpanded.toggle()
             }
         } label: {
-            HStack(alignment: description != nil ? .top : .center) {
-                headerText
+            VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
+                HStack {
+                    Text(title)
+                        .font(titleFont)
+                        .foregroundColor(DesignBook.Color.Text.primary)
+                    
+                    Spacer()
+                    
+                    chevronIcon
+                }
                 
-                Spacer()
-                
-                chevronIcon
+                if let description {
+                    Text(description)
+                        .font(descriptionFont)
+                        .foregroundColor(DesignBook.Color.Text.secondary)
+                }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .contentShape(Rectangle())
         }
         .buttonStyle(PlainButtonStyle())
     }
-    
-    @ViewBuilder
-    var headerText: some View {
-        if let description = description {
-            VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
-                Text(title)
-                    .font(titleFont)
-                    .foregroundColor(DesignBook.Color.Text.primary)
-                
-                Text(description)
-                    .font(descriptionFont)
-                    .foregroundColor(DesignBook.Color.Text.secondary)
-            }
-        } else {
-            Text(title)
-                .font(titleFont)
-                .foregroundColor(DesignBook.Color.Text.primary)
-        }
-    }
-    
-    @ViewBuilder
+
     var chevronIcon: some View {
-        if let description = description {
-            Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
-                .font(DesignBook.Font.headline)
-                .foregroundColor(DesignBook.Color.Text.accent)
-        } else {
-            Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
-                .foregroundColor(DesignBook.Color.Text.secondary)
-        }
+        Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
+            .font(DesignBook.Font.headline)
+            .foregroundColor(DesignBook.Color.Text.accent)
     }
 }
 
@@ -93,13 +94,13 @@ private extension FoldableCard {
             Text("Content here")
         }
         
-        FoldableCard(
-            isExpanded: .constant(false),
-            title: "Round 1",
-            description: "No restrictions"
-        ) {
-            Text("Round content here")
-        }
+       FoldableCard(
+           isExpanded: .constant(false),
+           title: "Round 1",
+           description: "No restrictions"
+       ) {
+           Text("Round content here")
+       }
     }
     .padding()
     .background(DesignBook.Color.Background.primary)
