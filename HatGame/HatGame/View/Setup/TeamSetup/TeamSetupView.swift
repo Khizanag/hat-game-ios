@@ -102,7 +102,7 @@ private extension TeamSetupView {
 
     var continueSection: some View {
         VStack(spacing: DesignBook.Spacing.sm) {
-            PrimaryButton(title: "Continue") {
+            PrimaryButton(title: "Continue", icon: "arrow.right.circle.fill") {
                 navigator.push(.wordSettings)
             }
             .disabled(!canContinue)

@@ -129,7 +129,7 @@ private extension GameView {
 
                 Spacer()
 
-                PrimaryButton(title: "Got It!") {
+                PrimaryButton(title: "Got It!", icon: "checkmark.circle.fill") {
                     markAsGuessed()
                 }
             }
@@ -178,7 +178,7 @@ private extension GameView {
                     .font(DesignBook.Font.largeTitle)
                     .foregroundColor(DesignBook.Color.Text.primary)
 
-                PrimaryButton(title: "Continue") {
+                PrimaryButton(title: "Continue", icon: "play.fill") {
                     togglePause()
                 }
                 .frame(width: 216)

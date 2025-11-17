@@ -100,7 +100,7 @@ private extension RandomizationView {
     }
 
     var shuffleButton: some View {
-        PrimaryButton(title: "Shuffle & Start") {
+        PrimaryButton(title: "Shuffle & Start", icon: "shuffle") {
             shuffleAndStart()
         }
     }

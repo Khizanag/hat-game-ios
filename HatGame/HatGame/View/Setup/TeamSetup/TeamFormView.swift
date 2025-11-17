@@ -15,6 +15,7 @@ struct TeamFormView: View {
 
     let title: String
     let primaryButtonTitle: String
+    let primaryButtonIcon: String?
     let existingTeams: [Team]
     let currentTeamId: UUID?
     let onPrimaryAction: () -> Void
@@ -35,6 +36,7 @@ struct TeamFormView: View {
         teamColor: Binding<Color>,
         title: String,
         primaryButtonTitle: String,
+        primaryButtonIcon: String? = nil,
         existingTeams: [Team] = [],
         currentTeamId: UUID? = nil,
         onPrimaryAction: @escaping () -> Void,
@@ -45,6 +47,7 @@ struct TeamFormView: View {
         self._teamColor = teamColor
         self.title = title
         self.primaryButtonTitle = primaryButtonTitle
+        self.primaryButtonIcon = primaryButtonIcon
         self.existingTeams = existingTeams
         self.currentTeamId = currentTeamId
         self.onPrimaryAction = onPrimaryAction
@@ -329,8 +332,17 @@ private extension TeamFormView {
 
     var actionButtons: some View {
         VStack(spacing: DesignBook.Spacing.md) {
-            PrimaryButton(title: primaryButtonTitle) {
-                onPrimaryAction()
+            Group {
+
+                if let icon = primaryButtonIcon {
+                    PrimaryButton(title: primaryButtonTitle, icon: icon) {
+                        onPrimaryAction()
+                    }
+                } else {
+                    PrimaryButton(title: primaryButtonTitle) {
+                        onPrimaryAction()
+                    }
+                }
             }
             .disabled(!canSave)
             .opacity(canSave ? DesignBook.Opacity.enabled : DesignBook.Opacity.disabled)

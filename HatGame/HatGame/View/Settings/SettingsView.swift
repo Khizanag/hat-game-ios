@@ -159,7 +159,7 @@ private extension SettingsView {
             icon: "hand.raised"
         ) {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
-                Text("Controls the alignment of color picker in team setup. Right-handed aligns colors to the right, left-handed aligns to the left.")
+                Text("Customize the interface layout based on your dominant hand preference. This setting affects various UI elements throughout the app.")
                     .font(DesignBook.Font.body)
                     .foregroundColor(DesignBook.Color.Text.secondary)
                 
