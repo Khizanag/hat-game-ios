@@ -46,30 +46,13 @@ private extension WelcomeView {
     }
     
     var howToPlayCard: some View {
-        GameCard {
+        FoldableCard(
+            isExpanded: $isHowToPlayExpanded,
+            title: "How to Play"
+        ) {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
-                Button {
-                    withAnimation(.easeInOut) {
-                        isHowToPlayExpanded.toggle()
-                    }
-                } label: {
-                    HStack {
-                        Text("How to Play")
-                            .font(DesignBook.Font.title3)
-                            .foregroundColor(DesignBook.Color.Text.primary)
-                        Spacer()
-                        Image(systemName: isHowToPlayExpanded ? "chevron.up" : "chevron.down")
-                            .foregroundColor(DesignBook.Color.Text.secondary)
-                    }
-                }
-                
-                if isHowToPlayExpanded {
-                    VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
-                        ForEach(Array(instructions.enumerated()), id: \.offset) { index, text in
-                            InstructionRow(number: String(index + 1), text: text)
-                        }
-                    }
-                    .transition(.opacity.combined(with: .move(edge: .top)))
+                ForEach(Array(instructions.enumerated()), id: \.offset) { index, text in
+                    InstructionRow(number: String(index + 1), text: text)
                 }
             }
         }
@@ -90,39 +73,24 @@ private extension WelcomeView {
     }
     
     var testModeCard: some View {
-        GameCard {
+        FoldableCard(
+            isExpanded: $isTestModeExpanded,
+            title: "Test Mode",
+            titleFont: DesignBook.Font.headline,
+            spacing: DesignBook.Spacing.sm
+        ) {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
-                Button {
-                    withAnimation(.easeInOut) {
-                        isTestModeExpanded.toggle()
-                    }
-                } label: {
-                    HStack(alignment: .top) {
-                        Text("Test Mode")
-                            .font(DesignBook.Font.headline)
-                            .foregroundColor(DesignBook.Color.Text.primary)
-                        Spacer()
-                        Image(systemName: isTestModeExpanded ? "chevron.up" : "chevron.down")
-                            .foregroundColor(DesignBook.Color.Text.secondary)
-                    }
+                Toggle(
+                    isOn: Binding(
+                        get: { appConfiguration.isTestMode },
+                        set: { handleTestModeChange($0) }
+                    )
+                ) {
+                    Text("Prefill teams, players, and sample words so you can explore the flow instantly. You can still edit everything after enabling it.")
+                        .font(DesignBook.Font.body)
+                        .foregroundColor(DesignBook.Color.Text.secondary)
                 }
-                
-                if isTestModeExpanded {
-                    VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
-                        Toggle(
-                            isOn: Binding(
-                                get: { appConfiguration.isTestMode },
-                                set: { handleTestModeChange($0) }
-                            )
-                        ) {
-                            Text("Prefill teams, players, and sample words so you can explore the flow instantly. You can still edit everything after enabling it.")
-                                .font(DesignBook.Font.body)
-                                .foregroundColor(DesignBook.Color.Text.secondary)
-                        }
-                        .toggleStyle(SwitchToggleStyle(tint: DesignBook.Color.Text.accent))
-                    }
-                    .transition(.opacity.combined(with: .move(edge: .top)))
-                }
+                .toggleStyle(SwitchToggleStyle(tint: DesignBook.Color.Text.accent))
             }
         }
         .paddingHorizontalDefault()

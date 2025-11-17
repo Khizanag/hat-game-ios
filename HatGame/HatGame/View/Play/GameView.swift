@@ -149,7 +149,6 @@ private extension GameView {
 
                     Spacer()
 
-
                     Text("\(passedWordCount)/\(totalWordsCount)")
                         .font(DesignBook.Font.headline)
                         .foregroundColor(DesignBook.Color.Text.accent)
