@@ -12,17 +12,17 @@ struct TeamFormView: View {
     @Binding var teamName: String
     @Binding var playerNames: [String]
     @Binding var teamColor: Color
-    
+
     let title: String
     let primaryButtonTitle: String
     let existingTeams: [Team]
     let currentTeamId: UUID?
     let onPrimaryAction: () -> Void
     let onCancel: () -> Void
-    
+
     private let appConfiguration = AppConfiguration.shared
     @State private var isColorSectionExpanded: Bool = false
-    
+
     init(
         teamName: Binding<String>,
         playerNames: Binding<[String]>,
@@ -44,12 +44,12 @@ struct TeamFormView: View {
         self.onPrimaryAction = onPrimaryAction
         self.onCancel = onCancel
     }
-    
+
     private var canSave: Bool {
         !teamName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
         playerNames.allSatisfy { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
     }
-    
+
     var body: some View {
         ScrollView {
             VStack(spacing: DesignBook.Spacing.lg) {
@@ -76,12 +76,12 @@ private extension TeamFormView {
                     Image(systemName: "person.3.fill")
                         .font(.system(size: DesignBook.Size.iconSize))
                         .foregroundColor(DesignBook.Color.Text.accent)
-                    
+
                     Text("Team Name")
                         .font(DesignBook.Font.captionBold)
                         .foregroundColor(DesignBook.Color.Text.secondary)
                 }
-                
+
                 TextField("Enter team name", text: $teamName)
                     .textFieldStyle(.plain)
                     .font(DesignBook.Font.headline)
@@ -92,7 +92,7 @@ private extension TeamFormView {
             }
         }
     }
-    
+
     var colorCard: some View {
         GameCard {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
@@ -105,24 +105,24 @@ private extension TeamFormView {
                         Image(systemName: "paintpalette.fill")
                             .font(.system(size: DesignBook.Size.iconSize))
                             .foregroundColor(DesignBook.Color.Text.accent)
-                        
+
                         Text("Team Color")
                             .font(DesignBook.Font.captionBold)
                             .foregroundColor(DesignBook.Color.Text.secondary)
-                        
+
                         Spacer()
-                        
+
                         if !isColorSectionExpanded {
                             Circle()
                                 .fill(teamColor)
                                 .frame(width: 24, height: 24)
                         }
-                        
+
                         Image(systemName: isColorSectionExpanded ? "chevron.up" : "chevron.down")
                             .foregroundColor(DesignBook.Color.Text.secondary)
                     }
                 }
-                
+
                 if isColorSectionExpanded {
                     colorPicker
                         .transition(.opacity.combined(with: .move(edge: .top)))
@@ -130,47 +130,51 @@ private extension TeamFormView {
             }
         }
     }
-    
+
     var colorPicker: some View {
         HStack {
             if appConfiguration.isRightHanded {
                 Spacer()
             }
-            
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: 44), spacing: DesignBook.Spacing.md)], spacing: DesignBook.Spacing.md) {
+
+            LazyVGrid(
+                columns: [GridItem(.adaptive(minimum: 44), spacing: DesignBook.Spacing.md)],
+                spacing: DesignBook.Spacing.md
+            ) {
                 ForEach(suggestedColorOptions.indices, id: \.self) { index in
                     colorOption(color: suggestedColorOptions[index], index: index)
                 }
-                
-                ColorPicker("Custom Color", selection: Binding(
-                    get: { teamColor },
-                    set: { newColor in
-                        withAnimation(.easeInOut) {
-                            teamColor = newColor
-                            isColorSectionExpanded = false
+
+                ColorPicker(
+                    "Custom Color",
+                    selection: Binding(
+                        get: { teamColor },
+                        set: { newColor in
+                            withAnimation(.easeInOut) {
+                                teamColor = newColor
+                                isColorSectionExpanded = false
+                            }
                         }
-                    }
-                ), supportsOpacity: false)
-                    .labelsHidden()
-                    .frame(width: 44, height: 44)
-                    .padding(DesignBook.Spacing.md)
-                    .background(DesignBook.Color.Background.secondary)
-                    .cornerRadius(DesignBook.Size.smallCardCornerRadius)
-            }
-            
-            if !appConfiguration.isRightHanded {
-                Spacer()
+                    ),
+                    supportsOpacity: true
+                )
+                .labelsHidden()
+                .frame(width: 44, height: 44)
+                .padding(DesignBook.Spacing.sm)
+                .background(DesignBook.Color.Background.secondary)
+                .cornerRadius(DesignBook.Size.smallCardCornerRadius)
+                .contentShape(Rectangle())
             }
         }
     }
-    
+
     var suggestedColorOptions: [Color] {
         TeamDefaultColorGenerator.defaultColors
     }
-    
+
     func colorOption(color: Color, index: Int) -> some View {
         let isDisabled = isColorOccupiedByOtherTeam(color)
-        
+
         return Button {
             if !isDisabled {
                 withAnimation(.easeInOut) {
@@ -199,29 +203,29 @@ private extension TeamFormView {
         .buttonStyle(.plain)
         .disabled(isDisabled)
     }
-    
+
     func isSuggestedColorSelected(_ index: Int) -> Bool {
         guard index < suggestedColorOptions.count else { return false }
         let suggestedColor = suggestedColorOptions[index]
         return isColorSelected(suggestedColor)
     }
-    
+
     func isColorSelected(_ color: Color) -> Bool {
         // Compare colors by converting to UIColor and comparing components
         let uiColor1 = UIColor(teamColor)
         let uiColor2 = UIColor(color)
-        
+
         var r1: CGFloat = 0, g1: CGFloat = 0, b1: CGFloat = 0, a1: CGFloat = 0
         var r2: CGFloat = 0, g2: CGFloat = 0, b2: CGFloat = 0, a2: CGFloat = 0
-        
+
         guard uiColor1.getRed(&r1, green: &g1, blue: &b1, alpha: &a1),
               uiColor2.getRed(&r2, green: &g2, blue: &b2, alpha: &a2) else {
             return false
         }
-        
+
         return abs(r1 - r2) < 0.01 && abs(g1 - g2) < 0.01 && abs(b1 - b2) < 0.01
     }
-    
+
     func isColorOccupiedByOtherTeam(_ color: Color) -> Bool {
         existingTeams.contains { team in
             // Skip the current team if editing
@@ -231,22 +235,22 @@ private extension TeamFormView {
             return areColorsEqual(color, team.color)
         }
     }
-    
+
     func areColorsEqual(_ color1: Color, _ color2: Color) -> Bool {
         let uiColor1 = UIColor(color1)
         let uiColor2 = UIColor(color2)
-        
+
         var r1: CGFloat = 0, g1: CGFloat = 0, b1: CGFloat = 0, a1: CGFloat = 0
         var r2: CGFloat = 0, g2: CGFloat = 0, b2: CGFloat = 0, a2: CGFloat = 0
-        
+
         guard uiColor1.getRed(&r1, green: &g1, blue: &b1, alpha: &a1),
               uiColor2.getRed(&r2, green: &g2, blue: &b2, alpha: &a2) else {
             return false
         }
-        
+
         return abs(r1 - r2) < 0.01 && abs(g1 - g2) < 0.01 && abs(b1 - b2) < 0.01
     }
-    
+
     var playersCard: some View {
         GameCard {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
@@ -254,18 +258,18 @@ private extension TeamFormView {
                     Image(systemName: "person.2.fill")
                         .font(.system(size: DesignBook.Size.iconSize))
                         .foregroundColor(DesignBook.Color.Text.accent)
-                    
+
                     Text("Players")
                         .font(DesignBook.Font.captionBold)
                         .foregroundColor(DesignBook.Color.Text.secondary)
-                    
+
                     Spacer()
-                    
+
                     Text("\(playerNames.count)")
                         .font(DesignBook.Font.captionBold)
                         .foregroundColor(DesignBook.Color.Text.tertiary)
                 }
-                
+
                 VStack(spacing: DesignBook.Spacing.md) {
                     ForEach(playerNames.indices, id: \.self) { index in
                         playerField(index: index)
@@ -274,7 +278,7 @@ private extension TeamFormView {
             }
         }
     }
-    
+
     func playerField(index: Int) -> some View {
         HStack(spacing: DesignBook.Spacing.md) {
             Text("\(index + 1)")
@@ -283,7 +287,7 @@ private extension TeamFormView {
                 .frame(width: 24, height: 24)
                 .background(DesignBook.Color.Text.accent.opacity(DesignBook.Opacity.highlight))
                 .clipShape(Circle())
-            
+
             TextField("Player name", text: Binding(
                 get: { playerNames[index] },
                 set: { playerNames[index] = $0 }
@@ -296,7 +300,7 @@ private extension TeamFormView {
             .cornerRadius(DesignBook.Size.smallCardCornerRadius)
         }
     }
-    
+
     var actionButtons: some View {
         VStack(spacing: DesignBook.Spacing.md) {
             PrimaryButton(title: primaryButtonTitle) {
@@ -304,7 +308,7 @@ private extension TeamFormView {
             }
             .disabled(!canSave)
             .opacity(canSave ? DesignBook.Opacity.enabled : DesignBook.Opacity.disabled)
-            
+
             DestructiveButton(title: "Cancel") {
                 onCancel()
             }
