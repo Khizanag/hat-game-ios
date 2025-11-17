@@ -9,13 +9,21 @@ import SwiftUI
 
 struct TimerSettingsView: View {
     @Environment(GameManager.self) private var gameManager
+    @Environment(AppConfiguration.self) private var appConfiguration
     @Environment(Navigator.self) private var navigator
 
-    @State private var selectedDuration: Int = 10
+    @State private var selectedDuration: Int
 
+    init() {
+        _selectedDuration = State(initialValue: 60)
+    }
+    
     var body: some View {
         content
             .setDefaultStyle(title: "Timer Settings")
+            .onAppear {
+                selectedDuration = appConfiguration.defaultRoundDuration
+            }
     }
 }
 
@@ -120,4 +128,5 @@ private extension Int {
         Page.timerSettings.view()
     }
     .environment(GameManager())
+    .environment(AppConfiguration())
 }

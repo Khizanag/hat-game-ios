@@ -10,6 +10,7 @@ import SwiftUI
 
 enum Page: Hashable {
     case welcome
+    case settings
     case developerInfo
 
     case teamSetup
@@ -40,6 +41,8 @@ extension Page {
         switch self {
         case .welcome:
             WelcomeView()
+        case .settings:
+            SettingsView()
         case .teamSetup:
             NavigationView {
                 TeamSetupView()

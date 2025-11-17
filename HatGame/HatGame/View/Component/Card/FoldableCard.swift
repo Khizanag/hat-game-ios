@@ -8,19 +8,21 @@
 import SwiftUI
 
 struct FoldableCard<Content: View>: View {
-    private var spacing: CGFloat = DesignBook.Spacing.md
-
+    // MARK: - Properties
     @Binding var isExpanded: Bool
     let title: String
     let description: String?
+    let icon: String?
     let titleFont: Font
     let descriptionFont: Font
     @ViewBuilder let content: () -> Content
     
+    // MARK: - Init
     init(
         isExpanded: Binding<Bool>,
         title: String,
         description: String? = nil,
+        icon: String? = nil,
         titleFont: Font = DesignBook.Font.title3,
         descriptionFont: Font = DesignBook.Font.body,
         @ViewBuilder content: @escaping () -> Content
@@ -28,6 +30,7 @@ struct FoldableCard<Content: View>: View {
         self._isExpanded = isExpanded
         self.title = title
         self.description = description
+        self.icon = icon
         self.titleFont = titleFont
         self.descriptionFont = descriptionFont
         self.content = content
@@ -35,7 +38,7 @@ struct FoldableCard<Content: View>: View {
     
     var body: some View {
         GameCard {
-            VStack(alignment: .leading, spacing: spacing) {
+            VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
                 headerButton
                 
                 if isExpanded {
@@ -56,9 +59,17 @@ private extension FoldableCard {
         } label: {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
                 HStack {
-                    Text(title)
-                        .font(titleFont)
-                        .foregroundColor(DesignBook.Color.Text.primary)
+                    HStack(spacing: DesignBook.Spacing.sm) {
+                        if let icon {
+                            Image(systemName: icon)
+                                .font(titleFont)
+                                .foregroundColor(DesignBook.Color.Text.accent)
+                        }
+                        
+                        Text(title)
+                            .font(titleFont)
+                            .foregroundColor(DesignBook.Color.Text.primary)
+                    }
                     
                     Spacer()
                     
