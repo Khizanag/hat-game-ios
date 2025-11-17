@@ -76,8 +76,7 @@ private extension WelcomeView {
         FoldableCard(
             isExpanded: $isTestModeExpanded,
             title: "Test Mode",
-            titleFont: DesignBook.Font.headline,
-            spacing: DesignBook.Spacing.sm
+            titleFont: DesignBook.Font.headline
         ) {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
                 Toggle(
