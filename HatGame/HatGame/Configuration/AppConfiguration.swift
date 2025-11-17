@@ -10,9 +10,12 @@ import Observation
 
 @Observable
 final class AppConfiguration {
+    static let shared = AppConfiguration()
+    
     private static let testModeKey = "HatGame.isTestMode"
     private static let defaultWordsPerPlayerKey = "HatGame.defaultWordsPerPlayer"
     private static let defaultRoundDurationKey = "HatGame.defaultRoundDuration"
+    private static let isRightHandedKey = "HatGame.isRightHanded"
     
     var isTestMode: Bool {
         didSet {
@@ -32,9 +35,16 @@ final class AppConfiguration {
         }
     }
     
-    init() {
+    var isRightHanded: Bool {
+        didSet {
+            UserDefaults.standard.set(isRightHanded, forKey: Self.isRightHandedKey)
+        }
+    }
+    
+    private init() {
         isTestMode = UserDefaults.standard.bool(forKey: Self.testModeKey)
         defaultWordsPerPlayer = UserDefaults.standard.object(forKey: Self.defaultWordsPerPlayerKey) as? Int ?? 10
         defaultRoundDuration = UserDefaults.standard.object(forKey: Self.defaultRoundDurationKey) as? Int ?? 60
+        isRightHanded = UserDefaults.standard.object(forKey: Self.isRightHandedKey) as? Bool ?? true
     }
 }

@@ -114,5 +114,4 @@ private struct InstructionRow: View {
         Page.welcome.view()
     }
     .environment(GameManager())
-    .environment(AppConfiguration())
 }

@@ -8,12 +8,13 @@
 import SwiftUI
 
 struct SettingsView: View {
-    @Environment(AppConfiguration.self) private var appConfiguration
+    private let appConfiguration = AppConfiguration.shared
 
     @SceneStorage("SettingsView.isTestModeExpanded") private var isTestModeExpanded = false
     @SceneStorage("SettingsView.isDefaultsExpanded") private var isDefaultsExpanded = true
     @SceneStorage("SettingsView.isAboutExpanded") private var isAboutExpanded = true
     @SceneStorage("SettingsView.isDeveloperInfoExpanded") private var isDeveloperInfoExpanded = true
+    @SceneStorage("SettingsView.isHandednessExpanded") private var isHandednessExpanded = false
     
     var body: some View {
         content
@@ -26,6 +27,7 @@ private extension SettingsView {
         ScrollView {
             VStack(spacing: DesignBook.Spacing.xl) {
                 defaultsCard
+                handednessCard
                 aboutCard
                 developerInfoCard
                 testModeCard
@@ -146,6 +148,29 @@ private extension SettingsView {
                 Text("Adjust the default timer duration for each team's turn")
                     .font(DesignBook.Font.caption)
                     .foregroundColor(DesignBook.Color.Text.secondary)
+            }
+        }
+    }
+    
+    var handednessCard: some View {
+        FoldableCard(
+            isExpanded: $isHandednessExpanded,
+            title: "Handedness",
+            icon: "hand.raised"
+        ) {
+            VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
+                Text("Controls the alignment of color picker in team setup. Right-handed aligns colors to the right, left-handed aligns to the left.")
+                    .font(DesignBook.Font.body)
+                    .foregroundColor(DesignBook.Color.Text.secondary)
+                
+                Picker("Handedness", selection: Binding(
+                    get: { appConfiguration.isRightHanded ? "right" : "left" },
+                    set: { appConfiguration.isRightHanded = $0 == "right" }
+                )) {
+                    Text("Left-handed").tag("left")
+                    Text("Right-handed").tag("right")
+                }
+                .pickerStyle(.segmented)
             }
         }
     }
@@ -336,6 +361,5 @@ private extension SettingsView {
     NavigationView {
         Page.settings.view()
     }
-    .environment(AppConfiguration())
 }
 

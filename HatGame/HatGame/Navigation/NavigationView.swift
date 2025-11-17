@@ -38,5 +38,4 @@ struct NavigationView<RootContent: View>: View {
         Page.welcome.view()
     }
     .environment(GameManager())
-    .environment(AppConfiguration())
 }

@@ -10,6 +10,7 @@ import SwiftUI
 struct TeamSetupView: View {
     @Environment(GameManager.self) private var gameManager
     @Environment(Navigator.self) private var navigator
+    private let appConfiguration = AppConfiguration.shared
 
     @State private var isAddTeamSheetPresented: Bool = false
     @State private var newTeamName: String = ""

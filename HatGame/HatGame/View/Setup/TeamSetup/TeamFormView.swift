@@ -20,6 +20,7 @@ struct TeamFormView: View {
     let onPrimaryAction: () -> Void
     let onCancel: () -> Void
     
+    private let appConfiguration = AppConfiguration.shared
     @State private var isColorSectionExpanded: Bool = false
     
     init(
@@ -131,25 +132,35 @@ private extension TeamFormView {
     }
     
     var colorPicker: some View {
-        LazyVGrid(columns: [GridItem(.adaptive(minimum: 44), spacing: DesignBook.Spacing.md)], spacing: DesignBook.Spacing.md) {
-            ForEach(suggestedColorOptions.indices, id: \.self) { index in
-                colorOption(color: suggestedColorOptions[index], index: index)
+        HStack {
+            if appConfiguration.isRightHanded {
+                Spacer()
             }
             
-            ColorPicker("Custom Color", selection: Binding(
-                get: { teamColor },
-                set: { newColor in
-                    withAnimation(.easeInOut) {
-                        teamColor = newColor
-                        isColorSectionExpanded = false
-                    }
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 44), spacing: DesignBook.Spacing.md)], spacing: DesignBook.Spacing.md) {
+                ForEach(suggestedColorOptions.indices, id: \.self) { index in
+                    colorOption(color: suggestedColorOptions[index], index: index)
                 }
-            ), supportsOpacity: false)
-                .labelsHidden()
-                .frame(width: 44, height: 44)
-                .padding(DesignBook.Spacing.md)
-                .background(DesignBook.Color.Background.secondary)
-                .cornerRadius(DesignBook.Size.smallCardCornerRadius)
+                
+                ColorPicker("Custom Color", selection: Binding(
+                    get: { teamColor },
+                    set: { newColor in
+                        withAnimation(.easeInOut) {
+                            teamColor = newColor
+                            isColorSectionExpanded = false
+                        }
+                    }
+                ), supportsOpacity: false)
+                    .labelsHidden()
+                    .frame(width: 44, height: 44)
+                    .padding(DesignBook.Spacing.md)
+                    .background(DesignBook.Color.Background.secondary)
+                    .cornerRadius(DesignBook.Size.smallCardCornerRadius)
+            }
+            
+            if !appConfiguration.isRightHanded {
+                Spacer()
+            }
         }
     }
     
