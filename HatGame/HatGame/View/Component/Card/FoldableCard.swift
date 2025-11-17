@@ -12,9 +12,9 @@ struct FoldableCard<Content: View>: View {
 
     @Binding var isExpanded: Bool
     let title: String
-    var description: String? = nil
-    var titleFont: Font = DesignBook.Font.title3
-    var descriptionFont: Font = DesignBook.Font.body
+    let description: String?
+    let titleFont: Font
+    let descriptionFont: Font
     @ViewBuilder let content: () -> Content
     
     init(
