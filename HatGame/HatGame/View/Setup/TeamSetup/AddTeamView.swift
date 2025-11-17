@@ -41,9 +41,6 @@ struct AddTeamView: View {
                 }
                 onTeamCreate(team)
                 navigator.dismiss()
-            },
-            onCancel: {
-                navigator.dismiss()
             }
         )
         .onAppear {
