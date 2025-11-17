@@ -7,19 +7,45 @@
 
 import SwiftUI
 
-struct SecondaryButton: View {
-    let title: String
-    let action: () -> Void
+struct SecondaryButton<Label: View>: View {
+    private let action: () -> Void
+    @ViewBuilder private let label: () -> Label
+    
+    init(action: @escaping () -> Void, @ViewBuilder label: @escaping () -> Label) {
+        self.action = action
+        self.label = label
+    }
     
     var body: some View {
         Button(action: action) {
-            Text(title)
+            label()
                 .font(DesignBook.Font.headline)
                 .padding(8)
                 .frame(maxWidth: .infinity)
                 .cornerRadius(DesignBook.Size.smallCardCornerRadius)
         }
         .buttonStyle(.glass)
+    }
+}
+
+extension SecondaryButton where Label == Text {
+    init(title: String, action: @escaping () -> Void) {
+        self.action = action
+        self.label = { Text(title) }
+    }
+}
+
+extension SecondaryButton where Label == AnyView {
+    init(title: String, icon: String, action: @escaping () -> Void) {
+        self.action = action
+        self.label = {
+            AnyView(
+                HStack(spacing: DesignBook.Spacing.sm) {
+                    Image(systemName: icon)
+                    Text(title)
+                }
+            )
+        }
     }
 }
 

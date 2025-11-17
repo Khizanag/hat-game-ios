@@ -125,11 +125,11 @@ private extension NextTeamView {
 
     var buttonsSection: some View {
         VStack(spacing: DesignBook.Spacing.md) {
-            SecondaryButton(title: "Check Standings") {
+            SecondaryButton(title: "Check Standings", icon: "list.bullet.rectangle") {
                 isStandingsPresented = true
             }
             
-            PrimaryButton(title: "Play") {
+            PrimaryButton(title: "Play", icon: "play.fill") {
                 gameManager.prepareForNewPlay()
                 navigator.push(.play(round: round))
             }

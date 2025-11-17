@@ -9,13 +9,21 @@ import SwiftUI
 
 struct WordSettingsView: View {
     @Environment(GameManager.self) private var gameManager
+    @Environment(AppConfiguration.self) private var appConfiguration
     @Environment(Navigator.self) private var navigator
     
-    @State private var selectedWordCount: Int = 3 // TODO: Update to 10
+    @State private var selectedWordCount: Int
+    
+    init() {
+        _selectedWordCount = State(initialValue: 10)
+    }
     
     var body: some View {
         content
             .setDefaultStyle(title: "Word Settings")
+            .onAppear {
+                selectedWordCount = appConfiguration.defaultWordsPerPlayer
+            }
     }
 }
 
@@ -119,4 +127,5 @@ private extension Int {
         Page.wordSettings.view()
     }
     .environment(GameManager())
+    .environment(AppConfiguration())
 }
