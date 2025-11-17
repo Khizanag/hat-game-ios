@@ -80,15 +80,22 @@ private extension ResultsView {
     }
     
     func roundSection(for round: GameRound) -> some View {
-        GameCard {
-            VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
-                roundHeaderButton(for: round)
-                
-                if expandedRounds.contains(round) {
-                    roundScores(for: round)
-                        .transition(.opacity.combined(with: .move(edge: .top)))
+        FoldableCard(
+            isExpanded: Binding(
+                get: { expandedRounds.contains(round) },
+                set: { isExpanded in
+                    if isExpanded {
+                        expandedRounds.insert(round)
+                    } else {
+                        expandedRounds.remove(round)
+                    }
                 }
-            }
+            ),
+            title: round.title,
+            description: round.description,
+            animation: .spring(response: 0.3, dampingFraction: 0.8)
+        ) {
+            roundScores(for: round)
         }
     }
     
@@ -99,37 +106,6 @@ private extension ResultsView {
                 winnerCardContent
             }
         }
-    }
-    
-    func roundHeaderButton(for round: GameRound) -> some View {
-        Button {
-            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                if expandedRounds.contains(round) {
-                    expandedRounds.remove(round)
-                } else {
-                    expandedRounds.insert(round)
-                }
-            }
-        } label: {
-            HStack {
-                VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
-                    Text(round.title)
-                        .font(DesignBook.Font.title3)
-                        .foregroundColor(DesignBook.Color.Text.primary)
-                    
-                    Text(round.description)
-                        .font(DesignBook.Font.body)
-                        .foregroundColor(DesignBook.Color.Text.secondary)
-                }
-                
-                Spacer()
-                
-                Image(systemName: expandedRounds.contains(round) ? "chevron.up" : "chevron.down")
-                    .font(DesignBook.Font.headline)
-                    .foregroundColor(DesignBook.Color.Text.accent)
-            }
-        }
-        .buttonStyle(PlainButtonStyle())
     }
     
     func roundScores(for round: GameRound) -> some View {
@@ -143,41 +119,16 @@ private extension ResultsView {
                 )
             }
         }
-        .padding(.top, DesignBook.Spacing.sm)
     }
     
     var totalScoresSection: some View {
-        GameCard {
-            VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
-                totalScoresHeader
-                
-                if isTotalScoresExpanded {
-                    totalScoresContent
-                        .transition(.opacity.combined(with: .move(edge: .top)))
-                }
-            }
+        FoldableCard(
+            isExpanded: $isTotalScoresExpanded,
+            title: "Total Scores",
+            animation: .spring(response: 0.3, dampingFraction: 0.8)
+        ) {
+            totalScoresContent
         }
-    }
-    
-    var totalScoresHeader: some View {
-        Button {
-            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                isTotalScoresExpanded.toggle()
-            }
-        } label: {
-            HStack {
-                Text("Total Scores")
-                    .font(DesignBook.Font.title3)
-                    .foregroundColor(DesignBook.Color.Text.primary)
-                
-                Spacer()
-                
-                Image(systemName: isTotalScoresExpanded ? "chevron.up" : "chevron.down")
-                    .font(DesignBook.Font.headline)
-                    .foregroundColor(DesignBook.Color.Text.accent)
-            }
-        }
-        .buttonStyle(PlainButtonStyle())
     }
     
     var totalScoresContent: some View {
@@ -191,7 +142,6 @@ private extension ResultsView {
                 )
             }
         }
-        .padding(.top, DesignBook.Spacing.sm)
     }
     
     @ViewBuilder
