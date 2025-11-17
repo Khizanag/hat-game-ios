@@ -31,7 +31,6 @@ final class GameManager {
     // MARK: - Teams
     var currentTeam: Team { configuration.teams[currentTeamIndex] }
     private var currentTeamIndex: Int = 0
-    
 
     // MARK: - Functions
     func start() {
@@ -51,10 +50,6 @@ final class GameManager {
         remainingWords.remove(currentWord)
 
         self.currentWord = remainingWords.randomElement()
-
-        if self.currentWord == nil {
-            setUpNextRound()
-        }
     }
 
     func prepareForNewPlay() {
@@ -125,6 +120,8 @@ extension GameManager {
 // MARK: - Private
 private extension GameManager {
     func setUpNextRound() {
+        resetWords()
+        
         currentRound = roundIterator.next()
 
         if let currentRound {
@@ -138,6 +135,10 @@ private extension GameManager {
 
     func setNextTeam() {
         currentTeamIndex = (currentTeamIndex + 1) % configuration.teams.count
+    }
+
+    func resetWords() {
+        remainingWords = Set(configuration.words)
     }
 
     func finishGame() {

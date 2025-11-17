@@ -12,11 +12,17 @@ struct TeamTurnResultsView: View {
     @Environment(Navigator.self) private var navigator
 
     let guessedWords: [Word]
+    @State private var isStandingsPresented = false
 
     var body: some View {
         resultsScroll
             .setDefaultBackground()
             .navigationBarBackButtonHidden()
+            .sheet(isPresented: $isStandingsPresented) {
+                NavigationView {
+                    ResultsView()
+                }
+            }
     }
 }
 
@@ -35,7 +41,7 @@ private extension TeamTurnResultsView {
             .padding(.bottom, DesignBook.Spacing.xxl)
         }
         .safeAreaInset(edge: .bottom) {
-            continueButton
+            buttonsSection
                 .paddingHorizontalDefault()
         }
     }
@@ -110,18 +116,25 @@ private extension TeamTurnResultsView {
         }
     }
 
-    var continueButton: some View {
-        PrimaryButton(title: "Continue") {
-            if let round = gameManager.currentRound {
+    var buttonsSection: some View {
+        VStack(spacing: DesignBook.Spacing.md) {
+            SecondaryButton(title: "Check Standings") {
+                isStandingsPresented = true
+            }
+            
+            PrimaryButton(title: "Continue") {
                 gameManager.prepareForNewPlay()
-                navigator.push(
-                    .nextTeam(
-                        round: round,
-                        team: gameManager.currentTeam
+
+                if let round = gameManager.currentRound {
+                    navigator.push(
+                        .nextTeam(
+                            round: round,
+                            team: gameManager.currentTeam
+                        )
                     )
-                )
-            } else {
-                navigator.push(.finalResults)
+                } else {
+                    navigator.push(.finalResults)
+                }
             }
         }
     }
