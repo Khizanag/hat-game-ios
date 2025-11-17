@@ -31,6 +31,7 @@ struct NextTeamView: View {
     }
 }
 
+// MARK: - Components
 private extension NextTeamView {
     var content: some View {
         ScrollView {
@@ -43,18 +44,6 @@ private extension NextTeamView {
         .safeAreaInset(edge: .bottom) {
             buttonsSection
                 .paddingHorizontalDefault()
-        }
-    }
-    
-    var buttonsSection: some View {
-        VStack(spacing: DesignBook.Spacing.md) {
-            SecondaryButton(title: "Check Standings") {
-                isStandingsPresented = true
-            }
-            
-            PrimaryButton(title: "Play") {
-                navigator.push(.play(round: round))
-            }
         }
     }
     
@@ -131,6 +120,19 @@ private extension NextTeamView {
             Text(value)
                 .font(DesignBook.Font.bodyBold)
                 .foregroundColor(DesignBook.Color.Text.primary)
+        }
+    }
+
+    var buttonsSection: some View {
+        VStack(spacing: DesignBook.Spacing.md) {
+            SecondaryButton(title: "Check Standings") {
+                isStandingsPresented = true
+            }
+            
+            PrimaryButton(title: "Play") {
+                gameManager.prepareForNewPlay()
+                navigator.push(.play(round: round))
+            }
         }
     }
 }
