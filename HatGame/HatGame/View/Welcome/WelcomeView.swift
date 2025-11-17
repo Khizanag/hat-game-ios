@@ -65,13 +65,9 @@ private extension WelcomeView {
                 
                 if isHowToPlayExpanded {
                     VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
-                        InstructionRow(number: "1", text: "Create teams and add players")
-                        InstructionRow(number: "2", text: "Each player adds words to the hat")
-                        InstructionRow(number: "3", text: "Words are randomized")
-                        InstructionRow(number: "4", text: "Round 1: No restrictions - guess as many as you can")
-                        InstructionRow(number: "5", text: "Round 2: One word only to describe")
-                        InstructionRow(number: "6", text: "Round 3: Gestures and miming only")
-                        InstructionRow(number: "7", text: "Team with most points wins!")
+                        ForEach(Array(instructions.enumerated()), id: \.offset) { index, text in
+                            InstructionRow(number: String(index + 1), text: text)
+                        }
                     }
                     .transition(.opacity.combined(with: .move(edge: .top)))
                 }
@@ -134,6 +130,18 @@ private extension WelcomeView {
     
     func handleTestModeChange(_ enabled: Bool) {
         appConfiguration.isTestMode = enabled
+    }
+    
+    var instructions: [String] {
+        [
+            "Create teams and add players",
+            "Each player adds words to the hat",
+            "Words are randomized",
+            "Round 1: No restrictions - guess as many as you can",
+            "Round 2: One word only to describe",
+            "Round 3: Gestures and miming only",
+            "Team with most points wins!"
+        ]
     }
 }
 
