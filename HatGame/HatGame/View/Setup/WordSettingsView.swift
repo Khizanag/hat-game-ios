@@ -9,7 +9,7 @@ import SwiftUI
 
 struct WordSettingsView: View {
     @Environment(GameManager.self) private var gameManager
-    @Environment(AppConfiguration.self) private var appConfiguration
+    private let appConfiguration = AppConfiguration.shared
     @Environment(Navigator.self) private var navigator
     
     @State private var selectedWordCount: Int
@@ -127,5 +127,4 @@ private extension Int {
         Page.wordSettings.view()
     }
     .environment(GameManager())
-    .environment(AppConfiguration())
 }

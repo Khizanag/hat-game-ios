@@ -9,7 +9,7 @@ import SwiftUI
 
 struct WordInputView: View {
     @Environment(GameManager.self) private var gameManager
-    @Environment(AppConfiguration.self) private var appConfiguration
+    private let appConfiguration = AppConfiguration.shared
     @Environment(Navigator.self) private var navigator
 
     @State private var currentPlayerIndex: Int = 0
@@ -209,15 +209,8 @@ private extension WordInputView {
     
     func prepareCurrentPlayer() {
         guard let player = currentPlayer else { return }
-//        // In test mode, pre-fill words if available
-//        if appConfiguration.isTestMode, let preFilledWords = gameManager.getWords(for: player.id) {
-//            playerWords = preFilledWords
-//        } else {
-//            playerWords = []
-//        }
 //        isWordFieldFocused = true
     }
-    
     
     func handleAddWord() {
         let trimmedWord = currentWord.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -247,5 +240,4 @@ private extension WordInputView {
         Page.wordInput.view()
     }
     .environment(GameManager())
-    .environment(AppConfiguration())
 }

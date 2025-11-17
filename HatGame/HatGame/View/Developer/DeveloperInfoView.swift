@@ -92,5 +92,4 @@ private extension DeveloperInfoView {
         DeveloperInfoView()
     }
     .environment(GameManager())
-    .environment(AppConfiguration())
 }
