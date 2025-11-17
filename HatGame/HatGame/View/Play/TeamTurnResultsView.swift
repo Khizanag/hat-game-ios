@@ -122,7 +122,7 @@ private extension TeamTurnResultsView {
                 isStandingsPresented = true
             }
             
-            PrimaryButton(title: "Continue") {
+            PrimaryButton(title: "Continue", icon: "arrow.right.circle.fill") {
                 gameManager.prepareForNewPlay()
 
                 if let round = gameManager.currentRound {

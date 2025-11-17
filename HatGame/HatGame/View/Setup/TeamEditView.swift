@@ -24,6 +24,7 @@ struct TeamEditView: View {
             teamColor: $teamColor,
             title: "Edit group",
             primaryButtonTitle: "Save changes",
+            primaryButtonIcon: "checkmark.circle.fill",
             existingTeams: gameManager.configuration.teams,
             currentTeamId: team.id,
             onPrimaryAction: {

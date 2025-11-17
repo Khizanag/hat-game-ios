@@ -97,7 +97,7 @@ private extension WordSettingsView {
     }
     
     var continueButton: some View {
-        PrimaryButton(title: "Continue") {
+        PrimaryButton(title: "Continue", icon: "arrow.right.circle.fill") {
             handleContinue()
         }
     }

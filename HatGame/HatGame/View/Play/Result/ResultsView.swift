@@ -150,7 +150,7 @@ private extension ResultsView {
     }
     
     var newGameButton: some View {
-        PrimaryButton(title: "Return to Main Page") {
+        PrimaryButton(title: "Return to Main Page", icon: "house.fill") {
             handleReturnToMain()
         }
     }

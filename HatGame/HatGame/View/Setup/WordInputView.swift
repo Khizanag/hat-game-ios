@@ -197,7 +197,7 @@ private extension WordInputView {
     var actionButton: some View {
         // TODO: Uncomment
 //        if playerWords.count >= wordsPerPlayer {
-            PrimaryButton(title: actionButtonTitle) {
+            PrimaryButton(title: actionButtonTitle, icon: actionButtonIcon) {
                 handleSaveWords()
             }
 //        }
@@ -205,6 +205,10 @@ private extension WordInputView {
     
     var actionButtonTitle: String {
         currentPlayerIndex < allPlayers.count - 1 ? "Next Player" : "Finish"
+    }
+    
+    var actionButtonIcon: String {
+        currentPlayerIndex < allPlayers.count - 1 ? "arrow.right.circle.fill" : "checkmark.circle.fill"
     }
     
     func prepareCurrentPlayer() {
