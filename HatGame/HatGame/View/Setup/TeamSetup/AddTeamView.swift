@@ -14,7 +14,7 @@ struct AddTeamView: View {
     @State private var teamName: String = ""
     @State private var playerNames: [String]
     @State private var teamColor: Color
-    
+
     let playersPerTeam: Int
     let onTeamCreate: (Team) -> Void
 
