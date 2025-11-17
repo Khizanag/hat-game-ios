@@ -57,16 +57,12 @@ final class GameManager {
         }
     }
 
-    func commitPlayFinish() {
-        if currentWord != nil { // Round is not finished
-            currentTeamIndex = (currentTeamIndex + 1) % configuration.teams.count
-        } else { // Round is finished
+    func prepareForNewPlay() {
+        if currentWord != nil { // Current round is not finished
+            setNextTeam()
+        } else { // Current round is finished
             setUpNextRound()
         }
-    }
-
-    func setNextTeam() {
-
     }
 }
 
@@ -138,6 +134,10 @@ private extension GameManager {
         }
 
         currentWord = remainingWords.randomElement()
+    }
+
+    func setNextTeam() {
+        currentTeamIndex = (currentTeamIndex + 1) % configuration.teams.count
     }
 
     func finishGame() {

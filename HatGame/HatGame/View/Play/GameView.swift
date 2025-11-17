@@ -49,7 +49,7 @@ struct GameView: View {
                 if let newValue {
                     word = newValue
                 } else {
-                    navigator.push(.roundResults)
+                    navigator.push(.teamTurnResults(guessedWords: guessedWords))
                 }
             }
     }
@@ -191,7 +191,6 @@ private extension GameView {
         max(gameManager.configuration.roundDuration - remainingSeconds, 0)
     }
 
-
     @ViewBuilder
     var giveUpAlertActions: some View {
         Button("Cancel", role: .cancel) {
@@ -214,6 +213,7 @@ private extension GameView {
         stopTimer()
         isPaused = false
         // Get remaining time for this team, or use full duration
+        // TODO: Implement
         remainingSeconds = /*gameManager.getRemainingTime(for: team) ??*/ gameManager.configuration.roundDuration
         timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
             tickTimer()
@@ -264,20 +264,12 @@ private extension GameView {
     }
 
     func giveUpWord() {
-        // TODO: Implement
+        finishRound()
     }
 
     func finishRound() {
         stopTimer()
-        gameManager.commitPlayFinish()
 
-        // Check if this is the last round
-//        if round == .third {
-            // All rounds finished, go to final results
-//            navigator.push(.finalResults)
-//        } else {
-            // Show round results, then continue to next round
-            navigator.push(.roundResults)
-//        }
+        navigator.push(.teamTurnResults(guessedWords: guessedWords))
     }
 }
