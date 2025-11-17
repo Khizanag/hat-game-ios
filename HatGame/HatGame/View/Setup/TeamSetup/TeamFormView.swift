@@ -10,18 +10,17 @@ import UIKit
 
 struct TeamFormView: View {
     @Environment(Navigator.self) private var navigator
-    @Binding var teamName: String
-    @Binding var playerNames: [String]
-    @Binding var teamColor: Color
+    @Environment(GameManager.self) private var gameManager
 
-    let title: String
-    let primaryButtonTitle: String
-    let primaryButtonIcon: String?
+    let team: Team?
+    let playersPerTeam: Int
     let existingTeams: [Team]
-    let currentTeamId: UUID?
-    let onPrimaryAction: () -> Void
+    let onPrimaryAction: (Team) -> Void
 
     private let appConfiguration = AppConfiguration.shared
+    @State private var teamName: String = ""
+    @State private var playerNames: [String] = []
+    @State private var teamColor: Color = TeamDefaultColorGenerator.defaultColors[0]
     @State private var isColorSectionExpanded: Bool = false
     @FocusState private var focusedField: Field?
     
@@ -31,30 +30,36 @@ struct TeamFormView: View {
     }
 
     init(
-        teamName: Binding<String>,
-        playerNames: Binding<[String]>,
-        teamColor: Binding<Color>,
-        title: String,
-        primaryButtonTitle: String,
-        primaryButtonIcon: String? = nil,
+        team: Team? = nil,
+        playersPerTeam: Int,
         existingTeams: [Team] = [],
-        currentTeamId: UUID? = nil,
-        onPrimaryAction: @escaping () -> Void
+        onPrimaryAction: @escaping (Team) -> Void
     ) {
-        self._teamName = teamName
-        self._playerNames = playerNames
-        self._teamColor = teamColor
-        self.title = title
-        self.primaryButtonTitle = primaryButtonTitle
-        self.primaryButtonIcon = primaryButtonIcon
+        self.team = team
+        self.playersPerTeam = playersPerTeam
         self.existingTeams = existingTeams
-        self.currentTeamId = currentTeamId
         self.onPrimaryAction = onPrimaryAction
     }
 
     private var canSave: Bool {
         !teamName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
         playerNames.allSatisfy { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+    }
+    
+    private var title: String {
+        team == nil ? "New Team" : "Edit group"
+    }
+    
+    private var primaryButtonTitle: String {
+        team == nil ? "Create Team" : "Save changes"
+    }
+    
+    private var primaryButtonIcon: String? {
+        team == nil ? "plus.circle.fill" : "checkmark.circle.fill"
+    }
+    
+    private var currentTeamId: UUID? {
+        team?.id
     }
 
     var body: some View {
@@ -73,6 +78,7 @@ struct TeamFormView: View {
         }
         .setDefaultStyle(title: title)
         .onAppear {
+            loadInitialData()
             if teamName.isEmpty {
                 focusedField = .teamName
             }
@@ -332,11 +338,11 @@ private extension TeamFormView {
         VStack(spacing: DesignBook.Spacing.md) {
             if let icon = primaryButtonIcon {
                 PrimaryButton(title: primaryButtonTitle, icon: icon) {
-                    onPrimaryAction()
+                    handlePrimaryAction()
                 }
             } else {
                 PrimaryButton(title: primaryButtonTitle) {
-                    onPrimaryAction()
+                    handlePrimaryAction()
                 }
             }
             .disabled(!canSave)
@@ -349,5 +355,46 @@ private extension TeamFormView {
         .paddingHorizontalDefault()
         .padding(.top, DesignBook.Spacing.md)
         .padding(.bottom, DesignBook.Spacing.lg)
+    }
+    
+    func loadInitialData() {
+        if let team = team {
+            teamName = team.name
+            var names = team.players.map { $0.name }
+            // Pad to playersPerTeam if needed
+            while names.count < playersPerTeam {
+                names.append("")
+            }
+            playerNames = names
+            teamColor = team.color
+        } else {
+            teamName = ""
+            playerNames = Array(repeating: "", count: playersPerTeam)
+            updateDefaultColor()
+        }
+    }
+    
+    func updateDefaultColor() {
+        let generator = TeamDefaultColorGenerator()
+        teamColor = generator.generateDefaultColor(for: gameManager.configuration)
+    }
+    
+    func handlePrimaryAction() {
+        let trimmedName = teamName.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedName.isEmpty else { return }
+        
+        let teamId = team?.id ?? UUID()
+        let updatedTeam = Team(
+            id: teamId,
+            name: trimmedName,
+            players: playerNames
+                .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+                .filter { !$0.isEmpty }
+                .map { Player(name: $0, teamId: teamId) },
+            color: teamColor
+        )
+        
+        onPrimaryAction(updatedTeam)
+        navigator.dismiss()
     }
 }
