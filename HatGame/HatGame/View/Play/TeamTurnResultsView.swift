@@ -121,7 +121,7 @@ private extension TeamTurnResultsView {
             SecondaryButton(title: "Check Standings") {
                 isStandingsPresented = true
             }
-            
+
             PrimaryButton(title: "Continue", icon: "arrow.right.circle.fill") {
                 gameManager.prepareForNewPlay()
 

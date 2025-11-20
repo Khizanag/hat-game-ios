@@ -10,12 +10,12 @@ import SwiftUI
 struct SecondaryButton<Label: View>: View {
     private let action: () -> Void
     @ViewBuilder private let label: () -> Label
-    
+
     init(action: @escaping () -> Void, @ViewBuilder label: @escaping () -> Label) {
         self.action = action
         self.label = label
     }
-    
+
     var body: some View {
         Button(action: action) {
             label()

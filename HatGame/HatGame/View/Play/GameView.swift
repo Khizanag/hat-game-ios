@@ -68,7 +68,7 @@ private extension GameView {
         .padding(.top, DesignBook.Spacing.lg)
         .paddingHorizontalDefault()
     }
-    
+
     @ToolbarContentBuilder
     var gameToolbar: some ToolbarContent {
         ToolbarItem(placement: .principal) {
@@ -77,7 +77,7 @@ private extension GameView {
                 .foregroundColor(DesignBook.Color.Text.accent)
                 .monospacedDigit()
         }
-        
+
         ToolbarItem(placement: .navigationBarTrailing) {
             Button {
                 togglePause()
@@ -86,7 +86,7 @@ private extension GameView {
                     .foregroundColor(DesignBook.Color.Text.primary)
             }
         }
-        
+
         ToolbarItem(placement: .cancellationAction) {
             DestructiveButton(
                 action: {

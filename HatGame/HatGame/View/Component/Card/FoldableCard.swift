@@ -16,7 +16,7 @@ struct FoldableCard<Content: View>: View {
     let titleFont: Font
     let descriptionFont: Font
     @ViewBuilder let content: () -> Content
-    
+
     // MARK: - Init
     init(
         isExpanded: Binding<Bool>,
@@ -35,12 +35,12 @@ struct FoldableCard<Content: View>: View {
         self.descriptionFont = descriptionFont
         self.content = content
     }
-    
+
     var body: some View {
         GameCard {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
                 headerButton
-                
+
                 if isExpanded {
                     content()
                         .transition(.opacity.combined(with: .move(edge: .top)))
@@ -65,17 +65,17 @@ private extension FoldableCard {
                                 .font(titleFont)
                                 .foregroundColor(DesignBook.Color.Text.accent)
                         }
-                        
+
                         Text(title)
                             .font(titleFont)
                             .foregroundColor(DesignBook.Color.Text.primary)
                     }
-                    
+
                     Spacer()
-                    
+
                     chevronIcon
                 }
-                
+
                 if let description {
                     Text(description)
                         .font(descriptionFont)
@@ -104,7 +104,7 @@ private extension FoldableCard {
         ) {
             Text("Content here")
         }
-        
+
        FoldableCard(
            isExpanded: .constant(false),
            title: "Round 1",

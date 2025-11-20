@@ -36,7 +36,7 @@ final class GameManager {
     func start() {
         historyManager.setUp(configuration: configuration)
         historyManager.prepareForNewRound(.first)
-        
+
         remainingWords = Set(configuration.words)
         currentRound = roundIterator.next()
         currentWord = remainingWords.randomElement()
@@ -88,27 +88,27 @@ extension GameManager {
         }
         return ranking.first(where: { $0.0.id == team.id })?.1 ?? 0
     }
-    
+
     func getTotalScore(for team: Team) -> Int {
         let ranking = historyManager.totalRanking()
         return ranking.first(where: { $0.0.id == team.id })?.1 ?? 0
     }
-    
+
     func getSortedTeamsByRoundScore(for round: GameRound) -> [Team] {
         historyManager.rankingForRound(round)?.map { $0.0 } ?? []
     }
-    
+
     func getSortedTeamsByTotalScore() -> [Team] {
         historyManager.totalRanking().map { $0.0 }
     }
-    
+
     func getCompletedRounds() -> [GameRound] {
         guard let currentRound = currentRound else {
             return GameRound.allCases
         }
         return GameRound.allCases.filter { $0.rawValue < currentRound.rawValue }
     }
-    
+
     func getStartedRounds() -> [GameRound] {
         guard let currentRound = currentRound else {
             return GameRound.allCases
@@ -121,7 +121,7 @@ extension GameManager {
 private extension GameManager {
     func setUpNextRound() {
         resetWords()
-        
+
         currentRound = roundIterator.next()
 
         if let currentRound {

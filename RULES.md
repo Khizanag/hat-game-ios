@@ -12,7 +12,7 @@ Keep this file up-to-date—add any new conventions, UX decisions, or tooling no
 
 ### Styling
 - Use the `DesignBook` tokens for all colors, fonts, spacing, sizes, etc. Do **not** introduce ad-hoc values. If a new design value is required, add it to `DesignBook` with a generic, reusable name (e.g., `Color.Text.Status.error`).
-- Avoid trailing empty lines at the ends of files and extra blank lines elsewhere.
+- Do not add trailing spaces or newlines at the end of files. Files should end exactly where the content ends (no trailing whitespace or empty lines).
 
 ### UI Composition
 - Default background should use `DesignBook.Color.Background.primary` with `.ignoresSafeArea()` when a full-screen experience is intended.
@@ -26,4 +26,3 @@ Keep this file up-to-date—add any new conventions, UX decisions, or tooling no
 ### Testing & Misc
 - When changing gameplay logic (scores, timers, rounds), verify that `GameManager` state transitions remain valid and update previews where helpful.
 - When in doubt about future reuse, document behavior in this file for quick recall.
-

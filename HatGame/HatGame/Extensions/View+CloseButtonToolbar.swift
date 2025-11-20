@@ -21,7 +21,7 @@ extension EnvironmentValues {
 private struct CloseButtonToolbarModifier: ViewModifier {
     @Environment(\.needsCloseButton) private var needsCloseButton
     @Environment(Navigator.self) private var navigator
-    
+
     func body(content: Content) -> some View {
         content.toolbar {
             if needsCloseButton {
@@ -42,7 +42,7 @@ extension View {
     func closeButtonToolbar() -> some View {
         modifier(CloseButtonToolbarModifier())
     }
-    
+
     func needsCloseButton(_ value: Bool = true) -> some View {
         environment(\.needsCloseButton, value)
     }

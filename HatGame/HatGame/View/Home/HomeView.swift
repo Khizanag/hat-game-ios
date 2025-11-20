@@ -10,7 +10,7 @@ import SwiftUI
 struct HomeView: View {
     @Environment(Navigator.self) private var navigator
     @SceneStorage("HomeView.isHowToPlayExpanded") private var isHowToPlayExpanded: Bool = true
-    
+
     var body: some View {
         content
             .setDefaultBackground()
@@ -31,19 +31,19 @@ private extension HomeView {
             actionButtons
         }
     }
-    
+
     var header: some View {
         VStack(spacing: DesignBook.Spacing.md) {
             Text("🎩")
                 .font(.system(size: 80))
                 .padding(.top, DesignBook.Spacing.md)
-            
+
             Text("Hat Game")
                 .font(DesignBook.Font.largeTitle)
                 .foregroundColor(DesignBook.Color.Text.primary)
         }
     }
-    
+
     var howToPlayCard: some View {
         FoldableCard(
             isExpanded: $isHowToPlayExpanded,
@@ -58,13 +58,13 @@ private extension HomeView {
         }
         .paddingHorizontalDefault()
     }
-    
+
     var actionButtons: some View {
         VStack(spacing: DesignBook.Spacing.md) {
             PrimaryButton(title: "Start Game", icon: "play.fill") {
                 navigator.present(.teamSetup)
             }
-            
+
             SecondaryButton(title: "Settings", icon: "gearshape") {
                 navigator.push(.settings)
             }
@@ -73,7 +73,7 @@ private extension HomeView {
         .padding(.top, DesignBook.Spacing.md)
         .padding(.bottom, DesignBook.Spacing.lg)
     }
-    
+
     var instructions: [(icon: String, text: String)] {
         [
             (icon: "person.2", text: "Create teams and add players"),
@@ -90,23 +90,23 @@ private extension HomeView {
 private struct InstructionRow: View {
     let icon: String
     let text: String
-    
+
     var body: some View {
         HStack(alignment: .top, spacing: DesignBook.Spacing.md) {
             ZStack {
                 Circle()
                     .fill(DesignBook.Color.Text.accent.opacity(0.2))
                     .frame(width: 24, height: 24)
-                
+
                 Image(systemName: icon)
                     .font(.system(size: 12, weight: .semibold))
                     .foregroundColor(DesignBook.Color.Text.accent)
             }
-            
+
             Text(text)
                 .font(DesignBook.Font.body)
                 .foregroundColor(DesignBook.Color.Text.secondary)
-            
+
             Spacer()
         }
     }

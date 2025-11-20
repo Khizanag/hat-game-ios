@@ -12,7 +12,7 @@ struct TeamEditView: View {
     @Environment(Navigator.self) private var navigator
 
     let team: Team
-    
+
     var body: some View {
         TeamFormView(
             team: team,

@@ -30,13 +30,13 @@ private extension DeveloperInfoView {
             Text("HatGame")
                 .font(DesignBook.Font.largeTitle)
                 .foregroundColor(DesignBook.Color.Text.primary)
-            
+
             Text("Created by Giga Khizanishvili")
                 .font(DesignBook.Font.headline)
                 .foregroundColor(DesignBook.Color.Text.secondary)
         }
     }
-    
+
     var aboutSection: some View {
         infoCard(title: "About") {
             Text("HatGame is a modern take on the classic party game. It focuses on fast rounds, simple onboarding, and bright visuals powered by DesignBook.")
@@ -44,7 +44,7 @@ private extension DeveloperInfoView {
                 .foregroundColor(DesignBook.Color.Text.secondary)
         }
     }
-    
+
     var technologiesSection: some View {
         infoCard(title: "Technologies") {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
@@ -54,7 +54,7 @@ private extension DeveloperInfoView {
             }
         }
     }
-    
+
     var contactSection: some View {
         infoCard(title: "Contact") {
             Text("Feel free to reach out on GitHub: @gigakhizanishvili")
@@ -62,7 +62,7 @@ private extension DeveloperInfoView {
                 .foregroundColor(DesignBook.Color.Text.secondary)
         }
     }
-    
+
     func infoCard(title: String, @ViewBuilder content: () -> some View) -> some View {
         GameCard {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
@@ -73,7 +73,7 @@ private extension DeveloperInfoView {
             }
         }
     }
-    
+
     func bullet(_ text: String) -> some View {
         HStack(alignment: .top, spacing: DesignBook.Spacing.sm) {
             Circle()

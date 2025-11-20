@@ -11,7 +11,7 @@ struct LegendTag: View {
     let title: String
     let range: String
     let isHighlighted: Bool
-    
+
     var body: some View {
         VStack(spacing: DesignBook.Spacing.xs) {
             Text(title)

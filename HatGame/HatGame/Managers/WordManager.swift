@@ -13,4 +13,4 @@
 //     init() {
 //         words = configuration.words
 //     }
-// }
+//}

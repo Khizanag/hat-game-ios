@@ -89,7 +89,7 @@ private extension TeamSetupView {
                     }
                 )
             }
-            
+
             if gameManager.configuration.teams.count < 6 {
                 SecondaryButton(title: "Add Team") {
                     newTeamName = ""

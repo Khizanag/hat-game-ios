@@ -14,7 +14,7 @@ extension View {
                 .ignoresSafeArea()
         )
     }
-    
+
     @ViewBuilder
     func setDefaultStyle(title: String? = nil) -> some View {
         if let title {

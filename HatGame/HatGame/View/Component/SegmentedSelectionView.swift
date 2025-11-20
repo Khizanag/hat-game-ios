@@ -10,7 +10,7 @@ import SwiftUI
 struct SegmentedSelectionView<ID: Hashable>: View {
     let items: [SegmentedSelectionItem<ID>]
     @Binding var selection: ID
-    
+
     var body: some View {
         content
     }
@@ -25,10 +25,10 @@ private extension SegmentedSelectionView {
             }
         }
     }
-    
+
     func selectionButton(for item: SegmentedSelectionItem<ID>) -> some View {
         let isSelected = selection == item.id
-        
+
         return Button {
             handleSelection(item.id)
         } label: {
@@ -36,7 +36,7 @@ private extension SegmentedSelectionView {
         }
         .buttonStyle(PlainButtonStyle())
     }
-    
+
     func buttonContent(for item: SegmentedSelectionItem<ID>, isSelected: Bool) -> some View {
         VStack(spacing: DesignBook.Spacing.sm) {
             iconContainer(for: item, isSelected: isSelected)
@@ -57,14 +57,14 @@ private extension SegmentedSelectionView {
             y: 4
         )
     }
-    
+
     func textContent(for item: SegmentedSelectionItem<ID>, isSelected: Bool) -> some View {
         VStack(spacing: DesignBook.Spacing.xs) {
             titleText(for: item, isSelected: isSelected)
             subtitleText(for: item, isSelected: isSelected)
         }
     }
-    
+
     func titleText(for item: SegmentedSelectionItem<ID>, isSelected: Bool) -> some View {
         Text(item.title)
             .font(DesignBook.Font.captionBold)
@@ -74,7 +74,7 @@ private extension SegmentedSelectionView {
                     : DesignBook.Color.Text.secondary
             )
     }
-    
+
     func subtitleText(for item: SegmentedSelectionItem<ID>, isSelected: Bool) -> some View {
         Group {
             if let subtitle = item.subtitle {
@@ -92,14 +92,14 @@ private extension SegmentedSelectionView {
         }
         .frame(height: 16)
     }
-    
+
     func iconContainer(for item: SegmentedSelectionItem<ID>, isSelected: Bool) -> some View {
         ZStack {
             iconBackground(isSelected: isSelected)
             iconImage(for: item, isSelected: isSelected)
         }
     }
-    
+
     func iconBackground(isSelected: Bool) -> some View {
         Circle()
             .fill(
@@ -109,7 +109,7 @@ private extension SegmentedSelectionView {
             )
             .frame(width: 48, height: 48)
     }
-    
+
     func iconImage(for item: SegmentedSelectionItem<ID>, isSelected: Bool) -> some View {
         item.icon
             .font(.system(size: 22, weight: .semibold))
@@ -120,7 +120,7 @@ private extension SegmentedSelectionView {
             )
             .symbolEffect(.bounce, value: isSelected)
     }
-    
+
     func backgroundShape(isSelected: Bool) -> some View {
         RoundedRectangle(cornerRadius: DesignBook.Size.smallCardCornerRadius)
             .fill(
@@ -129,7 +129,7 @@ private extension SegmentedSelectionView {
                     : DesignBook.Color.Background.secondary
             )
     }
-    
+
     func borderOverlay(isSelected: Bool) -> some View {
         RoundedRectangle(cornerRadius: DesignBook.Size.smallCardCornerRadius)
             .stroke(
@@ -139,7 +139,7 @@ private extension SegmentedSelectionView {
                 lineWidth: 2
             )
     }
-    
+
     func handleSelection(_ id: ID) {
         withAnimation(.spring(response: 0.25, dampingFraction: 0.7)) {
             selection = id
@@ -177,4 +177,3 @@ private extension SegmentedSelectionView {
     }
     .background(DesignBook.Color.Background.primary)
 }
-
