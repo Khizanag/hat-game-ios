@@ -330,13 +330,15 @@ private extension TeamFormView {
 
     var actionButtons: some View {
         VStack(spacing: DesignBook.Spacing.md) {
-            if let icon = primaryButtonIcon {
-                PrimaryButton(title: primaryButtonTitle, icon: icon) {
-                    handlePrimaryAction()
-                }
-            } else {
-                PrimaryButton(title: primaryButtonTitle) {
-                    handlePrimaryAction()
+            Group {
+                if let icon = primaryButtonIcon {
+                    PrimaryButton(title: primaryButtonTitle, icon: icon) {
+                        handlePrimaryAction()
+                    }
+                } else {
+                    PrimaryButton(title: primaryButtonTitle) {
+                        handlePrimaryAction()
+                    }
                 }
             }
             .disabled(!canSave)
