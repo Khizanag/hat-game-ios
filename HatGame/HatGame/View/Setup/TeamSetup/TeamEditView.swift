@@ -9,19 +9,20 @@ import SwiftUI
 
 struct TeamEditView: View {
     @Environment(GameManager.self) private var gameManager
+    @Environment(Navigator.self) private var navigator
 
     let team: Team
     
     var body: some View {
         TeamFormView(
             team: team,
-            playersPerTeam: gameManager.configuration.maxTeamMembers,
-            existingTeams: gameManager.configuration.teams,
             onPrimaryAction: { updatedTeam in
                 gameManager.removeTeam(team)
                 gameManager.addTeam(updatedTeam)
             }
         )
+        .environment(gameManager)
+        .environment(navigator)
         .setDefaultBackground()
         .presentationDetents([.large])
     }

@@ -32,7 +32,6 @@ struct TeamSetupView: View {
             .sheet(isPresented: $isAddTeamSheetPresented) {
                 NavigationView {
                     AddTeamView(
-                        playersPerTeam: gameManager.configuration.maxTeamMembers,
                         onTeamCreate: { team in
                             gameManager.addTeam(team)
                         }
