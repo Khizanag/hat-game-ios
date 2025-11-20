@@ -70,8 +70,6 @@ private extension HomeView {
             }
         }
         .paddingHorizontalDefault()
-        .padding(.top, DesignBook.Spacing.md)
-        .padding(.bottom, DesignBook.Spacing.lg)
     }
 
     var instructions: [(icon: String, text: String)] {
