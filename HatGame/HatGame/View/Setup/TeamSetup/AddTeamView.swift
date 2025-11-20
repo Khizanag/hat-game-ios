@@ -9,21 +9,20 @@ import SwiftUI
 
 struct AddTeamView: View {
     @Environment(GameManager.self) private var gameManager
-
-    let playersPerTeam: Int
+    @Environment(Navigator.self) private var navigator
+    
     let onTeamCreate: (Team) -> Void
 
-    init(playersPerTeam: Int, onTeamCreate: @escaping (Team) -> Void) {
-        self.playersPerTeam = playersPerTeam
+    init(onTeamCreate: @escaping (Team) -> Void) {
         self.onTeamCreate = onTeamCreate
     }
 
     var body: some View {
         TeamFormView(
             team: nil,
-            playersPerTeam: playersPerTeam,
-            existingTeams: gameManager.configuration.teams,
             onPrimaryAction: onTeamCreate
         )
+        .environment(gameManager)
+        .environment(navigator)
     }
 }

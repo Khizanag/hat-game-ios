@@ -13,8 +13,6 @@ struct TeamFormView: View {
     @Environment(GameManager.self) private var gameManager
 
     let team: Team?
-    let playersPerTeam: Int
-    let existingTeams: [Team]
     let onPrimaryAction: (Team) -> Void
 
     private let appConfiguration = AppConfiguration.shared
@@ -31,13 +29,9 @@ struct TeamFormView: View {
 
     init(
         team: Team? = nil,
-        playersPerTeam: Int,
-        existingTeams: [Team] = [],
         onPrimaryAction: @escaping (Team) -> Void
     ) {
         self.team = team
-        self.playersPerTeam = playersPerTeam
-        self.existingTeams = existingTeams
         self.onPrimaryAction = onPrimaryAction
     }
 
@@ -251,7 +245,7 @@ private extension TeamFormView {
     }
 
     func isColorOccupiedByOtherTeam(_ color: Color) -> Bool {
-        existingTeams.contains { team in
+        gameManager.configuration.teams.contains { team in
             // Skip the current team if editing
             if let currentTeamId = currentTeamId, team.id == currentTeamId {
                 return false
@@ -361,15 +355,15 @@ private extension TeamFormView {
         if let team = team {
             teamName = team.name
             var names = team.players.map { $0.name }
-            // Pad to playersPerTeam if needed
-            while names.count < playersPerTeam {
+            // Pad to maxTeamMembers if needed
+            while names.count < gameManager.configuration.maxTeamMembers {
                 names.append("")
             }
             playerNames = names
             teamColor = team.color
         } else {
             teamName = ""
-            playerNames = Array(repeating: "", count: playersPerTeam)
+            playerNames = Array(repeating: "", count: gameManager.configuration.maxTeamMembers)
             updateDefaultColor()
         }
     }
