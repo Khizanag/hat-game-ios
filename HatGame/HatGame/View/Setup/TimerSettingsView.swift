@@ -20,7 +20,7 @@ struct TimerSettingsView: View {
 
     var body: some View {
         content
-            .setDefaultStyle(title: String(localized: "timer_settings.title"))
+            .setDefaultStyle(title: String(localized: "timerSettings.title"))
             .onAppear {
                 selectedDuration = appConfiguration.defaultRoundDuration
             }
@@ -46,8 +46,8 @@ private extension TimerSettingsView {
 
     var headerCard: some View {
         HeaderCard(
-            title: String(localized: "timer_settings.header_title"),
-            description: String(localized: "timer_settings.header_description")
+            title: String(localized: "timerSettings.headerTitle"),
+            description: String(localized: "timerSettings.headerDescription")
         )
     }
 
@@ -64,7 +64,7 @@ private extension TimerSettingsView {
 
     var durationHeader: some View {
         HStack {
-            Text(String(localized: "timer_settings.seconds_per_team"))
+            Text(String(localized: "timerSettings.secondsPerTeam"))
                 .font(DesignBook.Font.headline)
                 .foregroundColor(DesignBook.Color.Text.primary)
 
@@ -83,7 +83,7 @@ private extension TimerSettingsView {
 
     var durationStepper: some View {
         Stepper(value: $selectedDuration, in: 5...120, step: 5) {
-            Text(String(localized: "common.tap_or_hold_to_adjust"))
+            Text(String(localized: "common.tapOrHoldToAdjust"))
                 .font(DesignBook.Font.caption)
                 .foregroundColor(DesignBook.Color.Text.secondary)
         }
@@ -91,9 +91,9 @@ private extension TimerSettingsView {
 
     var timerTags: some View {
         HStack(spacing: DesignBook.Spacing.md) {
-            LegendTag(title: String(localized: "timer_settings.legend.lightning"), range: "5-30s", isHighlighted: selectedDuration.isBetween(5, and: 30))
-            LegendTag(title: String(localized: "timer_settings.legend.classic"), range: "60s", isHighlighted: selectedDuration == 60)
-            LegendTag(title: String(localized: "timer_settings.legend.marathon"), range: "90-120s", isHighlighted: selectedDuration.isBetween(90, and: 120))
+            LegendTag(title: String(localized: "timerSettings.legend.lightning"), range: "5-30s", isHighlighted: selectedDuration.isBetween(5, and: 30))
+            LegendTag(title: String(localized: "timerSettings.legend.classic"), range: "60s", isHighlighted: selectedDuration == 60)
+            LegendTag(title: String(localized: "timerSettings.legend.marathon"), range: "90-120s", isHighlighted: selectedDuration.isBetween(90, and: 120))
         }
     }
 

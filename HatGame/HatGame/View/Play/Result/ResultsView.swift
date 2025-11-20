@@ -32,7 +32,7 @@ struct ResultsView: View {
 
     var body: some View {
         content
-            .setDefaultStyle(title: isFinal ? String(localized: "game.results.game_over_title") : String(localized: "game.results.round_results_title"))
+            .setDefaultStyle(title: isFinal ? String(localized: "game.results.gameOverTitle") : String(localized: "game.results.roundResultsTitle"))
             .navigationBarBackButtonHidden()
             .toolbar {
                 finalToolbar
@@ -150,7 +150,7 @@ private extension ResultsView {
     }
 
     var newGameButton: some View {
-        PrimaryButton(title: String(localized: "game.results.return_to_main"), icon: "house.fill") {
+        PrimaryButton(title: String(localized: "game.results.returnToMain"), icon: "house.fill") {
             handleReturnToMain()
         }
     }

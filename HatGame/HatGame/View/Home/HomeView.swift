@@ -47,7 +47,7 @@ private extension HomeView {
     var howToPlayCard: some View {
         FoldableCard(
             isExpanded: $isHowToPlayExpanded,
-            title: "home.how_to_play.title",
+            title: "home.howToPlay.title",
             icon: "questionmark.circle"
         ) {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
@@ -61,7 +61,7 @@ private extension HomeView {
 
     var actionButtons: some View {
         VStack(spacing: DesignBook.Spacing.md) {
-            PrimaryButton(title: String(localized: "home.start_game"), icon: "play.fill") {
+            PrimaryButton(title: String(localized: "home.startGame"), icon: "play.fill") {
                 navigator.present(.teamSetup)
             }
 
@@ -74,8 +74,8 @@ private extension HomeView {
 
     var instructions: [(icon: String, text: String)] {
         [
-            (icon: "person.2", text: String(localized: "home.instructions.create_teams")),
-            (icon: "text.bubble", text: String(localized: "home.instructions.add_words")),
+            (icon: "person.2", text: String(localized: "home.instructions.createTeams")),
+            (icon: "text.bubble", text: String(localized: "home.instructions.addWords")),
             (icon: "shuffle", text: String(localized: "home.instructions.randomize")),
             (icon: "1.circle", text: String(localized: "home.instructions.round1")),
             (icon: "2.circle", text: String(localized: "home.instructions.round2")),

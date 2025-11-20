@@ -43,7 +43,7 @@ struct WordInputView: View {
 
     var body: some View {
         content
-            .setDefaultStyle(title: String(localized: "word_input.title"))
+            .setDefaultStyle(title: String(localized: "wordInput.title"))
             .onAppear {
                 prepareCurrentPlayer()
             }
@@ -71,10 +71,10 @@ private extension WordInputView {
 
     var headerCard: some View {
         HeaderCard(
-            title: String(localized: "word_input.title"),
+            title: String(localized: "wordInput.title"),
             description: currentPlayer.map { player in
                 String(
-                    format: String(localized: "word_input.player_instruction"),
+                    format: String(localized: "wordInput.playerInstruction"),
                     player.name,
                     wordsPerPlayer
                 )
@@ -102,7 +102,7 @@ private extension WordInputView {
     var wordInputCard: some View {
         GameCard {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
-                Text(String(format: String(localized: "word_input.words_added_progress"), playerWords.count, wordsPerPlayer))
+                Text(String(format: String(localized: "wordInput.wordsAddedProgress"), playerWords.count, wordsPerPlayer))
                     .font(DesignBook.Font.headline)
                     .foregroundColor(DesignBook.Color.Text.primary)
 
@@ -117,7 +117,7 @@ private extension WordInputView {
     }
 
     var wordTextField: some View {
-        TextField("word_input.enter_word", text: $currentWord)
+        TextField("wordInput.enterWord", text: $currentWord)
             .textFieldStyle(.plain)
             .font(DesignBook.Font.body)
             .foregroundColor(DesignBook.Color.Text.primary)
@@ -168,17 +168,17 @@ private extension WordInputView {
     var completionCard: some View {
         GameCard {
             VStack(spacing: DesignBook.Spacing.md) {
-                Text("word_input.all_words_added")
+                Text("wordInput.allWordsAdded")
                     .font(DesignBook.Font.headline)
                     .foregroundColor(DesignBook.Color.Text.primary)
 
                 if let nextPlayerName {
-                    Text(String(format: String(localized: "word_input.ready_to_pass"), nextPlayerName))
+                    Text(String(format: String(localized: "wordInput.readyToPass"), nextPlayerName))
                         .font(DesignBook.Font.body)
                         .foregroundColor(DesignBook.Color.Text.secondary)
                         .multilineTextAlignment(.center)
                 } else {
-                    Text("word_input.all_players_entered")
+                    Text("wordInput.allPlayersEntered")
                         .font(DesignBook.Font.body)
                         .foregroundColor(DesignBook.Color.Text.secondary)
                         .multilineTextAlignment(.center)
@@ -190,7 +190,7 @@ private extension WordInputView {
     var wordsListCard: some View {
         GameCard {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
-                Text(String(format: String(localized: "word_input.words_added_progress"), playerWords.count, wordsPerPlayer))
+                Text(String(format: String(localized: "wordInput.wordsAddedProgress"), playerWords.count, wordsPerPlayer))
                     .font(DesignBook.Font.headline)
                     .foregroundColor(DesignBook.Color.Text.primary)
 
@@ -211,8 +211,8 @@ private extension WordInputView {
 
     var actionButtonTitle: String {
         currentPlayerIndex < allPlayers.count - 1
-            ? String(localized: "word_input.next_player")
-            : String(localized: "word_input.finish")
+            ? String(localized: "wordInput.nextPlayer")
+            : String(localized: "wordInput.finish")
     }
 
     var actionButtonIcon: String {
