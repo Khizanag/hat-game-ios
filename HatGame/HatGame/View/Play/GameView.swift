@@ -39,7 +39,7 @@ struct GameView: View {
             .onDisappear {
                 stopTimer()
             }
-            .alert("Give Up?", isPresented: $showingGiveUpConfirmation) {
+            .alert(String(localized: "game.giveUp.title"), isPresented: $showingGiveUpConfirmation) {
                 giveUpAlertActions
             } message: {
                 giveUpAlertMessage
@@ -93,7 +93,7 @@ private extension GameView {
                     showingGiveUpConfirmation = true
                 },
                 label: {
-                    Label("Give up", systemImage: "hand.raised.fill")
+                    Label(String(localized: "game.giveUp.button"), systemImage: "hand.raised.fill")
                 }
             )
         }
@@ -104,7 +104,7 @@ private extension GameView {
             title: round.title,
             description: round.description
         ) {
-            Text("Current Team: \(gameManager.currentTeam.name)")
+            Text(String(format: String(localized: "Current Team: %@"), gameManager.currentTeam.name))
                 .font(DesignBook.Font.headline)
                 .foregroundColor(gameManager.currentTeam.color)
         }
@@ -129,7 +129,7 @@ private extension GameView {
 
                 Spacer()
 
-                PrimaryButton(title: "Got It!", icon: "checkmark.circle.fill") {
+                PrimaryButton(title: String(localized: "game.gotIt"), icon: "checkmark.circle.fill") {
                     markAsGuessed()
                 }
             }
@@ -143,7 +143,7 @@ private extension GameView {
                 let totalWordsCount = gameManager.configuration.words.count
 
                 HStack {
-                    Text("Progress")
+                    Text("game.progress.title")
                         .font(DesignBook.Font.headline)
                         .foregroundColor(DesignBook.Color.Text.primary)
 
@@ -174,11 +174,11 @@ private extension GameView {
                     .font(.system(size: 80))
                     .foregroundColor(DesignBook.Color.Text.primary)
 
-                Text("Paused")
+                Text("game.paused.title")
                     .font(DesignBook.Font.largeTitle)
                     .foregroundColor(DesignBook.Color.Text.primary)
 
-                PrimaryButton(title: "Continue", icon: "play.fill") {
+                PrimaryButton(title: String(localized: "Continue"), icon: "play.fill") {
                     isPaused = false
                 }
                 .frame(width: 216)
@@ -192,17 +192,17 @@ private extension GameView {
 
     @ViewBuilder
     var giveUpAlertActions: some View {
-        Button("Cancel", role: .cancel) {
+        Button(String(localized: "Cancel"), role: .cancel) {
             showingGiveUpConfirmation = false
         }
-        Button("Give Up", role: .destructive) {
+        Button(String(localized: "Give Up"), role: .destructive) {
             giveUpWord()
             showingGiveUpConfirmation = false
         }
     }
 
     var giveUpAlertMessage: some View {
-        Text("Are you sure you want to skip this word? It will remain available for other teams.")
+        Text("game.giveUp.confirmation.message")
     }
 }
 

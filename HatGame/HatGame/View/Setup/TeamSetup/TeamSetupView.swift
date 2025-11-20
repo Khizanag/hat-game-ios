@@ -28,7 +28,7 @@ struct TeamSetupView: View {
     // MARK: - Body
     var body: some View {
         content
-            .setDefaultStyle(title: "Setup Teams")
+            .setDefaultStyle(title: String(localized: "Setup Teams"))
             .sheet(isPresented: $isAddTeamSheetPresented) {
                 NavigationView {
                     AddTeamView(
@@ -41,7 +41,7 @@ struct TeamSetupView: View {
             .sheet(isPresented: editTeamBinding) {
                 editTeamSheet
             }
-            .alert("Delete Team", isPresented: isDeleteTeamAlertPresented) {
+            .alert(String(localized: "teamSetup.deleteTeam.title"), isPresented: isDeleteTeamAlertPresented) {
                 deleteTeamAlertActions
             } message: {
                 deleteTeamAlertMessage
@@ -67,8 +67,8 @@ private extension TeamSetupView {
 
     var headerCard: some View {
         HeaderCard(
-            title: "Setup Teams",
-            description: "Create teams and add players to each team"
+            title: String(localized: "Setup Teams"),
+            description: String(localized: "Create teams and add players to each team")
         )
     }
 
@@ -91,7 +91,7 @@ private extension TeamSetupView {
             }
 
             if gameManager.configuration.teams.count < 6 {
-                SecondaryButton(title: "Add Team") {
+                SecondaryButton(title: String(localized: "Add Team")) {
                     newTeamName = ""
                     isAddTeamSheetPresented = true
                 }
@@ -101,7 +101,7 @@ private extension TeamSetupView {
 
     var continueSection: some View {
         VStack(spacing: DesignBook.Spacing.sm) {
-            PrimaryButton(title: "Continue", icon: "arrow.right.circle.fill") {
+            PrimaryButton(title: String(localized: "Continue"), icon: "arrow.right.circle.fill") {
                 navigator.push(.wordSettings)
             }
             .disabled(!canContinue)
@@ -114,7 +114,7 @@ private extension TeamSetupView {
     }
 
     var requirementText: some View {
-        Text("Add at least \(gameManager.configuration.minTeams) teams to continue.")
+        Text(String(format: String(localized: "teamSetup.minTeamsRequired"), gameManager.configuration.minTeams))
             .font(DesignBook.Font.caption)
             .foregroundColor(DesignBook.Color.Text.secondary)
             .multilineTextAlignment(.center)
@@ -160,7 +160,7 @@ private extension TeamSetupView {
     @ViewBuilder
     var deleteTeamAlertMessage: some View {
         if let deletingTeam {
-            Text("Are you sure you want to delete \"\(deletingTeam.name)\"? This action cannot be undone.")
+            Text(String(format: String(localized: "Are you sure you want to delete \"%@\"? This action cannot be undone."), deletingTeam.name))
         }
     }
 

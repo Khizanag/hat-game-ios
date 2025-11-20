@@ -38,7 +38,7 @@ private extension HomeView {
                 .font(.system(size: 80))
                 .padding(.top, DesignBook.Spacing.md)
 
-            Text("Hat Game")
+            Text("home.title")
                 .font(DesignBook.Font.largeTitle)
                 .foregroundColor(DesignBook.Color.Text.primary)
         }
@@ -47,7 +47,7 @@ private extension HomeView {
     var howToPlayCard: some View {
         FoldableCard(
             isExpanded: $isHowToPlayExpanded,
-            title: "How to Play",
+            title: "home.howToPlay.title",
             icon: "questionmark.circle"
         ) {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
@@ -61,11 +61,11 @@ private extension HomeView {
 
     var actionButtons: some View {
         VStack(spacing: DesignBook.Spacing.md) {
-            PrimaryButton(title: "Start Game", icon: "play.fill") {
+            PrimaryButton(title: String(localized: "home.startGame"), icon: "play.fill") {
                 navigator.present(.teamSetup)
             }
 
-            SecondaryButton(title: "Settings", icon: "gearshape") {
+            SecondaryButton(title: String(localized: "Settings"), icon: "gearshape") {
                 navigator.push(.settings)
             }
         }
@@ -74,13 +74,13 @@ private extension HomeView {
 
     var instructions: [(icon: String, text: String)] {
         [
-            (icon: "person.2", text: "Create teams and add players"),
-            (icon: "text.bubble", text: "Each player adds words to the hat"),
-            (icon: "shuffle", text: "Words are randomized"),
-            (icon: "1.circle", text: "Round 1: No restrictions - guess as many as you can"),
-            (icon: "2.circle", text: "Round 2: One word only to describe"),
-            (icon: "3.circle", text: "Round 3: Gestures and miming only"),
-            (icon: "trophy", text: "Team with most points wins!")
+            (icon: "person.2", text: String(localized: "home.instructions.createTeams")),
+            (icon: "text.bubble", text: String(localized: "home.instructions.addWords")),
+            (icon: "shuffle", text: String(localized: "home.instructions.randomize")),
+            (icon: "1.circle", text: String(localized: "home.instructions.round1")),
+            (icon: "2.circle", text: String(localized: "home.instructions.round2")),
+            (icon: "3.circle", text: String(localized: "home.instructions.round3")),
+            (icon: "trophy", text: String(localized: "home.instructions.winner"))
         ]
     }
 }

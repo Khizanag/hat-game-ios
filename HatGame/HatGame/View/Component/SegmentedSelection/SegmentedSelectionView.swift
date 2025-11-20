@@ -59,7 +59,7 @@ private extension SegmentedSelectionView {
     }
 
     func titleText(for item: SegmentedSelectionItem<ID>, isSelected: Bool) -> some View {
-        Text(item.title)
+        Text(LocalizedStringKey(item.title))
             .font(DesignBook.Font.captionBold)
             .foregroundColor(
                 isSelected
@@ -71,7 +71,7 @@ private extension SegmentedSelectionView {
     func subtitleText(for item: SegmentedSelectionItem<ID>, isSelected: Bool) -> some View {
         Group {
             if let subtitle = item.subtitle {
-                Text(subtitle)
+                Text(LocalizedStringKey(subtitle))
                     .font(DesignBook.Font.caption)
                     .foregroundColor(
                         isSelected

@@ -20,7 +20,7 @@ struct TimerSettingsView: View {
 
     var body: some View {
         content
-            .setDefaultStyle(title: "Timer Settings")
+            .setDefaultStyle(title: String(localized: "Timer Settings"))
             .onAppear {
                 selectedDuration = appConfiguration.defaultRoundDuration
             }
@@ -46,8 +46,8 @@ private extension TimerSettingsView {
 
     var headerCard: some View {
         HeaderCard(
-            title: "Round timer",
-            description: "Each team gets the same amount of time per turn. Choose how intense you want the round to be."
+            title: String(localized: "Round timer"),
+            description: String(localized: "Each team gets the same amount of time per turn. Choose how intense you want the round to be.")
         )
     }
 
@@ -64,7 +64,7 @@ private extension TimerSettingsView {
 
     var durationHeader: some View {
         HStack {
-            Text("Seconds per team")
+            Text("timerSettings.secondsPerTeam")
                 .font(DesignBook.Font.headline)
                 .foregroundColor(DesignBook.Color.Text.primary)
 
@@ -83,7 +83,7 @@ private extension TimerSettingsView {
 
     var durationStepper: some View {
         Stepper(value: $selectedDuration, in: 5...120, step: 5) {
-            Text("Tap or hold to adjust")
+            Text("common.tapOrHoldToAdjust")
                 .font(DesignBook.Font.caption)
                 .foregroundColor(DesignBook.Color.Text.secondary)
         }
@@ -91,14 +91,14 @@ private extension TimerSettingsView {
 
     var timerTags: some View {
         HStack(spacing: DesignBook.Spacing.md) {
-            LegendTag(title: "Lightning", range: "5-30s", isHighlighted: selectedDuration.isBetween(5, and: 30))
-            LegendTag(title: "Classic", range: "60s", isHighlighted: selectedDuration == 60)
-            LegendTag(title: "Marathon", range: "90-120s", isHighlighted: selectedDuration.isBetween(90, and: 120))
+            LegendTag(title: String(localized: "Lightning"), range: "5-30s", isHighlighted: selectedDuration.isBetween(5, and: 30))
+            LegendTag(title: String(localized: "Classic"), range: "60s", isHighlighted: selectedDuration == 60)
+            LegendTag(title: String(localized: "Marathon"), range: "90-120s", isHighlighted: selectedDuration.isBetween(90, and: 120))
         }
     }
 
     var continueButton: some View {
-        PrimaryButton(title: "Continue", icon: "arrow.right.circle.fill") {
+        PrimaryButton(title: String(localized: "Continue"), icon: "arrow.right.circle.fill") {
             handleContinue()
         }
     }

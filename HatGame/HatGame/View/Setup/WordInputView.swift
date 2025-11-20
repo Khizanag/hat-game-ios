@@ -96,7 +96,7 @@ private extension WordInputView {
     var wordInputCard: some View {
         GameCard {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
-                Text("Words added: \(playerWords.count)/\(wordsPerPlayer)")
+                Text(String(format: String(localized: "Words added: %lld/%lld"), playerWords.count, wordsPerPlayer))
                     .font(DesignBook.Font.headline)
                     .foregroundColor(DesignBook.Color.Text.primary)
 
@@ -111,7 +111,7 @@ private extension WordInputView {
     }
 
     var wordTextField: some View {
-        TextField("Enter a word", text: $currentWord)
+        TextField("wordInput.enterWord", text: $currentWord)
             .textFieldStyle(.plain)
             .font(DesignBook.Font.body)
             .foregroundColor(DesignBook.Color.Text.primary)
@@ -162,17 +162,17 @@ private extension WordInputView {
     var completionCard: some View {
         GameCard {
             VStack(spacing: DesignBook.Spacing.md) {
-                Text("All words added!")
+                Text("wordInput.allWordsAdded")
                     .font(DesignBook.Font.headline)
                     .foregroundColor(DesignBook.Color.Text.primary)
 
                 if let nextPlayerName {
-                    Text("You're ready. Pass the device to \(nextPlayerName) for their turn.")
+                    Text(String(format: String(localized: "You're ready. Pass the device to %@ for their turn."), nextPlayerName))
                         .font(DesignBook.Font.body)
                         .foregroundColor(DesignBook.Color.Text.secondary)
                         .multilineTextAlignment(.center)
                 } else {
-                    Text("All players have entered their words. You can finish this step now.")
+                    Text("wordInput.allPlayersEntered")
                         .font(DesignBook.Font.body)
                         .foregroundColor(DesignBook.Color.Text.secondary)
                         .multilineTextAlignment(.center)
@@ -184,7 +184,7 @@ private extension WordInputView {
     var wordsListCard: some View {
         GameCard {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
-                Text("Words added: \(playerWords.count)/\(wordsPerPlayer)")
+                Text(String(format: String(localized: "Words added: %lld/%lld"), playerWords.count, wordsPerPlayer))
                     .font(DesignBook.Font.headline)
                     .foregroundColor(DesignBook.Color.Text.primary)
 
