@@ -32,7 +32,7 @@ struct ResultsView: View {
 
     var body: some View {
         content
-            .setDefaultStyle(title: isFinal ? "Game Over" : "Round Results")
+            .setDefaultStyle(title: isFinal ? String(localized: "Game Over") : String(localized: "Round Results"))
             .navigationBarBackButtonHidden()
             .toolbar {
                 finalToolbar
@@ -123,7 +123,7 @@ private extension ResultsView {
     var totalScoresSection: some View {
         FoldableCard(
             isExpanded: $isTotalScoresExpanded,
-            title: "Total Scores"
+            title: "game.results.totalScores"
         ) {
             totalScoresContent
         }
@@ -150,7 +150,7 @@ private extension ResultsView {
     }
 
     var newGameButton: some View {
-        PrimaryButton(title: "Return to Main Page", icon: "house.fill") {
+        PrimaryButton(title: String(localized: "game.results.returnToMain"), icon: "house.fill") {
             handleReturnToMain()
         }
     }
@@ -162,7 +162,7 @@ private extension ResultsView {
                 .font(.system(size: 80))
 
             if winners.count == 1 {
-                Text("Winner!")
+                Text("game.results.winner")
                     .font(DesignBook.Font.title2)
                     .foregroundColor(DesignBook.Color.Text.primary)
 
@@ -176,7 +176,7 @@ private extension ResultsView {
                         .foregroundColor(DesignBook.Color.Text.secondary)
                 }
             } else {
-                Text("Winners!")
+                Text("game.results.winners")
                     .font(DesignBook.Font.title2)
                     .foregroundColor(DesignBook.Color.Text.primary)
 

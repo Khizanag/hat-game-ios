@@ -20,44 +20,44 @@ struct DeveloperInfoView: View {
             .paddingHorizontalDefault()
             .padding(.vertical, DesignBook.Spacing.lg)
         }
-        .setDefaultStyle(title: "Developer Info")
+        .setDefaultStyle(title: String(localized: "settings.developerInfo.title"))
     }
 }
 
 private extension DeveloperInfoView {
     var header: some View {
         VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
-            Text("HatGame")
+            Text("settings.developerInfo.appName")
                 .font(DesignBook.Font.largeTitle)
                 .foregroundColor(DesignBook.Color.Text.primary)
 
-            Text("Created by Giga Khizanishvili")
+            Text("settings.developerInfo.createdBy")
                 .font(DesignBook.Font.headline)
                 .foregroundColor(DesignBook.Color.Text.secondary)
         }
     }
 
     var aboutSection: some View {
-        infoCard(title: "About") {
-            Text("HatGame is a modern take on the classic party game. It focuses on fast rounds, simple onboarding, and bright visuals powered by DesignBook.")
+        infoCard(title: "settings.developerInfo.about.title") {
+            Text("settings.developerInfo.about.description")
                 .font(DesignBook.Font.body)
                 .foregroundColor(DesignBook.Color.Text.secondary)
         }
     }
 
     var technologiesSection: some View {
-        infoCard(title: "Technologies") {
+        infoCard(title: "settings.developerInfo.technologies.title") {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
-                bullet("SwiftUI + Observation")
-                bullet("Custom navigation system")
-                bullet("DesignBook design tokens")
+                bullet("settings.technologies.swiftui")
+                bullet("settings.technologies.navigation")
+                bullet("settings.technologies.designbook")
             }
         }
     }
 
     var contactSection: some View {
-        infoCard(title: "Contact") {
-            Text("Feel free to reach out on GitHub: @gigakhizanishvili")
+        infoCard(title: "settings.developerInfo.contact.title") {
+            Text("settings.developerInfo.contact.message")
                 .font(DesignBook.Font.body)
                 .foregroundColor(DesignBook.Color.Text.secondary)
         }
@@ -66,7 +66,7 @@ private extension DeveloperInfoView {
     func infoCard(title: String, @ViewBuilder content: () -> some View) -> some View {
         GameCard {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
-                Text(title)
+                Text(LocalizedStringKey(title))
                     .font(DesignBook.Font.headline)
                     .foregroundColor(DesignBook.Color.Text.primary)
                 content()
@@ -80,7 +80,7 @@ private extension DeveloperInfoView {
                 .fill(DesignBook.Color.Text.accent)
                 .frame(width: 6, height: 6)
                 .padding(.top, 6)
-            Text(text)
+            Text(LocalizedStringKey(text))
                 .font(DesignBook.Font.body)
                 .foregroundColor(DesignBook.Color.Text.secondary)
         }

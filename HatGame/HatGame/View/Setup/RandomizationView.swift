@@ -43,7 +43,7 @@ private extension RandomizationView {
                 ProgressView()
                     .scaleEffect(1.5)
 
-                Text("Shuffling words...")
+                Text("randomization.shuffling.message")
                     .font(DesignBook.Font.headline)
                     .foregroundColor(DesignBook.Color.Text.secondary)
             }
@@ -60,11 +60,11 @@ private extension RandomizationView {
                     Text("🎲")
                         .font(.system(size: 80))
 
-                    Text("Randomize Words")
+                    Text("randomization.title")
                         .font(DesignBook.Font.title2)
                         .foregroundColor(DesignBook.Color.Text.primary)
 
-                    Text("\(gameManager.configuration.words.count) words ready")
+                    Text(String(format: String(localized: "%lld words ready"), gameManager.configuration.words.count))
                         .font(DesignBook.Font.body)
                         .foregroundColor(DesignBook.Color.Text.secondary)
                 }
@@ -83,11 +83,11 @@ private extension RandomizationView {
     var startingTeamPickerCard: some View {
         GameCard {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
-                Text("Which team starts?")
+                Text("randomization.startingTeam.title")
                     .font(DesignBook.Font.headline)
                     .foregroundColor(DesignBook.Color.Text.primary)
 
-                Picker("Starting Team", selection: $selectedStartingTeamIndex) {
+                Picker("randomization.startingTeam.picker", selection: $selectedStartingTeamIndex) {
                     ForEach(Array(gameManager.configuration.teams.enumerated()), id: \.offset) { index, team in
                         Text(team.name)
                             .tag(index)
@@ -100,7 +100,7 @@ private extension RandomizationView {
     }
 
     var shuffleButton: some View {
-        PrimaryButton(title: "Shuffle & Start", icon: "shuffle") {
+        PrimaryButton(title: String(localized: "game.shuffleAndStart"), icon: "shuffle") {
             shuffleAndStart()
         }
     }

@@ -89,12 +89,12 @@ private extension TeamFormView {
                         .font(.system(size: DesignBook.Size.iconSize))
                         .foregroundColor(DesignBook.Color.Text.accent)
 
-                    Text("Team Name")
+                    Text("teamForm.teamName")
                         .font(DesignBook.Font.captionBold)
                         .foregroundColor(DesignBook.Color.Text.secondary)
                 }
 
-                TextField("Enter team name", text: $teamName)
+                TextField("teamForm.enterTeamName", text: $teamName)
                     .textFieldStyle(.plain)
                     .font(DesignBook.Font.headline)
                     .foregroundColor(DesignBook.Color.Text.primary)
@@ -124,7 +124,7 @@ private extension TeamFormView {
                             .font(.system(size: DesignBook.Size.iconSize))
                             .foregroundColor(DesignBook.Color.Text.accent)
 
-                        Text("Team Color")
+                        Text("teamForm.teamColor")
                             .font(DesignBook.Font.captionBold)
                             .foregroundColor(DesignBook.Color.Text.secondary)
 
@@ -164,7 +164,7 @@ private extension TeamFormView {
                 }
 
                 ColorPicker(
-                    "Custom Color",
+                    "teamForm.customColor",
                     selection: Binding(
                         get: { teamColor },
                         set: { newColor in
@@ -277,7 +277,7 @@ private extension TeamFormView {
                         .font(.system(size: DesignBook.Size.iconSize))
                         .foregroundColor(DesignBook.Color.Text.accent)
 
-                    Text("Players")
+                    Text("teamForm.players")
                         .font(DesignBook.Font.captionBold)
                         .foregroundColor(DesignBook.Color.Text.secondary)
 
@@ -306,7 +306,7 @@ private extension TeamFormView {
                 .background(DesignBook.Color.Text.accent.opacity(DesignBook.Opacity.highlight))
                 .clipShape(Circle())
 
-            TextField("Player name", text: Binding(
+            TextField("teamForm.playerName", text: Binding(
                 get: { playerNames[index] },
                 set: { playerNames[index] = $0 }
             ))

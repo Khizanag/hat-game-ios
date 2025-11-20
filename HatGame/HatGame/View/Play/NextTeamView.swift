@@ -52,7 +52,7 @@ private extension NextTeamView {
             Text("🎯")
                 .font(.system(size: 80))
 
-            Text("Next Team")
+            Text("game.nextTeam.title")
                 .font(DesignBook.Font.largeTitle)
                 .foregroundColor(DesignBook.Color.Text.primary)
 
@@ -69,7 +69,7 @@ private extension NextTeamView {
                     .font(DesignBook.Font.title2)
                     .foregroundColor(team.color)
 
-                Text("Current Score: \(gameManager.getTotalScore(for: team))")
+                Text(String(format: String(localized: "Current Score: %lld"), gameManager.getTotalScore(for: team)))
                     .font(DesignBook.Font.headline)
                     .foregroundColor(DesignBook.Color.Text.accent)
             }
@@ -79,7 +79,7 @@ private extension NextTeamView {
     var roundStatusCard: some View {
         GameCard {
             VStack(spacing: DesignBook.Spacing.md) {
-                Text("Round Status")
+                Text("game.nextTeam.roundStatus")
                     .font(DesignBook.Font.headline)
                     .foregroundColor(DesignBook.Color.Text.primary)
 
@@ -87,7 +87,7 @@ private extension NextTeamView {
                     .font(DesignBook.Font.title3)
                     .foregroundColor(DesignBook.Color.Text.secondary)
 
-                Text("Words remaining: \(gameManager.remainingWordCount)")
+                Text(String(format: String(localized: "Words remaining: %lld"), gameManager.remainingWordCount))
                     .font(DesignBook.Font.body)
                     .foregroundColor(DesignBook.Color.Text.secondary)
             }
@@ -97,7 +97,7 @@ private extension NextTeamView {
     var rolesCard: some View {
         GameCard {
             VStack(spacing: DesignBook.Spacing.md) {
-                Text("Team Roles")
+                Text("game.nextTeam.teamRoles")
                     .font(DesignBook.Font.headline)
                     .foregroundColor(DesignBook.Color.Text.primary)
 
@@ -125,11 +125,11 @@ private extension NextTeamView {
 
     var buttonsSection: some View {
         VStack(spacing: DesignBook.Spacing.md) {
-            SecondaryButton(title: "Check Standings", icon: "list.bullet.rectangle") {
+            SecondaryButton(title: String(localized: "game.turnResults.checkStandings"), icon: "list.bullet.rectangle") {
                 isStandingsPresented = true
             }
 
-            PrimaryButton(title: "Play", icon: "play.fill") {
+            PrimaryButton(title: String(localized: "Play"), icon: "play.fill") {
                 gameManager.prepareForNewPlay()
                 navigator.push(.play(round: round))
             }

@@ -44,11 +44,11 @@ private extension SettingsView {
     var appearanceCard: some View {
         FoldableCard(
             isExpanded: $isAppearanceExpanded,
-            title: "Appearance",
+            title: "settings.appearance.title",
             icon: "paintbrush"
         ) {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
-                Text("Choose your preferred color scheme. The app will adapt to your selection or follow your system settings.")
+                Text("settings.appearance.description")
                     .font(DesignBook.Font.body)
                     .foregroundColor(DesignBook.Color.Text.secondary)
 
@@ -71,20 +71,20 @@ private extension SettingsView {
         [
             SegmentedSelectionItem(
                 id: .light,
-                title: "Light",
+                title: "settings.appearance.light",
                 subtitle: nil,
                 icon: Image(systemName: "sun.max.fill")
             ),
             SegmentedSelectionItem(
                 id: .dark,
-                title: "Dark",
+                title: "settings.appearance.dark",
                 subtitle: nil,
                 icon: Image(systemName: "moon.fill")
             ),
             SegmentedSelectionItem(
                 id: .system,
-                title: "System",
-                subtitle: "Auto",
+                title: "settings.appearance.system",
+                subtitle: "settings.appearance.auto",
                 icon: Image(systemName: "circle.lefthalf.filled")
             )
         ]
@@ -93,7 +93,7 @@ private extension SettingsView {
     var testModeCard: some View {
         FoldableCard(
             isExpanded: $isTestModeExpanded,
-            title: "Test Mode",
+            title: "settings.testMode.title",
             icon: "flask",
             titleFont: DesignBook.Font.headline
         ) {
@@ -104,7 +104,7 @@ private extension SettingsView {
                         set: { handleTestModeChange($0) }
                     )
                 ) {
-                    Text("Prefill teams, players, and sample words so you can explore the flow instantly. You can still edit everything after enabling it.")
+                    Text("settings.testMode.description")
                         .font(DesignBook.Font.body)
                         .foregroundColor(DesignBook.Color.Text.secondary)
                 }
@@ -116,11 +116,11 @@ private extension SettingsView {
     var defaultsCard: some View {
         FoldableCard(
             isExpanded: $isDefaultsExpanded,
-            title: "Default Game Settings",
+            title: "settings.defaults.title",
             icon: "slider.horizontal.3"
         ) {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
-                Text("These settings will be used as defaults when starting a new game. You can always change them during game setup.")
+                Text("settings.defaults.description")
                     .font(DesignBook.Font.body)
                     .foregroundColor(DesignBook.Color.Text.secondary)
 
@@ -142,7 +142,7 @@ private extension SettingsView {
                         .font(DesignBook.Font.headline)
                         .foregroundColor(DesignBook.Color.Text.accent)
 
-                    Text("Default Words per Player")
+                    Text("settings.defaultWordsPerPlayer.title")
                         .font(DesignBook.Font.headline)
                         .foregroundColor(DesignBook.Color.Text.primary)
                 }
@@ -161,7 +161,7 @@ private extension SettingsView {
                 ),
                 in: 3...20
             ) {
-                Text("Adjust the default number of words each player should add")
+                Text("settings.defaultWordsPerPlayer.description")
                     .font(DesignBook.Font.caption)
                     .foregroundColor(DesignBook.Color.Text.secondary)
             }
@@ -176,7 +176,7 @@ private extension SettingsView {
                         .font(DesignBook.Font.headline)
                         .foregroundColor(DesignBook.Color.Text.accent)
 
-                    Text("Default Round Duration")
+                    Text("settings.defaultRoundDuration.title")
                         .font(DesignBook.Font.headline)
                         .foregroundColor(DesignBook.Color.Text.primary)
                 }
@@ -196,7 +196,7 @@ private extension SettingsView {
                 in: 5...120,
                 step: 5
             ) {
-                Text("Adjust the default timer duration for each team's turn")
+                Text("settings.defaultRoundDuration.description")
                     .font(DesignBook.Font.caption)
                     .foregroundColor(DesignBook.Color.Text.secondary)
             }
@@ -206,20 +206,20 @@ private extension SettingsView {
     var handednessCard: some View {
         FoldableCard(
             isExpanded: $isHandednessExpanded,
-            title: "Handedness",
+            title: "settings.handedness.title",
             icon: "hand.raised"
         ) {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
-                Text("Customize the interface layout based on your dominant hand preference. This setting affects various UI elements throughout the app.")
+                Text("settings.handedness.description")
                     .font(DesignBook.Font.body)
                     .foregroundColor(DesignBook.Color.Text.secondary)
 
-                Picker("Handedness", selection: Binding(
+                Picker("settings.handedness.title", selection: Binding(
                     get: { appConfiguration.isRightHanded ? "right" : "left" },
                     set: { appConfiguration.isRightHanded = $0 == "right" }
                 )) {
-                    Text("Left-handed").tag("left")
-                    Text("Right-handed").tag("right")
+                    Text("settings.handedness.left").tag("left")
+                    Text("settings.handedness.right").tag("right")
                 }
                 .pickerStyle(.segmented)
             }
@@ -229,7 +229,7 @@ private extension SettingsView {
     var aboutCard: some View {
         FoldableCard(
             isExpanded: $isAboutExpanded,
-            title: "About",
+            title: "settings.about.title",
             icon: "info.circle"
         ) {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
@@ -245,11 +245,11 @@ private extension SettingsView {
 
     var appInfoSection: some View {
         VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
-            Text("Hat Game")
+            Text("settings.about.appName")
                 .font(DesignBook.Font.title3)
                 .foregroundColor(DesignBook.Color.Text.primary)
 
-            Text("A fun word guessing game where teams compete across multiple rounds with different rules. Perfect for parties and gatherings!")
+            Text("settings.about.description")
                 .font(DesignBook.Font.body)
                 .foregroundColor(DesignBook.Color.Text.secondary)
         }
@@ -264,7 +264,7 @@ private extension SettingsView {
                             .font(DesignBook.Font.body)
                             .foregroundColor(DesignBook.Color.Text.tertiary)
 
-                        Text("Version")
+                        Text("settings.about.version")
                             .font(DesignBook.Font.body)
                             .foregroundColor(DesignBook.Color.Text.secondary)
                     }
@@ -284,7 +284,7 @@ private extension SettingsView {
                             .font(DesignBook.Font.body)
                             .foregroundColor(DesignBook.Color.Text.tertiary)
 
-                        Text("Build")
+                        Text("settings.about.build")
                             .font(DesignBook.Font.body)
                             .foregroundColor(DesignBook.Color.Text.secondary)
                     }
@@ -310,7 +310,7 @@ private extension SettingsView {
     var developerInfoCard: some View {
         FoldableCard(
             isExpanded: $isDeveloperInfoExpanded,
-            title: "Developer Info",
+            title: "settings.developerInfo.title",
             icon: "person.circle"
         ) {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
@@ -336,11 +336,11 @@ private extension SettingsView {
 
     var developerHeader: some View {
         VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
-            Text("HatGame")
+            Text("settings.developerInfo.appName")
                 .font(DesignBook.Font.title2)
                 .foregroundColor(DesignBook.Color.Text.primary)
 
-            Text("Created by Giga Khizanishvili")
+            Text("settings.developerInfo.createdBy")
                 .font(DesignBook.Font.headline)
                 .foregroundColor(DesignBook.Color.Text.secondary)
         }
@@ -348,11 +348,11 @@ private extension SettingsView {
 
     var developerAboutSection: some View {
         VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
-            Text("About")
+            Text("settings.developerInfo.about.title")
                 .font(DesignBook.Font.headline)
                 .foregroundColor(DesignBook.Color.Text.primary)
 
-            Text("HatGame is a modern take on the classic party game. It focuses on fast rounds, simple onboarding, and bright visuals powered by DesignBook.")
+            Text("settings.developerInfo.about.description")
                 .font(DesignBook.Font.body)
                 .foregroundColor(DesignBook.Color.Text.secondary)
         }
@@ -360,14 +360,14 @@ private extension SettingsView {
 
     var technologiesSection: some View {
         VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
-            Text("Technologies")
+            Text("settings.developerInfo.technologies.title")
                 .font(DesignBook.Font.headline)
                 .foregroundColor(DesignBook.Color.Text.primary)
 
             VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
-                bullet("SwiftUI + Observation")
-                bullet("Custom navigation system")
-                bullet("DesignBook design tokens")
+                bullet("settings.technologies.swiftui")
+                bullet("settings.technologies.navigation")
+                bullet("settings.technologies.designbook")
             }
         }
     }
@@ -379,12 +379,12 @@ private extension SettingsView {
                     .font(DesignBook.Font.headline)
                     .foregroundColor(DesignBook.Color.Text.accent)
 
-                Text("Contact")
+                Text("settings.developerInfo.contact.title")
                     .font(DesignBook.Font.headline)
                     .foregroundColor(DesignBook.Color.Text.primary)
             }
 
-            Text("Feel free to reach out on GitHub: @gigakhizanishvili")
+            Text("settings.developerInfo.contact.message")
                 .font(DesignBook.Font.body)
                 .foregroundColor(DesignBook.Color.Text.secondary)
         }
