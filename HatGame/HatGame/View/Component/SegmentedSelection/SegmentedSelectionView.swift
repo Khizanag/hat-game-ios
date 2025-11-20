@@ -48,14 +48,7 @@ private extension SegmentedSelectionView {
         .background(backgroundShape(isSelected: isSelected))
         .overlay(borderOverlay(isSelected: isSelected))
         .scaleEffect(isSelected ? 1.03 : 1.0)
-        .shadow(
-            color: isSelected
-                ? DesignBook.Color.Text.accent.opacity(0.2)
-                : Color.clear,
-            radius: 8,
-            x: 0,
-            y: 4
-        )
+        .shadow(isSelected ? .accent : .none)
     }
 
     func textContent(for item: SegmentedSelectionItem<ID>, isSelected: Bool) -> some View {

@@ -20,8 +20,7 @@ struct GameCard<Content: View>: View {
             .frame(maxWidth: .infinity)
             .background(DesignBook.Color.Background.card)
             .cornerRadius(DesignBook.Size.cardCornerRadius)
-            .applyShadow(DesignBook.Shadow.large)
-
+            .shadow(.large)
     }
 }
 
