@@ -39,7 +39,7 @@ struct GameView: View {
             .onDisappear {
                 stopTimer()
             }
-            .alert(String(localized: "game.give_up.title"), isPresented: $showingGiveUpConfirmation) {
+            .alert(String(localized: "game.giveUp.title"), isPresented: $showingGiveUpConfirmation) {
                 giveUpAlertActions
             } message: {
                 giveUpAlertMessage
@@ -93,7 +93,7 @@ private extension GameView {
                     showingGiveUpConfirmation = true
                 },
                 label: {
-                    Label(String(localized: "game.give_up.button"), systemImage: "hand.raised.fill")
+                    Label(String(localized: "game.giveUp.button"), systemImage: "hand.raised.fill")
                 }
             )
         }
@@ -104,7 +104,7 @@ private extension GameView {
             title: round.title,
             description: round.description
         ) {
-            Text(String(format: String(localized: "game.current_team_label"), gameManager.currentTeam.name))
+            Text(String(format: String(localized: "game.currentTeamLabel"), gameManager.currentTeam.name))
                 .font(DesignBook.Font.headline)
                 .foregroundColor(gameManager.currentTeam.color)
         }
@@ -195,14 +195,14 @@ private extension GameView {
         Button(String(localized: "common.buttons.cancel"), role: .cancel) {
             showingGiveUpConfirmation = false
         }
-        Button(String(localized: "game.give_up.button"), role: .destructive) {
+        Button(String(localized: "game.giveUp.button"), role: .destructive) {
             giveUpWord()
             showingGiveUpConfirmation = false
         }
     }
 
     var giveUpAlertMessage: some View {
-        Text(String(localized: "game.give_up.confirmation_message"))
+        Text(String(localized: "game.giveUp.confirmationMessage"))
     }
 }
 

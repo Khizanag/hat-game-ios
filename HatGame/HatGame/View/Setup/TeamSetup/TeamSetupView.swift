@@ -28,7 +28,7 @@ struct TeamSetupView: View {
     // MARK: - Body
     var body: some View {
         content
-            .setDefaultStyle(title: String(localized: "team_setup.title"))
+            .setDefaultStyle(title: String(localized: "teamSetup.title"))
             .sheet(isPresented: $isAddTeamSheetPresented) {
                 NavigationView {
                     AddTeamView(
@@ -41,7 +41,7 @@ struct TeamSetupView: View {
             .sheet(isPresented: editTeamBinding) {
                 editTeamSheet
             }
-            .alert(String(localized: "team_setup.delete_team.title"), isPresented: isDeleteTeamAlertPresented) {
+            .alert(String(localized: "teamSetup.deleteTeam.title"), isPresented: isDeleteTeamAlertPresented) {
                 deleteTeamAlertActions
             } message: {
                 deleteTeamAlertMessage
@@ -67,8 +67,8 @@ private extension TeamSetupView {
 
     var headerCard: some View {
         HeaderCard(
-            title: String(localized: "team_setup.title"),
-            description: String(localized: "team_setup.description")
+            title: String(localized: "teamSetup.title"),
+            description: String(localized: "teamSetup.description")
         )
     }
 
@@ -91,7 +91,7 @@ private extension TeamSetupView {
             }
 
             if gameManager.configuration.teams.count < 6 {
-                SecondaryButton(title: String(localized: "team_setup.add_team")) {
+                SecondaryButton(title: String(localized: "teamSetup.addTeam")) {
                     newTeamName = ""
                     isAddTeamSheetPresented = true
                 }
@@ -114,7 +114,7 @@ private extension TeamSetupView {
     }
 
     var requirementText: some View {
-        Text(String(format: String(localized: "team_setup.min_teams_required"), gameManager.configuration.minTeams))
+        Text(String(format: String(localized: "teamSetup.minTeamsRequired"), gameManager.configuration.minTeams))
             .font(DesignBook.Font.caption)
             .foregroundColor(DesignBook.Color.Text.secondary)
             .multilineTextAlignment(.center)
@@ -149,7 +149,7 @@ private extension TeamSetupView {
         Button(String(localized: "common.buttons.cancel"), role: .cancel) {
             deletingTeam = nil
         }
-        Button(String(localized: "team_setup.delete_team.title"), role: .destructive) {
+        Button(String(localized: "teamSetup.deleteTeam.title"), role: .destructive) {
             if let deletingTeam {
                 gameManager.removeTeam(deletingTeam)
                 self.deletingTeam = nil
@@ -160,7 +160,7 @@ private extension TeamSetupView {
     @ViewBuilder
     var deleteTeamAlertMessage: some View {
         if let deletingTeam {
-            Text(String(format: String(localized: "team_setup.delete_team.confirmation"), deletingTeam.name))
+            Text(String(format: String(localized: "teamSetup.deleteTeam.confirmation"), deletingTeam.name))
         }
     }
 

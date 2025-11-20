@@ -26,13 +26,13 @@ struct TeamCard: View {
             Button {
                 onEditTeam()
             } label: {
-                Label(String(localized: "team_card.edit"), systemImage: "pencil")
+                Label(String(localized: "teamCard.edit"), systemImage: "pencil")
             }
 
             Button(role: .destructive) {
                 onRemoveTeam()
             } label: {
-                Label(String(localized: "team_card.delete"), systemImage: "trash")
+                Label(String(localized: "teamCard.delete"), systemImage: "trash")
             }
         }
     }
@@ -84,8 +84,8 @@ private extension TeamCard {
                 Image(systemName: "plus.circle.fill")
                 Text(
                     team.players.count < playersPerTeam
-                        ? String(localized: "team_card.add_player")
-                        : String(localized: "team_card.team_full")
+                        ? String(localized: "teamCard.addPlayer")
+                        : String(localized: "teamCard.teamFull")
                 )
             }
             .font(DesignBook.Font.body)

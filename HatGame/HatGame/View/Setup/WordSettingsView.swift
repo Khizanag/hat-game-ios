@@ -20,7 +20,7 @@ struct WordSettingsView: View {
 
     var body: some View {
         content
-            .setDefaultStyle(title: String(localized: "word_settings.title"))
+            .setDefaultStyle(title: String(localized: "wordSettings.title"))
             .onAppear {
                 selectedWordCount = appConfiguration.defaultWordsPerPlayer
             }
@@ -46,8 +46,8 @@ private extension WordSettingsView {
 
     var headerCard: some View {
         HeaderCard(
-            title: String(localized: "word_settings.header_title"),
-            description: String(localized: "word_settings.header_description")
+            title: String(localized: "wordSettings.headerTitle"),
+            description: String(localized: "wordSettings.headerDescription")
         )
     }
 
@@ -64,7 +64,7 @@ private extension WordSettingsView {
 
     var header: some View {
         HStack {
-            Text("word_settings.words_per_player")
+            Text("wordSettings.wordsPerPlayer")
                 .font(DesignBook.Font.headline)
                 .foregroundColor(DesignBook.Color.Text.primary)
 
@@ -83,7 +83,7 @@ private extension WordSettingsView {
 
     var stepper: some View {
         Stepper(value: $selectedWordCount, in: 3...20) {
-            Text("common.tap_or_hold_to_adjust")
+            Text("common.tapOrHoldToAdjust")
                 .font(DesignBook.Font.caption)
                 .foregroundColor(DesignBook.Color.Text.secondary)
         }
@@ -92,17 +92,17 @@ private extension WordSettingsView {
     var legendTags: some View {
         HStack(spacing: DesignBook.Spacing.md) {
             LegendTag(
-                title: String(localized: "word_settings.legend.short"),
+                title: String(localized: "wordSettings.legend.short"),
                 range: "3-7",
                 isHighlighted: selectedWordCount.isBetween(3, and: 7)
             )
             LegendTag(
-                title: String(localized: "word_settings.legend.balanced"),
+                title: String(localized: "wordSettings.legend.balanced"),
                 range: "8-12",
                 isHighlighted: selectedWordCount.isBetween(8, and: 12)
             )
             LegendTag(
-                title: String(localized: "word_settings.legend.epic"),
+                title: String(localized: "wordSettings.legend.epic"),
                 range: "13-20",
                 isHighlighted: selectedWordCount.isBetween(13, and: 20)
             )

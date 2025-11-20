@@ -64,7 +64,7 @@ private extension RandomizationView {
                         .font(DesignBook.Font.title2)
                         .foregroundColor(DesignBook.Color.Text.primary)
 
-                    Text(String(format: String(localized: "randomization.words_ready"), gameManager.configuration.words.count))
+                    Text(String(format: String(localized: "randomization.wordsReady"), gameManager.configuration.words.count))
                         .font(DesignBook.Font.body)
                         .foregroundColor(DesignBook.Color.Text.secondary)
                 }
@@ -83,11 +83,11 @@ private extension RandomizationView {
     var startingTeamPickerCard: some View {
         GameCard {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
-                Text("randomization.starting_team.title")
+                Text("randomization.startingTeam.title")
                     .font(DesignBook.Font.headline)
                     .foregroundColor(DesignBook.Color.Text.primary)
 
-                Picker("randomization.starting_team.picker", selection: $selectedStartingTeamIndex) {
+                Picker("randomization.startingTeam.picker", selection: $selectedStartingTeamIndex) {
                     ForEach(Array(gameManager.configuration.teams.enumerated()), id: \.offset) { index, team in
                         Text(team.name)
                             .tag(index)
@@ -100,7 +100,7 @@ private extension RandomizationView {
     }
 
     var shuffleButton: some View {
-        PrimaryButton(title: String(localized: "game.shuffle_and_start"), icon: "shuffle") {
+        PrimaryButton(title: String(localized: "game.shuffleAndStart"), icon: "shuffle") {
             shuffleAndStart()
         }
     }

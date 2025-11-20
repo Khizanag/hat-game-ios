@@ -41,11 +41,11 @@ struct TeamFormView: View {
     }
 
     private var title: String {
-        team == nil ? String(localized: "team_form.title.new") : String(localized: "team_form.title.edit")
+        team == nil ? String(localized: "teamForm.title.new") : String(localized: "teamForm.title.edit")
     }
 
     private var primaryButtonTitle: String {
-        team == nil ? String(localized: "team_form.primary.create") : String(localized: "team_form.primary.save")
+        team == nil ? String(localized: "teamForm.primary.create") : String(localized: "teamForm.primary.save")
     }
 
     private var primaryButtonIcon: String? {
@@ -89,12 +89,12 @@ private extension TeamFormView {
                         .font(.system(size: DesignBook.Size.iconSize))
                         .foregroundColor(DesignBook.Color.Text.accent)
 
-                    Text("team_form.team_name")
+                    Text("teamForm.teamName")
                         .font(DesignBook.Font.captionBold)
                         .foregroundColor(DesignBook.Color.Text.secondary)
                 }
 
-                TextField("team_form.enter_team_name", text: $teamName)
+                TextField("teamForm.enterTeamName", text: $teamName)
                     .textFieldStyle(.plain)
                     .font(DesignBook.Font.headline)
                     .foregroundColor(DesignBook.Color.Text.primary)
@@ -124,7 +124,7 @@ private extension TeamFormView {
                             .font(.system(size: DesignBook.Size.iconSize))
                             .foregroundColor(DesignBook.Color.Text.accent)
 
-                        Text("team_form.team_color")
+                        Text("teamForm.teamColor")
                             .font(DesignBook.Font.captionBold)
                             .foregroundColor(DesignBook.Color.Text.secondary)
 
@@ -164,7 +164,7 @@ private extension TeamFormView {
                 }
 
                 ColorPicker(
-                    "team_form.custom_color",
+                    "teamForm.customColor",
                     selection: Binding(
                         get: { teamColor },
                         set: { newColor in
@@ -277,7 +277,7 @@ private extension TeamFormView {
                         .font(.system(size: DesignBook.Size.iconSize))
                         .foregroundColor(DesignBook.Color.Text.accent)
 
-                    Text("team_form.players")
+                    Text("teamForm.players")
                         .font(DesignBook.Font.captionBold)
                         .foregroundColor(DesignBook.Color.Text.secondary)
 
@@ -306,7 +306,7 @@ private extension TeamFormView {
                 .background(DesignBook.Color.Text.accent.opacity(DesignBook.Opacity.highlight))
                 .clipShape(Circle())
 
-            TextField("team_form.player_name", text: Binding(
+            TextField("teamForm.playerName", text: Binding(
                 get: { playerNames[index] },
                 set: { playerNames[index] = $0 }
             ))

@@ -7,4 +7,4 @@
 
 import SwiftUI
 
-enum DesignBook {}
+enum DesignBook { }
