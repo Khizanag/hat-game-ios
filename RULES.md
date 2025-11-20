@@ -8,6 +8,7 @@ Keep this file up-to-date—add any new conventions, UX decisions, or tooling no
 - Use the Observation framework (`@Observable`, `@Environment`) instead of `ObservableObject`.
 - Move complex view sub-components into private computed properties/extensions to keep bodies short.
 - Keep imports sorted alphabetically.
+- Add appropriate MARK comments to file-level extensions (e.g., `// MARK: - Private`).
 
 ### Styling
 - Use the `DesignBook` tokens for all colors, fonts, spacing, sizes, etc. Do **not** introduce ad-hoc values. If a new design value is required, add it to `DesignBook` with a generic, reusable name (e.g., `Color.Text.Status.error`).
