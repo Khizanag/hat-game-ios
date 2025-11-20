@@ -26,13 +26,13 @@ struct TeamCard: View {
             Button {
                 onEditTeam()
             } label: {
-                Label("Edit", systemImage: "pencil")
+                Label(String(localized: "team_card.edit"), systemImage: "pencil")
             }
 
             Button(role: .destructive) {
                 onRemoveTeam()
             } label: {
-                Label("Delete", systemImage: "trash")
+                Label(String(localized: "team_card.delete"), systemImage: "trash")
             }
         }
     }
@@ -82,7 +82,11 @@ private extension TeamCard {
         Button(action: onAddPlayer) {
             HStack {
                 Image(systemName: "plus.circle.fill")
-                Text(team.players.count < playersPerTeam ? "Add Player" : "Team is full")
+                Text(
+                    team.players.count < playersPerTeam
+                        ? String(localized: "team_card.add_player")
+                        : String(localized: "team_card.team_full")
+                )
             }
             .font(DesignBook.Font.body)
             .foregroundColor(team.players.count < playersPerTeam ? DesignBook.Color.Text.accent : DesignBook.Color.Text.tertiary)

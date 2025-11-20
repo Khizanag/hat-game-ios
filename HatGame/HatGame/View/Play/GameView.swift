@@ -39,7 +39,7 @@ struct GameView: View {
             .onDisappear {
                 stopTimer()
             }
-            .alert(String(localized: "game.giveUp.title"), isPresented: $showingGiveUpConfirmation) {
+            .alert(String(localized: "game.give_up.title"), isPresented: $showingGiveUpConfirmation) {
                 giveUpAlertActions
             } message: {
                 giveUpAlertMessage
@@ -93,7 +93,7 @@ private extension GameView {
                     showingGiveUpConfirmation = true
                 },
                 label: {
-                    Label(String(localized: "game.giveUp.button"), systemImage: "hand.raised.fill")
+                    Label(String(localized: "game.give_up.button"), systemImage: "hand.raised.fill")
                 }
             )
         }
@@ -104,7 +104,7 @@ private extension GameView {
             title: round.title,
             description: round.description
         ) {
-            Text(String(format: String(localized: "Current Team: %@"), gameManager.currentTeam.name))
+            Text(String(format: String(localized: "game.current_team_label"), gameManager.currentTeam.name))
                 .font(DesignBook.Font.headline)
                 .foregroundColor(gameManager.currentTeam.color)
         }
@@ -178,7 +178,7 @@ private extension GameView {
                     .font(DesignBook.Font.largeTitle)
                     .foregroundColor(DesignBook.Color.Text.primary)
 
-                PrimaryButton(title: String(localized: "Continue"), icon: "play.fill") {
+                PrimaryButton(title: String(localized: "common.buttons.continue"), icon: "play.fill") {
                     isPaused = false
                 }
                 .frame(width: 216)
@@ -192,17 +192,17 @@ private extension GameView {
 
     @ViewBuilder
     var giveUpAlertActions: some View {
-        Button(String(localized: "Cancel"), role: .cancel) {
+        Button(String(localized: "common.buttons.cancel"), role: .cancel) {
             showingGiveUpConfirmation = false
         }
-        Button(String(localized: "Give Up"), role: .destructive) {
+        Button(String(localized: "game.give_up.button"), role: .destructive) {
             giveUpWord()
             showingGiveUpConfirmation = false
         }
     }
 
     var giveUpAlertMessage: some View {
-        Text("game.giveUp.confirmation.message")
+        Text(String(localized: "game.give_up.confirmation_message"))
     }
 }
 
