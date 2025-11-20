@@ -13,7 +13,7 @@ struct TeamCard: View {
     let onAddPlayer: () -> Void
     let onRemoveTeam: () -> Void
     let onEditTeam: () -> Void
-    
+
     var body: some View {
         GameCard {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
@@ -28,7 +28,7 @@ struct TeamCard: View {
             } label: {
                 Label("Edit", systemImage: "pencil")
             }
-            
+
             Button(role: .destructive) {
                 onRemoveTeam()
             } label: {
@@ -44,15 +44,15 @@ private extension TeamCard {
             Text(team.name)
                 .font(DesignBook.Font.headline)
                 .foregroundColor(team.color)
-            
+
             Spacer()
-            
+
             Text("\(team.players.count)/\(playersPerTeam)")
                 .font(DesignBook.Font.captionBold)
                 .foregroundColor(DesignBook.Color.Text.secondary)
         }
     }
-    
+
     var playersList: some View {
         VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
             ForEach(team.players) { player in
@@ -60,7 +60,7 @@ private extension TeamCard {
                     Circle()
                         .fill(team.color)
                         .frame(width: 8, height: 8)
-                    
+
                     Text(player.name)
                         .font(DesignBook.Font.body)
                         .foregroundColor(DesignBook.Color.Text.secondary)
@@ -68,7 +68,7 @@ private extension TeamCard {
             }
         }
     }
-    
+
     var actions: some View {
         HStack {
             addPlayerButton
@@ -77,7 +77,7 @@ private extension TeamCard {
             deleteButton
         }
     }
-    
+
     var addPlayerButton: some View {
         Button(action: onAddPlayer) {
             HStack {
@@ -89,7 +89,7 @@ private extension TeamCard {
         }
         .disabled(team.players.count >= playersPerTeam)
     }
-    
+
     var editButton: some View {
         Button(action: onEditTeam) {
             Image(systemName: "pencil.circle")
@@ -97,7 +97,7 @@ private extension TeamCard {
                 .font(DesignBook.Font.body)
         }
     }
-    
+
     var deleteButton: some View {
         Button(action: onRemoveTeam) {
             Image(systemName: "trash")

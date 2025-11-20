@@ -16,31 +16,31 @@ struct WordInputView: View {
     @State private var playerWords: [String] = []
     @State private var currentWord: String = ""
     @FocusState private var isWordFieldFocused: Bool
-    
+
     private var currentPlayer: Player? {
         guard currentPlayerIndex < allPlayers.count else { return nil }
         return allPlayers[currentPlayerIndex]
     }
-    
+
     private var nextPlayerName: String? {
         let nextIndex = currentPlayerIndex + 1
         guard nextIndex < allPlayers.count else { return nil }
         return allPlayers[nextIndex].name
     }
-    
+
     private var wordsPerPlayer: Int {
         gameManager.configuration.wordsPerPlayer
     }
-    
+
     private var allPlayers: [Player] {
         gameManager.configuration.teams.flatMap { $0.players }
     }
-    
+
     private var progress: Double {
         guard !allPlayers.isEmpty else { return 0 }
         return Double(currentPlayerIndex) / Double(allPlayers.count)
     }
-    
+
     var body: some View {
         content
             .setDefaultStyle(title: "Add Words")
@@ -68,7 +68,7 @@ private extension WordInputView {
                 .paddingHorizontalDefault()
         }
     }
-    
+
     var headerCard: some View {
         HeaderCard(
             title: "Add Words",
@@ -78,7 +78,7 @@ private extension WordInputView {
                 .tint(DesignBook.Color.Text.accent)
         }
     }
-    
+
     @ViewBuilder
     var wordEntrySection: some View {
         if currentPlayer != nil {
@@ -92,24 +92,24 @@ private extension WordInputView {
             }
         }
     }
-    
+
     var wordInputCard: some View {
         GameCard {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
                 Text("Words added: \(playerWords.count)/\(wordsPerPlayer)")
                     .font(DesignBook.Font.headline)
                     .foregroundColor(DesignBook.Color.Text.primary)
-                
+
                 HStack {
                     wordTextField
                     addWordButton
                 }
-                
+
                 wordsList
             }
         }
     }
-    
+
     var wordTextField: some View {
         TextField("Enter a word", text: $currentWord)
             .textFieldStyle(.plain)
@@ -123,7 +123,7 @@ private extension WordInputView {
                 handleAddWord()
             }
     }
-    
+
     var addWordButton: some View {
         Button(action: handleAddWord) {
             Image(systemName: "plus.circle.fill")
@@ -132,7 +132,7 @@ private extension WordInputView {
         }
         .disabled(currentWord.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
     }
-    
+
     var wordsList: some View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
@@ -141,9 +141,9 @@ private extension WordInputView {
                         Text(word)
                             .font(DesignBook.Font.body)
                             .foregroundColor(DesignBook.Color.Text.secondary)
-                        
+
                         Spacer()
-                        
+
                         Button {
                             playerWords.remove(at: index)
                         } label: {
@@ -158,14 +158,14 @@ private extension WordInputView {
             }
         }
     }
-    
+
     var completionCard: some View {
         GameCard {
             VStack(spacing: DesignBook.Spacing.md) {
                 Text("All words added!")
                     .font(DesignBook.Font.headline)
                     .foregroundColor(DesignBook.Color.Text.primary)
-                
+
                 if let nextPlayerName {
                     Text("You're ready. Pass the device to \(nextPlayerName) for their turn.")
                         .font(DesignBook.Font.body)
@@ -180,19 +180,19 @@ private extension WordInputView {
             }
         }
     }
-    
+
     var wordsListCard: some View {
         GameCard {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
                 Text("Words added: \(playerWords.count)/\(wordsPerPlayer)")
                     .font(DesignBook.Font.headline)
                     .foregroundColor(DesignBook.Color.Text.primary)
-                
+
                 wordsList
             }
         }
     }
-    
+
     @ViewBuilder
     var actionButton: some View {
         // TODO: Uncomment
@@ -202,20 +202,20 @@ private extension WordInputView {
             }
 //        }
     }
-    
+
     var actionButtonTitle: String {
         currentPlayerIndex < allPlayers.count - 1 ? "Next Player" : "Finish"
     }
-    
+
     var actionButtonIcon: String {
         currentPlayerIndex < allPlayers.count - 1 ? "arrow.right.circle.fill" : "checkmark.circle.fill"
     }
-    
+
     func prepareCurrentPlayer() {
         // TODO: Uncomment
         // isWordFieldFocused = true
     }
-    
+
     func handleAddWord() {
         let trimmedWord = currentWord.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedWord.isEmpty, playerWords.count < wordsPerPlayer else { return }
@@ -224,7 +224,7 @@ private extension WordInputView {
         currentWord = ""
         isWordFieldFocused = true
     }
-    
+
     func handleSaveWords() {
         guard let player = currentPlayer else { return }
         gameManager.addWords(playerWords, by: player)

@@ -16,7 +16,7 @@ struct SettingsView: View {
     @SceneStorage("SettingsView.isDeveloperInfoExpanded") private var isDeveloperInfoExpanded = true
     @SceneStorage("SettingsView.isHandednessExpanded") private var isHandednessExpanded = false
     @SceneStorage("SettingsView.isAppearanceExpanded") private var isAppearanceExpanded = true
-    
+
     var body: some View {
         content
             .setDefaultStyle(title: "Settings")
@@ -40,7 +40,7 @@ private extension SettingsView {
             .padding(.top, DesignBook.Spacing.lg)
         }
     }
-    
+
     var appearanceCard: some View {
         FoldableCard(
             isExpanded: $isAppearanceExpanded,
@@ -51,12 +51,12 @@ private extension SettingsView {
                 Text("Choose your preferred color scheme. The app will adapt to your selection or follow your system settings.")
                     .font(DesignBook.Font.body)
                     .foregroundColor(DesignBook.Color.Text.secondary)
-                
+
                 colorSchemeSelector
             }
         }
     }
-    
+
     var colorSchemeSelector: some View {
         SegmentedSelectionView(
             items: colorSchemeItems,
@@ -66,7 +66,7 @@ private extension SettingsView {
             )
         )
     }
-    
+
     var colorSchemeItems: [SegmentedSelectionItem<AppColorScheme>] {
         [
             SegmentedSelectionItem(
@@ -89,7 +89,7 @@ private extension SettingsView {
             )
         ]
     }
-    
+
     var testModeCard: some View {
         FoldableCard(
             isExpanded: $isTestModeExpanded,
@@ -112,7 +112,7 @@ private extension SettingsView {
             }
         }
     }
-    
+
     var defaultsCard: some View {
         FoldableCard(
             isExpanded: $isDefaultsExpanded,
@@ -123,17 +123,17 @@ private extension SettingsView {
                 Text("These settings will be used as defaults when starting a new game. You can always change them during game setup.")
                     .font(DesignBook.Font.body)
                     .foregroundColor(DesignBook.Color.Text.secondary)
-                
+
                 defaultWordsPerPlayerSection
-                
+
                 Divider()
                     .background(DesignBook.Color.Text.tertiary.opacity(0.3))
-                
+
                 defaultRoundDurationSection
             }
         }
     }
-    
+
     var defaultWordsPerPlayerSection: some View {
         VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
             HStack {
@@ -141,19 +141,19 @@ private extension SettingsView {
                     Image(systemName: "text.bubble")
                         .font(DesignBook.Font.headline)
                         .foregroundColor(DesignBook.Color.Text.accent)
-                    
+
                     Text("Default Words per Player")
                         .font(DesignBook.Font.headline)
                         .foregroundColor(DesignBook.Color.Text.primary)
                 }
-                
+
                 Spacer()
-                
+
                 Text("\(appConfiguration.defaultWordsPerPlayer)")
                     .font(DesignBook.Font.title3)
                     .foregroundColor(DesignBook.Color.Text.accent)
             }
-            
+
             Stepper(
                 value: Binding(
                     get: { appConfiguration.defaultWordsPerPlayer },
@@ -167,7 +167,7 @@ private extension SettingsView {
             }
         }
     }
-    
+
     var defaultRoundDurationSection: some View {
         VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
             HStack {
@@ -175,19 +175,19 @@ private extension SettingsView {
                     Image(systemName: "timer")
                         .font(DesignBook.Font.headline)
                         .foregroundColor(DesignBook.Color.Text.accent)
-                    
+
                     Text("Default Round Duration")
                         .font(DesignBook.Font.headline)
                         .foregroundColor(DesignBook.Color.Text.primary)
                 }
-                
+
                 Spacer()
-                
+
                 Text("\(appConfiguration.defaultRoundDuration)s")
                     .font(DesignBook.Font.title3)
                     .foregroundColor(DesignBook.Color.Text.accent)
             }
-            
+
             Stepper(
                 value: Binding(
                     get: { appConfiguration.defaultRoundDuration },
@@ -202,7 +202,7 @@ private extension SettingsView {
             }
         }
     }
-    
+
     var handednessCard: some View {
         FoldableCard(
             isExpanded: $isHandednessExpanded,
@@ -213,7 +213,7 @@ private extension SettingsView {
                 Text("Customize the interface layout based on your dominant hand preference. This setting affects various UI elements throughout the app.")
                     .font(DesignBook.Font.body)
                     .foregroundColor(DesignBook.Color.Text.secondary)
-                
+
                 Picker("Handedness", selection: Binding(
                     get: { appConfiguration.isRightHanded ? "right" : "left" },
                     set: { appConfiguration.isRightHanded = $0 == "right" }
@@ -225,7 +225,7 @@ private extension SettingsView {
             }
         }
     }
-    
+
     var aboutCard: some View {
         FoldableCard(
             isExpanded: $isAboutExpanded,
@@ -234,27 +234,27 @@ private extension SettingsView {
         ) {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
                 appInfoSection
-                
+
                 Divider()
                     .background(DesignBook.Color.Text.tertiary.opacity(0.3))
-                
+
                 versionSection
             }
         }
     }
-    
+
     var appInfoSection: some View {
         VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
             Text("Hat Game")
                 .font(DesignBook.Font.title3)
                 .foregroundColor(DesignBook.Color.Text.primary)
-            
+
             Text("A fun word guessing game where teams compete across multiple rounds with different rules. Perfect for parties and gatherings!")
                 .font(DesignBook.Font.body)
                 .foregroundColor(DesignBook.Color.Text.secondary)
         }
     }
-    
+
     var versionSection: some View {
         VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
             if let version = appVersion {
@@ -263,34 +263,34 @@ private extension SettingsView {
                         Image(systemName: "number")
                             .font(DesignBook.Font.body)
                             .foregroundColor(DesignBook.Color.Text.tertiary)
-                        
+
                         Text("Version")
                             .font(DesignBook.Font.body)
                             .foregroundColor(DesignBook.Color.Text.secondary)
                     }
-                    
+
                     Spacer()
-                    
+
                     Text(version)
                         .font(DesignBook.Font.body)
                         .foregroundColor(DesignBook.Color.Text.primary)
                 }
             }
-            
+
             if let build = appBuild {
                 HStack {
                     HStack(spacing: DesignBook.Spacing.sm) {
                         Image(systemName: "wrench.and.screwdriver")
                             .font(DesignBook.Font.body)
                             .foregroundColor(DesignBook.Color.Text.tertiary)
-                        
+
                         Text("Build")
                             .font(DesignBook.Font.body)
                             .foregroundColor(DesignBook.Color.Text.secondary)
                     }
-                    
+
                     Spacer()
-                    
+
                     Text(build)
                         .font(DesignBook.Font.body)
                         .foregroundColor(DesignBook.Color.Text.primary)
@@ -298,15 +298,15 @@ private extension SettingsView {
             }
         }
     }
-    
+
     var appVersion: String? {
         Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
     }
-    
+
     var appBuild: String? {
         Bundle.main.infoDictionary?["CFBundleVersion"] as? String
     }
-    
+
     var developerInfoCard: some View {
         FoldableCard(
             isExpanded: $isDeveloperInfoExpanded,
@@ -315,55 +315,55 @@ private extension SettingsView {
         ) {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
                 developerHeader
-                
+
                 Divider()
                     .background(DesignBook.Color.Text.tertiary.opacity(0.3))
-                
+
                 developerAboutSection
-                
+
                 Divider()
                     .background(DesignBook.Color.Text.tertiary.opacity(0.3))
-                
+
                 technologiesSection
-                
+
                 Divider()
                     .background(DesignBook.Color.Text.tertiary.opacity(0.3))
-                
+
                 contactSection
             }
         }
     }
-    
+
     var developerHeader: some View {
         VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
             Text("HatGame")
                 .font(DesignBook.Font.title2)
                 .foregroundColor(DesignBook.Color.Text.primary)
-            
+
             Text("Created by Giga Khizanishvili")
                 .font(DesignBook.Font.headline)
                 .foregroundColor(DesignBook.Color.Text.secondary)
         }
     }
-    
+
     var developerAboutSection: some View {
         VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
             Text("About")
                 .font(DesignBook.Font.headline)
                 .foregroundColor(DesignBook.Color.Text.primary)
-            
+
             Text("HatGame is a modern take on the classic party game. It focuses on fast rounds, simple onboarding, and bright visuals powered by DesignBook.")
                 .font(DesignBook.Font.body)
                 .foregroundColor(DesignBook.Color.Text.secondary)
         }
     }
-    
+
     var technologiesSection: some View {
         VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
             Text("Technologies")
                 .font(DesignBook.Font.headline)
                 .foregroundColor(DesignBook.Color.Text.primary)
-            
+
             VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
                 bullet("SwiftUI + Observation")
                 bullet("Custom navigation system")
@@ -371,25 +371,25 @@ private extension SettingsView {
             }
         }
     }
-    
+
     var contactSection: some View {
         VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
             HStack(spacing: DesignBook.Spacing.sm) {
                 Image(systemName: "envelope")
                     .font(DesignBook.Font.headline)
                     .foregroundColor(DesignBook.Color.Text.accent)
-                
+
                 Text("Contact")
                     .font(DesignBook.Font.headline)
                     .foregroundColor(DesignBook.Color.Text.primary)
             }
-            
+
             Text("Feel free to reach out on GitHub: @gigakhizanishvili")
                 .font(DesignBook.Font.body)
                 .foregroundColor(DesignBook.Color.Text.secondary)
         }
     }
-    
+
     func bullet(_ text: String) -> some View {
         HStack(alignment: .top, spacing: DesignBook.Spacing.sm) {
             Circle()
@@ -401,7 +401,7 @@ private extension SettingsView {
                 .foregroundColor(DesignBook.Color.Text.secondary)
         }
     }
-    
+
     func handleTestModeChange(_ enabled: Bool) {
         appConfiguration.isTestMode = enabled
     }
@@ -413,4 +413,3 @@ private extension SettingsView {
         Page.settings.view()
     }
 }
-

@@ -18,7 +18,7 @@ struct HatGameApp: App {
 
 struct AppRootView: View {
     @State private var appConfiguration = AppConfiguration.shared
-    
+
     var body: some View {
         NavigationView {
             Page.home.view()

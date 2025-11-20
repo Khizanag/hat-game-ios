@@ -24,7 +24,7 @@ final class GameConfiguration {
     var teamColors: [Color] {
         TeamDefaultColorGenerator.defaultColors
     }
-    
+
     func teamColor(for index: Int) -> Color {
         teamColors[index % teamColors.count]
     }

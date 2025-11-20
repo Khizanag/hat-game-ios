@@ -10,7 +10,7 @@ import Foundation
 struct Word: Identifiable, Hashable {
     let id: UUID
     let text: String
-    
+
     init(
         id: UUID = UUID(),
         text: String

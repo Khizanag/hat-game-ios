@@ -12,4 +12,3 @@ extension View {
         padding(.horizontal, DesignBook.Spacing.lg)
     }
 }
-

@@ -13,4 +13,3 @@ struct SegmentedSelectionItem<ID: Hashable> {
     let subtitle: String?
     let icon: Image
 }
-

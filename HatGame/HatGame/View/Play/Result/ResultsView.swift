@@ -17,11 +17,11 @@ struct ResultsView: View {
     private var round: GameRound? {
         gameManager.currentRound
     }
-    
+
     private var isFinal: Bool {
         round == nil
     }
-    
+
     private var winners: [Team] {
         let sortedTeams = gameManager.getSortedTeamsByTotalScore()
         guard let topScore = sortedTeams.first.map({ gameManager.getTotalScore(for: $0) }) else {
@@ -52,7 +52,7 @@ private extension ResultsView {
         ScrollView {
             VStack(spacing: DesignBook.Spacing.xl) {
                 winnerSection
-                
+
                 if isFinal {
                     allRoundsSection
                     totalScoresSection
@@ -70,7 +70,7 @@ private extension ResultsView {
                 .paddingHorizontalDefault()
         }
     }
-    
+
     var allRoundsSection: some View {
         VStack(spacing: DesignBook.Spacing.md) {
             ForEach(gameManager.getStartedRounds(), id: \.rawValue) { round in
@@ -78,7 +78,7 @@ private extension ResultsView {
             }
         }
     }
-    
+
     func roundSection(for round: GameRound) -> some View {
         FoldableCard(
             isExpanded: Binding(
@@ -97,7 +97,7 @@ private extension ResultsView {
             roundScores(for: round)
         }
     }
-    
+
     @ViewBuilder
     var winnerSection: some View {
         if isFinal {
@@ -106,7 +106,7 @@ private extension ResultsView {
             }
         }
     }
-    
+
     func roundScores(for round: GameRound) -> some View {
         VStack(spacing: DesignBook.Spacing.sm) {
             ForEach(Array(gameManager.getSortedTeamsByRoundScore(for: round).enumerated()), id: \.element.id) { index, team in
@@ -119,7 +119,7 @@ private extension ResultsView {
             }
         }
     }
-    
+
     var totalScoresSection: some View {
         FoldableCard(
             isExpanded: $isTotalScoresExpanded,
@@ -128,7 +128,7 @@ private extension ResultsView {
             totalScoresContent
         }
     }
-    
+
     var totalScoresContent: some View {
         VStack(spacing: DesignBook.Spacing.sm) {
             ForEach(Array(gameManager.getSortedTeamsByTotalScore().enumerated()), id: \.element.id) { index, team in
@@ -141,36 +141,36 @@ private extension ResultsView {
             }
         }
     }
-    
+
     @ViewBuilder
     var actionSection: some View {
         if isFinal {
             newGameButton
         }
     }
-    
+
     var newGameButton: some View {
         PrimaryButton(title: "Return to Main Page", icon: "house.fill") {
             handleReturnToMain()
         }
     }
-    
+
     @ViewBuilder
     var winnerCardContent: some View {
         VStack(spacing: DesignBook.Spacing.md) {
             Text("🏆")
                 .font(.system(size: 80))
-            
+
             if winners.count == 1 {
                 Text("Winner!")
                     .font(DesignBook.Font.title2)
                     .foregroundColor(DesignBook.Color.Text.primary)
-                
+
                 if let winner = winners.first {
                     Text(winner.name)
                         .font(DesignBook.Font.largeTitle)
                         .foregroundColor(teamColor(for: winner))
-                    
+
                     Text("\(gameManager.getTotalScore(for: winner)) points")
                         .font(DesignBook.Font.headline)
                         .foregroundColor(DesignBook.Color.Text.secondary)
@@ -179,14 +179,14 @@ private extension ResultsView {
                 Text("Winners!")
                     .font(DesignBook.Font.title2)
                     .foregroundColor(DesignBook.Color.Text.primary)
-                
+
                 VStack(spacing: DesignBook.Spacing.sm) {
                     ForEach(winners) { winner in
                         VStack(spacing: DesignBook.Spacing.xs) {
                             Text(winner.name)
                                 .font(DesignBook.Font.title3)
                                 .foregroundColor(teamColor(for: winner))
-                            
+
                             Text("\(gameManager.getTotalScore(for: winner)) points")
                                 .font(DesignBook.Font.body)
                                 .foregroundColor(DesignBook.Color.Text.secondary)
@@ -196,16 +196,16 @@ private extension ResultsView {
             }
         }
     }
-    
+
     func teamColor(for team: Team) -> Color {
         team.color
     }
-    
+
     func handleReturnToMain() {
         navigator.dismissToRoot()
         navigator.dismiss()
     }
-    
+
     @ToolbarContentBuilder
     var finalToolbar: some ToolbarContent {
         if isFinal {

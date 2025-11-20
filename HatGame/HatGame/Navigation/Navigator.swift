@@ -21,27 +21,27 @@ final class Navigator {
     }
 
     // MARK: - Navigation Methods
-    
+
     func push(_ page: Page) {
         navigationPath.append(page)
     }
-    
+
     func present(_ page: Page) {
         presentedPage = page
     }
-    
+
     func dismiss() {
         pleaseDismissViewSubject.send()
     }
-    
+
     func dismissToRoot() {
         navigationPath = []
     }
-    
+
     func popToRoot() {
         dismissToRoot()
     }
-    
+
     func replace(with page: Page) {
         // Replace current page by removing last and adding new
         if !navigationPath.isEmpty {

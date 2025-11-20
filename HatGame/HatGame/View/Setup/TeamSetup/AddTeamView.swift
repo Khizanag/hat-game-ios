@@ -10,7 +10,7 @@ import SwiftUI
 struct AddTeamView: View {
     @Environment(GameManager.self) private var gameManager
     @Environment(Navigator.self) private var navigator
-    
+
     let onTeamCreate: (Team) -> Void
 
     init(onTeamCreate: @escaping (Team) -> Void) {

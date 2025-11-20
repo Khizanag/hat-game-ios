@@ -21,7 +21,7 @@ struct TeamFormView: View {
     @State private var teamColor: Color = TeamDefaultColorGenerator.defaultColors[0]
     @State private var isColorSectionExpanded: Bool = false
     @FocusState private var focusedField: Field?
-    
+
     enum Field: Hashable {
         case teamName
         case player(Int)
@@ -39,19 +39,19 @@ struct TeamFormView: View {
         !teamName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
         playerNames.allSatisfy { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
     }
-    
+
     private var title: String {
         team == nil ? "New Team" : "Edit group"
     }
-    
+
     private var primaryButtonTitle: String {
         team == nil ? "Create Team" : "Save changes"
     }
-    
+
     private var primaryButtonIcon: String? {
         team == nil ? "plus.circle.fill" : "checkmark.circle.fill"
     }
-    
+
     private var currentTeamId: UUID? {
         team?.id
     }
@@ -352,7 +352,7 @@ private extension TeamFormView {
         .padding(.top, DesignBook.Spacing.md)
         .padding(.bottom, DesignBook.Spacing.lg)
     }
-    
+
     func loadInitialData() {
         if let team = team {
             teamName = team.name
@@ -369,16 +369,16 @@ private extension TeamFormView {
             updateDefaultColor()
         }
     }
-    
+
     func updateDefaultColor() {
         let generator = TeamDefaultColorGenerator()
         teamColor = generator.generateDefaultColor(for: gameManager.configuration)
     }
-    
+
     func handlePrimaryAction() {
         let trimmedName = teamName.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedName.isEmpty else { return }
-        
+
         let teamId = team?.id ?? UUID()
         let updatedTeam = Team(
             id: teamId,
@@ -389,7 +389,7 @@ private extension TeamFormView {
                 .map { Player(name: $0, teamId: teamId) },
             color: teamColor
         )
-        
+
         onPrimaryAction(updatedTeam)
         navigator.dismiss()
     }

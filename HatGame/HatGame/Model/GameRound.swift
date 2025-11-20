@@ -11,7 +11,7 @@ enum GameRound: Int, Codable, CaseIterable, Equatable, Hashable {
     case first = 1
     case second = 2
     case third = 3
-    
+
     var description: String {
         switch self {
         case .first:
@@ -22,7 +22,7 @@ enum GameRound: Int, Codable, CaseIterable, Equatable, Hashable {
             "No words - gestures and miming only"
         }
     }
-    
+
     var title: String {
         "Round \(rawValue)"
     }

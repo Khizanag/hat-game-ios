@@ -46,61 +46,61 @@ private extension NextTeamView {
                 .paddingHorizontalDefault()
         }
     }
-    
+
     var teamDetails: some View {
         VStack(spacing: DesignBook.Spacing.lg) {
             Text("🎯")
                 .font(.system(size: 80))
-            
+
             Text("Next Team")
                 .font(DesignBook.Font.largeTitle)
                 .foregroundColor(DesignBook.Color.Text.primary)
-            
+
             teamScoreCard
             roundStatusCard
             rolesCard
         }
     }
-    
+
     var teamScoreCard: some View {
         GameCard {
             VStack(spacing: DesignBook.Spacing.md) {
                 Text(team.name)
                     .font(DesignBook.Font.title2)
                     .foregroundColor(team.color)
-                
+
                 Text("Current Score: \(gameManager.getTotalScore(for: team))")
                     .font(DesignBook.Font.headline)
                     .foregroundColor(DesignBook.Color.Text.accent)
             }
         }
     }
-    
+
     var roundStatusCard: some View {
         GameCard {
             VStack(spacing: DesignBook.Spacing.md) {
                 Text("Round Status")
                     .font(DesignBook.Font.headline)
                     .foregroundColor(DesignBook.Color.Text.primary)
-                
+
                 Text(round.title)
                     .font(DesignBook.Font.title3)
                     .foregroundColor(DesignBook.Color.Text.secondary)
-                
+
                 Text("Words remaining: \(gameManager.remainingWordCount)")
                     .font(DesignBook.Font.body)
                     .foregroundColor(DesignBook.Color.Text.secondary)
             }
         }
     }
-    
+
     var rolesCard: some View {
         GameCard {
             VStack(spacing: DesignBook.Spacing.md) {
                 Text("Team Roles")
                     .font(DesignBook.Font.headline)
                     .foregroundColor(DesignBook.Color.Text.primary)
-                
+
                 VStack(spacing: DesignBook.Spacing.sm) {
                     roleRow(icon: "person.wave.2.fill", label: "Explaining", value: explainingPlayer.name)
                     roleRow(icon: "lightbulb.fill", label: "Guessing", value: guessingPlayer.name)
@@ -108,7 +108,7 @@ private extension NextTeamView {
             }
         }
     }
-    
+
     func roleRow(icon: String, label: String, value: String) -> some View {
         HStack {
             Image(systemName: icon)
@@ -128,7 +128,7 @@ private extension NextTeamView {
             SecondaryButton(title: "Check Standings", icon: "list.bullet.rectangle") {
                 isStandingsPresented = true
             }
-            
+
             PrimaryButton(title: "Play", icon: "play.fill") {
                 gameManager.prepareForNewPlay()
                 navigator.push(.play(round: round))

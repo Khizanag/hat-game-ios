@@ -11,13 +11,13 @@ struct WordSettingsView: View {
     @Environment(GameManager.self) private var gameManager
     private let appConfiguration = AppConfiguration.shared
     @Environment(Navigator.self) private var navigator
-    
+
     @State private var selectedWordCount: Int
-    
+
     init() {
         _selectedWordCount = State(initialValue: 10)
     }
-    
+
     var body: some View {
         content
             .setDefaultStyle(title: "Word Settings")
@@ -42,14 +42,14 @@ private extension WordSettingsView {
                 .paddingHorizontalDefault()
         }
     }
-    
+
     var headerCard: some View {
         HeaderCard(
             title: "How many words?",
             description: "Every player will add the same number of words. Choose what feels right for today's game."
         )
     }
-    
+
     var controlsCard: some View {
         GameCard {
             VStack(spacing: DesignBook.Spacing.md) {
@@ -60,26 +60,26 @@ private extension WordSettingsView {
             }
         }
     }
-    
+
     var header: some View {
         HStack {
             Text("Words per player")
                 .font(DesignBook.Font.headline)
                 .foregroundColor(DesignBook.Color.Text.primary)
-            
+
             Spacer()
-            
+
             Text("\(selectedWordCount)")
                 .font(DesignBook.Font.title2)
                 .foregroundColor(DesignBook.Color.Text.accent)
         }
     }
-    
+
     var slider: some View {
         Slider(value: wordCountBinding, in: 3...20, step: 1)
             .tint(DesignBook.Color.Text.accent)
     }
-    
+
     var stepper: some View {
         Stepper(value: $selectedWordCount, in: 3...20) {
             Text("Tap or hold to adjust")
@@ -87,7 +87,7 @@ private extension WordSettingsView {
                 .foregroundColor(DesignBook.Color.Text.secondary)
         }
     }
-    
+
     var legendTags: some View {
         HStack(spacing: DesignBook.Spacing.md) {
             LegendTag(title: "Short & speedy", range: "3-7", isHighlighted: selectedWordCount.isBetween(3, and: 7))
@@ -95,20 +95,20 @@ private extension WordSettingsView {
             LegendTag(title: "Epic round", range: "13-20", isHighlighted: selectedWordCount.isBetween(13, and: 20))
         }
     }
-    
+
     var continueButton: some View {
         PrimaryButton(title: "Continue", icon: "arrow.right.circle.fill") {
             handleContinue()
         }
     }
-    
+
     var wordCountBinding: Binding<Double> {
         Binding(
             get: { Double(selectedWordCount) },
             set: { selectedWordCount = Int($0) }
         )
     }
-    
+
     func handleContinue() {
         gameManager.configuration.wordsPerPlayer = selectedWordCount
         navigator.push(.timerSettings)

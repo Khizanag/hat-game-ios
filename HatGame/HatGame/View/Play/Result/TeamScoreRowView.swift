@@ -12,7 +12,7 @@ struct TeamScoreRowView: View {
     let rank: Int
     let score: Int
     let isWinner: Bool
-    
+
     var body: some View {
         HStack(spacing: DesignBook.Spacing.md) {
             rankView
@@ -36,25 +36,25 @@ private extension TeamScoreRowView {
             .foregroundColor(rankColor)
             .frame(width: 40, alignment: .leading)
     }
-    
+
     var indicator: some View {
         Circle()
             .fill(team.color)
             .frame(width: 12, height: 12)
     }
-    
+
     var nameView: some View {
         Text(team.name)
             .font(DesignBook.Font.headline)
             .foregroundColor(DesignBook.Color.Text.primary)
     }
-    
+
     var scoreView: some View {
         Text("\(score)")
             .font(DesignBook.Font.title3)
             .foregroundColor(isWinner ? team.color : DesignBook.Color.Text.secondary)
     }
-    
+
     @ViewBuilder
     var crownView: some View {
         if isWinner {
@@ -63,11 +63,11 @@ private extension TeamScoreRowView {
                 .foregroundColor(team.color)
         }
     }
-    
+
     var rowBackgroundColor: Color {
         isWinner ? team.color.opacity(DesignBook.Opacity.highlight) : DesignBook.Color.Background.secondary
     }
-    
+
     var rankColor: Color {
         rank <= 3 ? team.color : DesignBook.Color.Text.tertiary
     }
@@ -82,14 +82,14 @@ private extension TeamScoreRowView {
             score: 25,
             isWinner: true
         )
-        
+
         TeamScoreRowView(
             team: Team(name: "Team 2", color: .red),
             rank: 2,
             score: 20,
             isWinner: false
         )
-        
+
         TeamScoreRowView(
             team: Team(name: "Team 3", color: .green),
             rank: 3,
@@ -100,4 +100,3 @@ private extension TeamScoreRowView {
     .padding()
     .setDefaultBackground()
 }
-
