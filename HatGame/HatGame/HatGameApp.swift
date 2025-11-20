@@ -11,10 +11,19 @@ import SwiftUI
 struct HatGameApp: App {
     var body: some Scene {
         WindowGroup {
-            NavigationView {
-                Page.home.view()
-            }
-            .presentationBackground(Color.red)
+            AppRootView()
         }
+    }
+}
+
+struct AppRootView: View {
+    @State private var appConfiguration = AppConfiguration.shared
+    
+    var body: some View {
+        NavigationView {
+            Page.home.view()
+        }
+        .preferredColorScheme(appConfiguration.colorScheme.colorScheme)
+        .environment(appConfiguration)
     }
 }

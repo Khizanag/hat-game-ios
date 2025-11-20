@@ -15,6 +15,7 @@ struct SettingsView: View {
     @SceneStorage("SettingsView.isAboutExpanded") private var isAboutExpanded = true
     @SceneStorage("SettingsView.isDeveloperInfoExpanded") private var isDeveloperInfoExpanded = true
     @SceneStorage("SettingsView.isHandednessExpanded") private var isHandednessExpanded = false
+    @SceneStorage("SettingsView.isAppearanceExpanded") private var isAppearanceExpanded = true
     
     var body: some View {
         content
@@ -26,6 +27,7 @@ private extension SettingsView {
     var content: some View {
         ScrollView {
             VStack(spacing: DesignBook.Spacing.xl) {
+                appearanceCard
                 defaultsCard
                 handednessCard
                 aboutCard
@@ -37,6 +39,55 @@ private extension SettingsView {
             .paddingHorizontalDefault()
             .padding(.top, DesignBook.Spacing.lg)
         }
+    }
+    
+    var appearanceCard: some View {
+        FoldableCard(
+            isExpanded: $isAppearanceExpanded,
+            title: "Appearance",
+            icon: "paintbrush"
+        ) {
+            VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
+                Text("Choose your preferred color scheme. The app will adapt to your selection or follow your system settings.")
+                    .font(DesignBook.Font.body)
+                    .foregroundColor(DesignBook.Color.Text.secondary)
+                
+                colorSchemeSelector
+            }
+        }
+    }
+    
+    var colorSchemeSelector: some View {
+        SegmentedSelectionView(
+            items: colorSchemeItems,
+            selection: Binding(
+                get: { appConfiguration.colorScheme },
+                set: { appConfiguration.colorScheme = $0 }
+            )
+        )
+    }
+    
+    var colorSchemeItems: [SegmentedSelectionItem<AppColorScheme>] {
+        [
+            SegmentedSelectionItem(
+                id: .light,
+                title: "Light",
+                subtitle: nil,
+                icon: Image(systemName: "sun.max.fill")
+            ),
+            SegmentedSelectionItem(
+                id: .dark,
+                title: "Dark",
+                subtitle: nil,
+                icon: Image(systemName: "moon.fill")
+            ),
+            SegmentedSelectionItem(
+                id: .system,
+                title: "System",
+                subtitle: "Auto",
+                icon: Image(systemName: "circle.lefthalf.filled")
+            )
+        ]
     }
     
     var testModeCard: some View {

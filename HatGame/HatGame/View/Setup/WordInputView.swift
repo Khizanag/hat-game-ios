@@ -212,8 +212,8 @@ private extension WordInputView {
     }
     
     func prepareCurrentPlayer() {
-        guard let player = currentPlayer else { return }
-//        isWordFieldFocused = true
+        // TODO: Uncomment
+        // isWordFieldFocused = true
     }
     
     func handleAddWord() {
