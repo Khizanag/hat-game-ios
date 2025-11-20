@@ -16,4 +16,3 @@ extension DesignBook {
         static let largeIconSize: CGFloat = 48
     }
 }
-

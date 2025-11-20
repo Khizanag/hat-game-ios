@@ -7,9 +7,8 @@
 
 extension DesignBook {
     enum Opacity {
-        static let enabled: Double = 1.0
+        static let enabled: Double = 1
         static let disabled: Double = 0.4
         static let highlight: Double = 0.2
     }
 }
-
