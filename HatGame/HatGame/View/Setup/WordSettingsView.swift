@@ -20,13 +20,14 @@ struct WordSettingsView: View {
 
     var body: some View {
         content
-            .setDefaultStyle(title: String(localized: "Word Settings"))
+            .setDefaultStyle(title: String(localized: "word_settings.title"))
             .onAppear {
                 selectedWordCount = appConfiguration.defaultWordsPerPlayer
             }
     }
 }
 
+// MARK: - Private
 private extension WordSettingsView {
     var content: some View {
         ScrollView {
@@ -45,8 +46,8 @@ private extension WordSettingsView {
 
     var headerCard: some View {
         HeaderCard(
-            title: String(localized: "How many words?"),
-            description: String(localized: "Every player will add the same number of words. Choose what feels right for today's game.")
+            title: String(localized: "word_settings.header_title"),
+            description: String(localized: "word_settings.header_description")
         )
     }
 
@@ -63,7 +64,7 @@ private extension WordSettingsView {
 
     var header: some View {
         HStack {
-            Text("wordSettings.wordsPerPlayer")
+            Text("word_settings.words_per_player")
                 .font(DesignBook.Font.headline)
                 .foregroundColor(DesignBook.Color.Text.primary)
 
@@ -82,7 +83,7 @@ private extension WordSettingsView {
 
     var stepper: some View {
         Stepper(value: $selectedWordCount, in: 3...20) {
-            Text("common.tapOrHoldToAdjust")
+            Text("common.tap_or_hold_to_adjust")
                 .font(DesignBook.Font.caption)
                 .foregroundColor(DesignBook.Color.Text.secondary)
         }
@@ -90,14 +91,26 @@ private extension WordSettingsView {
 
     var legendTags: some View {
         HStack(spacing: DesignBook.Spacing.md) {
-            LegendTag(title: String(localized: "Short & speedy"), range: "3-7", isHighlighted: selectedWordCount.isBetween(3, and: 7))
-            LegendTag(title: String(localized: "Balanced"), range: "8-12", isHighlighted: selectedWordCount.isBetween(8, and: 12))
-            LegendTag(title: String(localized: "Epic round"), range: "13-20", isHighlighted: selectedWordCount.isBetween(13, and: 20))
+            LegendTag(
+                title: String(localized: "word_settings.legend.short"),
+                range: "3-7",
+                isHighlighted: selectedWordCount.isBetween(3, and: 7)
+            )
+            LegendTag(
+                title: String(localized: "word_settings.legend.balanced"),
+                range: "8-12",
+                isHighlighted: selectedWordCount.isBetween(8, and: 12)
+            )
+            LegendTag(
+                title: String(localized: "word_settings.legend.epic"),
+                range: "13-20",
+                isHighlighted: selectedWordCount.isBetween(13, and: 20)
+            )
         }
     }
 
     var continueButton: some View {
-        PrimaryButton(title: String(localized: "Continue"), icon: "arrow.right.circle.fill") {
+        PrimaryButton(title: String(localized: "common.buttons.continue"), icon: "arrow.right.circle.fill") {
             handleContinue()
         }
     }

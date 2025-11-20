@@ -51,7 +51,7 @@ private extension TeamTurnResultsView {
             Text("⏱️")
                 .font(.system(size: 80))
 
-            Text("game.turnResults.timeUp")
+            Text("game.turn_results.time_up")
                 .font(DesignBook.Font.largeTitle)
                 .foregroundColor(DesignBook.Color.Text.primary)
         }
@@ -63,11 +63,11 @@ private extension TeamTurnResultsView {
 
         GameCard {
             VStack(spacing: DesignBook.Spacing.md) {
-                Text(String(format: String(localized: "%@'s Results"), team.name))
+                Text(String(format: String(localized: "game.turn_results.team_title"), team.name))
                     .font(DesignBook.Font.title2)
                     .foregroundColor(team.color)
 
-                Text(String(format: String(localized: "Words guessed this turn: %lld"), guessedWords.count))
+                Text(String(format: String(localized: "game.turn_results.words_guessed_count"), guessedWords.count))
                     .font(DesignBook.Font.headline)
                     .foregroundColor(DesignBook.Color.Text.secondary)
             }
@@ -86,7 +86,7 @@ private extension TeamTurnResultsView {
     var guessedWordsCard: some View {
         GameCard {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
-                Text("game.turnResults.wordsGuessed")
+                Text("game.turn_results.words_guessed")
                     .font(DesignBook.Font.headline)
                     .foregroundColor(DesignBook.Color.Text.primary)
 
@@ -110,7 +110,7 @@ private extension TeamTurnResultsView {
 
     var emptyStateCard: some View {
         GameCard {
-            Text("game.turnResults.noWordsGuessed")
+            Text("game.turn_results.no_words_guessed")
                 .font(DesignBook.Font.body)
                 .foregroundColor(DesignBook.Color.Text.secondary)
         }
@@ -118,11 +118,11 @@ private extension TeamTurnResultsView {
 
     var buttonsSection: some View {
         VStack(spacing: DesignBook.Spacing.md) {
-            SecondaryButton(title: String(localized: "game.turnResults.checkStandings")) {
+            SecondaryButton(title: String(localized: "game.turn_results.check_standings")) {
                 isStandingsPresented = true
             }
 
-            PrimaryButton(title: String(localized: "Continue"), icon: "arrow.right.circle.fill") {
+            PrimaryButton(title: String(localized: "common.buttons.continue"), icon: "arrow.right.circle.fill") {
                 gameManager.prepareForNewPlay()
 
                 if let round = gameManager.currentRound {

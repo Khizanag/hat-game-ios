@@ -19,7 +19,7 @@ struct SettingsView: View {
 
     var body: some View {
         content
-            .setDefaultStyle(title: "Settings")
+            .setDefaultStyle(title: String(localized: "settings.title"))
     }
 }
 
@@ -93,7 +93,7 @@ private extension SettingsView {
     var testModeCard: some View {
         FoldableCard(
             isExpanded: $isTestModeExpanded,
-            title: "settings.testMode.title",
+            title: "settings.test_mode.title",
             icon: "flask",
             titleFont: DesignBook.Font.headline
         ) {
@@ -104,7 +104,7 @@ private extension SettingsView {
                         set: { handleTestModeChange($0) }
                     )
                 ) {
-                    Text("settings.testMode.description")
+                    Text("settings.test_mode.description")
                         .font(DesignBook.Font.body)
                         .foregroundColor(DesignBook.Color.Text.secondary)
                 }
@@ -142,7 +142,7 @@ private extension SettingsView {
                         .font(DesignBook.Font.headline)
                         .foregroundColor(DesignBook.Color.Text.accent)
 
-                    Text("settings.defaultWordsPerPlayer.title")
+                    Text("settings.default_words_per_player.title")
                         .font(DesignBook.Font.headline)
                         .foregroundColor(DesignBook.Color.Text.primary)
                 }
@@ -161,7 +161,7 @@ private extension SettingsView {
                 ),
                 in: 3...20
             ) {
-                Text("settings.defaultWordsPerPlayer.description")
+                Text("settings.default_words_per_player.description")
                     .font(DesignBook.Font.caption)
                     .foregroundColor(DesignBook.Color.Text.secondary)
             }
@@ -176,7 +176,7 @@ private extension SettingsView {
                         .font(DesignBook.Font.headline)
                         .foregroundColor(DesignBook.Color.Text.accent)
 
-                    Text("settings.defaultRoundDuration.title")
+                    Text("settings.default_round_duration.title")
                         .font(DesignBook.Font.headline)
                         .foregroundColor(DesignBook.Color.Text.primary)
                 }
@@ -196,7 +196,7 @@ private extension SettingsView {
                 in: 5...120,
                 step: 5
             ) {
-                Text("settings.defaultRoundDuration.description")
+                Text("settings.default_round_duration.description")
                     .font(DesignBook.Font.caption)
                     .foregroundColor(DesignBook.Color.Text.secondary)
             }
@@ -245,7 +245,7 @@ private extension SettingsView {
 
     var appInfoSection: some View {
         VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
-            Text("settings.about.appName")
+            Text("settings.about.app_name")
                 .font(DesignBook.Font.title3)
                 .foregroundColor(DesignBook.Color.Text.primary)
 
@@ -310,7 +310,7 @@ private extension SettingsView {
     var developerInfoCard: some View {
         FoldableCard(
             isExpanded: $isDeveloperInfoExpanded,
-            title: "settings.developerInfo.title",
+            title: "settings.developer_info.title",
             icon: "person.circle"
         ) {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
@@ -336,11 +336,11 @@ private extension SettingsView {
 
     var developerHeader: some View {
         VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
-            Text("settings.developerInfo.appName")
+            Text("settings.developer_info.app_name")
                 .font(DesignBook.Font.title2)
                 .foregroundColor(DesignBook.Color.Text.primary)
 
-            Text("settings.developerInfo.createdBy")
+            Text("settings.developer_info.created_by")
                 .font(DesignBook.Font.headline)
                 .foregroundColor(DesignBook.Color.Text.secondary)
         }
@@ -348,11 +348,11 @@ private extension SettingsView {
 
     var developerAboutSection: some View {
         VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
-            Text("settings.developerInfo.about.title")
+            Text("settings.developer_info.about.title")
                 .font(DesignBook.Font.headline)
                 .foregroundColor(DesignBook.Color.Text.primary)
 
-            Text("settings.developerInfo.about.description")
+            Text("settings.developer_info.about.description")
                 .font(DesignBook.Font.body)
                 .foregroundColor(DesignBook.Color.Text.secondary)
         }
@@ -360,7 +360,7 @@ private extension SettingsView {
 
     var technologiesSection: some View {
         VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
-            Text("settings.developerInfo.technologies.title")
+            Text("settings.developer_info.technologies.title")
                 .font(DesignBook.Font.headline)
                 .foregroundColor(DesignBook.Color.Text.primary)
 
@@ -379,12 +379,12 @@ private extension SettingsView {
                     .font(DesignBook.Font.headline)
                     .foregroundColor(DesignBook.Color.Text.accent)
 
-                Text("settings.developerInfo.contact.title")
+                Text("settings.developer_info.contact.title")
                     .font(DesignBook.Font.headline)
                     .foregroundColor(DesignBook.Color.Text.primary)
             }
 
-            Text("settings.developerInfo.contact.message")
+            Text("settings.developer_info.contact.message")
                 .font(DesignBook.Font.body)
                 .foregroundColor(DesignBook.Color.Text.secondary)
         }
