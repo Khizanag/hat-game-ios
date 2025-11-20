@@ -20,4 +20,3 @@ extension DesignBook {
         static let largeTitle = SwiftUI.Font.system(size: 56, weight: .bold, design: .rounded)
     }
 }
-

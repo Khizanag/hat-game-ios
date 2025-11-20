@@ -15,7 +15,7 @@ extension DesignBook {
         case accent
         case none
 
-        var style: ShadowStyle {
+        fileprivate var style: ShadowStyle {
             switch self {
             case .small:
                 return ShadowStyle(color: .black.opacity(0.1), radius: 4, x: 0, y: 2)
@@ -35,7 +35,7 @@ extension DesignBook {
             }
         }
 
-        struct ShadowStyle {
+        fileprivate struct ShadowStyle {
             let color: SwiftUI.Color
             let radius: CGFloat
             let x: CGFloat
@@ -50,4 +50,3 @@ extension View {
         return self.shadow(color: style.color, radius: style.radius, x: style.x, y: style.y)
     }
 }
-
