@@ -5,7 +5,7 @@
 //  Created by Giga Khizanishvili on 16.11.25.
 //
 
-import Foundation
+import SwiftUI
 
 enum GameRound: Int, Codable, CaseIterable, Equatable, Hashable {
     case first = 1
@@ -15,15 +15,15 @@ enum GameRound: Int, Codable, CaseIterable, Equatable, Hashable {
     var description: String {
         switch self {
         case .first:
-            "No restrictions - use any words or descriptions"
+            String(localized: "gameRound.first.description")
         case .second:
-            "One word only - can say just one word"
+            String(localized: "gameRound.second.description")
         case .third:
-            "No words - gestures and miming only"
+            String(localized: "gameRound.third.description")
         }
     }
 
     var title: String {
-        "Round \(rawValue)"
+        String(format: String(localized: "gameRound.title"), rawValue)
     }
 }

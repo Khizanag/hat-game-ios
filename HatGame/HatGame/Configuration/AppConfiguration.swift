@@ -8,6 +8,7 @@
 import Foundation
 import Observation
 import SwiftUI
+import UIKit
 
 @Observable
 final class AppConfiguration {
@@ -18,6 +19,7 @@ final class AppConfiguration {
     private static let defaultRoundDurationKey = "HatGame.defaultRoundDuration"
     private static let isRightHandedKey = "HatGame.isRightHanded"
     private static let colorSchemeKey = "HatGame.colorScheme"
+    private static let appIconKey = "HatGame.appIcon"
 
     var isTestMode: Bool {
         didSet {
@@ -49,6 +51,13 @@ final class AppConfiguration {
         }
     }
 
+    var appIcon: AppIcon {
+        didSet {
+            UserDefaults.standard.set(appIcon.rawValue, forKey: Self.appIconKey)
+            applyAppIcon(appIcon)
+        }
+    }
+
     private init() {
         isTestMode = UserDefaults.standard.bool(forKey: Self.testModeKey)
         defaultWordsPerPlayer = UserDefaults.standard.object(forKey: Self.defaultWordsPerPlayerKey) as? Int ?? 10
@@ -60,6 +69,36 @@ final class AppConfiguration {
             colorScheme = scheme
         } else {
             colorScheme = .system
+        }
+
+        if let storedIcon = UserDefaults.standard.string(forKey: Self.appIconKey),
+           let icon = AppIcon(rawValue: storedIcon) {
+            appIcon = icon
+        } else {
+            appIcon = .classic
+        }
+    }
+
+    func applyStoredAppIcon() {
+        applyAppIcon(appIcon)
+    }
+
+    private func applyAppIcon(_ icon: AppIcon) {
+        guard UIApplication.shared.supportsAlternateIcons else { return }
+        
+        let desiredName = icon.alternateIconName
+        let currentName = UIApplication.shared.alternateIconName
+        
+        if currentName == desiredName {
+            return
+        }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            UIApplication.shared.setAlternateIconName(desiredName) { error in
+                if let error = error {
+                    print("Failed to set app icon '\(desiredName ?? "primary")': \(error.localizedDescription)")
+                }
+            }
         }
     }
 }

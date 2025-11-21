@@ -18,7 +18,6 @@ struct HatGameApp: App {
 
 struct AppRootView: View {
     @State private var appConfiguration = AppConfiguration.shared
-    @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
         NavigationView {
@@ -27,10 +26,7 @@ struct AppRootView: View {
         .preferredColorScheme(appConfiguration.colorScheme.colorScheme)
         .environment(appConfiguration)
         .onAppear {
-            AppIconManager.shared.updateIcon(for: colorScheme)
-        }
-        .onChange(of: colorScheme) { newScheme in
-            AppIconManager.shared.updateIcon(for: newScheme)
+            appConfiguration.applyStoredAppIcon()
         }
     }
 }

@@ -47,7 +47,7 @@ private extension HomeView {
     var howToPlayCard: some View {
         FoldableCard(
             isExpanded: $isHowToPlayExpanded,
-            title: "home.howToPlay.title",
+            title: String(localized: "home.howToPlay.title"),
             icon: "questionmark.circle"
         ) {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
