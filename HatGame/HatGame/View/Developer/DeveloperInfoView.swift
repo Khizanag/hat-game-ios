@@ -24,6 +24,7 @@ struct DeveloperInfoView: View {
     }
 }
 
+// MARK: - Private
 private extension DeveloperInfoView {
     var header: some View {
         VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {

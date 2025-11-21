@@ -10,6 +10,7 @@ These guidelines apply to all of our iOS repositories. Project-specific rules (s
 - Never add extra blank lines at the end of files; each file must end exactly on its last character (no trailing newline).
 - Use the current date in file headers for newly created source files; never edit headers on existing files.
 - Localization keys must use camelCase or dot.notation (e.g., `wordInput.title`, not `word_input.title`).
+- Add MARK comments for file-level extensions (e.g., `// MARK: - Private` before `private extension SomeView`).
 
 ## SwiftUI Patterns
 - Use the Observation framework instead of `ObservableObject`.

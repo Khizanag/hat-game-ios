@@ -116,6 +116,7 @@ private extension TimerSettingsView {
     }
 }
 
+// MARK: - Private Extension
 private extension Int {
     func isBetween(_ lower: Int, and upper: Int) -> Bool {
         self >= lower && self <= upper

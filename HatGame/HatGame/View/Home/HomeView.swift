@@ -17,6 +17,7 @@ struct HomeView: View {
     }
 }
 
+// MARK: - Private
 private extension HomeView {
     var content: some View {
         ScrollView {

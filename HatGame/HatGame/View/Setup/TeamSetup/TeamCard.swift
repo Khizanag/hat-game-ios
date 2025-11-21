@@ -38,6 +38,7 @@ struct TeamCard: View {
     }
 }
 
+// MARK: - Private
 private extension TeamCard {
     var header: some View {
         HStack {
