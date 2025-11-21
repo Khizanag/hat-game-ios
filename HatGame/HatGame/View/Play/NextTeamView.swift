@@ -50,7 +50,7 @@ private extension NextTeamView {
     var teamDetails: some View {
         VStack(spacing: DesignBook.Spacing.lg) {
             Text("🎯")
-                .font(.system(size: 80))
+                .font(DesignBook.IconFont.emoji)
 
             Text("game.nextTeam.title")
                 .font(DesignBook.Font.largeTitle)

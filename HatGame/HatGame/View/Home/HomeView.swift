@@ -36,7 +36,7 @@ private extension HomeView {
     var header: some View {
         VStack(spacing: DesignBook.Spacing.md) {
             Text("🎩")
-                .font(.system(size: 80))
+                .font(DesignBook.IconFont.emoji)
                 .padding(.top, DesignBook.Spacing.md)
 
             Text("home.title")
@@ -98,7 +98,7 @@ private struct InstructionRow: View {
                     .frame(width: 24, height: 24)
 
                 Image(systemName: icon)
-                    .font(.system(size: 12, weight: .semibold))
+                    .font(DesignBook.Font.smallCaption)
                     .foregroundColor(DesignBook.Color.Text.accent)
             }
 

@@ -171,7 +171,7 @@ private extension GameView {
 
             VStack(spacing: DesignBook.Spacing.xl) {
                 Image(systemName: "pause.circle.fill")
-                    .font(.system(size: 80))
+                    .font(DesignBook.IconFont.emoji)
                     .foregroundColor(DesignBook.Color.Text.primary)
 
                 Text("game.paused.title")

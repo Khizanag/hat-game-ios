@@ -126,7 +126,7 @@ private extension AppIconSelectionView {
                                 .shadow(.small)
 
                             Image(systemName: "checkmark.circle.fill")
-                                .font(.system(size: 24))
+                                .font(DesignBook.IconFont.medium)
                                 .foregroundColor(DesignBook.Color.Text.accent)
                         }
                         .padding(DesignBook.Spacing.sm)

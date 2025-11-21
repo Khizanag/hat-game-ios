@@ -67,7 +67,7 @@ private extension SettingsView {
             GameCard {
                 HStack(spacing: DesignBook.Spacing.md) {
                     Image(systemName: "app.gift.fill")
-                        .font(.system(size: DesignBook.Size.largeIconSize))
+                        .font(DesignBook.IconFont.extraLarge)
                         .foregroundColor(DesignBook.Color.Text.accent)
                         .frame(width: DesignBook.Size.largeIconSize, height: DesignBook.Size.largeIconSize)
 

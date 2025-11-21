@@ -49,7 +49,7 @@ private extension TeamTurnResultsView {
     var header: some View {
         VStack(spacing: DesignBook.Spacing.md) {
             Text("⏱️")
-                .font(.system(size: 80))
+                .font(DesignBook.IconFont.emoji)
 
             Text("game.turnResults.timeUp")
                 .font(DesignBook.Font.largeTitle)
