@@ -69,6 +69,7 @@ private extension WordInputView {
             .safeAreaInset(edge: .bottom) {
                 actionButton
                     .paddingHorizontalDefault()
+                    .padding(.bottom, DesignBook.Spacing.sm)
             }
             .onAppear {
                 scrollToTextField(proxy: proxy, delay: 0.5)
@@ -189,7 +190,7 @@ private extension WordInputView {
                     handleAddWord()
                 } label: {
                     Image(systemName: "plus.circle.fill")
-                        .font(.system(size: 32))
+                        .font(DesignBook.IconFont.large)
                         .foregroundColor(DesignBook.Color.Button.primary)
                 }
                 .disabled(isAddWordButtonDisabled)
@@ -215,7 +216,7 @@ private extension WordInputView {
             Text("\(index + 1)")
                 .font(DesignBook.Font.caption)
                 .foregroundColor(DesignBook.Color.Text.tertiary)
-                .frame(width: 24, height: 24)
+                .frame(width: DesignBook.Size.badgeSize, height: DesignBook.Size.badgeSize)
                 .background(DesignBook.Color.Background.secondary)
                 .clipShape(Circle())
 
@@ -229,7 +230,7 @@ private extension WordInputView {
                 removeWord(at: index)
             } label: {
                 Image(systemName: "xmark.circle.fill")
-                    .font(.system(size: 20))
+                    .font(DesignBook.IconFont.small)
                     .foregroundColor(DesignBook.Color.Status.error.opacity(0.7))
             }
             .buttonStyle(.plain)
@@ -243,7 +244,7 @@ private extension WordInputView {
         GameCard {
             VStack(spacing: DesignBook.Spacing.md) {
                 Image(systemName: "checkmark.circle.fill")
-                    .font(.system(size: 48))
+                    .font(DesignBook.IconFont.extraLarge)
                     .foregroundColor(DesignBook.Color.Status.success)
 
                 Text("wordInput.allWordsAdded")

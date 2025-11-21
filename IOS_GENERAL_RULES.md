@@ -12,6 +12,13 @@ These guidelines apply to all of our iOS repositories. Project-specific rules (s
 - Localization keys must use camelCase or dot.notation (e.g., `wordInput.title`, not `word_input.title`).
 - Add MARK comments for file-level extensions (e.g., `// MARK: - Private` before `private extension SomeView`).
 
+## Design System
+- **MANDATORY**: All visual tokens (fonts, colors, spacing, sizes, opacity, shadows, etc.) MUST come from the project's design system (e.g., DesignBook).
+- Never use hardcoded numeric values like `.font(.system(size: 24))`, `Color.blue`, `padding(16)`, etc.
+- If a value is missing from the design system, add it to the design system first with a generic name, then use it.
+- All font sizes must use design system fonts (e.g., `DesignBook.Font.headline`, not `.font(.system(size: 20))`).
+- All icon sizes must use design system icon fonts or sizes (e.g., `DesignBook.IconFont.medium`, not `.font(.system(size: 24))`).
+
 ## SwiftUI Patterns
 - Use the Observation framework instead of `ObservableObject`.
 - Inject dependencies via `@Environment`.

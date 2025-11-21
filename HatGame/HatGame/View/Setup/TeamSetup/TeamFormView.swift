@@ -87,7 +87,7 @@ private extension TeamFormView {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
                 HStack(spacing: DesignBook.Spacing.sm) {
                     Image(systemName: "person.3.fill")
-                        .font(.system(size: DesignBook.Size.iconSize))
+                        .font(DesignBook.IconFont.medium)
                         .foregroundColor(DesignBook.Color.Text.accent)
 
                     Text("teamForm.teamName")
@@ -122,7 +122,7 @@ private extension TeamFormView {
                 } label: {
                     HStack(spacing: DesignBook.Spacing.sm) {
                         Image(systemName: "paintpalette.fill")
-                            .font(.system(size: DesignBook.Size.iconSize))
+                            .font(DesignBook.IconFont.medium)
                             .foregroundColor(DesignBook.Color.Text.accent)
 
                         Text("teamForm.teamColor")
@@ -208,11 +208,11 @@ private extension TeamFormView {
                 .overlay {
                     if isSuggestedColorSelected(index) {
                         Image(systemName: "checkmark")
-                            .font(.system(size: 18, weight: .bold))
+                            .font(DesignBook.Font.subheadlineBold)
                             .foregroundColor(.white)
                     } else if isDisabled {
                         Image(systemName: "xmark")
-                            .font(.system(size: 14, weight: .bold))
+                            .font(DesignBook.Font.footnoteBold)
                             .foregroundColor(.white)
                             .opacity(DesignBook.Opacity.disabled)
                     }
@@ -275,7 +275,7 @@ private extension TeamFormView {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
                 HStack(spacing: DesignBook.Spacing.sm) {
                     Image(systemName: "person.2.fill")
-                        .font(.system(size: DesignBook.Size.iconSize))
+                        .font(DesignBook.IconFont.medium)
                         .foregroundColor(DesignBook.Color.Text.accent)
 
                     Text("teamForm.players")
@@ -351,7 +351,7 @@ private extension TeamFormView {
         }
         .paddingHorizontalDefault()
         .padding(.top, DesignBook.Spacing.md)
-        .padding(.bottom, DesignBook.Spacing.lg)
+        .padding(.bottom, DesignBook.Spacing.sm)
     }
 
     func loadInitialData() {

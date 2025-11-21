@@ -105,7 +105,7 @@ private extension SegmentedSelectionView {
 
     func iconImage(for item: SegmentedSelectionItem<ID>, isSelected: Bool) -> some View {
         item.icon
-            .font(.system(size: 22, weight: .semibold))
+            .font(DesignBook.Font.callout)
             .foregroundColor(
                 isSelected
                     ? DesignBook.Color.Text.accent

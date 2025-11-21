@@ -59,7 +59,7 @@ private extension RandomizationView {
             GameCard {
                 VStack(spacing: DesignBook.Spacing.md) {
                     Text("🎲")
-                        .font(.system(size: 80))
+                        .font(DesignBook.IconFont.emoji)
 
                     Text("randomization.title")
                         .font(DesignBook.Font.title2)

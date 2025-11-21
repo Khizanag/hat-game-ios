@@ -162,7 +162,7 @@ private extension ResultsView {
     var winnerCardContent: some View {
         VStack(spacing: DesignBook.Spacing.md) {
             Text("🏆")
-                .font(.system(size: 80))
+                .font(DesignBook.IconFont.emoji)
 
             if winners.count == 1 {
                 Text("game.results.winner")
