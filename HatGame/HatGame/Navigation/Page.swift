@@ -12,6 +12,7 @@ enum Page: Hashable {
     case home
     case settings
     case developerInfo
+    case appIconSelection
 
     case teamSetup
     case wordSettings
@@ -43,6 +44,8 @@ extension Page {
             HomeView()
         case .settings:
             SettingsView()
+        case .appIconSelection:
+            AppIconSelectionView()
         case .teamSetup:
             NavigationView {
                 TeamSetupView()

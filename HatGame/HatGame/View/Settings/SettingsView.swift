@@ -9,7 +9,7 @@ import SwiftUI
 
 struct SettingsView: View {
     private let appConfiguration = AppConfiguration.shared
-    @Environment(\.colorScheme) private var colorScheme
+    @Environment(Navigator.self) private var navigator
 
     @SceneStorage("SettingsView.isTestModeExpanded") private var isTestModeExpanded = false
     @SceneStorage("SettingsView.isDefaultsExpanded") private var isDefaultsExpanded = true
@@ -29,6 +29,7 @@ private extension SettingsView {
         ScrollView {
             VStack(spacing: DesignBook.Spacing.xl) {
                 appearanceCard
+                appIconCard
                 defaultsCard
                 handednessCard
                 aboutCard
@@ -54,13 +55,40 @@ private extension SettingsView {
                     .foregroundColor(DesignBook.Color.Text.secondary)
 
                 colorSchemeSelector
-
-                Divider()
-                    .background(DesignBook.Color.Text.tertiary.opacity(0.3))
-
-                appIconSelector
             }
         }
+    }
+
+    var appIconCard: some View {
+        Button {
+            navigator.push(.appIconSelection)
+        } label: {
+            GameCard {
+                HStack(spacing: DesignBook.Spacing.md) {
+                    Image(systemName: "app.gift.fill")
+                        .font(.system(size: DesignBook.Size.largeIconSize))
+                        .foregroundColor(DesignBook.Color.Text.accent)
+                        .frame(width: DesignBook.Size.largeIconSize, height: DesignBook.Size.largeIconSize)
+
+                    VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
+                        Text("settings.appIcon.title")
+                            .font(DesignBook.Font.headline)
+                            .foregroundColor(DesignBook.Color.Text.primary)
+
+                        Text("settings.appIcon.description")
+                            .font(DesignBook.Font.body)
+                            .foregroundColor(DesignBook.Color.Text.secondary)
+                    }
+
+                    Spacer()
+
+                    Image(systemName: "chevron.right")
+                        .font(DesignBook.Font.body)
+                        .foregroundColor(DesignBook.Color.Text.tertiary)
+                }
+            }
+        }
+        .buttonStyle(.plain)
     }
 
     var colorSchemeSelector: some View {
@@ -94,79 +122,6 @@ private extension SettingsView {
                 icon: Image(systemName: "circle.lefthalf.filled")
             )
         ]
-    }
-
-    var appIconSelector: some View {
-        VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
-            HStack(spacing: DesignBook.Spacing.sm) {
-                Image(systemName: "app.gift")
-                    .font(DesignBook.Font.headline)
-                    .foregroundColor(DesignBook.Color.Text.accent)
-
-                Text("settings.appIcon.title")
-                    .font(DesignBook.Font.headline)
-                    .foregroundColor(DesignBook.Color.Text.primary)
-            }
-
-            Text("settings.appIcon.description")
-                .font(DesignBook.Font.body)
-                .foregroundColor(DesignBook.Color.Text.secondary)
-
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: DesignBook.Spacing.md) {
-                    ForEach(AppIcon.allCases) { icon in
-                        appIconOption(for: icon)
-                    }
-                }
-            }
-        }
-    }
-
-    func appIconOption(for icon: AppIcon) -> some View {
-        let isSelected = appConfiguration.appIcon == icon
-
-        return Button {
-            guard appConfiguration.appIcon != icon else { return }
-            appConfiguration.appIcon = icon
-        } label: {
-            VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
-                iconPreview(for: icon)
-
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(icon.titleKey)
-                        .font(DesignBook.Font.bodyBold)
-                        .foregroundColor(DesignBook.Color.Text.primary)
-
-                    Text(icon.subtitleKey)
-                        .font(DesignBook.Font.caption)
-                        .foregroundColor(DesignBook.Color.Text.secondary)
-                }
-            }
-            .padding(DesignBook.Spacing.md)
-            .frame(width: 180)
-            .background(
-                RoundedRectangle(cornerRadius: DesignBook.Size.cardCornerRadius)
-                    .fill(DesignBook.Color.Background.card)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: DesignBook.Size.cardCornerRadius)
-                    .stroke(
-                        isSelected ? DesignBook.Color.Text.accent : DesignBook.Color.Background.card,
-                        lineWidth: 2
-                    )
-            )
-            .shadow(isSelected ? .accent : .small)
-        }
-        .buttonStyle(.plain)
-    }
-
-    func iconPreview(for icon: AppIcon) -> some View {
-        let assetName = colorScheme == .dark ? icon.previewNameDark : icon.previewNameLight
-
-        return Image(assetName)
-            .resizable()
-            .aspectRatio(1, contentMode: .fit)
-            .clipShape(RoundedRectangle(cornerRadius: DesignBook.Size.smallCardCornerRadius))
     }
 
     var testModeCard: some View {
