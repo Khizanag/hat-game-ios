@@ -15,6 +15,7 @@ struct WordInputView: View {
     @State private var currentPlayerIndex: Int = 0
     @State private var playerWords: [String] = []
     @State private var currentWord: String = ""
+    @State private var shouldScrollToTextField: Bool = false
     @FocusState private var isWordFieldFocused: Bool
 
     private var currentPlayer: Player? {
@@ -56,17 +57,47 @@ struct WordInputView: View {
 // MARK: - Private
 private extension WordInputView {
     var content: some View {
-        ScrollView {
-            VStack(spacing: DesignBook.Spacing.lg) {
-                headerCard
-                wordEntrySection
-            }
-            .paddingHorizontalDefault()
-            .padding(.bottom, DesignBook.Spacing.xxl)
-        }
-        .safeAreaInset(edge: .bottom) {
-            actionButton
+        ScrollViewReader { proxy in
+            ScrollView {
+                VStack(spacing: DesignBook.Spacing.lg) {
+                    headerCard
+                    wordEntrySection
+                }
                 .paddingHorizontalDefault()
+                .padding(.bottom, DesignBook.Spacing.xxl)
+            }
+            .safeAreaInset(edge: .bottom) {
+                actionButton
+                    .paddingHorizontalDefault()
+            }
+            .onAppear {
+                scrollToTextField(proxy: proxy, delay: 0.5)
+            }
+            .onChange(of: isWordFieldFocused) { _, isFocused in
+                if isFocused {
+                    scrollToTextField(proxy: proxy, delay: 0.2)
+                }
+            }
+            .onChange(of: playerWords.count) { _, _ in
+                scrollToTextField(proxy: proxy, delay: 0.15)
+            }
+            .onChange(of: currentPlayerIndex) { _, _ in
+                scrollToTextField(proxy: proxy, delay: 0.4)
+            }
+            .onChange(of: shouldScrollToTextField) { _, shouldScroll in
+                if shouldScroll {
+                    scrollToTextField(proxy: proxy, delay: 0.1)
+                    shouldScrollToTextField = false
+                }
+            }
+        }
+    }
+
+    func scrollToTextField(proxy: ScrollViewProxy, delay: TimeInterval = 0.2) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+            withAnimation(.easeInOut(duration: 0.3)) {
+                proxy.scrollTo("wordTextField", anchor: .center)
+            }
         }
     }
 
@@ -102,75 +133,121 @@ private extension WordInputView {
 
     var wordInputCard: some View {
         GameCard {
-            VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
+            VStack(alignment: .leading, spacing: DesignBook.Spacing.lg) {
+                progressHeader
+
+                if !playerWords.isEmpty {
+                    wordsList
+                        .transition(.move(edge: .top).combined(with: .opacity))
+                }
+
+                wordTextField
+            }
+        }
+    }
+
+    var progressHeader: some View {
+        HStack {
+            VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
                 Text(String(format: String(localized: "wordInput.wordsAddedProgress"), playerWords.count, wordsPerPlayer))
                     .font(DesignBook.Font.headline)
                     .foregroundColor(DesignBook.Color.Text.primary)
 
-                HStack {
-                    wordTextField
-                    addWordButton
-                }
-
-                wordsList
+                ProgressView(value: Double(playerWords.count), total: Double(wordsPerPlayer))
+                    .tint(DesignBook.Color.Text.accent)
+                    .progressViewStyle(.linear)
             }
+
+            Spacer()
+
+            Text("\(playerWords.count)/\(wordsPerPlayer)")
+                .font(DesignBook.Font.title3)
+                .foregroundColor(DesignBook.Color.Text.accent)
         }
     }
 
     var wordTextField: some View {
-        TextField("wordInput.enterWord", text: $currentWord)
-            .textFieldStyle(.plain)
-            .font(DesignBook.Font.body)
-            .foregroundColor(DesignBook.Color.Text.primary)
-            .padding(DesignBook.Spacing.md)
-            .background(DesignBook.Color.Background.secondary)
-            .cornerRadius(DesignBook.Size.smallCardCornerRadius)
-            .focused($isWordFieldFocused)
-            .onSubmit {
-                handleAddWord()
-            }
-    }
+        HStack(spacing: DesignBook.Spacing.sm) {
+            TextField("wordInput.enterWord", text: $currentWord)
+                .textFieldStyle(.plain)
+                .font(DesignBook.Font.body)
+                .foregroundColor(DesignBook.Color.Text.primary)
+                .padding(DesignBook.Spacing.md)
+                .background(DesignBook.Color.Background.secondary)
+                .cornerRadius(DesignBook.Size.smallCardCornerRadius)
+                .focused($isWordFieldFocused)
+                .onSubmit {
+                    if !isAddWordButtonDisabled {
+                        handleAddWord()
+                        shouldScrollToTextField = true
+                    }
+                }
+                .id("wordTextField")
 
-    var addWordButton: some View {
-        Button(action: handleAddWord) {
-            Image(systemName: "plus.circle.fill")
-                .font(.system(size: 32))
-                .foregroundColor(DesignBook.Color.Button.primary)
+            if !currentWord.isEmpty {
+                Button {
+                    handleAddWord()
+                } label: {
+                    Image(systemName: "plus.circle.fill")
+                        .font(.system(size: 32))
+                        .foregroundColor(DesignBook.Color.Button.primary)
+                }
+                .disabled(isAddWordButtonDisabled)
+                .opacity(isAddWordButtonDisabled ? DesignBook.Opacity.disabled : DesignBook.Opacity.enabled)
+            }
         }
-        .disabled(currentWord.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
     }
 
     var wordsList: some View {
-        ScrollView {
-            LazyVStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
-                ForEach(Array(playerWords.enumerated()), id: \.offset) { index, word in
-                    HStack {
-                        Text(word)
-                            .font(DesignBook.Font.body)
-                            .foregroundColor(DesignBook.Color.Text.secondary)
-
-                        Spacer()
-
-                        Button {
-                            playerWords.remove(at: index)
-                        } label: {
-                            Image(systemName: "xmark.circle.fill")
-                                .foregroundColor(DesignBook.Color.Status.error)
-                        }
-                    }
-                    .padding(DesignBook.Spacing.sm)
-                    .background(DesignBook.Color.Background.secondary)
-                    .cornerRadius(DesignBook.Size.smallCardCornerRadius)
-                }
+        VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
+            ForEach(playerWords.indices, id: \.self) { index in
+                wordRow(at: index)
+                    .transition(.asymmetric(
+                        insertion: .scale.combined(with: .opacity),
+                        removal: .scale.combined(with: .opacity)
+                    ))
             }
         }
+    }
+
+    func wordRow(at index: Int) -> some View {
+        HStack(spacing: DesignBook.Spacing.sm) {
+            Text("\(index + 1)")
+                .font(DesignBook.Font.caption)
+                .foregroundColor(DesignBook.Color.Text.tertiary)
+                .frame(width: 24, height: 24)
+                .background(DesignBook.Color.Background.secondary)
+                .clipShape(Circle())
+
+            Text(playerWords[index])
+                .font(DesignBook.Font.body)
+                .foregroundColor(DesignBook.Color.Text.primary)
+
+            Spacer()
+
+            Button {
+                removeWord(at: index)
+            } label: {
+                Image(systemName: "xmark.circle.fill")
+                    .font(.system(size: 20))
+                    .foregroundColor(DesignBook.Color.Status.error.opacity(0.7))
+            }
+            .buttonStyle(.plain)
+        }
+        .padding(DesignBook.Spacing.md)
+        .background(DesignBook.Color.Background.secondary)
+        .cornerRadius(DesignBook.Size.smallCardCornerRadius)
     }
 
     var completionCard: some View {
         GameCard {
             VStack(spacing: DesignBook.Spacing.md) {
+                Image(systemName: "checkmark.circle.fill")
+                    .font(.system(size: 48))
+                    .foregroundColor(DesignBook.Color.Status.success)
+
                 Text("wordInput.allWordsAdded")
-                    .font(DesignBook.Font.headline)
+                    .font(DesignBook.Font.title3)
                     .foregroundColor(DesignBook.Color.Text.primary)
 
                 if let nextPlayerName {
@@ -185,6 +262,7 @@ private extension WordInputView {
                         .multilineTextAlignment(.center)
                 }
             }
+            .padding(DesignBook.Spacing.lg)
         }
     }
 
@@ -202,12 +280,21 @@ private extension WordInputView {
 
     @ViewBuilder
     var actionButton: some View {
-        // TODO: Uncomment
-//        if playerWords.count >= wordsPerPlayer {
+        if playerWords.count < wordsPerPlayer {
+            PrimaryButton(title: String(localized: "wordInput.addWord"), icon: "plus.circle.fill") {
+                handleAddWord()
+            }
+            .disabled(isAddWordButtonDisabled)
+            .opacity(isAddWordButtonDisabled ? DesignBook.Opacity.disabled : DesignBook.Opacity.enabled)
+        } else {
             PrimaryButton(title: actionButtonTitle, icon: actionButtonIcon) {
                 handleSaveWords()
             }
-//        }
+        }
+    }
+
+    var isAddWordButtonDisabled: Bool {
+        currentWord.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
     var actionButtonTitle: String {
@@ -221,24 +308,38 @@ private extension WordInputView {
     }
 
     func prepareCurrentPlayer() {
-        // TODO: Uncomment
-        // isWordFieldFocused = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            isWordFieldFocused = true
+        }
+    }
+
+    func removeWord(at index: Int) {
+        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+            playerWords.remove(at: index)
+        }
     }
 
     func handleAddWord() {
         let trimmedWord = currentWord.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedWord.isEmpty, playerWords.count < wordsPerPlayer else { return }
         guard !playerWords.contains(trimmedWord) else { return }
-        playerWords.append(trimmedWord)
+        
+        withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
+            playerWords.append(trimmedWord)
+        }
+        
         currentWord = ""
-        isWordFieldFocused = true
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            isWordFieldFocused = true
+        }
     }
 
     func handleSaveWords() {
-        guard let player = currentPlayer else { return }
-        gameManager.addWords(playerWords, by: player)
+        guard let currentPlayer else { return }
+        gameManager.addWords(playerWords, by: currentPlayer)
 
-        if currentPlayerIndex < allPlayers.count - 1 {
+        if currentPlayerIndex != allPlayers.indices.last {
             currentPlayerIndex += 1
             playerWords = []
         } else {
