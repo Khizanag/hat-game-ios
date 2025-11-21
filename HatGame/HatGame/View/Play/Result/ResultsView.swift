@@ -32,11 +32,13 @@ struct ResultsView: View {
 
     var body: some View {
         content
-            .setDefaultStyle(title: isFinal ? String(localized: "game.results.gameOverTitle") : String(localized: "game.results.roundResultsTitle"))
+            .setDefaultStyle(
+                title: String(
+                    localized: isFinal ? "game.results.gameOverTitle" : "game.results.roundResultsTitle"
+                )
+            )
             .navigationBarBackButtonHidden()
-            .toolbar {
-                finalToolbar
-            }
+            .toolbar { finalToolbar }
             .onAppear {
                 if !isFinal, let currentRound = round {
                     expandedRounds = [currentRound]
@@ -124,7 +126,7 @@ private extension ResultsView {
     var totalScoresSection: some View {
         FoldableCard(
             isExpanded: $isTotalScoresExpanded,
-            title: "game.results.totalScores"
+            title: String(localized: "game.results.totalScores")
         ) {
             totalScoresContent
         }

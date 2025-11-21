@@ -241,7 +241,7 @@ private extension SettingsView {
     var handednessCard: some View {
         FoldableCard(
             isExpanded: $isHandednessExpanded,
-            title: "settings.handedness.title",
+            title: String(localized: "settings.handedness.title"),
             icon: "hand.raised"
         ) {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
