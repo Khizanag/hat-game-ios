@@ -23,7 +23,7 @@ struct FoldableCard<Content: View>: View {
         title: String,
         description: String? = nil,
         icon: String? = nil,
-        titleFont: Font = DesignBook.Font.title3,
+        titleFont: Font = DesignBook.Font.headline,
         descriptionFont: Font = DesignBook.Font.body,
         @ViewBuilder content: @escaping () -> Content
     ) {
