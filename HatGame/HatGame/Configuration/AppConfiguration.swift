@@ -84,7 +84,10 @@ final class AppConfiguration {
     }
 
     private func applyAppIcon(_ icon: AppIcon) {
-        guard UIApplication.shared.supportsAlternateIcons else { return }
+        guard UIApplication.shared.supportsAlternateIcons else {
+            print("Alternate icons are not supported on this device")
+            return
+        }
         
         let desiredName = icon.alternateIconName
         let currentName = UIApplication.shared.alternateIconName
@@ -97,6 +100,9 @@ final class AppConfiguration {
             UIApplication.shared.setAlternateIconName(desiredName) { error in
                 if let error = error {
                     print("Failed to set app icon '\(desiredName ?? "primary")': \(error.localizedDescription)")
+                    print("Error domain: \(error._domain), code: \(error._code)")
+                } else {
+                    print("Successfully set app icon to '\(desiredName ?? "primary")'")
                 }
             }
         }
