@@ -53,6 +53,7 @@ struct WordInputView: View {
     }
 }
 
+// MARK: - Private
 private extension WordInputView {
     var content: some View {
         ScrollView {

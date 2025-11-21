@@ -24,6 +24,7 @@ struct SettingsView: View {
     }
 }
 
+// MARK: - Private
 private extension SettingsView {
     var content: some View {
         ScrollView {

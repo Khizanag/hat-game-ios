@@ -80,6 +80,7 @@ struct TeamFormView: View {
     }
 }
 
+// MARK: - Private
 private extension TeamFormView {
     var teamNameCard: some View {
         GameCard {

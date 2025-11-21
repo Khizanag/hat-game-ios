@@ -50,6 +50,7 @@ struct FoldableCard<Content: View>: View {
     }
 }
 
+// MARK: - Private
 private extension FoldableCard {
     var headerButton: some View {
         Button {

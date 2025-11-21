@@ -47,6 +47,7 @@ struct ResultsView: View {
     }
 }
 
+// MARK: - Private
 private extension ResultsView {
     var content: some View {
         ScrollView {

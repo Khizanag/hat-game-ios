@@ -15,10 +15,10 @@ struct AppIconSelectionView: View {
     var body: some View {
         content
             .setDefaultStyle(title: String(localized: "settings.appIcon.title"))
-            .setDefaultBackground()
     }
 }
 
+// MARK: - Private
 private extension AppIconSelectionView {
     var content: some View {
         ScrollView {
@@ -56,6 +56,7 @@ private extension AppIconSelectionView {
         }
     }
 
+
     func iconCard(for icon: AppIcon) -> some View {
         let isSelected = appConfiguration.appIcon == icon
 
@@ -69,11 +70,11 @@ private extension AppIconSelectionView {
                 iconPreview(for: icon, isSelected: isSelected)
 
                 VStack(spacing: DesignBook.Spacing.xs) {
-                    Text(icon.titleKey)
+                    Text(icon.title)
                         .font(DesignBook.Font.headline)
                         .foregroundColor(DesignBook.Color.Text.primary)
 
-                    Text(icon.subtitleKey)
+                    Text(icon.subtitle)
                         .font(DesignBook.Font.caption)
                         .foregroundColor(DesignBook.Color.Text.secondary)
                         .multilineTextAlignment(.center)

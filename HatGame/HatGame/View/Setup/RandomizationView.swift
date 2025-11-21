@@ -20,6 +20,7 @@ struct RandomizationView: View {
     }
 }
 
+// MARK: - Private
 private extension RandomizationView {
     var content: some View {
         readyContent

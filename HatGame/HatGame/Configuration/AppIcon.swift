@@ -18,12 +18,12 @@ enum AppIcon: String, CaseIterable, Identifiable {
         rawValue
     }
 
-    var titleKey: LocalizedStringKey {
-        LocalizedStringKey("settings.appIcon.\(identifier).title")
+    var title: String {
+        String(localized: "settings.appIcon.\(identifier).title")
     }
 
-    var subtitleKey: LocalizedStringKey {
-        LocalizedStringKey("settings.appIcon.\(identifier).subtitle")
+    var subtitle: String {
+        String(localized: "settings.appIcon.\(identifier).subtitle")
     }
 
     var previewNameLight: String {
