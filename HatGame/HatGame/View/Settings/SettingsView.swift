@@ -129,8 +129,7 @@ private extension SettingsView {
         FoldableCard(
             isExpanded: $isTestModeExpanded,
             title: String(localized: "settings.testMode.title"),
-            icon: "flask",
-            titleFont: DesignBook.Font.headline
+            icon: "flask"
         ) {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
                 Toggle(
