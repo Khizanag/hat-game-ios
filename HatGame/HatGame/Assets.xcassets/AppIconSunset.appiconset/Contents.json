@@ -1,19 +1,13 @@
 {
   "images" : [
     {
-      "filename" : "AppIconClassicLight.png",
-      "idiom" : "universal",
-      "platform" : "ios",
-      "size" : "1024x1024"
-    },
-    {
       "appearances" : [
         {
           "appearance" : "luminosity",
           "value" : "dark"
         }
       ],
-      "filename" : "AppIconClassicDark.png",
+      "filename" : "AppIconSunsetDark.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
@@ -25,7 +19,7 @@
           "value" : "light"
         }
       ],
-      "filename" : "AppIconClassicLight.png",
+      "filename" : "AppIconSunsetLight.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"

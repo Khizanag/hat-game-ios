@@ -9,6 +9,7 @@ import SwiftUI
 
 struct SettingsView: View {
     private let appConfiguration = AppConfiguration.shared
+    @Environment(\.colorScheme) private var colorScheme
 
     @SceneStorage("SettingsView.isTestModeExpanded") private var isTestModeExpanded = false
     @SceneStorage("SettingsView.isDefaultsExpanded") private var isDefaultsExpanded = true
@@ -44,7 +45,7 @@ private extension SettingsView {
     var appearanceCard: some View {
         FoldableCard(
             isExpanded: $isAppearanceExpanded,
-            title: "settings.appearance.title",
+            title: String(localized: "settings.appearance.title"),
             icon: "paintbrush"
         ) {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
@@ -53,6 +54,11 @@ private extension SettingsView {
                     .foregroundColor(DesignBook.Color.Text.secondary)
 
                 colorSchemeSelector
+
+                Divider()
+                    .background(DesignBook.Color.Text.tertiary.opacity(0.3))
+
+                appIconSelector
             }
         }
     }
@@ -71,33 +77,106 @@ private extension SettingsView {
         [
             SegmentedSelectionItem(
                 id: .light,
-                title: "settings.appearance.light",
+                title: String(localized: "settings.appearance.light"),
                 subtitle: nil,
                 icon: Image(systemName: "sun.max.fill")
             ),
             SegmentedSelectionItem(
                 id: .dark,
-                title: "settings.appearance.dark",
+                title: String(localized: "settings.appearance.dark"),
                 subtitle: nil,
                 icon: Image(systemName: "moon.fill")
             ),
             SegmentedSelectionItem(
                 id: .system,
-                title: "settings.appearance.system",
+                title: String(localized: "settings.appearance.system"),
                 subtitle: "settings.appearance.auto",
                 icon: Image(systemName: "circle.lefthalf.filled")
             )
         ]
     }
 
+    var appIconSelector: some View {
+        VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
+            HStack(spacing: DesignBook.Spacing.sm) {
+                Image(systemName: "app.gift")
+                    .font(DesignBook.Font.headline)
+                    .foregroundColor(DesignBook.Color.Text.accent)
+
+                Text("settings.appIcon.title")
+                    .font(DesignBook.Font.headline)
+                    .foregroundColor(DesignBook.Color.Text.primary)
+            }
+
+            Text("settings.appIcon.description")
+                .font(DesignBook.Font.body)
+                .foregroundColor(DesignBook.Color.Text.secondary)
+
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: DesignBook.Spacing.md) {
+                    ForEach(AppIcon.allCases) { icon in
+                        appIconOption(for: icon)
+                    }
+                }
+            }
+        }
+    }
+
+    func appIconOption(for icon: AppIcon) -> some View {
+        let isSelected = appConfiguration.appIcon == icon
+
+        return Button {
+            guard appConfiguration.appIcon != icon else { return }
+            appConfiguration.appIcon = icon
+        } label: {
+            VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
+                iconPreview(for: icon)
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(icon.titleKey)
+                        .font(DesignBook.Font.bodyBold)
+                        .foregroundColor(DesignBook.Color.Text.primary)
+
+                    Text(icon.subtitleKey)
+                        .font(DesignBook.Font.caption)
+                        .foregroundColor(DesignBook.Color.Text.secondary)
+                }
+            }
+            .padding(DesignBook.Spacing.md)
+            .frame(width: 180)
+            .background(
+                RoundedRectangle(cornerRadius: DesignBook.Size.cardCornerRadius)
+                    .fill(DesignBook.Color.Background.card)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: DesignBook.Size.cardCornerRadius)
+                    .stroke(
+                        isSelected ? DesignBook.Color.Text.accent : DesignBook.Color.Background.card,
+                        lineWidth: 2
+                    )
+            )
+            .shadow(isSelected ? .accent : .small)
+        }
+        .buttonStyle(.plain)
+    }
+
+    func iconPreview(for icon: AppIcon) -> some View {
+        let assetName = colorScheme == .dark ? icon.previewNameDark : icon.previewNameLight
+
+        return Image(assetName)
+            .resizable()
+            .aspectRatio(1, contentMode: .fit)
+            .clipShape(RoundedRectangle(cornerRadius: DesignBook.Size.smallCardCornerRadius))
+    }
+
     var testModeCard: some View {
         FoldableCard(
             isExpanded: $isTestModeExpanded,
-            title: "settings.testMode.title",
+            title: String(localized: "settings.testMode.title"),
             icon: "flask",
             titleFont: DesignBook.Font.headline
         ) {
-            VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
+            VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
                 Toggle(
                     isOn: Binding(
                         get: { appConfiguration.isTestMode },
@@ -116,7 +195,7 @@ private extension SettingsView {
     var defaultsCard: some View {
         FoldableCard(
             isExpanded: $isDefaultsExpanded,
-            title: "settings.defaults.title",
+            title: String(localized: "settings.defaults.title"),
             icon: "slider.horizontal.3"
         ) {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
@@ -135,7 +214,7 @@ private extension SettingsView {
     }
 
     var defaultWordsPerPlayerSection: some View {
-        VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
+        VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
             HStack {
                 HStack(spacing: DesignBook.Spacing.sm) {
                     Image(systemName: "text.bubble")
@@ -169,7 +248,7 @@ private extension SettingsView {
     }
 
     var defaultRoundDurationSection: some View {
-        VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
+        VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
             HStack {
                 HStack(spacing: DesignBook.Spacing.sm) {
                     Image(systemName: "timer")
@@ -209,15 +288,18 @@ private extension SettingsView {
             title: "settings.handedness.title",
             icon: "hand.raised"
         ) {
-            VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
+            VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
                 Text("settings.handedness.description")
                     .font(DesignBook.Font.body)
                     .foregroundColor(DesignBook.Color.Text.secondary)
 
-                Picker("settings.handedness.title", selection: Binding(
-                    get: { appConfiguration.isRightHanded ? "right" : "left" },
-                    set: { appConfiguration.isRightHanded = $0 == "right" }
-                )) {
+                Picker(
+                    "settings.handedness.title",
+                    selection: Binding(
+                        get: { appConfiguration.isRightHanded ? "right" : "left" },
+                        set: { appConfiguration.isRightHanded = ($0 == "right") }
+                    )
+                ) {
                     Text("settings.handedness.left").tag("left")
                     Text("settings.handedness.right").tag("right")
                 }
@@ -229,7 +311,7 @@ private extension SettingsView {
     var aboutCard: some View {
         FoldableCard(
             isExpanded: $isAboutExpanded,
-            title: "settings.about.title",
+            title: String(localized: "settings.about.title"),
             icon: "info.circle"
         ) {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
@@ -244,7 +326,7 @@ private extension SettingsView {
     }
 
     var appInfoSection: some View {
-        VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
+        VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
             Text("settings.about.appName")
                 .font(DesignBook.Font.title3)
                 .foregroundColor(DesignBook.Color.Text.primary)
@@ -310,7 +392,7 @@ private extension SettingsView {
     var developerInfoCard: some View {
         FoldableCard(
             isExpanded: $isDeveloperInfoExpanded,
-            title: "settings.developerInfo.title",
+            title: String(localized: "settings.developerInfo.title"),
             icon: "person.circle"
         ) {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
@@ -347,7 +429,7 @@ private extension SettingsView {
     }
 
     var developerAboutSection: some View {
-        VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
+        VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
             Text("settings.developerInfo.about.title")
                 .font(DesignBook.Font.headline)
                 .foregroundColor(DesignBook.Color.Text.primary)
@@ -359,7 +441,7 @@ private extension SettingsView {
     }
 
     var technologiesSection: some View {
-        VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
+        VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
             Text("settings.developerInfo.technologies.title")
                 .font(DesignBook.Font.headline)
                 .foregroundColor(DesignBook.Color.Text.primary)
@@ -373,7 +455,7 @@ private extension SettingsView {
     }
 
     var contactSection: some View {
-        VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
+        VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
             HStack(spacing: DesignBook.Spacing.sm) {
                 Image(systemName: "envelope")
                     .font(DesignBook.Font.headline)
@@ -391,11 +473,12 @@ private extension SettingsView {
     }
 
     func bullet(_ text: String) -> some View {
-        HStack(alignment: .top, spacing: DesignBook.Spacing.sm) {
+        HStack(alignment: .top, spacing: DesignBook.Spacing.md) {
             Circle()
                 .fill(DesignBook.Color.Text.accent)
                 .frame(width: 6, height: 6)
                 .padding(.top, 6)
+            
             Text(text)
                 .font(DesignBook.Font.body)
                 .foregroundColor(DesignBook.Color.Text.secondary)
