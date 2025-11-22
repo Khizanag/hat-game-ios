@@ -8,7 +8,9 @@
 import Foundation
 import Observation
 import SwiftUI
+#if canImport(UIKit)
 import UIKit
+#endif
 
 @Observable
 final class AppConfiguration {
@@ -84,6 +86,7 @@ final class AppConfiguration {
     }
 
     private func applyAppIcon(_ icon: AppIcon) {
+        #if os(iOS)
         guard UIApplication.shared.supportsAlternateIcons else {
             print("Alternate icons are not supported on this device")
             return
@@ -106,5 +109,8 @@ final class AppConfiguration {
                 }
             }
         }
+        #else
+        // App icon changes are not supported on macOS
+        #endif
     }
 }

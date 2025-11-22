@@ -78,7 +78,7 @@ private extension GameView {
                 .monospacedDigit()
         }
 
-        ToolbarItem(placement: .navigationBarTrailing) {
+        ToolbarItem(placement: .automatic) {
             Button {
                 togglePause()
             } label: {

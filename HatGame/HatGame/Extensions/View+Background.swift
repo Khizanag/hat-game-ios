@@ -18,12 +18,20 @@ extension View {
     @ViewBuilder
     func setDefaultStyle(title: String? = nil) -> some View {
         if let title {
+            #if os(iOS)
             self
                 .setDefaultBackground()
                 .navigationTitle(title)
                 .navigationBarTitleDisplayMode(.inline)
                 .needsCloseButton()
                 .closeButtonToolbar()
+            #else
+            self
+                .setDefaultBackground()
+                .navigationTitle(title)
+                .needsCloseButton()
+                .closeButtonToolbar()
+            #endif
         } else {
             self
                 .setDefaultBackground()

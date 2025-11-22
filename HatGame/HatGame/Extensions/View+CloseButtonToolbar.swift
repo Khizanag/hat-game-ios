@@ -25,7 +25,7 @@ private struct CloseButtonToolbarModifier: ViewModifier {
     func body(content: Content) -> some View {
         content.toolbar {
             if needsCloseButton {
-                ToolbarItem(placement: .navigationBarTrailing) {
+                ToolbarItem(placement: .automatic) {
                     Button {
                         navigator.dismiss()
                     } label: {
