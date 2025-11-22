@@ -7,7 +7,6 @@
 
 import Foundation
 import SwiftUI
-import UIKit
 
 struct TeamDefaultColorGenerator {
     static let defaultColors: [Color] = [
@@ -43,17 +42,6 @@ struct TeamDefaultColorGenerator {
     }
 
     private func areColorsEqual(_ color1: Color, _ color2: Color) -> Bool {
-        let uiColor1 = UIColor(color1)
-        let uiColor2 = UIColor(color2)
-
-        var r1: CGFloat = 0, g1: CGFloat = 0, b1: CGFloat = 0, a1: CGFloat = 0
-        var r2: CGFloat = 0, g2: CGFloat = 0, b2: CGFloat = 0, a2: CGFloat = 0
-
-        guard uiColor1.getRed(&r1, green: &g1, blue: &b1, alpha: &a1),
-              uiColor2.getRed(&r2, green: &g2, blue: &b2, alpha: &a2) else {
-            return false
-        }
-
-        return abs(r1 - r2) < 0.01 && abs(g1 - g2) < 0.01 && abs(b1 - b2) < 0.01
+        color1.isApproximatelyEqual(to: color2)
     }
 }

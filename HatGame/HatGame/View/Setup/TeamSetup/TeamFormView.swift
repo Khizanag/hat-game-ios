@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import UIKit
 
 struct TeamFormView: View {
     @Environment(Navigator.self) private var navigator
@@ -157,7 +156,7 @@ private extension TeamFormView {
             }
 
             LazyVGrid(
-                columns: [GridItem(.adaptive(minimum: 44), spacing: DesignBook.Spacing.md)],
+                columns: [GridItem(.adaptive(minimum: DesignBook.Size.colorSwatchSize), spacing: DesignBook.Spacing.md)],
                 spacing: DesignBook.Spacing.md
             ) {
                 ForEach(suggestedColorOptions.indices, id: \.self) { index in
@@ -178,7 +177,7 @@ private extension TeamFormView {
                     supportsOpacity: true
                 )
                 .labelsHidden()
-                .frame(width: 44, height: 44)
+                .frame(width: DesignBook.Size.colorSwatchSize, height: DesignBook.Size.colorSwatchSize)
                 .padding(DesignBook.Spacing.sm)
                 .background(DesignBook.Color.Background.secondary)
                 .cornerRadius(DesignBook.Size.smallCardCornerRadius)
@@ -204,7 +203,7 @@ private extension TeamFormView {
         } label: {
             Circle()
                 .fill(color)
-                .frame(width: 44, height: 44)
+                .frame(width: DesignBook.Size.colorSwatchSize, height: DesignBook.Size.colorSwatchSize)
                 .overlay {
                     if isSuggestedColorSelected(index) {
                         Image(systemName: "checkmark")
@@ -230,19 +229,7 @@ private extension TeamFormView {
     }
 
     func isColorSelected(_ color: Color) -> Bool {
-        // Compare colors by converting to UIColor and comparing components
-        let uiColor1 = UIColor(teamColor)
-        let uiColor2 = UIColor(color)
-
-        var r1: CGFloat = 0, g1: CGFloat = 0, b1: CGFloat = 0, a1: CGFloat = 0
-        var r2: CGFloat = 0, g2: CGFloat = 0, b2: CGFloat = 0, a2: CGFloat = 0
-
-        guard uiColor1.getRed(&r1, green: &g1, blue: &b1, alpha: &a1),
-              uiColor2.getRed(&r2, green: &g2, blue: &b2, alpha: &a2) else {
-            return false
-        }
-
-        return abs(r1 - r2) < 0.01 && abs(g1 - g2) < 0.01 && abs(b1 - b2) < 0.01
+        teamColor.isApproximatelyEqual(to: color)
     }
 
     func isColorOccupiedByOtherTeam(_ color: Color) -> Bool {
@@ -256,18 +243,7 @@ private extension TeamFormView {
     }
 
     func areColorsEqual(_ color1: Color, _ color2: Color) -> Bool {
-        let uiColor1 = UIColor(color1)
-        let uiColor2 = UIColor(color2)
-
-        var r1: CGFloat = 0, g1: CGFloat = 0, b1: CGFloat = 0, a1: CGFloat = 0
-        var r2: CGFloat = 0, g2: CGFloat = 0, b2: CGFloat = 0, a2: CGFloat = 0
-
-        guard uiColor1.getRed(&r1, green: &g1, blue: &b1, alpha: &a1),
-              uiColor2.getRed(&r2, green: &g2, blue: &b2, alpha: &a2) else {
-            return false
-        }
-
-        return abs(r1 - r2) < 0.01 && abs(g1 - g2) < 0.01 && abs(b1 - b2) < 0.01
+        color1.isApproximatelyEqual(to: color2)
     }
 
     var playersCard: some View {

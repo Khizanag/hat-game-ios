@@ -94,7 +94,11 @@ private extension RandomizationView {
                             .tag(index)
                     }
                 }
+                #if os(iOS)
                 .pickerStyle(.wheel)
+                #else
+                .pickerStyle(.menu)
+                #endif
                 .frame(height: 150)
             }
         }

@@ -212,7 +212,7 @@ private extension ResultsView {
     @ToolbarContentBuilder
     var finalToolbar: some ToolbarContent {
         if isFinal {
-            ToolbarItem(placement: .navigationBarTrailing) {
+            ToolbarItem(placement: .automatic) {
                 Button(String(localized: "common.buttons.close")) {
                     navigator.dismissToRoot()
                 }

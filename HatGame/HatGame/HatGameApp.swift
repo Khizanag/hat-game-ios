@@ -13,6 +13,10 @@ struct HatGameApp: App {
         WindowGroup {
             AppRootView()
         }
+        #if os(macOS)
+        .defaultSize(width: 800, height: 1000)
+        .windowResizability(.contentSize)
+        #endif
     }
 }
 
