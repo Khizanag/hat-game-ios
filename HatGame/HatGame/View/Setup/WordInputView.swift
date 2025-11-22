@@ -17,6 +17,7 @@ struct WordInputView: View {
     @State private var currentWord: String = ""
     @State private var shouldScrollToTextField: Bool = false
     @FocusState private var isWordFieldFocused: Bool
+    @Namespace private var addButtonNamespace
 
     private var currentPlayer: Player? {
         guard currentPlayerIndex < allPlayers.count else { return nil }
@@ -67,9 +68,18 @@ private extension WordInputView {
                 .padding(.bottom, DesignBook.Spacing.xxl)
             }
             .safeAreaInset(edge: .bottom) {
-                actionButton
-                    .paddingHorizontalDefault()
-                    .padding(.bottom, DesignBook.Spacing.sm)
+                Group {
+                    if (isWordFieldFocused && playerWords.count < wordsPerPlayer) {
+                        HStack {
+                            Spacer()
+                            floatingAddButton
+                        }
+                    } else {
+                        actionButton
+                    }
+                }
+                .paddingHorizontalDefault()
+                .padding(.bottom, DesignBook.Spacing.sm)
             }
             .onAppear {
                 scrollToTextField(proxy: proxy, delay: 0.5)
@@ -168,45 +178,33 @@ private extension WordInputView {
     }
 
     var wordTextField: some View {
-        HStack(spacing: DesignBook.Spacing.sm) {
-            TextField("wordInput.enterWord", text: $currentWord)
-                .textFieldStyle(.plain)
-                .font(DesignBook.Font.body)
-                .foregroundColor(DesignBook.Color.Text.primary)
-                .padding(DesignBook.Spacing.md)
-                .background(DesignBook.Color.Background.secondary)
-                .cornerRadius(DesignBook.Size.smallCardCornerRadius)
-                .focused($isWordFieldFocused)
-                .onSubmit {
-                    if !isAddWordButtonDisabled {
-                        handleAddWord()
-                        shouldScrollToTextField = true
-                    }
-                }
-                .id("wordTextField")
-
-            if !currentWord.isEmpty {
-                Button {
+        TextField("wordInput.enterWord", text: $currentWord)
+            .textFieldStyle(.plain)
+            .font(DesignBook.Font.body)
+            .foregroundColor(DesignBook.Color.Text.primary)
+            .padding(DesignBook.Spacing.md)
+            .background(DesignBook.Color.Background.secondary)
+            .cornerRadius(DesignBook.Size.smallCardCornerRadius)
+            .focused($isWordFieldFocused)
+            .onSubmit {
+                if !isAddWordButtonDisabled {
                     handleAddWord()
-                } label: {
-                    Image(systemName: "plus.circle.fill")
-                        .font(DesignBook.IconFont.large)
-                        .foregroundColor(DesignBook.Color.Button.primary)
+                    shouldScrollToTextField = true
                 }
-                .disabled(isAddWordButtonDisabled)
-                .opacity(isAddWordButtonDisabled ? DesignBook.Opacity.disabled : DesignBook.Opacity.enabled)
             }
-        }
+            .id("wordTextField")
     }
 
     var wordsList: some View {
         VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
             ForEach(playerWords.indices, id: \.self) { index in
                 wordRow(at: index)
-                    .transition(.asymmetric(
-                        insertion: .scale.combined(with: .opacity),
-                        removal: .scale.combined(with: .opacity)
-                    ))
+                    .transition(
+                        .asymmetric(
+                            insertion: .scale.combined(with: .opacity),
+                            removal: .scale.combined(with: .opacity)
+                        )
+                    )
             }
         }
     }
@@ -287,11 +285,24 @@ private extension WordInputView {
             }
             .disabled(isAddWordButtonDisabled)
             .opacity(isAddWordButtonDisabled ? DesignBook.Opacity.disabled : DesignBook.Opacity.enabled)
+            .matchedGeometryEffect(id: "addButton", in: addButtonNamespace)
         } else {
             PrimaryButton(title: actionButtonTitle, icon: actionButtonIcon) {
                 handleSaveWords()
             }
         }
+    }
+
+    var floatingAddButton: some View {
+        Button(action: handleAddWord) {
+            Image(systemName: "plus.circle.fill")
+                .font(DesignBook.IconFont.large)
+                .frame(width: DesignBook.Size.floatingButtonSize, height: DesignBook.Size.floatingButtonSize)
+        }
+        .buttonStyle(.glassProminent)
+        .disabled(isAddWordButtonDisabled)
+        .opacity(isAddWordButtonDisabled ? DesignBook.Opacity.disabled : DesignBook.Opacity.enabled)
+        .matchedGeometryEffect(id: "addButton", in: addButtonNamespace)
     }
 
     var isAddWordButtonDisabled: Bool {
