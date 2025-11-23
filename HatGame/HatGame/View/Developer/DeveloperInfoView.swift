@@ -57,10 +57,22 @@ private extension DeveloperInfoView {
     }
 
     var contactSection: some View {
-        infoCard(title: "settings.developerInfo.contact.title") {
-            Text("settings.developerInfo.contact.message")
-                .font(DesignBook.Font.body)
-                .foregroundColor(DesignBook.Color.Text.secondary)
+        GameCard {
+            VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
+                HStack(spacing: DesignBook.Spacing.sm) {
+                    Image(systemName: "envelope")
+                        .font(DesignBook.Font.headline)
+                        .foregroundColor(DesignBook.Color.Text.accent)
+
+                    Text("settings.developerInfo.contact.title")
+                        .font(DesignBook.Font.headline)
+                        .foregroundColor(DesignBook.Color.Text.primary)
+                }
+
+                Text("settings.developerInfo.contact.message")
+                    .font(DesignBook.Font.body)
+                    .foregroundColor(DesignBook.Color.Text.secondary)
+            }
         }
     }
 

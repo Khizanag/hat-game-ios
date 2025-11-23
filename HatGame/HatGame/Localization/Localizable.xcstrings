@@ -1708,6 +1708,23 @@
         }
       }
     },
+    "settings.developerInfo.description" : {
+      "comment" : "A description for the developer info navigation button.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Learn more about the developer"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "გაიგეთ მეტი დეველოპერის შესახებ"
+          }
+        }
+      }
+    },
     "settings.handedness.description" : {
       "comment" : "A description of the \"Handedness\" setting, explaining its purpose and impact on the user interface.",
       "localizations" : {
