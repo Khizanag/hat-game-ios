@@ -18,20 +18,20 @@ extension DesignBook {
         fileprivate var style: ShadowStyle {
             switch self {
             case .small:
-                return ShadowStyle(color: .black.opacity(0.1), radius: 4, x: 0, y: 2)
+                ShadowStyle(color: .black.opacity(0.1), radius: 4, x: 0, y: 2)
             case .medium:
-                return ShadowStyle(color: .black.opacity(0.15), radius: 8, x: 0, y: 4)
+                ShadowStyle(color: .black.opacity(0.15), radius: 8, x: 0, y: 4)
             case .large:
-                return ShadowStyle(color: .black.opacity(0.2), radius: 16, x: 0, y: 8)
+                ShadowStyle(color: .black.opacity(0.2), radius: 16, x: 0, y: 8)
             case .accent:
-                return ShadowStyle(
+                ShadowStyle(
                     color: SwiftUI.Color(red: 0.3, green: 0.6, blue: 1.0).opacity(0.2),
                     radius: 8,
                     x: 0,
                     y: 4
                 )
             case .none:
-                return ShadowStyle(color: .clear, radius: 0, x: 0, y: 0)
+                ShadowStyle(color: .clear, radius: 0, x: 0, y: 0)
             }
         }
 
@@ -46,7 +46,11 @@ extension DesignBook {
 
 extension View {
     func shadow(_ shadow: DesignBook.Shadow) -> some View {
-        let style = shadow.style
-        return self.shadow(color: style.color, radius: style.radius, x: style.x, y: style.y)
+        self.shadow(
+            color: shadow.style.color,
+            radius: shadow.style.radius,
+            x: shadow.style.x,
+            y: shadow.style.y
+        )
     }
 }
