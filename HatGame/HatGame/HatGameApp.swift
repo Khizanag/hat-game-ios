@@ -9,26 +9,15 @@ import SwiftUI
 
 @main
 struct HatGameApp: App {
+    @State private var appConfiguration = AppConfiguration.shared
+
     var body: some Scene {
         WindowGroup {
-            AppRootView()
-        }
-    }
-}
-
-struct AppRootView: View {
-    @State private var appConfiguration = AppConfiguration.shared
-    @State private var navigator = Navigator()
-
-    var body: some View {
-        NavigationView {
-            Page.home.view()
-        }
-        .environment(navigator)
-        .preferredColorScheme(appConfiguration.colorScheme.colorScheme)
-        .environment(appConfiguration)
-        .onAppear {
-            appConfiguration.applyStoredAppIcon()
+            NavigationView {
+                Page.home.view()
+            }
+            .environment(appConfiguration)
+            .preferredColorScheme(appConfiguration.colorScheme.colorScheme)
         }
     }
 }
