@@ -14,7 +14,6 @@ struct SettingsView: View {
     @SceneStorage("SettingsView.isTestModeExpanded") private var isTestModeExpanded = false
     @SceneStorage("SettingsView.isDefaultsExpanded") private var isDefaultsExpanded = true
     @SceneStorage("SettingsView.isAboutExpanded") private var isAboutExpanded = true
-    @SceneStorage("SettingsView.isDeveloperInfoExpanded") private var isDeveloperInfoExpanded = true
     @SceneStorage("SettingsView.isHandednessExpanded") private var isHandednessExpanded = false
     @SceneStorage("SettingsView.isAppearanceExpanded") private var isAppearanceExpanded = true
 
@@ -345,99 +344,35 @@ private extension SettingsView {
     }
 
     var developerInfoCard: some View {
-        FoldableCard(
-            isExpanded: $isDeveloperInfoExpanded,
-            title: String(localized: "settings.developerInfo.title"),
-            icon: "person.circle"
-        ) {
-            VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
-                developerHeader
+        Button {
+            navigator.push(.developerInfo)
+        } label: {
+            GameCard {
+                HStack(spacing: DesignBook.Spacing.md) {
+                    Image(systemName: "person.circle.fill")
+                        .font(DesignBook.IconFont.extraLarge)
+                        .foregroundColor(DesignBook.Color.Text.accent)
+                        .frame(width: DesignBook.Size.largeIconSize, height: DesignBook.Size.largeIconSize)
 
-                Divider()
-                    .background(DesignBook.Color.Text.tertiary.opacity(0.3))
+                    VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
+                        Text("settings.developerInfo.title")
+                            .font(DesignBook.Font.headline)
+                            .foregroundColor(DesignBook.Color.Text.primary)
 
-                developerAboutSection
+                        Text("settings.developerInfo.description")
+                            .font(DesignBook.Font.body)
+                            .foregroundColor(DesignBook.Color.Text.secondary)
+                    }
 
-                Divider()
-                    .background(DesignBook.Color.Text.tertiary.opacity(0.3))
+                    Spacer()
 
-                technologiesSection
-
-                Divider()
-                    .background(DesignBook.Color.Text.tertiary.opacity(0.3))
-
-                contactSection
+                    Image(systemName: "chevron.right")
+                        .font(DesignBook.Font.body)
+                        .foregroundColor(DesignBook.Color.Text.tertiary)
+                }
             }
         }
-    }
-
-    var developerHeader: some View {
-        VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
-            Text("settings.developerInfo.appName")
-                .font(DesignBook.Font.title2)
-                .foregroundColor(DesignBook.Color.Text.primary)
-
-            Text("settings.developerInfo.createdBy")
-                .font(DesignBook.Font.headline)
-                .foregroundColor(DesignBook.Color.Text.secondary)
-        }
-    }
-
-    var developerAboutSection: some View {
-        VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
-            Text("settings.developerInfo.about.title")
-                .font(DesignBook.Font.headline)
-                .foregroundColor(DesignBook.Color.Text.primary)
-
-            Text("settings.developerInfo.about.description")
-                .font(DesignBook.Font.body)
-                .foregroundColor(DesignBook.Color.Text.secondary)
-        }
-    }
-
-    var technologiesSection: some View {
-        VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
-            Text("settings.developerInfo.technologies.title")
-                .font(DesignBook.Font.headline)
-                .foregroundColor(DesignBook.Color.Text.primary)
-
-            VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
-                bullet("settings.technologies.swiftui")
-                bullet("settings.technologies.navigation")
-                bullet("settings.technologies.designbook")
-            }
-        }
-    }
-
-    var contactSection: some View {
-        VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
-            HStack(spacing: DesignBook.Spacing.sm) {
-                Image(systemName: "envelope")
-                    .font(DesignBook.Font.headline)
-                    .foregroundColor(DesignBook.Color.Text.accent)
-
-                Text("settings.developerInfo.contact.title")
-                    .font(DesignBook.Font.headline)
-                    .foregroundColor(DesignBook.Color.Text.primary)
-            }
-
-            Text("settings.developerInfo.contact.message")
-                .font(DesignBook.Font.body)
-                .foregroundColor(DesignBook.Color.Text.secondary)
-        }
-    }
-
-    func bullet(_ text: String) -> some View {
-        HStack(alignment: .top, spacing: DesignBook.Spacing.md) {
-            Circle()
-                .fill(DesignBook.Color.Text.accent)
-                .frame(width: 6, height: 6)
-                .padding(.top, 6)
-            
-            Text(text)
-                .font(DesignBook.Font.body)
-                .foregroundColor(DesignBook.Color.Text.secondary)
-        }
+        .buttonStyle(.plain)
     }
 
     func handleTestModeChange(_ enabled: Bool) {
