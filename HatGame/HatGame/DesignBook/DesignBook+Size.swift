@@ -18,5 +18,8 @@ extension DesignBook {
         static let largeIconSize: CGFloat = 48
         static let extraLargeIconSize: CGFloat = 80
         static let badgeSize: CGFloat = 24
+        static let touchTargetSize: CGFloat = 44
+        static let colorSwatchSize: CGFloat = 44
+        static let floatingButtonSize: CGFloat = 56
     }
 }
