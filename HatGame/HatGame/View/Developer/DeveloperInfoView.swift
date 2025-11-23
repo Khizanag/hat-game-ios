@@ -8,17 +8,21 @@
 import SwiftUI
 
 struct DeveloperInfoView: View {
+    private let appConfiguration = AppConfiguration.shared
+
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: DesignBook.Spacing.lg) {
-                header
-                aboutSection
+            VStack(spacing: DesignBook.Spacing.lg) {
+                headerCard
                 technologiesSection
+                testModeSection
                 contactSection
+                aboutSection
                 Spacer()
+                    .frame(height: DesignBook.Spacing.xl)
             }
             .paddingHorizontalDefault()
-            .padding(.vertical, DesignBook.Spacing.lg)
+            .padding(.top, DesignBook.Spacing.lg)
         }
         .setDefaultStyle(title: String(localized: "settings.developerInfo.title"))
     }
@@ -26,16 +30,11 @@ struct DeveloperInfoView: View {
 
 // MARK: - Private
 private extension DeveloperInfoView {
-    var header: some View {
-        VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
-            Text("settings.developerInfo.appName")
-                .font(DesignBook.Font.largeTitle)
-                .foregroundColor(DesignBook.Color.Text.primary)
-
-            Text("settings.developerInfo.createdBy")
-                .font(DesignBook.Font.headline)
-                .foregroundColor(DesignBook.Color.Text.secondary)
-        }
+    var headerCard: some View {
+        HeaderCard(
+            title: String(localized: "settings.developerInfo.title"),
+            description: String(localized: "settings.developerInfo.createdBy")
+        )
     }
 
     var aboutSection: some View {
@@ -56,9 +55,27 @@ private extension DeveloperInfoView {
         }
     }
 
+    var testModeSection: some View {
+        infoCard(title: "settings.testMode.title") {
+            VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
+                Toggle(
+                    isOn: Binding(
+                        get: { appConfiguration.isTestMode },
+                        set: { appConfiguration.isTestMode = $0 }
+                    )
+                ) {
+                    Text("settings.testMode.description")
+                        .font(DesignBook.Font.body)
+                        .foregroundColor(DesignBook.Color.Text.secondary)
+                }
+                .toggleStyle(SwitchToggleStyle(tint: DesignBook.Color.Text.accent))
+            }
+        }
+    }
+
     var contactSection: some View {
         GameCard {
-            VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
+            VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
                 HStack(spacing: DesignBook.Spacing.sm) {
                     Image(systemName: "envelope")
                         .font(DesignBook.Font.headline)
@@ -72,6 +89,18 @@ private extension DeveloperInfoView {
                 Text("settings.developerInfo.contact.message")
                     .font(DesignBook.Font.body)
                     .foregroundColor(DesignBook.Color.Text.secondary)
+
+                Link(destination: URL(string: "https://github.com/gigakhizanishvili")!) {
+                    HStack(spacing: DesignBook.Spacing.sm) {
+                        Image(systemName: "link")
+                            .font(DesignBook.Font.body)
+                            .foregroundColor(DesignBook.Color.Text.accent)
+
+                        Text("GitHub: @gigakhizanishvili")
+                            .font(DesignBook.Font.body)
+                            .foregroundColor(DesignBook.Color.Text.accent)
+                    }
+                }
             }
         }
     }
@@ -82,8 +111,11 @@ private extension DeveloperInfoView {
                 Text(LocalizedStringKey(title))
                     .font(DesignBook.Font.headline)
                     .foregroundColor(DesignBook.Color.Text.primary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+
                 content()
             }
+
         }
     }
 
@@ -93,6 +125,7 @@ private extension DeveloperInfoView {
                 .fill(DesignBook.Color.Text.accent)
                 .frame(width: 6, height: 6)
                 .padding(.top, 6)
+
             Text(LocalizedStringKey(text))
                 .font(DesignBook.Font.body)
                 .foregroundColor(DesignBook.Color.Text.secondary)

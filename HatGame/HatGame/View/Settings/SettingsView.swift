@@ -11,7 +11,6 @@ struct SettingsView: View {
     private let appConfiguration = AppConfiguration.shared
     @Environment(Navigator.self) private var navigator
 
-    @SceneStorage("SettingsView.isTestModeExpanded") private var isTestModeExpanded = false
     @SceneStorage("SettingsView.isDefaultsExpanded") private var isDefaultsExpanded = true
     @SceneStorage("SettingsView.isAboutExpanded") private var isAboutExpanded = true
     @SceneStorage("SettingsView.isHandednessExpanded") private var isHandednessExpanded = false
@@ -32,11 +31,8 @@ private extension SettingsView {
                 appIconCard
                 defaultsCard
                 handednessCard
-                aboutCard
                 developerInfoCard
-                testModeCard
-                Spacer()
-                    .frame(height: DesignBook.Spacing.xl)
+                aboutCard
             }
             .paddingHorizontalDefault()
             .padding(.top, DesignBook.Spacing.lg)
@@ -124,27 +120,6 @@ private extension SettingsView {
         ]
     }
 
-    var testModeCard: some View {
-        FoldableCard(
-            isExpanded: $isTestModeExpanded,
-            title: String(localized: "settings.testMode.title"),
-            icon: "flask"
-        ) {
-            VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
-                Toggle(
-                    isOn: Binding(
-                        get: { appConfiguration.isTestMode },
-                        set: { handleTestModeChange($0) }
-                    )
-                ) {
-                    Text("settings.testMode.description")
-                        .font(DesignBook.Font.body)
-                        .foregroundColor(DesignBook.Color.Text.secondary)
-                }
-                .toggleStyle(SwitchToggleStyle(tint: DesignBook.Color.Text.accent))
-            }
-        }
-    }
 
     var defaultsCard: some View {
         FoldableCard(
@@ -375,9 +350,6 @@ private extension SettingsView {
         .buttonStyle(.plain)
     }
 
-    func handleTestModeChange(_ enabled: Bool) {
-        appConfiguration.isTestMode = enabled
-    }
 }
 
 // MARK: - Preview
