@@ -24,15 +24,9 @@ struct NavigationView<RootContent: View>: View {
                 }
         }
         .environment(navigator)
-        #if os(iOS)
         .fullScreenCover(item: $navigator.presentedPage) { page in
             page.view()
         }
-        #else
-        .sheet(item: $navigator.presentedPage) { page in
-            page.view()
-        }
-        #endif
         .onReceive(navigator.pleaseDismissViewPublisher) {
             dismiss()
         }

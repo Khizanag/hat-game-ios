@@ -13,20 +13,18 @@ struct HatGameApp: App {
         WindowGroup {
             AppRootView()
         }
-        #if os(macOS)
-        .defaultSize(width: 800, height: 1000)
-        .windowResizability(.contentSize)
-        #endif
     }
 }
 
 struct AppRootView: View {
     @State private var appConfiguration = AppConfiguration.shared
+    @State private var navigator = Navigator()
 
     var body: some View {
         NavigationView {
             Page.home.view()
         }
+        .environment(navigator)
         .preferredColorScheme(appConfiguration.colorScheme.colorScheme)
         .environment(appConfiguration)
         .onAppear {

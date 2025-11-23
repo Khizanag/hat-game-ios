@@ -109,8 +109,6 @@ final class AppConfiguration {
                 }
             }
         }
-        #else
-        // App icon changes are not supported on macOS
         #endif
     }
 }
