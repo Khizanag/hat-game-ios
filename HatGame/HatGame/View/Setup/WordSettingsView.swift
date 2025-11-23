@@ -110,9 +110,11 @@ private extension WordSettingsView {
     }
 
     var continueButton: some View {
-        PrimaryButton(title: String(localized: "common.buttons.continue"), icon: "arrow.right.circle.fill") {
-            handleContinue()
-        }
+        PrimaryButton(
+            title: String(localized: "common.buttons.continue"),
+            icon: "arrow.right.circle.fill",
+            action: handleContinue
+        )
     }
 
     var wordCountBinding: Binding<Double> {
