@@ -15,11 +15,11 @@ enum AppColorScheme: String, CaseIterable {
     var displayName: String {
         switch self {
         case .light:
-            return String(localized: "settings.appearance.light")
+            String(localized: "settings.appearance.light")
         case .dark:
-            return String(localized: "settings.appearance.dark")
+            String(localized: "settings.appearance.dark")
         case .system:
-            return String(localized: "settings.appearance.system")
+            String(localized: "settings.appearance.system")
         }
     }
 

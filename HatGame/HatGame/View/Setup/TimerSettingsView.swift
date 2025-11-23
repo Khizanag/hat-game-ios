@@ -91,9 +91,21 @@ private extension TimerSettingsView {
 
     var timerTags: some View {
         HStack(spacing: DesignBook.Spacing.md) {
-            LegendTag(title: String(localized: "timerSettings.legend.lightning"), range: "5-30s", isHighlighted: selectedDuration.isBetween(5, and: 30))
-            LegendTag(title: String(localized: "timerSettings.legend.classic"), range: "60s", isHighlighted: selectedDuration == 60)
-            LegendTag(title: String(localized: "timerSettings.legend.marathon"), range: "90-120s", isHighlighted: selectedDuration.isBetween(90, and: 120))
+            LegendTag(
+                title: String(localized: "timerSettings.legend.lightning"),
+                range: "5-30s",
+                isHighlighted: selectedDuration.isBetween(5, and: 30)
+            )
+            LegendTag(
+                title: String(localized: "timerSettings.legend.classic"),
+                range: "60s",
+                isHighlighted: selectedDuration == 60
+            )
+            LegendTag(
+                title: String(localized: "timerSettings.legend.marathon"),
+                range: "90-120s",
+                isHighlighted: selectedDuration.isBetween(90, and: 120)
+            )
         }
     }
 
