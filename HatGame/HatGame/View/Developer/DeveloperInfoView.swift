@@ -102,6 +102,7 @@ private extension DeveloperInfoView {
                     }
                 }
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
 
@@ -115,7 +116,7 @@ private extension DeveloperInfoView {
 
                 content()
             }
-
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
 

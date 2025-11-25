@@ -11,7 +11,6 @@ struct SettingsView: View {
     private let appConfiguration = AppConfiguration.shared
     @Environment(Navigator.self) private var navigator
 
-    @SceneStorage("SettingsView.isDefaultsExpanded") private var isDefaultsExpanded = true
     @SceneStorage("SettingsView.isAboutExpanded") private var isAboutExpanded = true
     @SceneStorage("SettingsView.isHandednessExpanded") private var isHandednessExpanded = false
     @SceneStorage("SettingsView.isAppearanceExpanded") private var isAppearanceExpanded = true
@@ -56,35 +55,13 @@ private extension SettingsView {
     }
 
     var appIconCard: some View {
-        Button {
+        NavigationCard(
+            icon: "app.gift.fill",
+            title: String(localized: "settings.appIcon.title"),
+            description: String(localized: "settings.appIcon.description")
+        ) {
             navigator.push(.appIconSelection)
-        } label: {
-            GameCard {
-                HStack(spacing: DesignBook.Spacing.md) {
-                    Image(systemName: "app.gift.fill")
-                        .font(DesignBook.IconFont.extraLarge)
-                        .foregroundColor(DesignBook.Color.Text.accent)
-                        .frame(width: DesignBook.Size.largeIconSize, height: DesignBook.Size.largeIconSize)
-
-                    VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
-                        Text("settings.appIcon.title")
-                            .font(DesignBook.Font.headline)
-                            .foregroundColor(DesignBook.Color.Text.primary)
-
-                        Text("settings.appIcon.description")
-                            .font(DesignBook.Font.body)
-                            .foregroundColor(DesignBook.Color.Text.secondary)
-                    }
-
-                    Spacer()
-
-                    Image(systemName: "chevron.right")
-                        .font(DesignBook.Font.body)
-                        .foregroundColor(DesignBook.Color.Text.tertiary)
-                }
-            }
         }
-        .buttonStyle(.plain)
     }
 
     var colorSchemeSelector: some View {
@@ -122,92 +99,12 @@ private extension SettingsView {
 
 
     var defaultsCard: some View {
-        FoldableCard(
-            isExpanded: $isDefaultsExpanded,
+        NavigationCard(
+            icon: "slider.horizontal.3",
             title: String(localized: "settings.defaults.title"),
-            icon: "slider.horizontal.3"
+            description: String(localized: "settings.defaults.description")
         ) {
-            VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
-                Text("settings.defaults.description")
-                    .font(DesignBook.Font.body)
-                    .foregroundColor(DesignBook.Color.Text.secondary)
-
-                defaultWordsPerPlayerSection
-
-                Divider()
-                    .background(DesignBook.Color.Text.tertiary.opacity(0.3))
-
-                defaultRoundDurationSection
-            }
-        }
-    }
-
-    var defaultWordsPerPlayerSection: some View {
-        VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
-            HStack {
-                HStack(spacing: DesignBook.Spacing.sm) {
-                    Image(systemName: "text.bubble")
-                        .font(DesignBook.Font.headline)
-                        .foregroundColor(DesignBook.Color.Text.accent)
-
-                    Text("settings.defaultWordsPerPlayer.title")
-                        .font(DesignBook.Font.headline)
-                        .foregroundColor(DesignBook.Color.Text.primary)
-                }
-
-                Spacer()
-
-                Text("\(appConfiguration.defaultWordsPerPlayer)")
-                    .font(DesignBook.Font.title3)
-                    .foregroundColor(DesignBook.Color.Text.accent)
-            }
-
-            Stepper(
-                value: Binding(
-                    get: { appConfiguration.defaultWordsPerPlayer },
-                    set: { appConfiguration.defaultWordsPerPlayer = $0 }
-                ),
-                in: 3...20
-            ) {
-                Text("settings.defaultWordsPerPlayer.description")
-                    .font(DesignBook.Font.caption)
-                    .foregroundColor(DesignBook.Color.Text.secondary)
-            }
-        }
-    }
-
-    var defaultRoundDurationSection: some View {
-        VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
-            HStack {
-                HStack(spacing: DesignBook.Spacing.sm) {
-                    Image(systemName: "timer")
-                        .font(DesignBook.Font.headline)
-                        .foregroundColor(DesignBook.Color.Text.accent)
-
-                    Text("settings.defaultRoundDuration.title")
-                        .font(DesignBook.Font.headline)
-                        .foregroundColor(DesignBook.Color.Text.primary)
-                }
-
-                Spacer()
-
-                Text("\(appConfiguration.defaultRoundDuration)s")
-                    .font(DesignBook.Font.title3)
-                    .foregroundColor(DesignBook.Color.Text.accent)
-            }
-
-            Stepper(
-                value: Binding(
-                    get: { appConfiguration.defaultRoundDuration },
-                    set: { appConfiguration.defaultRoundDuration = $0 }
-                ),
-                in: 5...120,
-                step: 5
-            ) {
-                Text("settings.defaultRoundDuration.description")
-                    .font(DesignBook.Font.caption)
-                    .foregroundColor(DesignBook.Color.Text.secondary)
-            }
+            navigator.push(.defaultsSettings)
         }
     }
 
@@ -269,44 +166,40 @@ private extension SettingsView {
     var versionSection: some View {
         VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
             if let version = appVersion {
-                HStack {
-                    HStack(spacing: DesignBook.Spacing.sm) {
-                        Image(systemName: "number")
-                            .font(DesignBook.Font.body)
-                            .foregroundColor(DesignBook.Color.Text.tertiary)
-
-                        Text("settings.about.version")
-                            .font(DesignBook.Font.body)
-                            .foregroundColor(DesignBook.Color.Text.secondary)
-                    }
-
-                    Spacer()
-
-                    Text(version)
-                        .font(DesignBook.Font.body)
-                        .foregroundColor(DesignBook.Color.Text.primary)
-                }
+                infoRow(
+                    icon: "number",
+                    label: String(localized: "settings.about.version"),
+                    value: version
+                )
             }
 
             if let build = appBuild {
-                HStack {
-                    HStack(spacing: DesignBook.Spacing.sm) {
-                        Image(systemName: "wrench.and.screwdriver")
-                            .font(DesignBook.Font.body)
-                            .foregroundColor(DesignBook.Color.Text.tertiary)
-
-                        Text("settings.about.build")
-                            .font(DesignBook.Font.body)
-                            .foregroundColor(DesignBook.Color.Text.secondary)
-                    }
-
-                    Spacer()
-
-                    Text(build)
-                        .font(DesignBook.Font.body)
-                        .foregroundColor(DesignBook.Color.Text.primary)
-                }
+                infoRow(
+                    icon: "wrench.and.screwdriver",
+                    label: String(localized: "settings.about.build"),
+                    value: build
+                )
             }
+        }
+    }
+
+    func infoRow(icon: String, label: String, value: String) -> some View {
+        HStack {
+            HStack(spacing: DesignBook.Spacing.sm) {
+                Image(systemName: icon)
+                    .font(DesignBook.Font.body)
+                    .foregroundColor(DesignBook.Color.Text.tertiary)
+
+                Text(label)
+                    .font(DesignBook.Font.body)
+                    .foregroundColor(DesignBook.Color.Text.secondary)
+            }
+
+            Spacer()
+
+            Text(value)
+                .font(DesignBook.Font.body)
+                .foregroundColor(DesignBook.Color.Text.primary)
         }
     }
 
@@ -319,35 +212,13 @@ private extension SettingsView {
     }
 
     var developerInfoCard: some View {
-        Button {
+        NavigationCard(
+            icon: "person.circle.fill",
+            title: String(localized: "settings.developerInfo.title"),
+            description: String(localized: "settings.developerInfo.description")
+        ) {
             navigator.push(.developerInfo)
-        } label: {
-            GameCard {
-                HStack(spacing: DesignBook.Spacing.md) {
-                    Image(systemName: "person.circle.fill")
-                        .font(DesignBook.IconFont.extraLarge)
-                        .foregroundColor(DesignBook.Color.Text.accent)
-                        .frame(width: DesignBook.Size.largeIconSize, height: DesignBook.Size.largeIconSize)
-
-                    VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
-                        Text("settings.developerInfo.title")
-                            .font(DesignBook.Font.headline)
-                            .foregroundColor(DesignBook.Color.Text.primary)
-
-                        Text("settings.developerInfo.description")
-                            .font(DesignBook.Font.body)
-                            .foregroundColor(DesignBook.Color.Text.secondary)
-                    }
-
-                    Spacer()
-
-                    Image(systemName: "chevron.right")
-                        .font(DesignBook.Font.body)
-                        .foregroundColor(DesignBook.Color.Text.tertiary)
-                }
-            }
         }
-        .buttonStyle(.plain)
     }
 
 }
