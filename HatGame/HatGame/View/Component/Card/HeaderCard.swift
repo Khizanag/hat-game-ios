@@ -20,15 +20,17 @@ struct HeaderCard<Content: View>: View {
 
     var body: some View {
         GameCard {
-            VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
+            VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
                 Text(title)
-                    .font(DesignBook.Font.title2)
+                    .font(DesignBook.Font.headline)
                     .foregroundColor(DesignBook.Color.Text.primary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
 
                 if let description {
                     Text(description)
                         .font(DesignBook.Font.body)
                         .foregroundColor(DesignBook.Color.Text.secondary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
                 }
 
                 content()
