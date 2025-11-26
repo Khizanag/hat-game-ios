@@ -61,9 +61,7 @@ struct SettingsRow<Content: View>: View {
             Spacer()
 
             // Content (toggle, chevron, etc.)
-            if let content {
-                content()
-            }
+            content?()
 
             if showChevron {
                 Image(systemName: "chevron.right")
