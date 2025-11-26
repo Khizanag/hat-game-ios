@@ -40,17 +40,18 @@ struct TeamFormView: View {
         let nonEmptyPlayers = playerNames.filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
 
         return !trimmedName.isEmpty &&
-               nonEmptyPlayers.count >= gameManager.configuration.minTeamMembers
+               nonEmptyPlayers.count == gameManager.configuration.playersPerTeam
     }
 
     private var validationMessage: String? {
         let nonEmptyPlayers = playerNames.filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+        let required = gameManager.configuration.playersPerTeam
 
         if !teamName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
-           nonEmptyPlayers.count < gameManager.configuration.minTeamMembers {
+           nonEmptyPlayers.count < required {
             return String(
-                format: String(localized: "teamForm.validation.minPlayers"),
-                gameManager.configuration.minTeamMembers
+                format: String(localized: "teamForm.validation.exactPlayers"),
+                required
             )
         }
         return nil
@@ -282,7 +283,7 @@ private extension TeamFormView {
 
                     Spacer()
 
-                    Text("\(playerNames.filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }.count)/\(gameManager.configuration.maxTeamMembers)")
+                    Text("\(playerNames.filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }.count)/\(gameManager.configuration.playersPerTeam)")
                         .font(DesignBook.Font.captionBold)
                         .foregroundColor(DesignBook.Color.Text.tertiary)
                 }
@@ -297,30 +298,6 @@ private extension TeamFormView {
                     ForEach(playerNames.indices, id: \.self) { index in
                         playerField(index: index)
                     }
-                }
-
-                if playerNames.count < gameManager.configuration.maxTeamMembers {
-                    Button {
-                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                            playerNames.append("")
-                            focusedField = .player(playerNames.count - 1)
-                        }
-                    } label: {
-                        HStack(spacing: DesignBook.Spacing.sm) {
-                            Image(systemName: "plus.circle.fill")
-                                .font(DesignBook.IconFont.medium)
-                                .foregroundColor(DesignBook.Color.Text.accent)
-
-                            Text("teamForm.addPlayer")
-                                .font(DesignBook.Font.body)
-                                .foregroundColor(DesignBook.Color.Text.primary)
-                        }
-                        .frame(maxWidth: .infinity)
-                        .padding(DesignBook.Spacing.md)
-                        .background(DesignBook.Color.Background.secondary)
-                        .cornerRadius(DesignBook.Size.smallCardCornerRadius)
-                    }
-                    .buttonStyle(.plain)
                 }
             }
         }
@@ -353,22 +330,6 @@ private extension TeamFormView {
                 } else {
                     focusedField = nil
                 }
-            }
-
-            if playerNames.count > gameManager.configuration.minTeamMembers {
-                Button {
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                        playerNames.remove(at: index)
-                        if focusedField == .player(index) {
-                            focusedField = nil
-                        }
-                    }
-                } label: {
-                    Image(systemName: "minus.circle.fill")
-                        .font(DesignBook.IconFont.medium)
-                        .foregroundColor(DesignBook.Color.Status.error.opacity(0.7))
-                }
-                .buttonStyle(.plain)
             }
         }
     }
@@ -465,17 +426,21 @@ private extension TeamFormView {
     func loadInitialData() {
         if let team = team {
             teamName = team.name
-            // Start with existing players, ensuring at least minTeamMembers fields
+            // Always use exact playersPerTeam count
             var names = team.players.map { $0.name }
-            while names.count < gameManager.configuration.minTeamMembers {
+            while names.count < gameManager.configuration.playersPerTeam {
                 names.append("")
+            }
+            // Trim if team has more players than current setting
+            if names.count > gameManager.configuration.playersPerTeam {
+                names = Array(names.prefix(gameManager.configuration.playersPerTeam))
             }
             playerNames = names
             teamColor = team.color
         } else {
             teamName = ""
-            // Start with minimum required fields for new teams
-            playerNames = Array(repeating: "", count: gameManager.configuration.minTeamMembers)
+            // Always create exactly playersPerTeam fields
+            playerNames = Array(repeating: "", count: gameManager.configuration.playersPerTeam)
             updateDefaultColor()
         }
     }

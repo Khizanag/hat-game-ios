@@ -10,7 +10,6 @@ import SwiftUI
 struct TeamCard: View {
     let team: Team
     let playersPerTeam: Int
-    let onAddPlayer: () -> Void
     let onRemoveTeam: () -> Void
     let onEditTeam: () -> Void
 
@@ -72,27 +71,10 @@ private extension TeamCard {
 
     var actions: some View {
         HStack {
-            addPlayerButton
             Spacer()
             editButton
             deleteButton
         }
-    }
-
-    var addPlayerButton: some View {
-        Button(action: onAddPlayer) {
-            HStack {
-                Image(systemName: "plus.circle.fill")
-                Text(
-                    team.players.count < playersPerTeam
-                        ? String(localized: "teamCard.addPlayer")
-                        : String(localized: "teamCard.teamFull")
-                )
-            }
-            .font(DesignBook.Font.body)
-            .foregroundColor(team.players.count < playersPerTeam ? DesignBook.Color.Text.accent : DesignBook.Color.Text.tertiary)
-        }
-        .disabled(team.players.count >= playersPerTeam)
     }
 
     var editButton: some View {

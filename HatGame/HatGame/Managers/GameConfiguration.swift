@@ -15,6 +15,7 @@ final class GameConfiguration {
     let maxTeams: Int
     let minTeamMembers = 2 // Minimum 2 players per team (one explains, others guess)
     let maxTeamMembers: Int
+    var playersPerTeam: Int // Fixed number of players each team must have
     var wordsPerPlayer: Int
     var roundDuration: Int
     var teams: [Team] = []
@@ -33,6 +34,7 @@ final class GameConfiguration {
     init(
         maxTeams: Int = 6,
         maxTeamMembers: Int = 6,
+        playersPerTeam: Int = 2,
         wordsPerPlayer: Int? = nil,
         roundDuration: Int? = nil,
         teams: [Team] = [],
@@ -40,6 +42,7 @@ final class GameConfiguration {
     ) {
         self.maxTeams = maxTeams
         self.maxTeamMembers = maxTeamMembers
+        self.playersPerTeam = playersPerTeam
         self.wordsPerPlayer = wordsPerPlayer ?? AppConfiguration.shared.defaultWordsPerPlayer
         self.roundDuration = roundDuration ?? AppConfiguration.shared.defaultRoundDuration
         self.teams = teams
@@ -74,6 +77,7 @@ extension GameConfiguration {
         return GameConfiguration(
             maxTeams: 10,
             maxTeamMembers: 6,
+            playersPerTeam: 2,
             wordsPerPlayer: 3,
             roundDuration: 10,
             teams: [team1, team2],

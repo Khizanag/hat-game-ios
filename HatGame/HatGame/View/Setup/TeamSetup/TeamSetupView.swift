@@ -13,11 +13,7 @@ struct TeamSetupView: View {
     private let appConfiguration = AppConfiguration.shared
 
     @State private var isAddTeamSheetPresented: Bool = false
-    @State private var newTeamName: String = ""
-    @State private var showingAddPlayer: Bool = false
-    @State private var selectedTeam: Team?
     @State private var editingTeam: Team?
-    @State private var newPlayerName: String = ""
     @State private var deletingTeam: Team?
 
     private var canContinue: Bool {
@@ -55,6 +51,7 @@ private extension TeamSetupView {
         ScrollView {
             VStack(spacing: DesignBook.Spacing.lg) {
                 headerCard
+                playerCountCard
                 teamsList
             }
             .paddingHorizontalDefault()
@@ -73,15 +70,56 @@ private extension TeamSetupView {
         )
     }
 
+    var playerCountCard: some View {
+        GameCard {
+            VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
+                HStack(spacing: DesignBook.Spacing.sm) {
+                    Image(systemName: "person.2.fill")
+                        .font(DesignBook.IconFont.medium)
+                        .foregroundColor(DesignBook.Color.Text.accent)
+
+                    Text("teamSetup.playersPerTeam.title")
+                        .font(DesignBook.Font.headline)
+                        .foregroundColor(DesignBook.Color.Text.primary)
+
+                    Spacer()
+                }
+
+                Text("teamSetup.playersPerTeam.description")
+                    .font(DesignBook.Font.caption)
+                    .foregroundColor(DesignBook.Color.Text.secondary)
+
+                HStack(spacing: DesignBook.Spacing.sm) {
+                    ForEach(gameManager.configuration.minTeamMembers...gameManager.configuration.maxTeamMembers, id: \.self) { count in
+                        playerCountOption(count)
+                    }
+                }
+            }
+            .padding(DesignBook.Spacing.md)
+        }
+    }
+
+    func playerCountOption(_ count: Int) -> some View {
+        Button {
+            gameManager.configuration.playersPerTeam = count
+        } label: {
+            Text("\(count)")
+                .font(DesignBook.Font.headline)
+                .foregroundColor(gameManager.configuration.playersPerTeam == count ? .white : DesignBook.Color.Text.primary)
+                .frame(maxWidth: .infinity)
+                .padding(DesignBook.Spacing.md)
+                .background(gameManager.configuration.playersPerTeam == count ? DesignBook.Color.Text.accent : DesignBook.Color.Background.secondary)
+                .cornerRadius(DesignBook.Size.smallCardCornerRadius)
+        }
+        .buttonStyle(.plain)
+    }
+
     var teamsList: some View {
         VStack(spacing: DesignBook.Spacing.md) {
             ForEach(gameManager.configuration.teams) { team in
                 TeamCard(
                     team: team,
-                    playersPerTeam: gameManager.configuration.maxTeamMembers,
-                    onAddPlayer: {
-                        selectedTeam = team
-                    },
+                    playersPerTeam: gameManager.configuration.playersPerTeam,
                     onRemoveTeam: {
                         deletingTeam = team
                     },
@@ -93,7 +131,6 @@ private extension TeamSetupView {
 
             if gameManager.configuration.teams.count < 6 {
                 SecondaryButton(title: String(localized: "teamSetup.addTeam"), icon: "plus.circle.fill") {
-                    newTeamName = ""
                     isAddTeamSheetPresented = true
                 }
             }
@@ -163,11 +200,6 @@ private extension TeamSetupView {
         if let deletingTeam {
             Text(String(format: String(localized: "teamSetup.deleteTeam.confirmation"), deletingTeam.name))
         }
-    }
-
-    func handleCancelAddPlayer() {
-        newPlayerName = ""
-        selectedTeam = nil
     }
 }
 

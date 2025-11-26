@@ -2612,6 +2612,23 @@
         }
       }
     },
+    "teamForm.validation.exactPlayers" : {
+      "comment" : "Validation message when team must have exact number of players.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Must have exactly %d players"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "უნდა იყოს ზუსტად %d მოთამაშე"
+          }
+        }
+      }
+    },
     "teamForm.validation.minPlayers" : {
       "comment" : "Validation message when team has fewer than minimum required players.",
       "localizations" : {
@@ -2731,6 +2748,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "გუნდების მომზადება"
+          }
+        }
+      }
+    },
+    "teamSetup.playersPerTeam.description" : {
+      "comment" : "Description for players per team selection.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All teams must have the same number of players"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ყველა გუნდს უნდა ჰყავდეს თანაბარი რაოდენობის მოთამაშეები"
+          }
+        }
+      }
+    },
+    "teamSetup.playersPerTeam.title" : {
+      "comment" : "Title for players per team selection.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Players Per Team"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "მოთამაშეები გუნდში"
           }
         }
       }
