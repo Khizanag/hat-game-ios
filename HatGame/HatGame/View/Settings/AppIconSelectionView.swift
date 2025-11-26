@@ -9,7 +9,6 @@ import SwiftUI
 
 struct AppIconSelectionView: View {
     @Environment(Navigator.self) private var navigator
-    @Environment(\.colorScheme) private var colorScheme
     private let appConfiguration = AppConfiguration.shared
 
     var body: some View {
@@ -24,10 +23,8 @@ private extension AppIconSelectionView {
         ScrollView {
             VStack(spacing: DesignBook.Spacing.xl) {
                 descriptionText
-
-                SettingsSection {
-                    iconGrid
-                }
+                currentSelectionCard
+                iconGrid
             }
             .paddingHorizontalDefault()
             .padding(.top, DesignBook.Spacing.lg)
@@ -42,20 +39,63 @@ private extension AppIconSelectionView {
             .padding(.horizontal, DesignBook.Spacing.sm)
     }
 
-    var iconGrid: some View {
-        LazyVGrid(
-            columns: [
-                GridItem(.flexible(), spacing: DesignBook.Spacing.md),
-                GridItem(.flexible(), spacing: DesignBook.Spacing.md)
-            ],
-            spacing: DesignBook.Spacing.lg
+    var currentSelectionCard: some View {
+        SettingsSection(
+            title: String(localized: "settings.appIcon.current"),
+            footer: String(localized: "settings.appIcon.current.description")
         ) {
-            ForEach(AppIcon.allCases) { icon in
-                iconCard(for: icon)
+            HStack(spacing: DesignBook.Spacing.md) {
+                // Current icon preview
+                ZStack {
+                    LinearGradient(
+                        colors: appConfiguration.appIcon.gradientColors,
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                    .frame(width: 60, height: 60)
+                    .cornerRadius(DesignBook.Size.smallCardCornerRadius)
+
+                    Image(systemName: appConfiguration.appIcon.iconSymbol)
+                        .font(.system(size: 30))
+                        .foregroundColor(.white)
+                        .shadow(color: .black.opacity(0.2), radius: 2, x: 0, y: 1)
+                }
+
+                VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
+                    Text(appConfiguration.appIcon.title)
+                        .font(DesignBook.Font.headline)
+                        .foregroundColor(DesignBook.Color.Text.primary)
+
+                    Text(appConfiguration.appIcon.subtitle)
+                        .font(DesignBook.Font.caption)
+                        .foregroundColor(DesignBook.Color.Text.secondary)
+                }
+
+                Spacer()
             }
+            .padding(DesignBook.Spacing.md)
+            .background(DesignBook.Color.Background.card)
+            .cornerRadius(DesignBook.Size.cardCornerRadius)
         }
     }
 
+    var iconGrid: some View {
+        SettingsSection(
+            title: String(localized: "settings.appIcon.available")
+        ) {
+            LazyVGrid(
+                columns: [
+                    GridItem(.flexible(), spacing: DesignBook.Spacing.md),
+                    GridItem(.flexible(), spacing: DesignBook.Spacing.md)
+                ],
+                spacing: DesignBook.Spacing.lg
+            ) {
+                ForEach(AppIcon.allCases) { icon in
+                    iconCard(for: icon)
+                }
+            }
+        }
+    }
 
     func iconCard(for icon: AppIcon) -> some View {
         let isSelected = appConfiguration.appIcon == icon
@@ -67,8 +107,48 @@ private extension AppIconSelectionView {
             }
         } label: {
             VStack(spacing: DesignBook.Spacing.md) {
-                iconPreview(for: icon, isSelected: isSelected)
+                // Icon preview with gradient
+                ZStack {
+                    // Gradient background
+                    LinearGradient(
+                        colors: icon.gradientColors,
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                    .frame(width: 100, height: 100)
+                    .cornerRadius(DesignBook.Size.smallCardCornerRadius)
+                    .shadow(color: icon.displayColor.opacity(0.3), radius: 8, x: 0, y: 4)
 
+                    // Icon symbol
+                    Image(systemName: icon.iconSymbol)
+                        .font(.system(size: 40))
+                        .foregroundColor(.white)
+                        .shadow(color: .black.opacity(0.3), radius: 3, x: 0, y: 2)
+
+                    // Selection indicator
+                    if isSelected {
+                        VStack {
+                            HStack {
+                                Spacer()
+                                ZStack {
+                                    Circle()
+                                        .fill(.white)
+                                        .frame(width: 28, height: 28)
+                                        .shadow(color: .black.opacity(0.2), radius: 2, x: 0, y: 1)
+
+                                    Image(systemName: "checkmark.circle.fill")
+                                        .font(.system(size: 24))
+                                        .foregroundColor(icon.displayColor)
+                                }
+                                .offset(x: 8, y: -8)
+                            }
+                            Spacer()
+                        }
+                        .frame(width: 100, height: 100)
+                    }
+                }
+
+                // Title and subtitle
                 VStack(spacing: DesignBook.Spacing.xs) {
                     Text(icon.title)
                         .font(DesignBook.Font.headline)
@@ -80,61 +160,20 @@ private extension AppIconSelectionView {
                         .multilineTextAlignment(.center)
                 }
             }
-            .padding(DesignBook.Spacing.lg)
+            .padding(DesignBook.Spacing.md)
             .frame(maxWidth: .infinity)
-            .background(
-                RoundedRectangle(cornerRadius: DesignBook.Size.cardCornerRadius)
-                    .fill(DesignBook.Color.Background.card)
-            )
+            .background(DesignBook.Color.Background.card)
+            .cornerRadius(DesignBook.Size.cardCornerRadius)
             .overlay(
                 RoundedRectangle(cornerRadius: DesignBook.Size.cardCornerRadius)
                     .stroke(
-                        isSelected ? DesignBook.Color.Text.accent : Color.clear,
-                        lineWidth: isSelected ? 3 : 0
+                        isSelected ? icon.displayColor : Color.clear,
+                        lineWidth: isSelected ? 2 : 0
                     )
             )
-            .shadow(isSelected ? .accent : .small)
-            .scaleEffect(isSelected ? 1.0 : 0.98)
+            .scaleEffect(isSelected ? 1.02 : 1.0)
         }
         .buttonStyle(.plain)
-    }
-
-    func iconPreview(for icon: AppIcon, isSelected: Bool) -> some View {
-        let assetName = colorScheme == .dark ? icon.previewNameDark : icon.previewNameLight
-
-        return ZStack {
-            RoundedRectangle(cornerRadius: DesignBook.Size.smallCardCornerRadius)
-                .fill(DesignBook.Color.Background.secondary)
-                .frame(width: 120, height: 120)
-
-            Image(assetName)
-                .resizable()
-                .aspectRatio(1, contentMode: .fit)
-                .frame(width: 100, height: 100)
-                .clipShape(RoundedRectangle(cornerRadius: DesignBook.Size.smallCardCornerRadius))
-                .shadow(.small)
-
-            if isSelected {
-                VStack {
-                    Spacer()
-                    HStack {
-                        Spacer()
-                        ZStack {
-                            Circle()
-                                .fill(DesignBook.Color.Background.card)
-                                .frame(width: 32, height: 32)
-                                .shadow(.small)
-
-                            Image(systemName: "checkmark.circle.fill")
-                                .font(DesignBook.IconFont.medium)
-                                .foregroundColor(DesignBook.Color.Text.accent)
-                        }
-                        .padding(DesignBook.Spacing.sm)
-                    }
-                }
-                .frame(width: 120, height: 120)
-            }
-        }
     }
 }
 
