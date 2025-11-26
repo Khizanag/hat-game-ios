@@ -32,6 +32,10 @@ final class GameManager {
     var currentTeam: Team { configuration.teams[currentTeamIndex] }
     private var currentTeamIndex: Int = 0
 
+    // MARK: - Team Roles
+    private var teamExplainerIndices: [UUID: Int] = [:]
+    private var shouldRotateRoles: Bool = true
+
     // MARK: - Time Tracking
     private var teamRemainingTimes: [UUID: Int] = [:]
 
@@ -68,10 +72,17 @@ final class GameManager {
     }
 
     func prepareForNewPlay() {
+        // Rotate roles if needed (when time ran out, not when words completed early)
+        if shouldRotateRoles {
+            rotateExplainer(for: currentTeam)
+        }
+
         if currentWord != nil { // Current round is not finished
             setNextTeam()
+            shouldRotateRoles = true // Reset for next team
         } else { // Current round is finished
             setUpNextRound()
+            shouldRotateRoles = true // Reset for next round
         }
     }
 
@@ -89,6 +100,49 @@ final class GameManager {
 
     func getAllUsedWords() -> Set<String> {
         Set(configuration.words.map { $0.text })
+    }
+
+    // MARK: - Role Management
+
+    func setExplainer(playerIndex: Int, for team: Team) {
+        teamExplainerIndices[team.id] = playerIndex
+    }
+
+    func getExplainerIndex(for team: Team) -> Int? {
+        teamExplainerIndices[team.id]
+    }
+
+    func getExplainer(for team: Team) -> Player? {
+        guard let index = teamExplainerIndices[team.id],
+              index < team.players.count else {
+            return nil
+        }
+        return team.players[index]
+    }
+
+    func getGuessers(for team: Team) -> [Player] {
+        guard let explainerIndex = teamExplainerIndices[team.id] else {
+            return Array(team.players.dropFirst())
+        }
+        return team.players.enumerated()
+            .filter { $0.offset != explainerIndex }
+            .map { $0.element }
+    }
+
+    func rotateExplainer(for team: Team) {
+        guard !team.players.isEmpty else { return }
+
+        let currentIndex = teamExplainerIndices[team.id] ?? 0
+        let nextIndex = (currentIndex + 1) % team.players.count
+        teamExplainerIndices[team.id] = nextIndex
+    }
+
+    func markPlayEndedWithTimeRemaining() {
+        shouldRotateRoles = false
+    }
+
+    func markPlayEndedWithTimeOut() {
+        shouldRotateRoles = true
     }
 }
 
