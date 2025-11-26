@@ -298,6 +298,30 @@ private extension TeamFormView {
                         playerField(index: index)
                     }
                 }
+
+                if playerNames.count < gameManager.configuration.maxTeamMembers {
+                    Button {
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                            playerNames.append("")
+                            focusedField = .player(playerNames.count - 1)
+                        }
+                    } label: {
+                        HStack(spacing: DesignBook.Spacing.sm) {
+                            Image(systemName: "plus.circle.fill")
+                                .font(DesignBook.IconFont.medium)
+                                .foregroundColor(DesignBook.Color.Text.accent)
+
+                            Text("teamForm.addPlayer")
+                                .font(DesignBook.Font.body)
+                                .foregroundColor(DesignBook.Color.Text.primary)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(DesignBook.Spacing.md)
+                        .background(DesignBook.Color.Background.secondary)
+                        .cornerRadius(DesignBook.Size.smallCardCornerRadius)
+                    }
+                    .buttonStyle(.plain)
+                }
             }
         }
     }
@@ -329,6 +353,22 @@ private extension TeamFormView {
                 } else {
                     focusedField = nil
                 }
+            }
+
+            if playerNames.count > gameManager.configuration.minTeamMembers {
+                Button {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                        playerNames.remove(at: index)
+                        if focusedField == .player(index) {
+                            focusedField = nil
+                        }
+                    }
+                } label: {
+                    Image(systemName: "minus.circle.fill")
+                        .font(DesignBook.IconFont.medium)
+                        .foregroundColor(DesignBook.Color.Status.error.opacity(0.7))
+                }
+                .buttonStyle(.plain)
             }
         }
     }
@@ -425,16 +465,17 @@ private extension TeamFormView {
     func loadInitialData() {
         if let team = team {
             teamName = team.name
+            // Start with existing players, ensuring at least minTeamMembers fields
             var names = team.players.map { $0.name }
-            // Pad to maxTeamMembers if needed
-            while names.count < gameManager.configuration.maxTeamMembers {
+            while names.count < gameManager.configuration.minTeamMembers {
                 names.append("")
             }
             playerNames = names
             teamColor = team.color
         } else {
             teamName = ""
-            playerNames = Array(repeating: "", count: gameManager.configuration.maxTeamMembers)
+            // Start with minimum required fields for new teams
+            playerNames = Array(repeating: "", count: gameManager.configuration.minTeamMembers)
             updateDefaultColor()
         }
     }
