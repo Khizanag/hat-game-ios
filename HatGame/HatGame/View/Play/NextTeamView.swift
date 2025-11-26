@@ -71,9 +71,9 @@ private extension NextTeamView {
                 .font(DesignBook.Font.largeTitle)
                 .foregroundColor(DesignBook.Color.Text.primary)
 
+            rolesCard
             teamScoreCard
             roundStatusCard
-            rolesCard
         }
     }
 
@@ -121,14 +121,33 @@ private extension NextTeamView {
     var roleSelectionCard: some View {
         GameCard {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.lg) {
-                VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
-                    Text("game.nextTeam.selectExplainer")
-                        .font(DesignBook.Font.headline)
-                        .foregroundColor(DesignBook.Color.Text.primary)
+                HStack {
+                    VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
+                        Text("game.nextTeam.selectExplainer")
+                            .font(DesignBook.Font.headline)
+                            .foregroundColor(DesignBook.Color.Text.primary)
 
-                    Text("game.nextTeam.selectExplainer.description")
-                        .font(DesignBook.Font.caption)
-                        .foregroundColor(DesignBook.Color.Text.secondary)
+                        Text("game.nextTeam.selectExplainer.description")
+                            .font(DesignBook.Font.caption)
+                            .foregroundColor(DesignBook.Color.Text.secondary)
+                    }
+
+                    Spacer()
+
+                    Button {
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                            let randomIndex = Int.random(in: 0..<team.players.count)
+                            selectedExplainerIndex = randomIndex
+                            gameManager.setExplainer(playerIndex: randomIndex, for: team)
+                        }
+                    } label: {
+                        Image(systemName: "shuffle")
+                            .font(DesignBook.Font.body)
+                            .foregroundColor(DesignBook.Color.Text.accent)
+                            .padding(DesignBook.Spacing.sm)
+                            .background(DesignBook.Color.Background.secondary)
+                            .cornerRadius(DesignBook.Size.smallCardCornerRadius)
+                    }
                 }
 
                 VStack(spacing: DesignBook.Spacing.sm) {
@@ -231,13 +250,19 @@ private extension NextTeamView {
                                     .foregroundColor(DesignBook.Color.Text.secondary)
                             }
 
-                            Text(explainer.name)
-                                .font(DesignBook.Font.bodyBold)
-                                .foregroundColor(team.color)
-                                .padding(DesignBook.Spacing.sm)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .background(team.color.opacity(0.1))
-                                .cornerRadius(DesignBook.Size.smallCardCornerRadius)
+                            HStack(spacing: DesignBook.Spacing.sm) {
+                                Circle()
+                                    .fill(team.color.opacity(0.6))
+                                    .frame(width: 6, height: 6)
+
+                                Text(explainer.name)
+                                    .font(DesignBook.Font.bodyBold)
+                                    .foregroundColor(team.color)
+                            }
+                            .padding(DesignBook.Spacing.sm)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .background(team.color.opacity(0.1))
+                            .cornerRadius(DesignBook.Size.smallCardCornerRadius)
                         }
                     }
 
