@@ -18,25 +18,25 @@ extension View {
                     LinearGradient(
                         gradient: Gradient(stops: [
                             .init(color: DesignBook.Color.Background.primary.opacity(0), location: 0.0),
-                            .init(color: DesignBook.Color.Background.primary.opacity(0.02), location: 0.2),
-                            .init(color: DesignBook.Color.Background.primary.opacity(0.05), location: 0.35),
-                            .init(color: DesignBook.Color.Background.primary.opacity(0.1), location: 0.45),
-                            .init(color: DesignBook.Color.Background.primary.opacity(0.2), location: 0.55),
-                            .init(color: DesignBook.Color.Background.primary.opacity(0.4), location: 0.65),
-                            .init(color: DesignBook.Color.Background.primary.opacity(0.65), location: 0.8),
-                            .init(color: DesignBook.Color.Background.primary.opacity(0.9), location: 0.95),
+                            .init(color: DesignBook.Color.Background.primary.opacity(DesignBook.Opacity.veryLight), location: 0.2),
+                            .init(color: DesignBook.Color.Background.primary.opacity(DesignBook.Opacity.veryLight), location: 0.35),
+                            .init(color: DesignBook.Color.Background.primary.opacity(DesignBook.Opacity.light), location: 0.45),
+                            .init(color: DesignBook.Color.Background.primary.opacity(DesignBook.Opacity.highlight), location: 0.55),
+                            .init(color: DesignBook.Color.Background.primary.opacity(DesignBook.Opacity.disabled), location: 0.65),
+                            .init(color: DesignBook.Color.Background.primary.opacity(DesignBook.Opacity.semiTransparent + 0.05), location: 0.8),
+                            .init(color: DesignBook.Color.Background.primary.opacity(DesignBook.Opacity.mostlyOpaque + 0.1), location: 0.95),
                             .init(color: DesignBook.Color.Background.primary, location: 1.0)
                         ]),
                         startPoint: .top,
                         endPoint: .bottom
                     )
-                    .frame(height: 120)
+                    .frame(height: DesignBook.Size.footerGradientHeight)
 
                     // Solid background for button area
                     DesignBook.Color.Background.primary
                 }
                 .ignoresSafeArea(edges: .bottom)
             }
-            .background(.ultraThinMaterial.opacity(0.1))
+            .background(.ultraThinMaterial.opacity(DesignBook.Opacity.light))
     }
 }

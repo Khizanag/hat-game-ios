@@ -179,10 +179,10 @@ private extension NextTeamView {
             ZStack {
                 Circle()
                     .stroke(
-                        isSelected ? team.color : DesignBook.Color.Text.tertiary.opacity(0.3),
+                        isSelected ? team.color : DesignBook.Color.Text.tertiary.opacity(DesignBook.Opacity.medium),
                         lineWidth: 2
                     )
-                    .frame(width: 24, height: 24)
+                    .frame(width: DesignBook.Size.selectionIndicatorSize, height: DesignBook.Size.selectionIndicatorSize)
 
                 if isSelected {
                     Circle()
@@ -260,8 +260,8 @@ private extension NextTeamView {
 
                             HStack(spacing: DesignBook.Spacing.sm) {
                                 Circle()
-                                    .fill(team.color.opacity(0.6))
-                                    .frame(width: 6, height: 6)
+                                    .fill(team.color.opacity(DesignBook.Opacity.semiTransparent))
+                                    .frame(width: DesignBook.Size.dotSmall, height: DesignBook.Size.dotSmall)
 
                                 Text(explainer.name)
                                     .font(DesignBook.Font.bodyBold)
@@ -269,7 +269,7 @@ private extension NextTeamView {
                             }
                             .padding(DesignBook.Spacing.sm)
                             .frame(maxWidth: .infinity, alignment: .leading)
-                            .background(team.color.opacity(0.1))
+                            .background(team.color.opacity(DesignBook.Opacity.light))
                             .cornerRadius(DesignBook.Size.smallCardCornerRadius)
                         }
                     }
@@ -291,8 +291,8 @@ private extension NextTeamView {
                                 ForEach(currentGuessers) { guesser in
                                     HStack(spacing: DesignBook.Spacing.sm) {
                                         Circle()
-                                            .fill(DesignBook.Color.Text.accent.opacity(0.3))
-                                            .frame(width: 6, height: 6)
+                                            .fill(DesignBook.Color.Text.accent.opacity(DesignBook.Opacity.medium))
+                                            .frame(width: DesignBook.Size.dotSmall, height: DesignBook.Size.dotSmall)
 
                                         Text(guesser.name)
                                             .font(DesignBook.Font.body)
