@@ -16,6 +16,7 @@ struct WordInputView: View {
     @State private var playerWords: [String] = []
     @State private var currentWord: String = ""
     @State private var shouldScrollToTextField: Bool = false
+    @State private var isAutoFilling: Bool = false
     @FocusState private var isWordFieldFocused: Bool
     @Namespace private var addButtonNamespace
 
@@ -184,10 +185,12 @@ private extension WordInputView {
             handleAutoFillWords()
         } label: {
             HStack(spacing: DesignBook.Spacing.sm) {
-                Image(systemName: "wand.and.stars")
+                Image(systemName: isAutoFilling ? "sparkles" : "wand.and.stars")
                     .font(DesignBook.Font.body)
                     .fontWeight(.semibold)
-                Text("wordInput.autoFill")
+                    .symbolEffect(.pulse, options: .repeating, isActive: isAutoFilling)
+
+                Text(isAutoFilling ? "wordInput.autoFill.thinking" : "wordInput.autoFill")
                     .font(DesignBook.Font.body)
                     .fontWeight(.medium)
             }
@@ -241,8 +244,8 @@ private extension WordInputView {
             .shadow(color: DesignBook.Color.Text.accent.opacity(0.2), radius: 8, x: 0, y: 4)
         }
         .buttonStyle(.plain)
-        .disabled(playerWords.count >= wordsPerPlayer)
-        .opacity(playerWords.count >= wordsPerPlayer ? DesignBook.Opacity.disabled : DesignBook.Opacity.enabled)
+        .disabled(playerWords.count >= wordsPerPlayer || isAutoFilling)
+        .opacity((playerWords.count >= wordsPerPlayer || isAutoFilling) ? DesignBook.Opacity.disabled : DesignBook.Opacity.enabled)
     }
 
     var wordTextField: some View {
@@ -430,6 +433,7 @@ private extension WordInputView {
     func handleAutoFillWords() {
         let remainingCount = wordsPerPlayer - playerWords.count
         guard remainingCount > 0 else { return }
+        guard !isAutoFilling else { return }
 
         var excludedWords = Set(playerWords)
 
@@ -445,8 +449,27 @@ private extension WordInputView {
         // Shuffle and take what we need
         let newWords = Array(availableWords.shuffled().prefix(remainingCount))
 
-        _ = withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
-            playerWords.append(contentsOf: newWords)
+        // Start AI thinking animation
+        withAnimation(.easeInOut(duration: 0.3)) {
+            isAutoFilling = true
+        }
+
+        // Add words one by one with delay for AI thinking effect
+        for (index, word) in newWords.enumerated() {
+            DispatchQueue.main.asyncAfter(deadline: .now() + Double(index) * 0.3 + 0.5) {
+                withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
+                    playerWords.append(word)
+                }
+
+                // Stop animation after last word
+                if index == newWords.count - 1 {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                        withAnimation(.easeInOut(duration: 0.3)) {
+                            isAutoFilling = false
+                        }
+                    }
+                }
+            }
         }
     }
 }
