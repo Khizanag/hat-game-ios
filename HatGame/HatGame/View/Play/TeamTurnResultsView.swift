@@ -44,6 +44,7 @@ private extension TeamTurnResultsView {
         .safeAreaInset(edge: .bottom) {
             buttonsSection
                 .paddingHorizontalDefault()
+                .withFooterGradient()
         }
     }
 

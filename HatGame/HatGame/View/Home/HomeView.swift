@@ -30,6 +30,7 @@ private extension HomeView {
         }
         .safeAreaInset(edge: .bottom) {
             actionButtons
+                .withFooterGradient()
         }
     }
 

@@ -41,6 +41,7 @@ private extension TimerSettingsView {
         .safeAreaInset(edge: .bottom) {
             continueButton
                 .paddingHorizontalDefault()
+                .withFooterGradient()
         }
     }
 

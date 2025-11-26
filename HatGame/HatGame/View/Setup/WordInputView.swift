@@ -81,6 +81,7 @@ private extension WordInputView {
                 }
                 .paddingHorizontalDefault()
                 .padding(.bottom, DesignBook.Spacing.sm)
+                .withFooterGradient()
             }
             .onAppear {
                 scrollToTextField(proxy: proxy, delay: 0.5)

@@ -69,6 +69,7 @@ struct TeamFormView: View {
         }
         .safeAreaInset(edge: .bottom) {
             actionButtons
+                .withFooterGradient()
         }
         .setDefaultStyle(title: title)
         .onAppear {

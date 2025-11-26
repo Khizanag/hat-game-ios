@@ -41,6 +41,7 @@ private extension WordSettingsView {
         .safeAreaInset(edge: .bottom) {
             continueButton
                 .paddingHorizontalDefault()
+                .withFooterGradient()
         }
     }
 
