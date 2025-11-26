@@ -136,7 +136,13 @@ extension GameManager {
 private extension GameManager {
     func setUpNextRound() {
         resetWords()
+        // Preserve current team's remaining time if they finished the round early
+        // Clear all other teams' times
+        let currentTeamTime = teamRemainingTimes[currentTeam.id]
         resetTeamTimes()
+        if let currentTeamTime {
+            teamRemainingTimes[currentTeam.id] = currentTeamTime
+        }
 
         currentRound = roundIterator.next()
 
