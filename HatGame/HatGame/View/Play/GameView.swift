@@ -49,6 +49,8 @@ struct GameView: View {
                 if let newValue {
                     word = newValue
                 } else {
+                    // All words guessed - don't rotate roles
+                    gameManager.markPlayEndedWithTimeRemaining()
                     navigator.push(.teamTurnResults(guessedWords: guessedWords))
                 }
             }
@@ -249,6 +251,7 @@ private extension GameView {
 
     func timeExpired() {
         stopTimer()
+        gameManager.markPlayEndedWithTimeOut()
         showTeamTurnResults()
     }
 

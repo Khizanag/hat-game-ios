@@ -436,6 +436,40 @@
         }
       }
     },
+    "game.nextTeam.selectExplainer" : {
+      "comment" : "Title for selecting which player will explain.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Who will explain?"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ვინ აიხსნის?"
+          }
+        }
+      }
+    },
+    "game.nextTeam.selectExplainer.description" : {
+      "comment" : "Description for explainer selection.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select one player to explain words, others will guess"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "აირჩიეთ ერთი მოთამაშე სიტყვების ახსნისთვის, დანარჩენები გამოიცნობენ"
+          }
+        }
+      }
+    },
     "game.nextTeam.roundStatus" : {
       "comment" : "A label displayed above the round status information.",
       "localizations" : {
