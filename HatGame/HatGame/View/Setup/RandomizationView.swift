@@ -77,20 +77,15 @@ private extension RandomizationView {
                         .font(DesignBook.Font.title2)
                         .foregroundColor(.white)
 
-                    HStack(spacing: 4) {
-                        ForEach(0..<3) { index in
-                            Circle()
-                                .fill(.white.opacity(0.8))
-                                .frame(width: 8, height: 8)
-                                .scaleEffect(loadingDotScale(for: index))
-                                .animation(
-                                    .easeInOut(duration: 0.6)
-                                        .repeatForever()
-                                        .delay(Double(index) * 0.2),
-                                    value: isShuffling
-                                )
-                        }
-                    }
+                    ProgressDotIndicator(
+                        count: 3,
+                        currentIndex: 1,
+                        dotSize: DesignBook.Size.dotMedium,
+                        spacing: 4,
+                        completedColor: .white.opacity(DesignBook.Opacity.mostlyOpaque),
+                        currentColor: .white.opacity(DesignBook.Opacity.mostlyOpaque),
+                        pendingColor: .white.opacity(DesignBook.Opacity.mostlyOpaque)
+                    )
                 }
             }
         }
@@ -99,10 +94,6 @@ private extension RandomizationView {
                 rotationAngle = 360
             }
         }
-    }
-
-    func loadingDotScale(for index: Int) -> CGFloat {
-        isShuffling ? 1.5 : 1.0
     }
 
     var readyContent: some View {
@@ -131,25 +122,17 @@ private extension RandomizationView {
     var headerCard: some View {
         GameCard {
             VStack(spacing: DesignBook.Spacing.md) {
-                ZStack {
-                    Circle()
-                        .fill(
-                            LinearGradient(
-                                colors: [
-                                    DesignBook.Color.Text.accent.opacity(0.2),
-                                    DesignBook.Color.Text.accent.opacity(0.05)
-                                ],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
-                        .frame(width: 70, height: 70)
-
-                    Image(systemName: "sparkles")
-                        .font(.system(size: 35))
-                        .foregroundColor(DesignBook.Color.Text.accent)
-                        .symbolEffect(.pulse, options: .repeating)
-                }
+                CircularIconContainer(
+                    icon: "sparkles",
+                    size: DesignBook.Size.cardLarge,
+                    iconSize: 35,
+                    color: DesignBook.Color.Text.accent,
+                    gradientColors: [
+                        DesignBook.Color.Text.accent.opacity(DesignBook.Opacity.highlight),
+                        DesignBook.Color.Text.accent.opacity(DesignBook.Opacity.veryLight)
+                    ]
+                )
+                .symbolEffect(.pulse, options: .repeating)
 
                 VStack(spacing: DesignBook.Spacing.xs) {
                     Text("randomization.header.title")
