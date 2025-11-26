@@ -49,9 +49,13 @@ struct GameView: View {
                 if let newValue {
                     word = newValue
                 } else {
-                    // All words guessed - don't rotate roles
+                    // All words guessed - don't rotate roles and save remaining time
+                    stopTimer()
                     gameManager.markPlayEndedWithTimeRemaining()
-                    navigator.push(.teamTurnResults(guessedWords: guessedWords))
+                    if remainingSeconds > 0 {
+                        gameManager.saveRemainingTime(remainingSeconds, for: gameManager.currentTeam)
+                    }
+                    navigator.push(.teamTurnResults(guessedWords: guessedWords, completionReason: .allWordsGuessed))
                 }
             }
     }
@@ -256,12 +260,7 @@ private extension GameView {
     }
 
     func showTeamTurnResults() {
-        // Only save remaining time if round is ending (no more words)
-        // If timer just expired normally, don't save 0 seconds
-        if gameManager.currentWord == nil && remainingSeconds > 0 {
-            gameManager.saveRemainingTime(remainingSeconds, for: gameManager.currentTeam)
-        }
-        navigator.push(.teamTurnResults(guessedWords: guessedWords))
+        navigator.push(.teamTurnResults(guessedWords: guessedWords, completionReason: .timeExpired))
     }
 
     func markAsGuessed() {
@@ -276,6 +275,6 @@ private extension GameView {
     func finishRound() {
         stopTimer()
 
-        navigator.push(.teamTurnResults(guessedWords: guessedWords))
+        navigator.push(.teamTurnResults(guessedWords: guessedWords, completionReason: .timeExpired))
     }
 }

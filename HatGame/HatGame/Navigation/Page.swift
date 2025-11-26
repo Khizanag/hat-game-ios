@@ -22,7 +22,7 @@ enum Page: Hashable {
     case randomization
 
     case play(round: GameRound)
-    case teamTurnResults(guessedWords: [Word])
+    case teamTurnResults(guessedWords: [Word], completionReason: PlayCompletionReason)
     case nextTeam(round: GameRound, team: Team)
     case roundResults
 
@@ -65,8 +65,8 @@ extension Page {
             RandomizationView()
         case .play(let round):
             GameView(round: round)
-        case .teamTurnResults(let guessedWords):
-            TeamTurnResultsView(guessedWords: guessedWords)
+        case .teamTurnResults(let guessedWords, let completionReason):
+            TeamTurnResultsView(guessedWords: guessedWords, completionReason: completionReason)
         case .nextTeam(let round, let team):
             NextTeamView(round: round, team: team)
         case .roundResults:
