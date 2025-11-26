@@ -95,7 +95,7 @@ private extension RandomizationView {
             }
         }
         .onAppear {
-            withAnimation(.linear(duration: 2).repeatForever(autoreverses: false)) {
+            withAnimation(.linear(duration: 2.5).repeatForever(autoreverses: false)) {
                 rotationAngle = 360
             }
         }
@@ -130,7 +130,7 @@ private extension RandomizationView {
 
     var headerCard: some View {
         GameCard {
-            VStack(spacing: DesignBook.Spacing.lg) {
+            VStack(spacing: DesignBook.Spacing.md) {
                 ZStack {
                     Circle()
                         .fill(
@@ -143,10 +143,10 @@ private extension RandomizationView {
                                 endPoint: .bottomTrailing
                             )
                         )
-                        .frame(width: 100, height: 100)
+                        .frame(width: 70, height: 70)
 
                     Image(systemName: "sparkles")
-                        .font(.system(size: 50))
+                        .font(.system(size: 35))
                         .foregroundColor(DesignBook.Color.Text.accent)
                         .symbolEffect(.pulse, options: .repeating)
                 }
@@ -162,7 +162,7 @@ private extension RandomizationView {
                         .multilineTextAlignment(.center)
                 }
             }
-            .padding(DesignBook.Spacing.lg)
+            .padding(DesignBook.Spacing.md)
         }
     }
 
@@ -190,13 +190,8 @@ private extension RandomizationView {
                 }
 
                 Spacer()
-
-                Text("\(gameManager.configuration.words.count)")
-                    .font(DesignBook.Font.largeTitle)
-                    .fontWeight(.bold)
-                    .foregroundColor(DesignBook.Color.Status.success)
             }
-            .padding(DesignBook.Spacing.lg)
+            .padding(DesignBook.Spacing.md)
         }
     }
 
@@ -406,7 +401,7 @@ private extension RandomizationView {
             isShuffling = true
         }
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
             gameManager.start(startingTeamIndex: selectedStartingTeamIndex)
             navigator.push(
                 .nextTeam(
