@@ -2628,6 +2628,23 @@
         }
       }
     },
+    "wordInput.autoFill.thinking" : {
+      "comment" : "Button text shown while AI is thinking and auto-filling words.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Thinking..."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ვფიქრობ..."
+          }
+        }
+      }
+    },
     "wordInput.enterWord" : {
       "comment" : "A placeholder text for a text field where a user can enter a word.",
       "localizations" : {
