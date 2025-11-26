@@ -435,6 +435,9 @@ private extension WordInputView {
         guard remainingCount > 0 else { return }
         guard !isAutoFilling else { return }
 
+        // Dismiss keyboard first for better visibility
+        isWordFieldFocused = false
+
         var excludedWords = Set(playerWords)
 
         // If duplicates not allowed, exclude words used by other players
