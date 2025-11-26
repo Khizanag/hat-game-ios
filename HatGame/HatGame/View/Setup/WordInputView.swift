@@ -326,7 +326,7 @@ private extension WordInputView {
     }
 
     func removeWord(at index: Int) {
-        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+        _ = withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
             playerWords.remove(at: index)
         }
     }
