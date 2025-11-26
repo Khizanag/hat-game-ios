@@ -143,44 +143,52 @@ private extension SettingsView {
             title: String(localized: "settings.accessibility.title"),
             footer: String(localized: "settings.handedness.description")
         ) {
-            VStack(spacing: DesignBook.Spacing.md) {
-                HStack {
-                    Image(systemName: "hand.raised.fill")
-                        .font(DesignBook.Font.body)
-                        .foregroundColor(DesignBook.Color.Text.accent)
-
-                    Text("settings.handedness.title")
-                        .font(DesignBook.Font.headline)
-                        .foregroundColor(DesignBook.Color.Text.primary)
-
-                    Spacer()
-                }
-
-                Picker(
-                    "settings.handedness.title",
-                    selection: Binding(
-                        get: { appConfiguration.isRightHanded ? "right" : "left" },
-                        set: { appConfiguration.isRightHanded = ($0 == "right") }
-                    )
-                ) {
-                    HStack {
-                        Image(systemName: "hand.point.left.fill")
-                        Text("settings.handedness.left")
-                    }
-                    .tag("left")
-
-                    HStack {
-                        Image(systemName: "hand.point.right.fill")
-                        Text("settings.handedness.right")
-                    }
-                    .tag("right")
-                }
-                .pickerStyle(.segmented)
-            }
-            .padding(DesignBook.Spacing.md)
-            .background(DesignBook.Color.Background.card)
-            .cornerRadius(DesignBook.Size.cardCornerRadius)
+            handednessCard
         }
+    }
+
+    var handednessCard: some View {
+        VStack(spacing: DesignBook.Spacing.md) {
+            HStack {
+                Image(systemName: "hand.raised.fill")
+                    .font(DesignBook.Font.body)
+                    .foregroundColor(DesignBook.Color.Text.accent)
+
+                Text("settings.handedness.title")
+                    .font(DesignBook.Font.headline)
+                    .foregroundColor(DesignBook.Color.Text.primary)
+
+                Spacer()
+            }
+
+            SegmentedSelectionView(
+                items: handednessItems,
+                selection: Binding(
+                    get: { appConfiguration.isRightHanded ? .right : .left },
+                    set: { appConfiguration.isRightHanded = ($0 == .right) }
+                )
+            )
+        }
+        .padding(DesignBook.Spacing.md)
+        .background(DesignBook.Color.Background.card)
+        .cornerRadius(DesignBook.Size.cardCornerRadius)
+    }
+
+    var handednessItems: [SegmentedSelectionItem<Handedness>] {
+        [
+            SegmentedSelectionItem(
+                id: .left,
+                title: String(localized: "settings.handedness.left"),
+                subtitle: nil,
+                icon: Image(systemName: "hand.point.left.fill")
+            ),
+            SegmentedSelectionItem(
+                id: .right,
+                title: String(localized: "settings.handedness.right"),
+                subtitle: nil,
+                icon: Image(systemName: "hand.point.right.fill")
+            )
+        ]
     }
 
     // MARK: - About Section
