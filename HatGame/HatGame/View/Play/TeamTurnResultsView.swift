@@ -12,6 +12,7 @@ struct TeamTurnResultsView: View {
     @Environment(Navigator.self) private var navigator
 
     let guessedWords: [Word]
+    let completionReason: PlayCompletionReason
     @State private var isStandingsPresented = false
 
     var body: some View {
@@ -48,10 +49,10 @@ private extension TeamTurnResultsView {
 
     var header: some View {
         VStack(spacing: DesignBook.Spacing.md) {
-            Text("⏱️")
+            Text(completionReason == .timeExpired ? "⏱️" : "✨")
                 .font(DesignBook.IconFont.emoji)
 
-            Text("game.turnResults.timeUp")
+            Text(completionReason == .timeExpired ? "game.turnResults.timeUp" : "game.turnResults.allWordsGuessed")
                 .font(DesignBook.Font.largeTitle)
                 .foregroundColor(DesignBook.Color.Text.primary)
         }
