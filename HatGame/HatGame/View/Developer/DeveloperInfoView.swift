@@ -121,9 +121,10 @@ private extension DeveloperInfoView {
                     set: { appConfiguration.isTestMode = $0 }
                 )) {
                     HStack(spacing: DesignBook.Spacing.sm) {
-                        Image(systemName: "testtube.2")
+                        Image(systemName: appConfiguration.isTestMode ? "testtube.2.fill" : "testtube.2")
                             .font(DesignBook.Font.body)
                             .foregroundColor(.orange)
+                            .contentTransition(.symbolEffect(.replace))
 
                         Text("settings.testMode.title")
                             .font(DesignBook.Font.headline)
