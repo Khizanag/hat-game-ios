@@ -2388,6 +2388,23 @@
         }
       }
     },
+    "wordInput.autoFill" : {
+      "comment" : "Button title to auto-fill remaining words from the database.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Auto-fill from Database"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ავტომატური შევსება"
+          }
+        }
+      }
+    },
     "wordInput.allPlayersEntered" : {
       "comment" : "A message displayed when all players have submitted their words, allowing them to move on to the next step.",
       "localizations" : {

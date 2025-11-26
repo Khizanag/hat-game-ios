@@ -12,7 +12,7 @@ import SwiftUI
 @Observable
 final class GameManager {
     // MARK: - Configuration
-    var configuration = GameConfiguration.mockForTesting
+    var configuration: GameConfiguration
 
     // MARK: - History
     let historyManager = HistoryManager()
@@ -34,6 +34,17 @@ final class GameManager {
 
     // MARK: - Time Tracking
     private var teamRemainingTimes: [UUID: Int] = [:]
+
+    // MARK: - Initialization
+    init(configuration: GameConfiguration? = nil) {
+        if let configuration {
+            self.configuration = configuration
+        } else if AppConfiguration.shared.isTestMode {
+            self.configuration = GameConfiguration.mockForTesting
+        } else {
+            self.configuration = GameConfiguration()
+        }
+    }
 
     // MARK: - Functions
     func start() {
