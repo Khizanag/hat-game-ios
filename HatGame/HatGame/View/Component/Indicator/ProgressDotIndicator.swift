@@ -44,7 +44,7 @@ struct ProgressDotIndicator: View {
                     .fill(colorForIndex(index))
                     .frame(width: dotSize, height: dotSize)
                     .overlay {
-                        if showStroke && index == currentIndex {
+                        if showStroke, index == currentIndex {
                             Circle()
                                 .stroke(currentColor, lineWidth: 2)
                         }

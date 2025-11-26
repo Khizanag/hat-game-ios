@@ -47,7 +47,7 @@ struct TeamFormView: View {
         let nonEmptyPlayers = playerNames.filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
         let required = gameManager.configuration.playersPerTeam
 
-        if !teamName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
+        if !teamName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
            nonEmptyPlayers.count < required {
             return String(
                 format: String(localized: "teamForm.validation.exactPlayers"),
