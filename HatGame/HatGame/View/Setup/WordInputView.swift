@@ -16,6 +16,7 @@ struct WordInputView: View {
     @State private var playerWords: [String] = []
     @State private var currentWord: String = ""
     @State private var shouldScrollToTextField: Bool = false
+    @State private var shouldScrollToLatestWord: Bool = false
     @State private var isAutoFilling: Bool = false
     @FocusState private var isWordFieldFocused: Bool
     @Namespace private var addButtonNamespace
@@ -103,6 +104,12 @@ private extension WordInputView {
                     shouldScrollToTextField = false
                 }
             }
+            .onChange(of: shouldScrollToLatestWord) { _, shouldScroll in
+                if shouldScroll {
+                    scrollToLatestWord(proxy: proxy)
+                    shouldScrollToLatestWord = false
+                }
+            }
         }
     }
 
@@ -110,6 +117,16 @@ private extension WordInputView {
         DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
             withAnimation(.easeInOut(duration: 0.3)) {
                 proxy.scrollTo("wordTextField", anchor: .center)
+            }
+        }
+    }
+
+    func scrollToLatestWord(proxy: ScrollViewProxy) {
+        guard !playerWords.isEmpty else { return }
+        let latestIndex = playerWords.count - 1
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            withAnimation(.easeInOut(duration: 0.3)) {
+                proxy.scrollTo("word_\(latestIndex)", anchor: .top)
             }
         }
     }
@@ -125,8 +142,36 @@ private extension WordInputView {
                 )
             }
         ) {
-            ProgressView(value: progress)
-                .tint(DesignBook.Color.Text.accent)
+            playerStepIndicator
+        }
+    }
+
+    var playerStepIndicator: some View {
+        HStack(spacing: DesignBook.Spacing.xs) {
+            ForEach(allPlayers.indices, id: \.self) { index in
+                Capsule()
+                    .fill(stepColor(for: index))
+                    .frame(height: 6)
+                    .overlay {
+                        if index == currentPlayerIndex {
+                            Capsule()
+                                .stroke(DesignBook.Color.Text.accent, lineWidth: 2)
+                        }
+                    }
+            }
+        }
+    }
+
+    func stepColor(for index: Int) -> Color {
+        if index < currentPlayerIndex {
+            // Completed players
+            return DesignBook.Color.Status.success
+        } else if index == currentPlayerIndex {
+            // Current player
+            return DesignBook.Color.Text.accent
+        } else {
+            // Remaining players
+            return DesignBook.Color.Background.secondary
         }
     }
 
@@ -271,12 +316,20 @@ private extension WordInputView {
         VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
             ForEach(playerWords.indices, id: \.self) { index in
                 wordRow(at: index)
+                    .id("word_\(index)")
                     .transition(
                         .asymmetric(
                             insertion: .scale.combined(with: .opacity),
                             removal: .scale.combined(with: .opacity)
                         )
                     )
+                    .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                        Button(role: .destructive) {
+                            removeWord(at: index)
+                        } label: {
+                            Label("Delete", systemImage: "trash.fill")
+                        }
+                    }
             }
         }
     }
@@ -407,13 +460,18 @@ private extension WordInputView {
         let trimmedWord = currentWord.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedWord.isEmpty, playerWords.count < wordsPerPlayer else { return }
         guard !playerWords.contains(trimmedWord) else { return }
-        
+
         withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
             playerWords.append(trimmedWord)
         }
-        
+
         currentWord = ""
-        
+
+        // Scroll to show the newly added word
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            shouldScrollToLatestWord = true
+        }
+
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             isWordFieldFocused = true
         }
