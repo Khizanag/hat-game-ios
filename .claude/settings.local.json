@@ -2,7 +2,9 @@
   "permissions": {
     "allow": [
       "Bash(xcodebuild:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(for file in /Users/Giga.Khizanishvili/GitHub/hat-game-ios/HatGame/HatGame/View/Component/Settings/SettingsSection.swift /Users/Giga.Khizanishvili/GitHub/hat-game-ios/HatGame/HatGame/View/Component/Card/HeaderCard.swift /Users/Giga.Khizanishvili/GitHub/hat-game-ios/HatGame/HatGame/View/Component/Card/FoldableCard.swift)",
+      "Bash(git grep:*)"
     ],
     "deny": [],
     "ask": []

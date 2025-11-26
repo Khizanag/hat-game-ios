@@ -2,6 +2,56 @@
 
 This document defines the Swift coding style conventions for the Hat Game project.
 
+> **Note:** This file is automatically updated whenever new style conventions or technical suggestions are adopted. Each rule includes rationale and examples to help maintain consistent code quality.
+
+## Optional Handling
+
+### Use Optional Chaining for Optional Closures
+
+When calling an optional closure or function, use optional chaining instead of if-let unwrapping.
+
+**Preferred:**
+```swift
+content?()
+onComplete?()
+closure?()
+```
+
+**Not Preferred:**
+```swift
+if let content {
+    content()
+}
+
+if let onComplete {
+    onComplete()
+}
+```
+
+**Rationale:** Optional chaining is more concise and clearly expresses the intent. It eliminates unnecessary unwrapping when you just want to call the optional if it exists.
+
+**Example:**
+```swift
+struct CustomButton: View {
+    let action: (() -> Void)?
+
+    var body: some View {
+        Button("Tap") {
+            action?()  // Clean and clear
+        }
+    }
+}
+```
+
+**Note:** This applies specifically to optional closures/functions where you're just calling them. If you need to use the unwrapped value for other operations, use if-let:
+```swift
+// Still use if-let when you need the unwrapped value
+if let user = currentUser {
+    print("Name: \(user.name)")
+    updateUI(for: user)
+}
+```
+
 ## Conditional Statements
 
 ### Use Comma-Separated Conditions
