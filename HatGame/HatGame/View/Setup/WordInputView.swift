@@ -162,22 +162,22 @@ private extension WordInputView {
     }
 
     var progressHeader: some View {
-        HStack {
-            VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
+        VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
+            HStack {
                 Text("wordInput.wordsAdded")
                     .font(DesignBook.Font.headline)
                     .foregroundColor(DesignBook.Color.Text.primary)
 
-                ProgressView(value: Double(playerWords.count), total: Double(wordsPerPlayer))
-                    .tint(DesignBook.Color.Text.accent)
-                    .progressViewStyle(.linear)
+                Spacer()
+
+                Text("\(playerWords.count)/\(wordsPerPlayer)")
+                    .font(DesignBook.Font.title3)
+                    .foregroundColor(DesignBook.Color.Text.accent)
             }
 
-            Spacer()
-
-            Text("\(playerWords.count)/\(wordsPerPlayer)")
-                .font(DesignBook.Font.title3)
-                .foregroundColor(DesignBook.Color.Text.accent)
+            ProgressView(value: Double(playerWords.count), total: Double(wordsPerPlayer))
+                .tint(DesignBook.Color.Text.accent)
+                .progressViewStyle(.linear)
         }
     }
 
