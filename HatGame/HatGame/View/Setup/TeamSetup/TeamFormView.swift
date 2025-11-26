@@ -36,8 +36,24 @@ struct TeamFormView: View {
     }
 
     private var canSave: Bool {
-        !teamName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
-        playerNames.allSatisfy { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+        let trimmedName = teamName.trimmingCharacters(in: .whitespacesAndNewlines)
+        let nonEmptyPlayers = playerNames.filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+
+        return !trimmedName.isEmpty &&
+               nonEmptyPlayers.count >= gameManager.configuration.minTeamMembers
+    }
+
+    private var validationMessage: String? {
+        let nonEmptyPlayers = playerNames.filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+
+        if !teamName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
+           nonEmptyPlayers.count < gameManager.configuration.minTeamMembers {
+            return String(
+                format: String(localized: "teamForm.validation.minPlayers"),
+                gameManager.configuration.minTeamMembers
+            )
+        }
+        return nil
     }
 
     private var title: String {
@@ -266,9 +282,15 @@ private extension TeamFormView {
 
                     Spacer()
 
-                    Text("\(playerNames.count)")
+                    Text("\(playerNames.filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }.count)/\(gameManager.configuration.maxTeamMembers)")
                         .font(DesignBook.Font.captionBold)
                         .foregroundColor(DesignBook.Color.Text.tertiary)
+                }
+
+                if let validationMessage {
+                    Text(validationMessage)
+                        .font(DesignBook.Font.caption)
+                        .foregroundColor(DesignBook.Color.Status.error)
                 }
 
                 VStack(spacing: DesignBook.Spacing.md) {

@@ -2459,6 +2459,23 @@
         }
       }
     },
+    "teamForm.validation.minPlayers" : {
+      "comment" : "Validation message when team has fewer than minimum required players.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "At least %d players required"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "მინიმუმ %d მოთამაშე საჭიროა"
+          }
+        }
+      }
+    },
     "teamForm.primary.create" : {
       "comment" : "Primary action when creating team.",
       "localizations" : {
