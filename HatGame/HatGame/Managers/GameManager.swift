@@ -47,7 +47,8 @@ final class GameManager {
     }
 
     // MARK: - Functions
-    func start() {
+    func start(startingTeamIndex: Int = 0) {
+        currentTeamIndex = startingTeamIndex
         historyManager.setUp(configuration: configuration)
         historyManager.prepareForNewRound(.first)
 

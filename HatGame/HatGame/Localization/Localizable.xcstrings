@@ -1011,6 +1011,57 @@
         }
       }
     },
+    "randomization.header.title" : {
+      "comment" : "Main title for randomization page header.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ready to Start!"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "მზად ხართ დასაწყებად!"
+          }
+        }
+      }
+    },
+    "randomization.header.subtitle" : {
+      "comment" : "Subtitle for randomization page header.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose starting team and let the fun begin"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "აირჩიეთ საწყისი გუნდი და დაიწყეთ თამაში"
+          }
+        }
+      }
+    },
+    "randomization.shuffleAndStart" : {
+      "comment" : "Button to shuffle and start the game.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start Game"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "თამაშის დაწყება"
+          }
+        }
+      }
+    },
     "randomization.shuffling.message" : {
       "comment" : "A message displayed while shuffling words in the game.",
       "localizations" : {
@@ -1024,6 +1075,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "სიტყვების არევა..."
+          }
+        }
+      }
+    },
+    "randomization.startingTeam.goesFirst" : {
+      "comment" : "Text indicating selected team will go first.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "goes first!"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "პირველი იწყებს!"
           }
         }
       }
@@ -1045,6 +1113,40 @@
         }
       }
     },
+    "randomization.startingTeam.randomize" : {
+      "comment" : "Button to randomize starting team selection.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Randomize"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "შემთხვევითი"
+          }
+        }
+      }
+    },
+    "randomization.startingTeam.selected" : {
+      "comment" : "Label shown above selected starting team.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Starting Team"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "საწყისი გუნდი"
+          }
+        }
+      }
+    },
     "randomization.startingTeam.title" : {
       "comment" : "A label displayed above a picker that lets the user select which team starts the game.",
       "localizations" : {
@@ -1058,6 +1160,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "რომელი გუნდი იწყებს?"
+          }
+        }
+      }
+    },
+    "randomization.team.players" : {
+      "comment" : "Shows number of players in a team.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld players"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld მოთამაშე"
           }
         }
       }
@@ -1093,6 +1212,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%lld სიტყვა მზადაა"
+          }
+        }
+      }
+    },
+    "randomization.wordsReady.count" : {
+      "comment" : "Shows count of words ready to play.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld words collected and ready to play"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld სიტყვა შეგროვებულია და მზადაა"
+          }
+        }
+      }
+    },
+    "randomization.wordsReady.title" : {
+      "comment" : "Title for words ready section.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Words Ready"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "სიტყვები მზადაა"
           }
         }
       }
