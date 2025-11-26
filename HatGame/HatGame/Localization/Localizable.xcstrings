@@ -2459,6 +2459,23 @@
         }
       }
     },
+    "teamForm.addPlayer" : {
+      "comment" : "Button to add another player field to the team.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add Player"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "მოთამაშის დამატება"
+          }
+        }
+      }
+    },
     "teamForm.validation.minPlayers" : {
       "comment" : "Validation message when team has fewer than minimum required players.",
       "localizations" : {
