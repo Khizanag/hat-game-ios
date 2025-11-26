@@ -408,8 +408,9 @@ private extension RandomizationView {
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
             gameManager.start(startingTeamIndex: selectedStartingTeamIndex)
             navigator.push(
-                .play(
-                    round: .first
+                .nextTeam(
+                    round: .first,
+                    team: gameManager.currentTeam
                 )
             )
         }
