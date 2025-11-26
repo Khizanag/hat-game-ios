@@ -183,17 +183,62 @@ private extension WordInputView {
         Button {
             handleAutoFillWords()
         } label: {
-            HStack {
+            HStack(spacing: DesignBook.Spacing.sm) {
                 Image(systemName: "wand.and.stars")
                     .font(DesignBook.Font.body)
+                    .fontWeight(.semibold)
                 Text("wordInput.autoFill")
                     .font(DesignBook.Font.body)
+                    .fontWeight(.medium)
             }
-            .foregroundColor(DesignBook.Color.Text.accent)
-            .padding(DesignBook.Spacing.sm)
+            .foregroundStyle(
+                LinearGradient(
+                    colors: [
+                        DesignBook.Color.Text.accent,
+                        DesignBook.Color.Text.accent.opacity(0.8)
+                    ],
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
+            )
+            .padding(.vertical, DesignBook.Spacing.md)
+            .padding(.horizontal, DesignBook.Spacing.lg)
             .frame(maxWidth: .infinity)
-            .background(DesignBook.Color.Text.accent.opacity(0.1))
-            .cornerRadius(DesignBook.Size.smallCardCornerRadius)
+            .background {
+                ZStack {
+                    // Glass effect background
+                    RoundedRectangle(cornerRadius: DesignBook.Size.cardCornerRadius)
+                        .fill(.ultraThinMaterial)
+
+                    // Gradient overlay for glass effect
+                    RoundedRectangle(cornerRadius: DesignBook.Size.cardCornerRadius)
+                        .fill(
+                            LinearGradient(
+                                colors: [
+                                    DesignBook.Color.Text.accent.opacity(0.15),
+                                    DesignBook.Color.Text.accent.opacity(0.05)
+                                ],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+
+                    // Border for glass effect
+                    RoundedRectangle(cornerRadius: DesignBook.Size.cardCornerRadius)
+                        .strokeBorder(
+                            LinearGradient(
+                                colors: [
+                                    DesignBook.Color.Text.accent.opacity(0.3),
+                                    DesignBook.Color.Text.accent.opacity(0.1)
+                                ],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ),
+                            lineWidth: 1.5
+                        )
+                }
+            }
+            .shadow(color: DesignBook.Color.Text.accent.opacity(0.2), radius: 8, x: 0, y: 4)
         }
         .buttonStyle(.plain)
         .disabled(playerWords.count >= wordsPerPlayer)

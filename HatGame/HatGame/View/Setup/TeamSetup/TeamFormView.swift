@@ -317,10 +317,14 @@ private extension TeamFormView {
             if isKeyboardVisible {
                 // Horizontal layout when keyboard is visible
                 HStack(spacing: DesignBook.Spacing.md) {
-                    DestructiveButton(title: String(localized: "common.buttons.cancel")) {
-                        navigator.dismiss()
+                    Button(action: navigator.dismiss) {
+                        Text("common.buttons.cancel")
+                            .font(DesignBook.Font.headline)
+                            .padding(8)
+                            .cornerRadius(DesignBook.Size.smallCardCornerRadius)
                     }
-                    .frame(maxWidth: .infinity, maxHeight: 50)
+                    .buttonStyle(.glassProminent)
+                    .tint(DesignBook.Color.Status.error)
 
                     Group {
                         if let icon = primaryButtonIcon {
@@ -333,7 +337,6 @@ private extension TeamFormView {
                             }
                         }
                     }
-                    .frame(maxWidth: .infinity * 1.8, maxHeight: 50)
                     .disabled(!canSave)
                     .opacity(canSave ? DesignBook.Opacity.enabled : DesignBook.Opacity.disabled)
                 }
