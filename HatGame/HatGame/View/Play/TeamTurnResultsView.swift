@@ -118,7 +118,7 @@ private extension TeamTurnResultsView {
 
     var buttonsSection: some View {
         VStack(spacing: DesignBook.Spacing.md) {
-            SecondaryButton(title: String(localized: "game.turnResults.checkStandings")) {
+            SecondaryButton(title: String(localized: "game.turnResults.checkStandings"), icon: "list.bullet.rectangle") {
                 isStandingsPresented = true
             }
 
