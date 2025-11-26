@@ -32,6 +32,9 @@ final class GameManager {
     var currentTeam: Team { configuration.teams[currentTeamIndex] }
     private var currentTeamIndex: Int = 0
 
+    // MARK: - Time Tracking
+    private var teamRemainingTimes: [UUID: Int] = [:]
+
     // MARK: - Functions
     func start() {
         historyManager.setUp(configuration: configuration)
@@ -58,6 +61,18 @@ final class GameManager {
         } else { // Current round is finished
             setUpNextRound()
         }
+    }
+
+    func saveRemainingTime(_ seconds: Int, for team: Team) {
+        teamRemainingTimes[team.id] = seconds
+    }
+
+    func getRemainingTime(for team: Team) -> Int? {
+        teamRemainingTimes[team.id]
+    }
+
+    func clearRemainingTime(for team: Team) {
+        teamRemainingTimes.removeValue(forKey: team.id)
     }
 }
 
@@ -121,6 +136,7 @@ extension GameManager {
 private extension GameManager {
     func setUpNextRound() {
         resetWords()
+        resetTeamTimes()
 
         currentRound = roundIterator.next()
 
@@ -139,6 +155,10 @@ private extension GameManager {
 
     func resetWords() {
         remainingWords = Set(configuration.words)
+    }
+
+    func resetTeamTimes() {
+        teamRemainingTimes.removeAll()
     }
 
     func finishGame() {

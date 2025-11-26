@@ -212,8 +212,9 @@ private extension GameView {
         stopTimer()
         isPaused = false
         // Get remaining time for this team, or use full duration
-        // TODO: Implement
-        remainingSeconds = /*gameManager.getRemainingTime(for: team) ??*/ gameManager.configuration.roundDuration
+        remainingSeconds = gameManager.getRemainingTime(for: gameManager.currentTeam) ?? gameManager.configuration.roundDuration
+        // Clear the saved time after using it
+        gameManager.clearRemainingTime(for: gameManager.currentTeam)
         timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
             tickTimer()
         }
@@ -252,8 +253,11 @@ private extension GameView {
     }
 
     func showTeamTurnResults() {
-        // Save remaining time for this team
-        //        gameManager.saveRemainingTime(remainingSeconds, for: team)
+        // Only save remaining time if round is ending (no more words)
+        // If timer just expired normally, don't save 0 seconds
+        if gameManager.currentWord == nil && remainingSeconds > 0 {
+            gameManager.saveRemainingTime(remainingSeconds, for: gameManager.currentTeam)
+        }
         navigator.push(.teamTurnResults(guessedWords: guessedWords))
     }
 
