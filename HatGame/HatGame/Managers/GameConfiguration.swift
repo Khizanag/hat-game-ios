@@ -76,20 +76,7 @@ extension GameConfiguration {
             wordsPerPlayer: 3,
             roundDuration: 10,
             teams: [team1, team2],
-            words: [
-                .init(text: "ვაშლი"),
-                .init(text: "მსხალი"),
-                .init(text: "მასპინძელი"),
-                .init(text: "მზე"),
-                .init(text: "ცათამბრჯენი"),
-                .init(text: "და"),
-                .init(text: "aმბასადორი"),
-                .init(text: "ალპინისტი"),
-                .init(text: "აბსტრაქცია"),
-                .init(text: "პარაცეტამოლი"),
-                .init(text: "აბსადასჯოიჯიოჯოაიასოდჯასიჯდოსაიჯდოისა"),
-                .init(text: "ასდკასპოდკასოპდკაოსპკდ"),
-            ]
+            words: [ ]
         )
     }
 }
