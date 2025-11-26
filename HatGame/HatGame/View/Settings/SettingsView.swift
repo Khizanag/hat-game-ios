@@ -207,9 +207,23 @@ private extension SettingsView {
                 }
                 .buttonStyle(.plain)
 
+                feedbackRow
+
                 appInfoRow
             }
         }
+    }
+
+    var feedbackRow: some View {
+        Link(destination: URL(string: "mailto:giga.khizanishvili@gmail.com?subject=Hat%20Game%20Feedback")!) {
+            SettingsRow(
+                icon: "envelope.fill",
+                iconColor: .blue,
+                title: String(localized: "settings.feedback.title"),
+                subtitle: String(localized: "settings.feedback.description")
+            )
+        }
+        .buttonStyle(.plain)
     }
 
     var appInfoRow: some View {
