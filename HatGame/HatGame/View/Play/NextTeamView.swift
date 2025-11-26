@@ -130,7 +130,6 @@ private extension NextTeamView {
             }
 
             PrimaryButton(title: String(localized: "common.buttons.play"), icon: "play.fill") {
-                gameManager.prepareForNewPlay()
                 navigator.push(.play(round: round))
             }
         }
