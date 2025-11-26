@@ -19,6 +19,7 @@ struct TeamFormView: View {
     @State private var playerNames: [String] = []
     @State private var teamColor: Color = TeamDefaultColorGenerator.defaultColors[0]
     @State private var isColorSectionExpanded: Bool = false
+    @State private var isKeyboardVisible: Bool = false
     @FocusState private var focusedField: Field?
 
     enum Field: Hashable {
@@ -75,6 +76,10 @@ struct TeamFormView: View {
             if teamName.isEmpty {
                 focusedField = .teamName
             }
+            setupKeyboardObservers()
+        }
+        .onDisappear {
+            removeKeyboardObservers()
         }
     }
 }
@@ -305,30 +310,91 @@ private extension TeamFormView {
         }
     }
 
+    // MARK: - Action Buttons
+
     var actionButtons: some View {
-        VStack(spacing: DesignBook.Spacing.md) {
-            Group {
-                if let icon = primaryButtonIcon {
-                    PrimaryButton(title: primaryButtonTitle, icon: icon) {
-                        handlePrimaryAction()
+        Group {
+            if isKeyboardVisible {
+                // Horizontal layout when keyboard is visible
+                HStack(spacing: DesignBook.Spacing.md) {
+                    DestructiveButton(title: String(localized: "common.buttons.cancel")) {
+                        navigator.dismiss()
                     }
-                } else {
-                    PrimaryButton(title: primaryButtonTitle) {
-                        handlePrimaryAction()
+                    .frame(maxWidth: .infinity, maxHeight: 50)
+
+                    Group {
+                        if let icon = primaryButtonIcon {
+                            PrimaryButton(title: primaryButtonTitle, icon: icon) {
+                                handlePrimaryAction()
+                            }
+                        } else {
+                            PrimaryButton(title: primaryButtonTitle) {
+                                handlePrimaryAction()
+                            }
+                        }
+                    }
+                    .frame(maxWidth: .infinity * 1.8, maxHeight: 50)
+                    .disabled(!canSave)
+                    .opacity(canSave ? DesignBook.Opacity.enabled : DesignBook.Opacity.disabled)
+                }
+                .paddingHorizontalDefault()
+                .padding(.top, DesignBook.Spacing.md)
+                .padding(.bottom, DesignBook.Spacing.sm)
+            } else {
+                // Vertical layout when keyboard is hidden
+                VStack(spacing: DesignBook.Spacing.md) {
+                    Group {
+                        if let icon = primaryButtonIcon {
+                            PrimaryButton(title: primaryButtonTitle, icon: icon) {
+                                handlePrimaryAction()
+                            }
+                        } else {
+                            PrimaryButton(title: primaryButtonTitle) {
+                                handlePrimaryAction()
+                            }
+                        }
+                    }
+                    .disabled(!canSave)
+                    .opacity(canSave ? DesignBook.Opacity.enabled : DesignBook.Opacity.disabled)
+
+                    DestructiveButton(title: String(localized: "common.buttons.cancel")) {
+                        navigator.dismiss()
                     }
                 }
-            }
-            .disabled(!canSave)
-            .opacity(canSave ? DesignBook.Opacity.enabled : DesignBook.Opacity.disabled)
-
-            DestructiveButton(title: String(localized: "common.buttons.cancel")) {
-                navigator.dismiss()
+                .paddingHorizontalDefault()
+                .padding(.top, DesignBook.Spacing.md)
+                .padding(.bottom, DesignBook.Spacing.sm)
             }
         }
-        .paddingHorizontalDefault()
-        .padding(.top, DesignBook.Spacing.md)
-        .padding(.bottom, DesignBook.Spacing.sm)
+        .animation(.easeInOut(duration: 0.25), value: isKeyboardVisible)
     }
+
+    // MARK: - Keyboard Handling
+
+    func setupKeyboardObservers() {
+        NotificationCenter.default.addObserver(
+            forName: UIResponder.keyboardWillShowNotification,
+            object: nil,
+            queue: .main
+        ) { _ in
+            isKeyboardVisible = true
+        }
+
+        NotificationCenter.default.addObserver(
+            forName: UIResponder.keyboardWillHideNotification,
+            object: nil,
+            queue: .main
+        ) { _ in
+            isKeyboardVisible = false
+        }
+    }
+
+    func removeKeyboardObservers() {
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+
+    // MARK: - Data Handling
 
     func loadInitialData() {
         if let team = team {
