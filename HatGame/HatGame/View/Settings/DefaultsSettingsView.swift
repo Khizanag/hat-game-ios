@@ -20,133 +20,132 @@ struct DefaultsSettingsView: View {
 private extension DefaultsSettingsView {
     var content: some View {
         ScrollView {
-            VStack(spacing: DesignBook.Spacing.lg) {
-                headerCard
-                defaultsCard
-                Spacer()
-                    .frame(height: DesignBook.Spacing.xl)
+            VStack(spacing: DesignBook.Spacing.xl) {
+                descriptionText
+                wordsPerPlayerSection
+                roundDurationSection
+                duplicateWordsSection
             }
             .paddingHorizontalDefault()
             .padding(.top, DesignBook.Spacing.lg)
+            .padding(.bottom, DesignBook.Spacing.xxl)
         }
     }
 
-    var headerCard: some View {
-        HeaderCard(
-            title: String(localized: "settings.defaults.title"),
-            description: String(localized: "settings.defaults.description")
-        )
+    var descriptionText: some View {
+        Text("settings.defaults.description")
+            .font(DesignBook.Font.body)
+            .foregroundColor(DesignBook.Color.Text.secondary)
+            .padding(.horizontal, DesignBook.Spacing.sm)
     }
 
-    var defaultsCard: some View {
-        GameCard {
-            VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
-                defaultWordsPerPlayerSection
-
-                Divider()
-                    .background(DesignBook.Color.Text.tertiary.opacity(0.3))
-
-                defaultRoundDurationSection
-
-                Divider()
-                    .background(DesignBook.Color.Text.tertiary.opacity(0.3))
-
-                allowDuplicateWordsSection
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-        }
-    }
-
-    var defaultWordsPerPlayerSection: some View {
-        VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
-            HStack {
-                HStack(spacing: DesignBook.Spacing.sm) {
-                    Image(systemName: "text.bubble")
-                        .font(DesignBook.Font.headline)
-                        .foregroundColor(DesignBook.Color.Text.accent)
+    // MARK: - Words Per Player
+    var wordsPerPlayerSection: some View {
+        SettingsSection(
+            title: String(localized: "settings.defaultWordsPerPlayer.title"),
+            footer: String(localized: "settings.defaultWordsPerPlayer.description")
+        ) {
+            VStack(spacing: DesignBook.Spacing.md) {
+                HStack {
+                    Image(systemName: "text.bubble.fill")
+                        .font(DesignBook.Font.body)
+                        .foregroundColor(.orange)
 
                     Text("settings.defaultWordsPerPlayer.title")
                         .font(DesignBook.Font.headline)
                         .foregroundColor(DesignBook.Color.Text.primary)
+
+                    Spacer()
+
+                    Text("\(appConfiguration.defaultWordsPerPlayer)")
+                        .font(DesignBook.Font.title2)
+                        .fontWeight(.bold)
+                        .foregroundColor(.orange)
                 }
 
-                Spacer()
-
-                Text("\(appConfiguration.defaultWordsPerPlayer)")
-                    .font(DesignBook.Font.title3)
-                    .foregroundColor(DesignBook.Color.Text.accent)
+                Stepper(
+                    "",
+                    value: Binding(
+                        get: { appConfiguration.defaultWordsPerPlayer },
+                        set: { appConfiguration.defaultWordsPerPlayer = $0 }
+                    ),
+                    in: 3...20
+                )
+                .labelsHidden()
             }
-
-            Stepper(
-                value: Binding(
-                    get: { appConfiguration.defaultWordsPerPlayer },
-                    set: { appConfiguration.defaultWordsPerPlayer = $0 }
-                ),
-                in: 3...20
-            ) {
-                Text("settings.defaultWordsPerPlayer.description")
-                    .font(DesignBook.Font.caption)
-                    .foregroundColor(DesignBook.Color.Text.secondary)
-            }
+            .padding(DesignBook.Spacing.md)
+            .background(DesignBook.Color.Background.card)
+            .cornerRadius(DesignBook.Size.cardCornerRadius)
         }
     }
 
-    var defaultRoundDurationSection: some View {
-        VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
-            HStack {
-                HStack(spacing: DesignBook.Spacing.sm) {
-                    Image(systemName: "timer")
-                        .font(DesignBook.Font.headline)
-                        .foregroundColor(DesignBook.Color.Text.accent)
+    // MARK: - Round Duration
+    var roundDurationSection: some View {
+        SettingsSection(
+            title: String(localized: "settings.defaultRoundDuration.title"),
+            footer: String(localized: "settings.defaultRoundDuration.description")
+        ) {
+            VStack(spacing: DesignBook.Spacing.md) {
+                HStack {
+                    Image(systemName: "timer.circle.fill")
+                        .font(DesignBook.Font.body)
+                        .foregroundColor(.blue)
 
                     Text("settings.defaultRoundDuration.title")
                         .font(DesignBook.Font.headline)
                         .foregroundColor(DesignBook.Color.Text.primary)
+
+                    Spacer()
+
+                    Text("\(appConfiguration.defaultRoundDuration)s")
+                        .font(DesignBook.Font.title2)
+                        .fontWeight(.bold)
+                        .foregroundColor(.blue)
                 }
 
-                Spacer()
-
-                Text("\(appConfiguration.defaultRoundDuration)s")
-                    .font(DesignBook.Font.title3)
-                    .foregroundColor(DesignBook.Color.Text.accent)
+                Stepper(
+                    "",
+                    value: Binding(
+                        get: { appConfiguration.defaultRoundDuration },
+                        set: { appConfiguration.defaultRoundDuration = $0 }
+                    ),
+                    in: 5...120,
+                    step: 5
+                )
+                .labelsHidden()
             }
-
-            Stepper(
-                value: Binding(
-                    get: { appConfiguration.defaultRoundDuration },
-                    set: { appConfiguration.defaultRoundDuration = $0 }
-                ),
-                in: 5...120,
-                step: 5
-            ) {
-                Text("settings.defaultRoundDuration.description")
-                    .font(DesignBook.Font.caption)
-                    .foregroundColor(DesignBook.Color.Text.secondary)
-            }
+            .padding(DesignBook.Spacing.md)
+            .background(DesignBook.Color.Background.card)
+            .cornerRadius(DesignBook.Size.cardCornerRadius)
         }
     }
 
-    var allowDuplicateWordsSection: some View {
-        VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
-            Toggle(isOn: Binding(
-                get: { appConfiguration.allowDuplicateWords },
-                set: { appConfiguration.allowDuplicateWords = $0 }
-            )) {
-                HStack(spacing: DesignBook.Spacing.sm) {
-                    Image(systemName: "doc.on.doc")
-                        .font(DesignBook.Font.headline)
-                        .foregroundColor(DesignBook.Color.Text.accent)
+    // MARK: - Duplicate Words
+    var duplicateWordsSection: some View {
+        SettingsSection(
+            title: String(localized: "settings.allowDuplicateWords.title"),
+            footer: String(localized: "settings.allowDuplicateWords.description")
+        ) {
+            VStack(spacing: DesignBook.Spacing.md) {
+                Toggle(isOn: Binding(
+                    get: { appConfiguration.allowDuplicateWords },
+                    set: { appConfiguration.allowDuplicateWords = $0 }
+                )) {
+                    HStack(spacing: DesignBook.Spacing.sm) {
+                        Image(systemName: "doc.on.doc.fill")
+                            .font(DesignBook.Font.body)
+                            .foregroundColor(.purple)
 
-                    Text("settings.allowDuplicateWords.title")
-                        .font(DesignBook.Font.headline)
-                        .foregroundColor(DesignBook.Color.Text.primary)
+                        Text("settings.allowDuplicateWords.title")
+                            .font(DesignBook.Font.headline)
+                            .foregroundColor(DesignBook.Color.Text.primary)
+                    }
                 }
+                .tint(.purple)
             }
-            .tint(DesignBook.Color.Text.accent)
-
-            Text("settings.allowDuplicateWords.description")
-                .font(DesignBook.Font.caption)
-                .foregroundColor(DesignBook.Color.Text.secondary)
+            .padding(DesignBook.Spacing.md)
+            .background(DesignBook.Color.Background.card)
+            .cornerRadius(DesignBook.Size.cardCornerRadius)
         }
     }
 }
@@ -157,4 +156,3 @@ private extension DefaultsSettingsView {
         Page.defaultsSettings.view()
     }
 }
-

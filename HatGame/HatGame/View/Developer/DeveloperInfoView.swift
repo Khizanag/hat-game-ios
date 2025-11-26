@@ -12,17 +12,16 @@ struct DeveloperInfoView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: DesignBook.Spacing.lg) {
-                headerCard
+            VStack(spacing: DesignBook.Spacing.xl) {
+                headerText
+                aboutSection
                 technologiesSection
                 testModeSection
                 contactSection
-                aboutSection
-                Spacer()
-                    .frame(height: DesignBook.Spacing.xl)
             }
             .paddingHorizontalDefault()
             .padding(.top, DesignBook.Spacing.lg)
+            .padding(.bottom, DesignBook.Spacing.xxl)
         }
         .setDefaultStyle(title: String(localized: "settings.developerInfo.title"))
     }
@@ -30,106 +29,164 @@ struct DeveloperInfoView: View {
 
 // MARK: - Private
 private extension DeveloperInfoView {
-    var headerCard: some View {
-        HeaderCard(
-            title: String(localized: "settings.developerInfo.title"),
-            description: String(localized: "settings.developerInfo.createdBy")
-        )
+    var headerText: some View {
+        Text("settings.developerInfo.createdBy")
+            .font(DesignBook.Font.body)
+            .foregroundColor(DesignBook.Color.Text.secondary)
+            .padding(.horizontal, DesignBook.Spacing.sm)
     }
 
+    // MARK: - About Section
     var aboutSection: some View {
-        infoCard(title: "settings.developerInfo.about.title") {
-            Text("settings.developerInfo.about.description")
-                .font(DesignBook.Font.body)
-                .foregroundColor(DesignBook.Color.Text.secondary)
-        }
-    }
-
-    var technologiesSection: some View {
-        infoCard(title: "settings.developerInfo.technologies.title") {
-            VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
-                bullet("settings.technologies.swiftui")
-                bullet("settings.technologies.navigation")
-                bullet("settings.technologies.designbook")
-            }
-        }
-    }
-
-    var testModeSection: some View {
-        infoCard(title: "settings.testMode.title") {
-            VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
-                Toggle(
-                    isOn: Binding(
-                        get: { appConfiguration.isTestMode },
-                        set: { appConfiguration.isTestMode = $0 }
-                    )
-                ) {
-                    Text("settings.testMode.description")
-                        .font(DesignBook.Font.body)
-                        .foregroundColor(DesignBook.Color.Text.secondary)
-                }
-                .toggleStyle(SwitchToggleStyle(tint: DesignBook.Color.Text.accent))
-            }
-        }
-    }
-
-    var contactSection: some View {
-        GameCard {
-            VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
+        SettingsSection(
+            title: String(localized: "settings.developerInfo.about.title")
+        ) {
+            VStack(spacing: DesignBook.Spacing.md) {
                 HStack(spacing: DesignBook.Spacing.sm) {
-                    Image(systemName: "envelope")
-                        .font(DesignBook.Font.headline)
-                        .foregroundColor(DesignBook.Color.Text.accent)
+                    Image(systemName: "person.circle.fill")
+                        .font(DesignBook.Font.body)
+                        .foregroundColor(.purple)
 
-                    Text("settings.developerInfo.contact.title")
+                    Text("settings.developerInfo.about.title")
                         .font(DesignBook.Font.headline)
                         .foregroundColor(DesignBook.Color.Text.primary)
+
+                    Spacer()
                 }
 
-                Text("settings.developerInfo.contact.message")
+                Text("settings.developerInfo.about.description")
                     .font(DesignBook.Font.body)
                     .foregroundColor(DesignBook.Color.Text.secondary)
-
-                Link(destination: URL(string: "https://github.com/gigakhizanishvili")!) {
-                    HStack(spacing: DesignBook.Spacing.sm) {
-                        Image(systemName: "link")
-                            .font(DesignBook.Font.body)
-                            .foregroundColor(DesignBook.Color.Text.accent)
-
-                        Text("GitHub: @gigakhizanishvili")
-                            .font(DesignBook.Font.body)
-                            .foregroundColor(DesignBook.Color.Text.accent)
-                    }
-                }
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-        }
-    }
-
-    func infoCard(title: String, @ViewBuilder content: () -> some View) -> some View {
-        GameCard {
-            VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
-                Text(LocalizedStringKey(title))
-                    .font(DesignBook.Font.headline)
-                    .foregroundColor(DesignBook.Color.Text.primary)
                     .frame(maxWidth: .infinity, alignment: .leading)
-
-                content()
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(DesignBook.Spacing.md)
+            .background(DesignBook.Color.Background.card)
+            .cornerRadius(DesignBook.Size.cardCornerRadius)
         }
     }
 
-    func bullet(_ text: String) -> some View {
+    // MARK: - Technologies Section
+    var technologiesSection: some View {
+        SettingsSection(
+            title: String(localized: "settings.developerInfo.technologies.title")
+        ) {
+            VStack(spacing: DesignBook.Spacing.md) {
+                HStack(spacing: DesignBook.Spacing.sm) {
+                    Image(systemName: "hammer.circle.fill")
+                        .font(DesignBook.Font.body)
+                        .foregroundColor(.blue)
+
+                    Text("settings.developerInfo.technologies.title")
+                        .font(DesignBook.Font.headline)
+                        .foregroundColor(DesignBook.Color.Text.primary)
+
+                    Spacer()
+                }
+
+                VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
+                    techBullet("settings.technologies.swiftui")
+                    techBullet("settings.technologies.navigation")
+                    techBullet("settings.technologies.designbook")
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .padding(DesignBook.Spacing.md)
+            .background(DesignBook.Color.Background.card)
+            .cornerRadius(DesignBook.Size.cardCornerRadius)
+        }
+    }
+
+    func techBullet(_ text: String) -> some View {
         HStack(alignment: .top, spacing: DesignBook.Spacing.sm) {
-            Circle()
-                .fill(DesignBook.Color.Text.accent)
-                .frame(width: 6, height: 6)
-                .padding(.top, 6)
+            Image(systemName: "checkmark.circle.fill")
+                .font(DesignBook.Font.caption)
+                .foregroundColor(.blue)
+                .padding(.top, 2)
 
             Text(LocalizedStringKey(text))
                 .font(DesignBook.Font.body)
                 .foregroundColor(DesignBook.Color.Text.secondary)
+        }
+    }
+
+    // MARK: - Test Mode Section
+    var testModeSection: some View {
+        SettingsSection(
+            title: String(localized: "settings.testMode.title"),
+            footer: String(localized: "settings.testMode.description")
+        ) {
+            VStack(spacing: DesignBook.Spacing.md) {
+                Toggle(isOn: Binding(
+                    get: { appConfiguration.isTestMode },
+                    set: { appConfiguration.isTestMode = $0 }
+                )) {
+                    HStack(spacing: DesignBook.Spacing.sm) {
+                        Image(systemName: "testtube.2")
+                            .font(DesignBook.Font.body)
+                            .foregroundColor(.orange)
+
+                        Text("settings.testMode.title")
+                            .font(DesignBook.Font.headline)
+                            .foregroundColor(DesignBook.Color.Text.primary)
+                    }
+                }
+                .tint(.orange)
+            }
+            .padding(DesignBook.Spacing.md)
+            .background(DesignBook.Color.Background.card)
+            .cornerRadius(DesignBook.Size.cardCornerRadius)
+        }
+    }
+
+    // MARK: - Contact Section
+    var contactSection: some View {
+        SettingsSection(
+            title: String(localized: "settings.developerInfo.contact.title")
+        ) {
+            VStack(spacing: DesignBook.Spacing.md) {
+                HStack(spacing: DesignBook.Spacing.sm) {
+                    Image(systemName: "envelope.circle.fill")
+                        .font(DesignBook.Font.body)
+                        .foregroundColor(.green)
+
+                    Text("settings.developerInfo.contact.title")
+                        .font(DesignBook.Font.headline)
+                        .foregroundColor(DesignBook.Color.Text.primary)
+
+                    Spacer()
+                }
+
+                VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
+                    Text("settings.developerInfo.contact.message")
+                        .font(DesignBook.Font.body)
+                        .foregroundColor(DesignBook.Color.Text.secondary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+
+                    Link(destination: URL(string: "https://github.com/gigakhizanishvili")!) {
+                        HStack(spacing: DesignBook.Spacing.sm) {
+                            Image(systemName: "link.circle.fill")
+                                .font(DesignBook.Font.body)
+                                .foregroundColor(.green)
+
+                            Text("GitHub: @gigakhizanishvili")
+                                .font(DesignBook.Font.body)
+                                .foregroundColor(.green)
+
+                            Spacer()
+
+                            Image(systemName: "arrow.up.right")
+                                .font(DesignBook.Font.caption)
+                                .foregroundColor(.green)
+                        }
+                        .padding(DesignBook.Spacing.sm)
+                        .background(Color.green.opacity(0.1))
+                        .cornerRadius(DesignBook.Size.smallCardCornerRadius)
+                    }
+                }
+            }
+            .padding(DesignBook.Spacing.md)
+            .background(DesignBook.Color.Background.card)
+            .cornerRadius(DesignBook.Size.cardCornerRadius)
         }
     }
 }

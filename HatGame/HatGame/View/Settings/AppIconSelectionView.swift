@@ -23,23 +23,23 @@ private extension AppIconSelectionView {
     var content: some View {
         ScrollView {
             VStack(spacing: DesignBook.Spacing.xl) {
-                headerCard
+                descriptionText
 
-                iconGrid
-
-                Spacer()
-                    .frame(height: DesignBook.Spacing.xl)
+                SettingsSection {
+                    iconGrid
+                }
             }
             .paddingHorizontalDefault()
             .padding(.top, DesignBook.Spacing.lg)
+            .padding(.bottom, DesignBook.Spacing.xxl)
         }
     }
 
-    var headerCard: some View {
-        HeaderCard(
-            title: String(localized: "settings.appIcon.title"),
-            description: String(localized: "settings.appIcon.description")
-        )
+    var descriptionText: some View {
+        Text("settings.appIcon.description")
+            .font(DesignBook.Font.body)
+            .foregroundColor(DesignBook.Color.Text.secondary)
+            .padding(.horizontal, DesignBook.Spacing.sm)
     }
 
     var iconGrid: some View {
