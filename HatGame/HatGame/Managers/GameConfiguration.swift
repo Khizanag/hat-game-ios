@@ -32,15 +32,15 @@ final class GameConfiguration {
     init(
         maxTeams: Int = 6,
         maxTeamMembers: Int = 2,
-        wordsPerPlayer: Int = 10,
-        roundDuration: Int = 60,
+        wordsPerPlayer: Int? = nil,
+        roundDuration: Int? = nil,
         teams: [Team] = [],
         words: [Word] = []
     ) {
         self.maxTeams = maxTeams
         self.maxTeamMembers = maxTeamMembers
-        self.wordsPerPlayer = wordsPerPlayer
-        self.roundDuration = roundDuration
+        self.wordsPerPlayer = wordsPerPlayer ?? AppConfiguration.shared.defaultWordsPerPlayer
+        self.roundDuration = roundDuration ?? AppConfiguration.shared.defaultRoundDuration
         self.teams = teams
         self.words = words
     }

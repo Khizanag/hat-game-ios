@@ -147,6 +147,8 @@ private extension WordInputView {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.lg) {
                 progressHeader
 
+                autoFillButton
+
                 if !playerWords.isEmpty {
                     wordsList
                         .transition(.move(edge: .top).combined(with: .opacity))
@@ -175,6 +177,27 @@ private extension WordInputView {
                 .font(DesignBook.Font.title3)
                 .foregroundColor(DesignBook.Color.Text.accent)
         }
+    }
+
+    var autoFillButton: some View {
+        Button {
+            handleAutoFillWords()
+        } label: {
+            HStack {
+                Image(systemName: "wand.and.stars")
+                    .font(DesignBook.Font.body)
+                Text("wordInput.autoFill")
+                    .font(DesignBook.Font.body)
+            }
+            .foregroundColor(DesignBook.Color.Text.accent)
+            .padding(DesignBook.Spacing.sm)
+            .frame(maxWidth: .infinity)
+            .background(DesignBook.Color.Text.accent.opacity(0.1))
+            .cornerRadius(DesignBook.Size.smallCardCornerRadius)
+        }
+        .buttonStyle(.plain)
+        .disabled(playerWords.count >= wordsPerPlayer)
+        .opacity(playerWords.count >= wordsPerPlayer ? DesignBook.Opacity.disabled : DesignBook.Opacity.enabled)
     }
 
     var wordTextField: some View {
@@ -356,6 +379,18 @@ private extension WordInputView {
             playerWords = []
         } else {
             navigator.push(.randomization)
+        }
+    }
+
+    func handleAutoFillWords() {
+        let remainingCount = wordsPerPlayer - playerWords.count
+        guard remainingCount > 0 else { return }
+
+        let newWords = WordDatabase.randomWords(count: remainingCount)
+            .filter { !playerWords.contains($0) }
+
+        _ = withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
+            playerWords.append(contentsOf: newWords)
         }
     }
 }
