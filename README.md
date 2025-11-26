@@ -2,6 +2,8 @@
 
 A fun and interactive party game for iOS built with SwiftUI. Players explain words to their teammates within a time limit across multiple rounds, making it perfect for gatherings and parties.
 
+> **For Developers:** See [DEVELOPMENT.md](DEVELOPMENT.md) for comprehensive technical details, code style guidelines, and development practices.
+
 ## Table of Contents
 
 - [Game Rules](#game-rules)
@@ -12,6 +14,7 @@ A fun and interactive party game for iOS built with SwiftUI. Players explain wor
 - [Development Guidelines](#development-guidelines)
 - [Code Style Rules](#code-style-rules)
 - [Architecture](#architecture)
+- [Documentation](#documentation)
 
 ## Game Rules
 
@@ -362,6 +365,28 @@ Home → Team Setup → Word Input → Randomization → Game Play ↔ Results �
 - Centralized design system
 - Colors, typography, spacing
 - Consistent UI across app
+
+## Documentation
+
+### Primary Documents
+
+- **[README.md](README.md)** - You are here! Game rules, features, and quick start guide
+- **[DEVELOPMENT.md](DEVELOPMENT.md)** - Comprehensive technical guide including:
+  - Detailed architecture documentation
+  - Complete code style guidelines
+  - Testing infrastructure
+  - State management patterns
+  - Navigation system
+  - Design system reference
+  - Common patterns and best practices
+  - Development rules and principles
+
+### When to Use Each Document
+
+- **New to the project?** Start with README.md to understand the game and basic setup
+- **Ready to contribute?** Read DEVELOPMENT.md for technical details and coding standards
+- **Making changes?** Check DEVELOPMENT.md to ensure your code follows project conventions
+- **Need a reference?** DEVELOPMENT.md is the single source of truth for all technical decisions
 
 ## Contributing
 
