@@ -163,7 +163,7 @@ private extension WordInputView {
     var progressHeader: some View {
         HStack {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
-                Text(String(format: String(localized: "wordInput.wordsAddedProgress"), playerWords.count, wordsPerPlayer))
+                Text("wordInput.wordsAdded")
                     .font(DesignBook.Font.headline)
                     .foregroundColor(DesignBook.Color.Text.primary)
 

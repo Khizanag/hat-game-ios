@@ -2611,6 +2611,23 @@
         }
       }
     },
+    "wordInput.wordsAdded" : {
+      "comment" : "Label showing words added section without count.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Words added"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "დამატებული სიტყვები"
+          }
+        }
+      }
+    },
     "wordInput.autoFill" : {
       "comment" : "Button title to auto-fill remaining words from the database.",
       "localizations" : {
