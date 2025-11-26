@@ -73,7 +73,7 @@ extension GameConfiguration {
 
         return GameConfiguration(
             maxTeams: 10,
-            maxTeamMembers: 2,
+            maxTeamMembers: 6,
             wordsPerPlayer: 3,
             roundDuration: 10,
             teams: [team1, team2],
