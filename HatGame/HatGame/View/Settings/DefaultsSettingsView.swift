@@ -47,6 +47,11 @@ private extension DefaultsSettingsView {
                     .background(DesignBook.Color.Text.tertiary.opacity(0.3))
 
                 defaultRoundDurationSection
+
+                Divider()
+                    .background(DesignBook.Color.Text.tertiary.opacity(0.3))
+
+                allowDuplicateWordsSection
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }
@@ -118,6 +123,30 @@ private extension DefaultsSettingsView {
                     .font(DesignBook.Font.caption)
                     .foregroundColor(DesignBook.Color.Text.secondary)
             }
+        }
+    }
+
+    var allowDuplicateWordsSection: some View {
+        VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
+            Toggle(isOn: Binding(
+                get: { appConfiguration.allowDuplicateWords },
+                set: { appConfiguration.allowDuplicateWords = $0 }
+            )) {
+                HStack(spacing: DesignBook.Spacing.sm) {
+                    Image(systemName: "doc.on.doc")
+                        .font(DesignBook.Font.headline)
+                        .foregroundColor(DesignBook.Color.Text.accent)
+
+                    Text("settings.allowDuplicateWords.title")
+                        .font(DesignBook.Font.headline)
+                        .foregroundColor(DesignBook.Color.Text.primary)
+                }
+            }
+            .tint(DesignBook.Color.Text.accent)
+
+            Text("settings.allowDuplicateWords.description")
+                .font(DesignBook.Font.caption)
+                .foregroundColor(DesignBook.Color.Text.secondary)
         }
     }
 }

@@ -85,6 +85,10 @@ final class GameManager {
     func clearRemainingTime(for team: Team) {
         teamRemainingTimes.removeValue(forKey: team.id)
     }
+
+    func getAllUsedWords() -> Set<String> {
+        Set(configuration.words.map { $0.text })
+    }
 }
 
 // MARK: - Setup

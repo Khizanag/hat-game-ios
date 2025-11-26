@@ -1576,6 +1576,40 @@
         }
       }
     },
+    "settings.allowDuplicateWords.title" : {
+      "comment" : "Toggle title for allowing duplicate words when using auto-fill feature.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allow Duplicate Words"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "დუბლიკატი სიტყვების დაშვება"
+          }
+        }
+      }
+    },
+    "settings.allowDuplicateWords.description" : {
+      "comment" : "Description explaining what the allow duplicate words setting does.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "When disabled, auto-fill ensures each player gets unique words per game"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "გამორთვის შემთხვევაში, ავტომატური შევსება უზრუნველყოფს, რომ თითოეულ მოთამაშეს მიეცეს უნიკალური სიტყვები თამაშში"
+          }
+        }
+      }
+    },
     "settings.developerInfo.about.description" : {
       "comment" : "A paragraph describing the developer and their background.",
       "localizations" : {

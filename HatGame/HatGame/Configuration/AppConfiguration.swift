@@ -22,6 +22,7 @@ final class AppConfiguration {
     private static let isRightHandedKey = "HatGame.isRightHanded"
     private static let colorSchemeKey = "HatGame.colorScheme"
     private static let appIconKey = "HatGame.appIcon"
+    private static let allowDuplicateWordsKey = "HatGame.allowDuplicateWords"
 
     var isTestMode: Bool {
         didSet {
@@ -60,6 +61,12 @@ final class AppConfiguration {
         }
     }
 
+    var allowDuplicateWords: Bool {
+        didSet {
+            UserDefaults.standard.set(allowDuplicateWords, forKey: Self.allowDuplicateWordsKey)
+        }
+    }
+
     private init() {
         isTestMode = UserDefaults.standard.bool(forKey: Self.testModeKey)
         defaultWordsPerPlayer = UserDefaults.standard.object(forKey: Self.defaultWordsPerPlayerKey) as? Int ?? 10
@@ -79,6 +86,8 @@ final class AppConfiguration {
         } else {
             appIcon = .classic
         }
+
+        allowDuplicateWords = UserDefaults.standard.object(forKey: Self.allowDuplicateWordsKey) as? Bool ?? false
     }
 
     func applyStoredAppIcon() {

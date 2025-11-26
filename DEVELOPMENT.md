@@ -292,7 +292,24 @@ let allWords = WordDatabase.allWordsShuffled()
 - Available in WordInputView
 - One-click button to fill remaining words
 - Uses random words from database
-- Filters duplicates automatically
+- Respects "Allow Duplicate Words" setting
+
+**Duplicate Words Setting:**
+- Located in Settings → Defaults → Allow Duplicate Words
+- Default: **Disabled** (ensures unique words per game)
+- When **Disabled:**
+  - Auto-fill gives each player unique words
+  - Tracks all used words across all players in the game
+  - Prevents duplicate words between players
+- When **Enabled:**
+  - Auto-fill can give the same words to different players
+  - Only prevents duplicates within the same player's list
+  - Useful when word database is small relative to game size
+
+**Implementation Details:**
+- `AppConfiguration.allowDuplicateWords` - User preference
+- `GameManager.getAllUsedWords()` - Returns all words added by all players
+- Auto-fill logic filters based on setting and used words
 
 ---
 
@@ -678,4 +695,4 @@ DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
 - Code reviews
 - Onboarding new developers
 
-**Last Major Update:** 2025-11-26 - Initial creation with comprehensive guidelines
+**Last Major Update:** 2025-11-26 - Added unique words per game feature with duplicate words setting
