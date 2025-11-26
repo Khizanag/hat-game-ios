@@ -72,8 +72,8 @@ private extension NextTeamView {
                 .font(DesignBook.Font.largeTitle)
                 .foregroundColor(DesignBook.Color.Text.primary)
 
-            rolesCard
             teamScoreCard
+            rolesCard
             roundStatusCard
         }
     }
@@ -85,10 +85,20 @@ private extension NextTeamView {
                     .font(DesignBook.Font.title2)
                     .foregroundColor(team.color)
 
-                Text(String(format: String(localized: "game.currentScoreLabel"), gameManager.getTotalScore(for: team)))
-                    .font(DesignBook.Font.headline)
-                    .foregroundColor(DesignBook.Color.Text.accent)
+                // Only show score if game has started (not the very first play)
+                if hasGameStarted {
+                    Text(String(format: String(localized: "game.currentScoreLabel"), gameManager.getTotalScore(for: team)))
+                        .font(DesignBook.Font.headline)
+                        .foregroundColor(DesignBook.Color.Text.accent)
+                }
             }
+        }
+    }
+
+    private var hasGameStarted: Bool {
+        // Check if any team has a score > 0
+        gameManager.configuration.teams.contains { team in
+            gameManager.getTotalScore(for: team) > 0
         }
     }
 
@@ -137,9 +147,7 @@ private extension NextTeamView {
 
                     Button {
                         withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                            let randomIndex = Int.random(in: 0..<team.players.count)
-                            selectedExplainerIndex = randomIndex
-                            gameManager.setExplainer(playerIndex: randomIndex, for: team)
+                            selectedExplainerIndex = Int.random(in: 0..<team.players.count)
                         }
                     } label: {
                         Image(systemName: "shuffle")
@@ -157,7 +165,6 @@ private extension NextTeamView {
                             .onTapGesture {
                                 withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                                     selectedExplainerIndex = index
-                                    gameManager.setExplainer(playerIndex: index, for: team)
                                 }
                             }
                     }
