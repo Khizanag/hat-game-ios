@@ -1807,6 +1807,7 @@
     },
     "settings.appIcon.sunset.title" : {
       "comment" : "Title for the sunset app icon style.",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2148,6 +2149,40 @@
         }
       }
     },
+    "settings.feedback.description" : {
+      "comment" : "Description for the feedback option in settings.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Share your thoughts and suggestions"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "გააზიარეთ თქვენი აზრები და წინადადებები"
+          }
+        }
+      }
+    },
+    "settings.feedback.title" : {
+      "comment" : "Title for the feedback option in settings.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Send Feedback"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "უკუკავშირის გაგზავნა"
+          }
+        }
+      }
+    },
     "settings.handedness.description" : {
       "comment" : "A description of the \"Handedness\" setting, explaining its purpose and impact on the user interface.",
       "localizations" : {
@@ -2390,6 +2425,23 @@
         }
       }
     },
+    "teamForm.addPlayer" : {
+      "comment" : "Button to add another player field to the team.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add Player"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "მოთამაშის დამატება"
+          }
+        }
+      }
+    },
     "teamForm.customColor" : {
       "comment" : "A title for a color picker that allows users to select a custom color.",
       "localizations" : {
@@ -2454,40 +2506,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "მოთამაშეები"
-          }
-        }
-      }
-    },
-    "teamForm.addPlayer" : {
-      "comment" : "Button to add another player field to the team.",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Add Player"
-          }
-        },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "მოთამაშის დამატება"
-          }
-        }
-      }
-    },
-    "teamForm.validation.minPlayers" : {
-      "comment" : "Validation message when team has fewer than minimum required players.",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "At least %d players required"
-          }
-        },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "მინიმუმ %d მოთამაშე საჭიროა"
           }
         }
       }
@@ -2590,6 +2608,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ახალი გუნდი"
+          }
+        }
+      }
+    },
+    "teamForm.validation.minPlayers" : {
+      "comment" : "Validation message when team has fewer than minimum required players.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "At least %d players required"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "მინიმუმ %d მოთამაშე საჭიროა"
           }
         }
       }
