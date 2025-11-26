@@ -386,8 +386,19 @@ private extension WordInputView {
         let remainingCount = wordsPerPlayer - playerWords.count
         guard remainingCount > 0 else { return }
 
-        let newWords = WordDatabase.randomWords(count: remainingCount)
-            .filter { !playerWords.contains($0) }
+        var excludedWords = Set(playerWords)
+
+        // If duplicates not allowed, exclude words used by other players
+        if !appConfiguration.allowDuplicateWords {
+            let usedWords = gameManager.getAllUsedWords()
+            excludedWords.formUnion(usedWords)
+        }
+
+        // Get available words from database
+        let availableWords = WordDatabase.words.filter { !excludedWords.contains($0) }
+
+        // Shuffle and take what we need
+        let newWords = Array(availableWords.shuffled().prefix(remainingCount))
 
         _ = withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
             playerWords.append(contentsOf: newWords)
