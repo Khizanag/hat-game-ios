@@ -1807,7 +1807,6 @@
     },
     "settings.appIcon.sunset.title" : {
       "comment" : "Title for the sunset app icon style.",
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
