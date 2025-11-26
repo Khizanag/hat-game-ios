@@ -13,6 +13,7 @@ import SwiftUI
 final class GameConfiguration {
     let minTeams = 2
     let maxTeams: Int
+    let minTeamMembers = 2 // Minimum 2 players per team (one explains, others guess)
     let maxTeamMembers: Int
     var wordsPerPlayer: Int
     var roundDuration: Int
@@ -31,7 +32,7 @@ final class GameConfiguration {
 
     init(
         maxTeams: Int = 6,
-        maxTeamMembers: Int = 2,
+        maxTeamMembers: Int = 6,
         wordsPerPlayer: Int? = nil,
         roundDuration: Int? = nil,
         teams: [Team] = [],

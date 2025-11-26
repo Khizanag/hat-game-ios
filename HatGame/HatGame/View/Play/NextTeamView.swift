@@ -18,7 +18,7 @@ struct NextTeamView: View {
     let team: Team
 
     private var isFirstPlay: Bool {
-        gameManager.getExplainerIndex(for: team) == nil
+        gameManager.canSelectRoles(for: team)
     }
 
     private var currentExplainer: Player? {

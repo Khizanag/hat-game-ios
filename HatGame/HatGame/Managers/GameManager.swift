@@ -34,6 +34,7 @@ final class GameManager {
 
     // MARK: - Team Roles
     private var teamExplainerIndices: [UUID: Int] = [:]
+    private var teamsWithLockedRoles: Set<UUID> = [] // Teams that have played at least once
     private var shouldRotateRoles: Bool = true
 
     // MARK: - Time Tracking
@@ -106,10 +107,18 @@ final class GameManager {
 
     func setExplainer(playerIndex: Int, for team: Team) {
         teamExplainerIndices[team.id] = playerIndex
+        // Lock roles for this team - they can never select again
+        teamsWithLockedRoles.insert(team.id)
     }
 
     func getExplainerIndex(for team: Team) -> Int? {
         teamExplainerIndices[team.id]
+    }
+
+    /// Returns true if this is the team's first play and roles can be selected
+    /// After the first play, roles are locked and auto-rotated only
+    func canSelectRoles(for team: Team) -> Bool {
+        !teamsWithLockedRoles.contains(team.id)
     }
 
     func getExplainer(for team: Team) -> Player? {
