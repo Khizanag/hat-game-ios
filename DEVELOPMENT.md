@@ -477,6 +477,10 @@ Located in `View/Component/`:
 - `FoldableCard`: Expandable/collapsible card
 - `NavigationCard`: Card that leads to another screen
 
+#### Settings
+- `SettingsRow`: Reusable row component with icon, title, subtitle, and optional content
+- `SettingsSection`: Section component with title and footer for organizing settings
+
 #### Other
 - `SegmentedSelectionView`: Custom segmented control
 - `LegendTag`: Small colored tag for legends
@@ -695,4 +699,4 @@ DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
 - Code reviews
 - Onboarding new developers
 
-**Last Major Update:** 2025-11-26 - Added unique words per game feature with duplicate words setting
+**Last Major Update:** 2025-11-26 - Redesigned Settings page with reusable SettingsRow and SettingsSection components for improved UX
