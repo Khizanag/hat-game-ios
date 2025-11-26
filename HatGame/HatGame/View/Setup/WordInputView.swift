@@ -71,7 +71,7 @@ private extension WordInputView {
             }
             .safeAreaInset(edge: .bottom) {
                 Group {
-                    if (isWordFieldFocused && playerWords.count < wordsPerPlayer) {
+                    if isWordFieldFocused, playerWords.count < wordsPerPlayer {
                         HStack {
                             Spacer()
                             floatingAddButton
