@@ -124,6 +124,7 @@ private extension RandomizationView {
             shuffleButton
                 .paddingHorizontalDefault()
                 .padding(.bottom, DesignBook.Spacing.sm)
+                .withFooterGradient()
         }
     }
 

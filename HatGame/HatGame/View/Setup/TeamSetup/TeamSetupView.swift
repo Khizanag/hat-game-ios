@@ -62,6 +62,7 @@ private extension TeamSetupView {
         .safeAreaInset(edge: .bottom) {
             continueSection
                 .paddingHorizontalDefault()
+                .withFooterGradient()
         }
     }
 

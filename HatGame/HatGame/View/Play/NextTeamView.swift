@@ -59,6 +59,7 @@ private extension NextTeamView {
         .safeAreaInset(edge: .bottom) {
             buttonsSection
                 .paddingHorizontalDefault()
+                .withFooterGradient()
         }
     }
 

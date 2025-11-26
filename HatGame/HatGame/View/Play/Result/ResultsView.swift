@@ -71,6 +71,7 @@ private extension ResultsView {
         .safeAreaInset(edge: .bottom) {
             actionSection
                 .paddingHorizontalDefault()
+                .withFooterGradient()
         }
     }
 
