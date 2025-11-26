@@ -92,7 +92,7 @@ private extension TeamSetupView {
             }
 
             if gameManager.configuration.teams.count < 6 {
-                SecondaryButton(title: String(localized: "teamSetup.addTeam")) {
+                SecondaryButton(title: String(localized: "teamSetup.addTeam"), icon: "plus.circle.fill") {
                     newTeamName = ""
                     isAddTeamSheetPresented = true
                 }
