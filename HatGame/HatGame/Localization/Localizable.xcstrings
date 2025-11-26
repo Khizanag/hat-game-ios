@@ -1066,6 +1066,7 @@
     },
     "settings.about.appName" : {
       "comment" : "The name of the app displayed in the about section.",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1100,6 +1101,7 @@
     },
     "settings.about.description" : {
       "comment" : "A description of the Hat Game app.",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1115,8 +1117,26 @@
         }
       }
     },
+    "settings.about.sectionTitle" : {
+      "comment" : "Section header for the About section in settings.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "About"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "შესახებ"
+          }
+        }
+      }
+    },
     "settings.about.title" : {
       "comment" : "A section title for about information.",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1149,6 +1169,57 @@
         }
       }
     },
+    "settings.accessibility.title" : {
+      "comment" : "Section header for the Accessibility section in settings.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accessibility"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ხელმისაწვდომობა"
+          }
+        }
+      }
+    },
+    "settings.allowDuplicateWords.description" : {
+      "comment" : "Description explaining what the allow duplicate words setting does.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "When disabled, auto-fill ensures each player gets unique words per game"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "გამორთვის შემთხვევაში, ავტომატური შევსება უზრუნველყოფს, რომ თითოეულ მოთამაშეს მიეცეს უნიკალური სიტყვები თამაშში"
+          }
+        }
+      }
+    },
+    "settings.allowDuplicateWords.title" : {
+      "comment" : "Toggle title for allowing duplicate words when using auto-fill feature.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allow Duplicate Words"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "დუბლიკატი სიტყვების დაშვება"
+          }
+        }
+      }
+    },
     "settings.appearance.auto" : {
       "comment" : "A subtitle for system color scheme option.",
       "localizations" : {
@@ -1162,6 +1233,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ავტო"
+          }
+        }
+      }
+    },
+    "settings.appearance.colorScheme" : {
+      "comment" : "Label for the color scheme selector in appearance settings.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Color Scheme"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ფერის სქემა"
           }
         }
       }
@@ -1525,6 +1613,23 @@
         }
       }
     },
+    "settings.defaults.sectionTitle" : {
+      "comment" : "Section header for the Game Defaults section in settings.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Game Defaults"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "თამაშის სტანდარტები"
+          }
+        }
+      }
+    },
     "settings.defaults.title" : {
       "comment" : "A section title for default game settings.",
       "localizations" : {
@@ -1572,40 +1677,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "სტანდარტული სიტყვების რაოდენობა მოთამაშეზე"
-          }
-        }
-      }
-    },
-    "settings.allowDuplicateWords.title" : {
-      "comment" : "Toggle title for allowing duplicate words when using auto-fill feature.",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Allow Duplicate Words"
-          }
-        },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "დუბლიკატი სიტყვების დაშვება"
-          }
-        }
-      }
-    },
-    "settings.allowDuplicateWords.description" : {
-      "comment" : "Description explaining what the allow duplicate words setting does.",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "When disabled, auto-fill ensures each player gets unique words per game"
-          }
-        },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "გამორთვის შემთხვევაში, ავტომატური შევსება უზრუნველყოფს, რომ თითოეულ მოთამაშეს მიეცეს უნიკალური სიტყვები თამაშში"
           }
         }
       }
@@ -2422,23 +2493,6 @@
         }
       }
     },
-    "wordInput.autoFill" : {
-      "comment" : "Button title to auto-fill remaining words from the database.",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Auto-fill from Database"
-          }
-        },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ავტომატური შევსება"
-          }
-        }
-      }
-    },
     "wordInput.allPlayersEntered" : {
       "comment" : "A message displayed when all players have submitted their words, allowing them to move on to the next step.",
       "localizations" : {
@@ -2469,6 +2523,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ყველა სიტყვა დამატებულია!"
+          }
+        }
+      }
+    },
+    "wordInput.autoFill" : {
+      "comment" : "Button title to auto-fill remaining words from the database.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Auto-fill from Database"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ავტომატური შევსება"
           }
         }
       }
