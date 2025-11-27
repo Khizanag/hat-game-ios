@@ -51,7 +51,6 @@ private extension TeamSetupView {
         ScrollView {
             VStack(spacing: DesignBook.Spacing.lg) {
                 headerCard
-                playerCountCard
                 teamsList
             }
             .paddingHorizontalDefault()
@@ -68,50 +67,6 @@ private extension TeamSetupView {
             title: String(localized: "teamSetup.title"),
             description: String(localized: "teamSetup.description")
         )
-    }
-
-    var playerCountCard: some View {
-        GameCard {
-            VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
-                HStack(spacing: DesignBook.Spacing.sm) {
-                    Image(systemName: "person.2.fill")
-                        .font(DesignBook.IconFont.medium)
-                        .foregroundColor(DesignBook.Color.Text.accent)
-
-                    Text("teamSetup.playersPerTeam.title")
-                        .font(DesignBook.Font.headline)
-                        .foregroundColor(DesignBook.Color.Text.primary)
-
-                    Spacer()
-                }
-
-                Text("teamSetup.playersPerTeam.description")
-                    .font(DesignBook.Font.caption)
-                    .foregroundColor(DesignBook.Color.Text.secondary)
-
-                HStack(spacing: DesignBook.Spacing.sm) {
-                    ForEach(gameManager.configuration.minTeamMembers...gameManager.configuration.maxTeamMembers, id: \.self) { count in
-                        playerCountOption(count)
-                    }
-                }
-            }
-            .padding(DesignBook.Spacing.md)
-        }
-    }
-
-    func playerCountOption(_ count: Int) -> some View {
-        Button {
-            gameManager.configuration.playersPerTeam = count
-        } label: {
-            Text("\(count)")
-                .font(DesignBook.Font.headline)
-                .foregroundColor(gameManager.configuration.playersPerTeam == count ? .white : DesignBook.Color.Text.primary)
-                .frame(maxWidth: .infinity)
-                .padding(DesignBook.Spacing.md)
-                .background(gameManager.configuration.playersPerTeam == count ? DesignBook.Color.Text.accent : DesignBook.Color.Background.secondary)
-                .cornerRadius(DesignBook.Size.smallCardCornerRadius)
-        }
-        .buttonStyle(.plain)
     }
 
     var teamsList: some View {
