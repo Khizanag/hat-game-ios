@@ -107,6 +107,67 @@ return !trimmedName.isEmpty && playerCount > 0  // Correct
 let isValid = name.isEmpty && age > 18          // Correct
 ```
 
+### Use Positive Logic in Conditionals
+
+When writing if-else statements, prefer positive conditions over negated ones for better readability.
+
+**Preferred:**
+```swift
+if hasConfirmedPlayerCount {
+    showPlayerCountSummary()
+    showTeamsList()
+} else {
+    showPlayerCountSelection()
+}
+
+if isValid {
+    processData()
+} else {
+    showError()
+}
+```
+
+**Not Preferred:**
+```swift
+if !hasConfirmedPlayerCount {
+    showPlayerCountSelection()
+} else {
+    showPlayerCountSummary()
+    showTeamsList()
+}
+
+if !isValid {
+    showError()
+} else {
+    processData()
+}
+```
+
+**Rationale:** Positive logic is easier to understand and reduces cognitive load. Reading "if something is true, do X, otherwise do Y" is more natural than "if something is not true, do Y, otherwise do X."
+
+**Example:**
+```swift
+// Good - positive logic flows naturally
+if user.isAuthenticated {
+    showDashboard()
+} else {
+    showLoginScreen()
+}
+
+// Not preferred - negation makes it harder to follow
+if !user.isAuthenticated {
+    showLoginScreen()
+} else {
+    showDashboard()
+}
+```
+
+**Note:** This rule applies specifically to if-else statements. For simple guard statements or single-branch conditions, negative logic may still be appropriate:
+```swift
+guard !name.isEmpty else { return }  // Fine for guard with early return
+if items.isEmpty { showEmptyState() }  // Fine for single-branch condition
+```
+
 ## Additional Style Guidelines
 
 ### Naming Conventions
