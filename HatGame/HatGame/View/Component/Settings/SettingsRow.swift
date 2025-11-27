@@ -60,7 +60,6 @@ struct SettingsRow<Content: View>: View {
 
             Spacer()
 
-            // Content (toggle, chevron, etc.)
             content?()
 
             if showChevron {
