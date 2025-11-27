@@ -54,77 +54,123 @@ private extension TeamSetupView {
     var content: some View {
         VStack(spacing: 0) {
             List {
-                Section {
-                    headerCard
-                        .listRowInsets(EdgeInsets())
-                        .listRowBackground(Color.clear)
-                        .listRowSeparator(.hidden)
-                }
-
-                Section {
-                    if gameManager.configuration.teams.count > 1 {
-                        HStack {
-                            Spacer()
-                            editModeButton
-                        }
-                        .listRowInsets(EdgeInsets())
-                        .listRowBackground(Color.clear)
-                        .listRowSeparator(.hidden)
-                    }
-
-                    ForEach(gameManager.configuration.teams) { team in
-                        TeamCard(
-                            team: team,
-                            playersPerTeam: gameManager.configuration.playersPerTeam,
-                            onRemoveTeam: {
-                                deletingTeam = team
-                            },
-                            onEditTeam: {
-                                editingTeam = team
-                            },
-                            isEditMode: isEditMode
-                        )
-                        .listRowInsets(EdgeInsets())
-                        .listRowBackground(Color.clear)
-                        .listRowSeparator(.hidden)
-                        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                            Button(role: .destructive) {
-                                deletingTeam = team
-                            } label: {
-                                Label(String(localized: "teamCard.delete"), systemImage: "trash")
-                            }
-
-                            Button {
-                                editingTeam = team
-                            } label: {
-                                Label(String(localized: "teamCard.edit"), systemImage: "pencil")
-                            }
-                            .tint(DesignBook.Color.Text.accent)
-                        }
-                    }
-                    .onMove { source, destination in
-                        withAnimation {
-                            gameManager.moveTeam(from: source, to: destination)
-                        }
-                    }
-
-                    if !isEditMode, gameManager.configuration.teams.count < 6 {
-                        SecondaryButton(title: String(localized: "teamSetup.addTeam"), icon: "plus.circle.fill") {
-                            isAddTeamSheetPresented = true
-                        }
-                        .listRowInsets(EdgeInsets())
-                        .listRowBackground(Color.clear)
-                        .listRowSeparator(.hidden)
-                    }
-                }
+                headerSection
+                teamsSection
             }
             .listStyle(.plain)
             .scrollContentBackground(.hidden)
-            .paddingHorizontalDefault()
 
             continueSection
                 .paddingHorizontalDefault()
                 .withFooterGradient()
+        }
+    }
+
+    var headerSection: some View {
+        Section {
+            headerCard
+                .padding(.horizontal, DesignBook.Spacing.lg)
+                .padding(.top, DesignBook.Spacing.md)
+                .listRowInsets(EdgeInsets())
+                .listRowBackground(Color.clear)
+                .listRowSeparator(.hidden)
+        }
+    }
+
+    var teamsSection: some View {
+        Section {
+            if shouldShowEditButton {
+                editButtonRow
+            }
+
+            teamsList
+
+            if shouldShowAddButton {
+                addTeamButtonRow
+            }
+        }
+    }
+
+    var shouldShowEditButton: Bool {
+        gameManager.configuration.teams.count > 1
+    }
+
+    var shouldShowAddButton: Bool {
+        !isEditMode && gameManager.configuration.teams.count < 6
+    }
+
+    var editButtonRow: some View {
+        HStack {
+            Spacer()
+            editModeButton
+        }
+        .padding(.horizontal, DesignBook.Spacing.lg)
+        .padding(.top, DesignBook.Spacing.sm)
+        .listRowInsets(EdgeInsets())
+        .listRowBackground(Color.clear)
+        .listRowSeparator(.hidden)
+    }
+
+    var teamsList: some View {
+        ForEach(gameManager.configuration.teams) { team in
+            teamRow(for: team)
+        }
+        .onMove(perform: moveTeam)
+    }
+
+    func teamRow(for team: Team) -> some View {
+        TeamCard(
+            team: team,
+            playersPerTeam: gameManager.configuration.playersPerTeam,
+            onRemoveTeam: { deletingTeam = team },
+            onEditTeam: { editingTeam = team },
+            isEditMode: isEditMode
+        )
+        .padding(.horizontal, DesignBook.Spacing.lg)
+        .padding(.vertical, DesignBook.Spacing.xs)
+        .listRowInsets(EdgeInsets())
+        .listRowBackground(Color.clear)
+        .listRowSeparator(.hidden)
+        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+            deleteSwipeAction(for: team)
+            editSwipeAction(for: team)
+        }
+    }
+
+    func deleteSwipeAction(for team: Team) -> some View {
+        Button(role: .destructive) {
+            deletingTeam = team
+        } label: {
+            Label(String(localized: "teamCard.delete"), systemImage: "trash")
+        }
+    }
+
+    func editSwipeAction(for team: Team) -> some View {
+        Button {
+            editingTeam = team
+        } label: {
+            Label(String(localized: "teamCard.edit"), systemImage: "pencil")
+        }
+        .tint(DesignBook.Color.Text.accent)
+    }
+
+    var addTeamButtonRow: some View {
+        SecondaryButton(
+            title: String(localized: "teamSetup.addTeam"),
+            icon: "plus.circle.fill"
+        ) {
+            isAddTeamSheetPresented = true
+        }
+        .padding(.horizontal, DesignBook.Spacing.lg)
+        .padding(.vertical, DesignBook.Spacing.xs)
+        .listRowInsets(EdgeInsets())
+        .listRowBackground(Color.clear)
+        .listRowSeparator(.hidden)
+    }
+
+    func moveTeam(from source: IndexSet, to destination: Int) {
+        withAnimation {
+            gameManager.moveTeam(from: source, to: destination)
         }
     }
 
