@@ -16,10 +16,6 @@ struct TeamCard: View {
 
     var body: some View {
         HStack(spacing: DesignBook.Spacing.sm) {
-            if isEditMode {
-                dragHandle
-            }
-
             GameCard {
                 VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
                     header
@@ -64,13 +60,6 @@ private extension TeamCard {
                 }
             }
         }
-    }
-
-    var dragHandle: some View {
-        Image(systemName: "line.3.horizontal")
-            .font(.system(size: 20))
-            .foregroundColor(DesignBook.Color.Text.tertiary)
-            .frame(width: 30)
     }
 
     var editModeActions: some View {

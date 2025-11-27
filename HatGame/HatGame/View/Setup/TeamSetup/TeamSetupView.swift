@@ -127,7 +127,7 @@ private extension TeamSetupView {
             isEditMode: isEditMode
         )
         .padding(.horizontal, DesignBook.Spacing.lg)
-        .padding(.vertical, DesignBook.Spacing.xs)
+        .padding(.vertical, DesignBook.Spacing.sm)
         .listRowInsets(EdgeInsets())
         .listRowBackground(Color.clear)
         .listRowSeparator(.hidden)
