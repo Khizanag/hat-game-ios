@@ -26,13 +26,6 @@ struct TeamSetupView: View {
     var body: some View {
         content
             .setDefaultStyle(title: String(localized: "teamSetup.title"))
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    if gameManager.configuration.teams.count > 1 {
-                        editModeButton
-                    }
-                }
-            }
             .sheet(isPresented: $isAddTeamSheetPresented) {
                 NavigationView {
                     AddTeamView(
@@ -79,6 +72,13 @@ private extension TeamSetupView {
 
     var teamsList: some View {
         VStack(spacing: DesignBook.Spacing.md) {
+            if gameManager.configuration.teams.count > 1 {
+                HStack {
+                    Spacer()
+                    editModeButton
+                }
+            }
+
             ForEach(gameManager.configuration.teams) { team in
                 TeamCard(
                     team: team,
@@ -91,9 +91,25 @@ private extension TeamSetupView {
                     },
                     isEditMode: isEditMode
                 )
+                .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                    Button(role: .destructive) {
+                        deletingTeam = team
+                    } label: {
+                        Label(String(localized: "teamCard.delete"), systemImage: "trash")
+                    }
+
+                    Button {
+                        editingTeam = team
+                    } label: {
+                        Label(String(localized: "teamCard.edit"), systemImage: "pencil")
+                    }
+                    .tint(DesignBook.Color.Text.accent)
+                }
             }
             .onMove { source, destination in
-                gameManager.moveTeam(from: source, to: destination)
+                withAnimation {
+                    gameManager.moveTeam(from: source, to: destination)
+                }
             }
 
             if !isEditMode, gameManager.configuration.teams.count < 6 {
@@ -171,14 +187,25 @@ private extension TeamSetupView {
 
     var editModeButton: some View {
         Button {
-            withAnimation {
+            withAnimation(.spring(response: 0.3)) {
                 isEditMode.toggle()
             }
         } label: {
-            Text(isEditMode ? String(localized: "common.buttons.done") : String(localized: "common.buttons.edit"))
-                .font(DesignBook.Font.body)
-                .foregroundColor(DesignBook.Color.Text.accent)
+            HStack(spacing: DesignBook.Spacing.xs) {
+                Image(systemName: isEditMode ? "checkmark.circle.fill" : "slider.horizontal.3")
+                    .font(DesignBook.Font.body)
+                Text(isEditMode ? String(localized: "common.buttons.done") : String(localized: "common.buttons.edit"))
+                    .font(DesignBook.Font.bodyBold)
+            }
+            .foregroundColor(isEditMode ? DesignBook.Color.Status.success : DesignBook.Color.Text.accent)
+            .padding(.horizontal, DesignBook.Spacing.md)
+            .padding(.vertical, DesignBook.Spacing.sm)
+            .background(
+                RoundedRectangle(cornerRadius: DesignBook.Size.smallCardCornerRadius)
+                    .fill(isEditMode ? DesignBook.Color.Status.success.opacity(DesignBook.Opacity.veryLight) : DesignBook.Color.Background.secondary)
+            )
         }
+        .buttonStyle(.plain)
     }
 }
 

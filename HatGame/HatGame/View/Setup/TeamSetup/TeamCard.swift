@@ -15,33 +15,20 @@ struct TeamCard: View {
     let isEditMode: Bool
 
     var body: some View {
-        GameCard {
-            HStack(spacing: DesignBook.Spacing.md) {
-                if isEditMode {
-                    dragHandle
-                }
+        HStack(spacing: DesignBook.Spacing.sm) {
+            if isEditMode {
+                dragHandle
+            }
 
+            GameCard {
                 VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
                     header
                     playersList
                 }
-
-                if isEditMode {
-                    editModeActions
-                }
-            }
-        }
-        .contextMenu {
-            Button {
-                onEditTeam()
-            } label: {
-                Label(String(localized: "teamCard.edit"), systemImage: "pencil")
             }
 
-            Button(role: .destructive) {
-                onRemoveTeam()
-            } label: {
-                Label(String(localized: "teamCard.delete"), systemImage: "trash")
+            if isEditMode {
+                editModeActions
             }
         }
     }
@@ -81,27 +68,28 @@ private extension TeamCard {
 
     var dragHandle: some View {
         Image(systemName: "line.3.horizontal")
-            .font(DesignBook.Font.title)
+            .font(.system(size: 20))
             .foregroundColor(DesignBook.Color.Text.tertiary)
-            .padding(.leading, DesignBook.Spacing.xs)
+            .frame(width: 30)
     }
 
     var editModeActions: some View {
-        VStack(spacing: DesignBook.Spacing.sm) {
+        VStack(spacing: DesignBook.Spacing.md) {
             Button(action: onEditTeam) {
                 Image(systemName: "pencil.circle.fill")
-                    .font(DesignBook.IconFont.medium)
+                    .font(.system(size: 32))
                     .foregroundColor(DesignBook.Color.Text.accent)
             }
             .buttonStyle(.plain)
+            .frame(width: 44, height: 44)
 
             Button(action: onRemoveTeam) {
                 Image(systemName: "trash.circle.fill")
-                    .font(DesignBook.IconFont.medium)
+                    .font(.system(size: 32))
                     .foregroundColor(DesignBook.Color.Status.error)
             }
             .buttonStyle(.plain)
+            .frame(width: 44, height: 44)
         }
-        .padding(.trailing, DesignBook.Spacing.xs)
     }
 }
