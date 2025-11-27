@@ -12,13 +12,23 @@ struct TeamCard: View {
     let playersPerTeam: Int
     let onRemoveTeam: () -> Void
     let onEditTeam: () -> Void
+    let isEditMode: Bool
 
     var body: some View {
         GameCard {
-            VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
-                header
-                playersList
-                actions
+            HStack(spacing: DesignBook.Spacing.md) {
+                if isEditMode {
+                    dragHandle
+                }
+
+                VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
+                    header
+                    playersList
+                }
+
+                if isEditMode {
+                    editModeActions
+                }
             }
         }
         .contextMenu {
@@ -59,7 +69,7 @@ private extension TeamCard {
                 HStack {
                     Circle()
                         .fill(team.color)
-                        .frame(width: 8, height: 8)
+                        .frame(width: DesignBook.Size.dotMedium, height: DesignBook.Size.dotMedium)
 
                     Text(player.name)
                         .font(DesignBook.Font.body)
@@ -69,27 +79,29 @@ private extension TeamCard {
         }
     }
 
-    var actions: some View {
-        HStack {
-            Spacer()
-            editButton
-            deleteButton
-        }
+    var dragHandle: some View {
+        Image(systemName: "line.3.horizontal")
+            .font(DesignBook.Font.title)
+            .foregroundColor(DesignBook.Color.Text.tertiary)
+            .padding(.leading, DesignBook.Spacing.xs)
     }
 
-    var editButton: some View {
-        Button(action: onEditTeam) {
-            Image(systemName: "pencil.circle")
-                .foregroundColor(DesignBook.Color.Text.accent)
-                .font(DesignBook.Font.body)
-        }
-    }
+    var editModeActions: some View {
+        VStack(spacing: DesignBook.Spacing.sm) {
+            Button(action: onEditTeam) {
+                Image(systemName: "pencil.circle.fill")
+                    .font(DesignBook.IconFont.medium)
+                    .foregroundColor(DesignBook.Color.Text.accent)
+            }
+            .buttonStyle(.plain)
 
-    var deleteButton: some View {
-        Button(action: onRemoveTeam) {
-            Image(systemName: "trash")
-                .foregroundColor(DesignBook.Color.Status.error)
-                .font(DesignBook.Font.body)
+            Button(action: onRemoveTeam) {
+                Image(systemName: "trash.circle.fill")
+                    .font(DesignBook.IconFont.medium)
+                    .foregroundColor(DesignBook.Color.Status.error)
+            }
+            .buttonStyle(.plain)
         }
+        .padding(.trailing, DesignBook.Spacing.xs)
     }
 }

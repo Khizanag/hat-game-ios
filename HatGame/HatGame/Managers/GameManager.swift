@@ -172,6 +172,10 @@ extension GameManager {
     func removeTeam(_ team: Team) {
         configuration.teams.removeAll { $0.id == team.id }
     }
+
+    func moveTeam(from source: IndexSet, to destination: Int) {
+        configuration.teams.move(fromOffsets: source, toOffset: destination)
+    }
 }
 
 // MARK: - Scores

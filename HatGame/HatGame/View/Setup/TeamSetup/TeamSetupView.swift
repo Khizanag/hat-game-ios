@@ -15,6 +15,7 @@ struct TeamSetupView: View {
     @State private var isAddTeamSheetPresented: Bool = false
     @State private var editingTeam: Team?
     @State private var deletingTeam: Team?
+    @State private var isEditMode: Bool = false
 
     private var canContinue: Bool {
         (gameManager.configuration.minTeams...gameManager.configuration.maxTeams)
@@ -25,6 +26,13 @@ struct TeamSetupView: View {
     var body: some View {
         content
             .setDefaultStyle(title: String(localized: "teamSetup.title"))
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    if gameManager.configuration.teams.count > 1 {
+                        editModeButton
+                    }
+                }
+            }
             .sheet(isPresented: $isAddTeamSheetPresented) {
                 NavigationView {
                     AddTeamView(
@@ -80,11 +88,15 @@ private extension TeamSetupView {
                     },
                     onEditTeam: {
                         editingTeam = team
-                    }
+                    },
+                    isEditMode: isEditMode
                 )
             }
+            .onMove { source, destination in
+                gameManager.moveTeam(from: source, to: destination)
+            }
 
-            if gameManager.configuration.teams.count < 6 {
+            if !isEditMode, gameManager.configuration.teams.count < 6 {
                 SecondaryButton(title: String(localized: "teamSetup.addTeam"), icon: "plus.circle.fill") {
                     isAddTeamSheetPresented = true
                 }
@@ -154,6 +166,18 @@ private extension TeamSetupView {
     var deleteTeamAlertMessage: some View {
         if let deletingTeam {
             Text(String(format: String(localized: "teamSetup.deleteTeam.confirmation"), deletingTeam.name))
+        }
+    }
+
+    var editModeButton: some View {
+        Button {
+            withAnimation {
+                isEditMode.toggle()
+            }
+        } label: {
+            Text(isEditMode ? String(localized: "common.buttons.done") : String(localized: "common.buttons.edit"))
+                .font(DesignBook.Font.body)
+                .foregroundColor(DesignBook.Color.Text.accent)
         }
     }
 }
