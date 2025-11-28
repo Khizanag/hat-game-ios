@@ -1103,6 +1103,40 @@
         }
       }
     },
+    "home.director.label" : {
+      "comment" : "Label for game director credit.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Game Director"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "თამაშის რეჟისორი"
+          }
+        }
+      }
+    },
+    "home.director.name" : {
+      "comment" : "Name of the game director.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Levan Karanadze"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ლევან ყარანაძე"
+          }
+        }
+      }
+    },
     "home.title" : {
       "comment" : "The title of the game displayed on the home screen.",
       "localizations" : {
