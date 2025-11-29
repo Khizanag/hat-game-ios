@@ -14,6 +14,7 @@ struct DeveloperInfoView: View {
         ScrollView {
             VStack(spacing: DesignBook.Spacing.xl) {
                 headerText
+                directorCredit
                 aboutSection
                 technologiesSection
                 testModeSection
@@ -34,6 +35,42 @@ private extension DeveloperInfoView {
             .font(DesignBook.Font.body)
             .foregroundColor(DesignBook.Color.Text.secondary)
             .padding(.horizontal, DesignBook.Spacing.sm)
+    }
+
+    var directorCredit: some View {
+        GameCard {
+            HStack(spacing: DesignBook.Spacing.md) {
+                CircularIconContainer(
+                    icon: "star.fill",
+                    size: DesignBook.Size.cardMedium,
+                    iconSize: 24,
+                    color: .white,
+                    gradientColors: [
+                        DesignBook.Color.Text.accent,
+                        DesignBook.Color.Text.accent.opacity(DesignBook.Opacity.semiTransparent)
+                    ],
+                    hasShadow: true
+                )
+
+                VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
+                    Text("home.director.label")
+                        .font(DesignBook.Font.caption)
+                        .foregroundColor(DesignBook.Color.Text.secondary)
+
+                    Text("home.director.name")
+                        .font(DesignBook.Font.headline)
+                        .foregroundColor(DesignBook.Color.Text.primary)
+                }
+
+                Spacer()
+
+                Image(systemName: "sparkles")
+                    .font(DesignBook.IconFont.medium)
+                    .foregroundColor(DesignBook.Color.Text.accent)
+                    .rotationEffect(.degrees(15))
+            }
+            .padding(DesignBook.Spacing.md)
+        }
     }
 
     // MARK: - About Section
