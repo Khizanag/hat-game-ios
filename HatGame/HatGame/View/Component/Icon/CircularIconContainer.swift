@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import DesignBook
 
 struct CircularIconContainer: View {
     let icon: String

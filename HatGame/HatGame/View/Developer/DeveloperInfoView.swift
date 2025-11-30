@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import DesignBook
 
 struct DeveloperInfoView: View {
     private let appConfiguration = AppConfiguration.shared

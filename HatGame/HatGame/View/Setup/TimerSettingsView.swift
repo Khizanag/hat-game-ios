@@ -6,6 +6,8 @@
 //
 
 import SwiftUI
+import DesignBook
+import Navigation
 
 struct TimerSettingsView: View {
     @Environment(GameManager.self) private var gameManager

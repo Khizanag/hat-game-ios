@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import DesignBook
 
 /// A reusable section component for organizing settings
 struct SettingsSection<Content: View>: View {

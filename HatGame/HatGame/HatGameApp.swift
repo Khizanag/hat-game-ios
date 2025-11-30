@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Navigation
 
 @main
 struct HatGameApp: App {

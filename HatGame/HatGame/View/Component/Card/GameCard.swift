@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import DesignBook
 
 struct GameCard<Content: View>: View {
     let content: Content

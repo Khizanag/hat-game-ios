@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import DesignBook
 
 struct SegmentedSelectionView<ID: Hashable>: View {
     let items: [SegmentedSelectionItem<ID>]
