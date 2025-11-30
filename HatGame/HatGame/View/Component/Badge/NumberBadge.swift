@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import DesignBook
 
 struct NumberBadge: View {
     let number: Int

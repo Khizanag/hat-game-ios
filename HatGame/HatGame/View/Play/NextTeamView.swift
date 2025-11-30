@@ -6,6 +6,8 @@
 //
 
 import SwiftUI
+import DesignBook
+import Navigation
 
 struct NextTeamView: View {
     @Environment(Navigator.self) private var navigator

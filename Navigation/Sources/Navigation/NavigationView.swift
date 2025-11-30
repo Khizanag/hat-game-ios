@@ -1,25 +1,25 @@
 //
 //  NavigationView.swift
-//  HatGame
+//  Navigation Package
 //
 //  Created by Giga Khizanishvili on 15.11.25.
 //
 
 import SwiftUI
 
-struct NavigationView<RootContent: View>: View {
+public struct NavigationView<RootContent: View>: View {
     @State private var navigator = Navigator()
     @ViewBuilder private let rootContent: () -> RootContent
     @Environment(\.dismiss) private var dismiss
 
-    init(@ViewBuilder rootContent: @escaping () -> RootContent) {
+    public init(@ViewBuilder rootContent: @escaping () -> RootContent) {
         self.rootContent = rootContent
     }
 
-    var body: some View {
+    public var body: some View {
         NavigationStack(path: $navigator.navigationPath) {
             rootContent()
-                .navigationDestination(for: Page.self) { page in
+                .navigationDestination(for: AnyPage.self) { page in
                     page.view()
                 }
         }
@@ -31,11 +31,4 @@ struct NavigationView<RootContent: View>: View {
             dismiss()
         }
     }
-}
-
-#Preview {
-    NavigationView {
-        Page.home.view()
-    }
-    .environment(GameManager())
 }

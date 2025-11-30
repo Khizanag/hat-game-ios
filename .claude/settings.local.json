@@ -4,7 +4,12 @@
       "Bash(xcodebuild:*)",
       "Bash(find:*)",
       "Bash(for file in /Users/Giga.Khizanishvili/GitHub/hat-game-ios/HatGame/HatGame/View/Component/Settings/SettingsSection.swift /Users/Giga.Khizanishvili/GitHub/hat-game-ios/HatGame/HatGame/View/Component/Card/HeaderCard.swift /Users/Giga.Khizanishvili/GitHub/hat-game-ios/HatGame/HatGame/View/Component/Card/FoldableCard.swift)",
-      "Bash(git grep:*)"
+      "Bash(git grep:*)",
+      "Bash(git checkout:*)",
+      "Bash(while read file)",
+      "Bash(do if ! grep -q \"^import DesignBook\" \"$file\")",
+      "Bash(then echo \"$file\" fi done)",
+      "Bash(python3:*)"
     ],
     "deny": [],
     "ask": []

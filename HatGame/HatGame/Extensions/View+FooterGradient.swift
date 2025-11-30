@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import DesignBook
 
 extension View {
     /// Adds a gradient fade effect to footer content, similar to iOS 26 toolbar

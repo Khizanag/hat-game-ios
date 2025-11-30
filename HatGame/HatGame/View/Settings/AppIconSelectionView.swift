@@ -6,6 +6,8 @@
 //
 
 import SwiftUI
+import DesignBook
+import Navigation
 
 struct AppIconSelectionView: View {
     @Environment(Navigator.self) private var navigator

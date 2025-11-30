@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import DesignBook
 
 struct FoldableCard<Content: View>: View {
     // MARK: - Properties

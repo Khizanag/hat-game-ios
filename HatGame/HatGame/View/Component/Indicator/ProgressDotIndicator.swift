@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import DesignBook
 
 struct ProgressDotIndicator: View {
     let count: Int

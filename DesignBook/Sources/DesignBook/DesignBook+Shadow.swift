@@ -45,7 +45,7 @@ extension DesignBook {
 }
 
 extension View {
-    func shadow(_ shadow: DesignBook.Shadow) -> some View {
+    public func shadow(_ shadow: DesignBook.Shadow) -> some View {
         self.shadow(
             color: shadow.style.color,
             radius: shadow.style.radius,

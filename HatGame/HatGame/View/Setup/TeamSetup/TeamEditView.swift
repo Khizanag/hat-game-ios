@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Navigation
 
 struct TeamEditView: View {
     @Environment(GameManager.self) private var gameManager

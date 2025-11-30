@@ -6,6 +6,8 @@
 //
 
 import SwiftUI
+import DesignBook
+import Navigation
 
 struct SettingsView: View {
     private let appConfiguration = AppConfiguration.shared

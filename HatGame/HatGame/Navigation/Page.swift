@@ -1,80 +1,106 @@
 //
-//  Page.swift
+//  Page+App.swift
 //  HatGame
 //
 //  Created by Giga Khizanishvili on 15.11.25.
 //
 
-import Foundation
 import SwiftUI
+import Navigation
 
-enum Page: Hashable {
-    case home
-    case settings
-    case developerInfo
-    case appIconSelection
-    case defaultsSettings
-
-    case teamSetup
-    case wordSettings
-    case timerSettings
-    case wordInput
-    case randomization
-
-    case play(round: GameRound)
-    case teamTurnResults(guessedWords: [Word], completionReason: PlayCompletionReason)
-    case nextTeam(round: GameRound, team: Team)
-    case roundResults
-
-    case finalResults
-}
-
-// MARK: - Identifiable
-extension Page: Identifiable {
-    var id: Page {
-        self
-    }
-}
-
-// MARK: - View
+// MARK: - App Pages
 extension Page {
-    @ViewBuilder
-    func view() -> some View {
-        switch self {
-        case .home:
+    static var home: Page<HomeView> {
+        Page<HomeView>(id: "home") {
             HomeView()
-        case .settings:
+        }
+    }
+
+    static var settings: Page<SettingsView> {
+        Page<SettingsView>(id: "settings") {
             SettingsView()
-        case .appIconSelection:
-            AppIconSelectionView()
-        case .defaultsSettings:
-            DefaultsSettingsView()
-        case .teamSetup:
-            NavigationView {
-                TeamSetupView()
-            }
-            .environment(GameManager())
-            .needsCloseButton()
-        case .wordSettings:
-            WordSettingsView()
-        case .timerSettings:
-            TimerSettingsView()
-        case .wordInput:
-            WordInputView()
-        case .randomization:
-            RandomizationView()
-        case .play(let round):
-            GameView(round: round)
-        case .teamTurnResults(let guessedWords, let completionReason):
-            TeamTurnResultsView(guessedWords: guessedWords, completionReason: completionReason)
-        case .nextTeam(let round, let team):
-            NextTeamView(round: round, team: team)
-        case .roundResults:
-            ResultsView()
-        case .finalResults:
-            ResultsView()
-        case .developerInfo:
+        }
+    }
+
+    static var developerInfo: Page<DeveloperInfoView> {
+        Page<DeveloperInfoView>(id: "developerInfo") {
             DeveloperInfoView()
+        }
+    }
+
+    static var appIconSelection: Page<AppIconSelectionView> {
+        Page<AppIconSelectionView>(id: "appIconSelection") {
+            AppIconSelectionView()
+        }
+    }
+
+    static var defaultsSettings: Page<DefaultsSettingsView> {
+        Page<DefaultsSettingsView>(id: "defaultsSettings") {
+            DefaultsSettingsView()
+        }
+    }
+
+    static var teamSetup: Page {
+        Page(id: "teamSetup") {
+//            NavigationView {
+                TeamSetupView()
+//            }
+//            .environment(GameManager())
+//            .needsCloseButton()
+        }
+    }
+
+    static var wordSettings: Page<WordSettingsView> {
+        Page<WordSettingsView>(id: "wordSettings") {
+            WordSettingsView()
+        }
+    }
+
+    static var timerSettings: Page<TimerSettingsView> {
+        Page<TimerSettingsView>(id: "timerSettings") {
+            TimerSettingsView()
+        }
+    }
+
+    static var wordInput: Page<WordInputView> {
+        Page<WordInputView>(id: "wordInput") {
+            WordInputView()
+        }
+    }
+
+    static var randomization: Page<RandomizationView> {
+        Page<RandomizationView>(id: "randomization") {
+            RandomizationView()
+        }
+    }
+
+    static func play(round: GameRound) -> Page<GameView> {
+        Page<GameView>(id: "play-\(round.rawValue)") {
+            GameView(round: round)
+        }
+    }
+
+    static func teamTurnResults(guessedWords: [Word], completionReason: PlayCompletionReason) -> Page<TeamTurnResultsView> {
+        Page<TeamTurnResultsView>(id: "teamTurnResults-\(guessedWords.hashValue)") {
+            TeamTurnResultsView(guessedWords: guessedWords, completionReason: completionReason)
+        }
+    }
+
+    static func nextTeam(round: GameRound, team: Team) -> Page<NextTeamView> {
+        Page<NextTeamView>(id: "nextTeam-\(round.rawValue)-\(team.id)") {
+            NextTeamView(round: round, team: team)
+        }
+    }
+
+    static var roundResults: Page<ResultsView> {
+        Page<ResultsView>(id: "roundResults") {
+            ResultsView()
+        }
+    }
+
+    static var finalResults: Page<ResultsView> {
+        Page<ResultsView>(id: "finalResults") {
+            ResultsView()
         }
     }
 }

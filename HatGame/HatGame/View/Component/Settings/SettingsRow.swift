@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import DesignBook
 
 /// A reusable row component for settings with consistent styling
 struct SettingsRow<Content: View>: View {

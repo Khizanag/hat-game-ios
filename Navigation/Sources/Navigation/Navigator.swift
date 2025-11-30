@@ -1,6 +1,6 @@
 //
 //  Navigator.swift
-//  HatGame
+//  Navigation Package
 //
 //  Created by Giga Khizanishvili on 15.11.25.
 //
@@ -10,39 +10,41 @@ import SwiftUI
 import Observation
 
 @Observable
-final class Navigator {
-    var navigationPath: [Page] = []
-    var presentedPage: Page?
+public final class Navigator {
+    internal var navigationPath: [AnyPage] = []
+    internal var presentedPage: AnyPage?
 
     private var pleaseDismissViewSubject = PassthroughSubject<Void, Never>()
 
-    var pleaseDismissViewPublisher: AnyPublisher<Void, Never> {
+    public var pleaseDismissViewPublisher: AnyPublisher<Void, Never> {
         pleaseDismissViewSubject.eraseToAnyPublisher()
     }
 
+    public init() {}
+
     // MARK: - Navigation Methods
 
-    func push(_ page: Page) {
-        navigationPath.append(page)
+    public func push<Content: View>(_ page: Page<Content>) {
+        navigationPath.append(page.eraseToAnyPage())
     }
 
-    func present(_ page: Page) {
-        presentedPage = page
+    public func present<Content: View>(_ page: Page<Content>) {
+        presentedPage = page.eraseToAnyPage()
     }
 
-    func dismiss() {
+    public func dismiss() {
         pleaseDismissViewSubject.send()
     }
 
-    func dismissToRoot() {
+    public func dismissToRoot() {
         navigationPath = []
     }
 
-    func popToRoot() {
+    public func popToRoot() {
         dismissToRoot()
     }
 
-    func replace(with page: Page) {
+    public func replace<Content: View>(with page: Page<Content>) {
         // Replace current page by removing last and adding new
         if !navigationPath.isEmpty {
             navigationPath.removeLast()

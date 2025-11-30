@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import DesignBook
 
 struct SecondaryButton<Label: View>: View {
     private let action: () -> Void
