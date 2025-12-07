@@ -275,7 +275,8 @@ private extension TeamSetupView {
 // MARK: - Preview
 #Preview {
     NavigationView {
-        Page.teamSetup.view()
+        TeamSetupView()
     }
+    .environment(Navigator())
     .environment(GameManager())
 }

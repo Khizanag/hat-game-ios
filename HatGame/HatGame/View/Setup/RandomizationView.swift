@@ -401,7 +401,8 @@ private extension RandomizationView {
 // MARK: - Preview
 #Preview {
     NavigationView {
-        Page.randomization.view()
+        RandomizationView()
     }
+    .environment(Navigator())
     .environment(GameManager())
 }

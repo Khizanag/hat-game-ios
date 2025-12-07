@@ -9,7 +9,9 @@
       "Bash(while read file)",
       "Bash(do if ! grep -q \"^import DesignBook\" \"$file\")",
       "Bash(then echo \"$file\" fi done)",
-      "Bash(python3:*)"
+      "Bash(python3:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
     ],
     "deny": [],
     "ask": []

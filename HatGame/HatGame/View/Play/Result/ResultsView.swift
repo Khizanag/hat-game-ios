@@ -228,7 +228,8 @@ private extension ResultsView {
 // MARK: - Preview
 #Preview {
     NavigationView {
-        Page.finalResults.view()
+        ResultsView()
     }
+    .environment(Navigator())
     .environment(GameManager())
 }

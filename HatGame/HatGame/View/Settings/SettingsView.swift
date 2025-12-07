@@ -268,6 +268,7 @@ private extension SettingsView {
 // MARK: - Preview
 #Preview {
     NavigationView {
-        Page.settings.view()
+        SettingsView()
     }
+    .environment(Navigator())
 }
