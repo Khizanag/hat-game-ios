@@ -155,6 +155,6 @@ private extension DefaultsSettingsView {
 // MARK: - Preview
 #Preview {
     NavigationView {
-        Page.defaultsSettings.view()
+        DefaultsSettingsView()
     }
 }

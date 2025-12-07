@@ -143,7 +143,8 @@ private extension Int {
 // MARK: - Preview
 #Preview {
     NavigationView {
-        Page.wordSettings.view()
+        WordSettingsView()
     }
+    .environment(Navigator())
     .environment(GameManager())
 }

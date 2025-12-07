@@ -141,7 +141,8 @@ private extension Int {
 // MARK: - Preview
 #Preview {
     NavigationView {
-        Page.timerSettings.view()
+        TimerSettingsView()
     }
+    .environment(Navigator())
     .environment(GameManager())
 }

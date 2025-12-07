@@ -15,9 +15,11 @@ struct HatGameApp: App {
     var body: some Scene {
         WindowGroup {
             NavigationView {
-                Page.home.view()
+                HomeView()
             }
             .environment(appConfiguration)
+            .environment(Navigator())
+            .environment(GameManager())
             .preferredColorScheme(appConfiguration.colorScheme.colorScheme)
         }
     }

@@ -40,13 +40,9 @@ extension Page {
         }
     }
 
-    static var teamSetup: Page {
-        Page(id: "teamSetup") {
-//            NavigationView {
-                TeamSetupView()
-//            }
-//            .environment(GameManager())
-//            .needsCloseButton()
+    static var teamSetup: Page<TeamSetupView> {
+        Page<TeamSetupView>(id: "teamSetup") {
+            TeamSetupView()
         }
     }
 

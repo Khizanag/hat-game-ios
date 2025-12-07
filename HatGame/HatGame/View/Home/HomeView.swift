@@ -117,7 +117,7 @@ private struct InstructionRow: View {
 // MARK: - Preview
 #Preview {
     NavigationView {
-        Page.home.view()
+        HomeView()
     }
-    .environment(GameManager())
+    .environment(Navigator())
 }

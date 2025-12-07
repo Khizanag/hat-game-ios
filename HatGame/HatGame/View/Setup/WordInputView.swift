@@ -541,7 +541,8 @@ private extension WordInputView {
 // MARK: - Preview
 #Preview {
     NavigationView {
-        Page.wordInput.view()
+        WordInputView()
     }
+    .environment(Navigator())
     .environment(GameManager())
 }
