@@ -616,19 +616,53 @@
         }
       }
     },
+    "game.results.playAgain" : {
+      "comment" : "A button label to play again with the same teams.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Play Again"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "თავიდან თამაში"
+          }
+        }
+      }
+    },
+    "game.results.playAgain.note" : {
+      "comment" : "A note explaining that playing again keeps the same teams.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Same teams, new words"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "იგივე გუნდები, ახალი სიტყვები"
+          }
+        }
+      }
+    },
     "game.results.returnToMain" : {
       "comment" : "A button label to return to the home screen.",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Return to Main Page"
+            "value" : "Return to Main"
           }
         },
         "ka" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "მთავარ გვერდზე დაბრუნება"
+            "value" : "მთავარ გვერდზე"
           }
         }
       }

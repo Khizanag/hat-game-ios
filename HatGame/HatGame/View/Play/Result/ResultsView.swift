@@ -40,7 +40,6 @@ struct ResultsView: View {
                 )
             )
             .navigationBarBackButtonHidden()
-            .toolbar { finalToolbar }
             .onAppear {
                 if !isFinal, let currentRound = round {
                     expandedRounds = [currentRound]
@@ -151,12 +150,27 @@ private extension ResultsView {
     @ViewBuilder
     var actionSection: some View {
         if isFinal {
-            newGameButton
+            VStack(spacing: DesignBook.Spacing.md) {
+                playAgainButton
+                returnToMainButton
+            }
         }
     }
 
-    var newGameButton: some View {
-        PrimaryButton(title: String(localized: "game.results.returnToMain"), icon: "house.fill") {
+    var playAgainButton: some View {
+        VStack(spacing: DesignBook.Spacing.xs) {
+            PrimaryButton(title: String(localized: "game.results.playAgain"), icon: "arrow.counterclockwise.circle.fill") {
+                handlePlayAgain()
+            }
+
+            Text("game.results.playAgain.note")
+                .font(DesignBook.Font.caption)
+                .foregroundColor(DesignBook.Color.Text.secondary)
+        }
+    }
+
+    var returnToMainButton: some View {
+        SecondaryButton(title: String(localized: "game.results.returnToMain"), icon: "house.fill") {
             handleReturnToMain()
         }
     }
@@ -207,21 +221,15 @@ private extension ResultsView {
         team.color
     }
 
+    func handlePlayAgain() {
+        gameManager.resetForNewGame()
+        navigator.dismissToRoot()
+        navigator.push(.wordSettings)
+    }
+
     func handleReturnToMain() {
         navigator.dismissToRoot()
         navigator.dismiss()
-    }
-
-    @ToolbarContentBuilder
-    var finalToolbar: some ToolbarContent {
-        if isFinal {
-            ToolbarItem(placement: .automatic) {
-                Button(String(localized: "common.buttons.close")) {
-                    navigator.dismissToRoot()
-                }
-                .foregroundColor(DesignBook.Color.Text.accent)
-            }
-        }
     }
 }
 

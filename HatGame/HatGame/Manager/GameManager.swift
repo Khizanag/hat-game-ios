@@ -153,6 +153,24 @@ final class GameManager {
     func markPlayEndedWithTimeOut() {
         shouldRotateRoles = true
     }
+
+    func resetForNewGame() {
+        // Reset round iterator
+        roundIterator = GameConfiguration.rounds.makeIterator()
+        currentRound = nil
+        currentWord = nil
+        currentTeamIndex = 0
+
+        // Clear game state but keep teams
+        remainingWords = []
+        teamExplainerIndices = [:]
+        teamsWithLockedRoles = []
+        teamRemainingTimes = [:]
+        shouldRotateRoles = true
+
+        // Clear words - they need to be re-entered
+        configuration.words = []
+    }
 }
 
 // MARK: - Setup
