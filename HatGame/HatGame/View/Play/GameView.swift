@@ -35,7 +35,13 @@ struct GameView: View {
             }
             .toolbar { gameToolbar }
             .onAppear {
-                word = gameManager.currentWord!
+                guard let currentWord = gameManager.currentWord else {
+                    // Edge case: View appeared but no word available (race condition)
+                    // This can happen when all words are guessed and navigation is processing
+                    stopTimer()
+                    return
+                }
+                word = currentWord
                 startTimer()
             }
             .onDisappear {
@@ -266,6 +272,10 @@ private extension GameView {
     }
 
     func markAsGuessed() {
+        guard gameManager.currentWord != nil else {
+            // Safety check: prevent duplicate calls when word is already processed
+            return
+        }
         guessedWords.append(word)
         gameManager.commitWordGuess()
     }

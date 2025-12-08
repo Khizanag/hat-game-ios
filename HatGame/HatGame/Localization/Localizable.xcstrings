@@ -214,6 +214,7 @@
     },
     "common.buttons.close" : {
       "comment" : "Generic close button label.",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {

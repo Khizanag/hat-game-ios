@@ -62,7 +62,11 @@ final class GameManager {
     }
 
     func commitWordGuess() {
-        guard let currentWord, let currentRound else { fatalError("No current word") }
+        guard let currentWord, let currentRound else {
+            // Safety: This should never happen in normal flow, but prevents crash
+            print("⚠️ Warning: commitWordGuess called with no current word or round")
+            return
+        }
 
         historyManager.saveThatTeamGuessedWord(word: currentWord, for: currentTeam, round: currentRound)
 
