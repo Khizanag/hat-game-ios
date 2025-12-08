@@ -79,6 +79,7 @@ final class GameManager {
 
         if currentWord != nil { // Current round is not finished
             setNextTeam()
+            currentWord = remainingWords.randomElement()
             shouldRotateRoles = true // Reset for next team
         } else { // Current round is finished
             setUpNextRound()
