@@ -2,7 +2,7 @@
 //  View+FooterGradient.swift
 //  HatGame
 //
-//  Created by Claude Code
+//  Created by Giga Khizanishvili
 //
 
 import SwiftUI

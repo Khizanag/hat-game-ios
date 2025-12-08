@@ -2,10 +2,8 @@
 //  PlayCompletionReason.swift
 //  HatGame
 //
-//  Created by Claude Code
+//  Created by Giga Khizanishvili
 //
-
-import Foundation
 
 enum PlayCompletionReason {
     case timeExpired

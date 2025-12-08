@@ -5,7 +5,6 @@
 //  Created by Giga Khizanishvili on 16.11.25.
 //
 
-import Foundation
 import SwiftUI
 
 struct TeamDefaultColorGenerator {

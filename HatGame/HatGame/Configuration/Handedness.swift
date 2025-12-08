@@ -2,7 +2,7 @@
 //  Handedness.swift
 //  HatGame
 //
-//  Created by Claude Code
+//  Created by Giga Khizanishvili
 //
 
 import Foundation
