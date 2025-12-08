@@ -950,6 +950,41 @@
         }
       }
     },
+    "home.director.label" : {
+      "comment" : "Label for game director credit.",
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Game Director"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "თამაშის რეჟისორი"
+          }
+        }
+      }
+    },
+    "home.director.name" : {
+      "comment" : "Name of the game director.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Levan Karanadze"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ლევან ყარანაძე"
+          }
+        }
+      }
+    },
     "home.howToPlay.title" : {
       "comment" : "A title for the instructions card on the home screen.",
       "localizations" : {
@@ -1099,40 +1134,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "თამაშის დაწყება"
-          }
-        }
-      }
-    },
-    "home.director.label" : {
-      "comment" : "Label for game director credit.",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Game Director"
-          }
-        },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "თამაშის რეჟისორი"
-          }
-        }
-      }
-    },
-    "home.director.name" : {
-      "comment" : "Name of the game director.",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Levan Karanadze"
-          }
-        },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ლევან ყარანაძე"
           }
         }
       }
@@ -2162,6 +2163,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "შექმნა გიგა ხიზანიშვილმა"
+          }
+        }
+      }
+    },
+    "settings.developerInfo.credits.rulesExplainer" : {
+      "comment" : "Description for the person who explained the game rules.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keeper of the Sacred Rules"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "წესების მემატიანე"
+          }
+        }
+      }
+    },
+    "settings.developerInfo.credits.title" : {
+      "comment" : "A section header that says \"Credits\".",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Credits"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "მადლობა"
           }
         }
       }

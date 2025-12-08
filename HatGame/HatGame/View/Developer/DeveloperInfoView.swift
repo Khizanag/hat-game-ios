@@ -15,9 +15,9 @@ struct DeveloperInfoView: View {
         ScrollView {
             VStack(spacing: DesignBook.Spacing.xl) {
                 headerText
-                directorCredit
                 aboutSection
                 technologiesSection
+                creditsSection
                 testModeSection
                 contactSection
             }
@@ -38,39 +38,64 @@ private extension DeveloperInfoView {
             .padding(.horizontal, DesignBook.Spacing.sm)
     }
 
-    var directorCredit: some View {
-        GameCard {
-            HStack(spacing: DesignBook.Spacing.md) {
-                CircularIconContainer(
-                    icon: "star.fill",
-                    size: DesignBook.Size.cardMedium,
-                    iconSize: 24,
-                    color: .white,
-                    gradientColors: [
-                        DesignBook.Color.Text.accent,
-                        DesignBook.Color.Text.accent.opacity(DesignBook.Opacity.semiTransparent)
-                    ],
-                    hasShadow: true
-                )
+    // MARK: - Credits Section
+    var creditsSection: some View {
+        SettingsSection(
+            title: String(localized: "settings.developerInfo.credits.title")
+        ) {
+            VStack(spacing: DesignBook.Spacing.md) {
+                HStack(spacing: DesignBook.Spacing.sm) {
+                    Image(systemName: "star.circle.fill")
+                        .font(DesignBook.Font.body)
+                        .foregroundColor(.yellow)
 
-                VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
-                    Text("home.director.label")
-                        .font(DesignBook.Font.caption)
-                        .foregroundColor(DesignBook.Color.Text.secondary)
-
-                    Text("home.director.name")
+                    Text("settings.developerInfo.credits.title")
                         .font(DesignBook.Font.headline)
                         .foregroundColor(DesignBook.Color.Text.primary)
+
+                    Spacer()
                 }
 
-                Spacer()
+                HStack(alignment: .center, spacing: DesignBook.Spacing.sm) {
+                    Image(systemName: "person.fill")
+                        .font(DesignBook.Font.body)
+                        .foregroundColor(.yellow)
 
-                Image(systemName: "sparkles")
-                    .font(DesignBook.IconFont.medium)
-                    .foregroundColor(DesignBook.Color.Text.accent)
-                    .rotationEffect(.degrees(15))
+                    VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
+                        Text("home.director.name")
+                            .font(DesignBook.Font.body)
+                            .foregroundColor(DesignBook.Color.Text.primary)
+
+                        HStack(spacing: DesignBook.Spacing.xs) {
+                            Image(systemName: "sparkles")
+                                .font(DesignBook.Font.caption)
+                                .foregroundStyle(
+                                    LinearGradient(
+                                        colors: [.yellow, .orange],
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    )
+                                )
+
+                            Text("settings.developerInfo.credits.rulesExplainer")
+                                .font(DesignBook.Font.caption)
+                                .italic()
+                                .foregroundStyle(
+                                    LinearGradient(
+                                        colors: [.yellow, .orange],
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    )
+                                )
+                        }
+                    }
+
+                    Spacer()
+                }
             }
             .padding(DesignBook.Spacing.md)
+            .background(DesignBook.Color.Background.card)
+            .cornerRadius(DesignBook.Size.cardCornerRadius)
         }
     }
 
