@@ -41,12 +41,12 @@ final class GameManager {
 
     // MARK: - Initialization
     init(configuration: GameConfiguration? = nil) {
-        if let configuration {
-            self.configuration = configuration
+        self.configuration = if let configuration {
+            configuration
         } else if AppConfiguration.shared.isTestMode {
-            self.configuration = GameConfiguration.mockForTesting
+            .mockForTesting
         } else {
-            self.configuration = GameConfiguration()
+            GameConfiguration()
         }
     }
 
