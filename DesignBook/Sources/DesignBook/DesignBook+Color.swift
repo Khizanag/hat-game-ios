@@ -10,29 +10,29 @@ import SwiftUI
 extension DesignBook {
     public enum Color {
         public enum Background {
-            public static let primary = SwiftUI.Color(hex: "0D0D0D")
-            public static let secondary = SwiftUI.Color(hex: "1C1C1C")
-            public static let card = SwiftUI.Color(hex: "262626")
+            public static let primary = SwiftUI.Color(.Background.primary)
+            public static let secondary = SwiftUI.Color(.Background.secondary)
+            public static let card = SwiftUI.Color(.Background.card)
         }
 
         public enum Text {
-            public static let primary = SwiftUI.Color(hex: "FFFFFF")
-            public static let secondary = SwiftUI.Color(hex: "A0A0A0")
-            public static let tertiary = SwiftUI.Color(hex: "666666")
-            public static let accent = SwiftUI.Color(hex: "007AFF")
+            public static let primary = SwiftUI.Color(.Text.primary)
+            public static let secondary = SwiftUI.Color(.Text.secondary)
+            public static let tertiary = SwiftUI.Color(.Text.tertiary)
+            public static let accent = SwiftUI.Color(.Text.accent)
         }
 
         public enum Status {
-            public static let success = SwiftUI.Color(hex: "34C759")
-            public static let error = SwiftUI.Color(hex: "FF3B30")
-            public static let warning = SwiftUI.Color(hex: "FF9500")
+            public static let success = SwiftUI.Color(.Status.success)
+            public static let error = SwiftUI.Color(.Status.error)
+            public static let warning = SwiftUI.Color(.Status.warning)
         }
 
         public enum Button {
-            public static let primary = SwiftUI.Color(hex: "007AFF")
-            public static let primaryPressed = SwiftUI.Color(hex: "0051D5")
-            public static let secondary = SwiftUI.Color(hex: "2C2C2E")
-            public static let secondaryPressed = SwiftUI.Color(hex: "1C1C1E")
+            public static let primary = SwiftUI.Color(.Button.primary)
+            public static let primaryPressed = SwiftUI.Color(.Button.primaryPressed)
+            public static let secondary = SwiftUI.Color(.Button.secondary)
+            public static let secondaryPressed = SwiftUI.Color(.Button.secondaryPressed)
         }
     }
 }

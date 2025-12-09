@@ -39,6 +39,8 @@ struct TeamSetupView: View {
                         }
                     )
                 }
+                .environment(navigator)
+                .environment(gameManager)
             }
             .sheet(isPresented: editTeamBinding) {
                 editTeamSheet
@@ -218,6 +220,8 @@ private extension TeamSetupView {
             NavigationView {
                 TeamEditView(team: team)
             }
+            .environment(navigator)
+            .environment(gameManager)
         }
     }
 

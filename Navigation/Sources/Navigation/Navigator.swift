@@ -9,6 +9,7 @@ import Combine
 import SwiftUI
 import Observation
 
+@MainActor
 @Observable
 public final class Navigator {
     internal var navigationPath: [AnyPage] = []

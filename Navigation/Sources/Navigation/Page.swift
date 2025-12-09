@@ -7,11 +7,11 @@
 
 import SwiftUI
 
-public struct Page<Content: View>: Hashable, Identifiable {
+public struct Page<Content: View>: Hashable, Identifiable, Sendable where Content: Sendable {
     public let id: String
-    @ViewBuilder private let content: () -> Content
+    @ViewBuilder private let content: @MainActor @Sendable () -> Content
 
-    public init(id: String, @ViewBuilder view: @escaping @MainActor () -> Content) {
+    public init(id: String, @ViewBuilder view: @escaping @MainActor @Sendable () -> Content) {
         self.id = id
         self.content = view
     }
@@ -31,17 +31,19 @@ public struct Page<Content: View>: Hashable, Identifiable {
     }
 
     // Convert to type-erased version for storage
+    @MainActor
     internal func eraseToAnyPage() -> AnyPage {
-        AnyPage(id: id, viewBuilder: { AnyView(self.view()) })
+        let viewBuilder = self.content
+        return AnyPage(id: id, viewBuilder: { AnyView(viewBuilder()) })
     }
 }
 
 // Internal type-erased page for storage in Navigator
-internal struct AnyPage: Hashable, Identifiable {
+internal struct AnyPage: Hashable, Identifiable, Sendable {
     let id: String
-    private let viewBuilder: @MainActor () -> AnyView
+    private let viewBuilder: @MainActor @Sendable () -> AnyView
 
-    init(id: String, viewBuilder: @escaping @MainActor () -> AnyView) {
+    init(id: String, viewBuilder: @escaping @MainActor @Sendable () -> AnyView) {
         self.id = id
         self.viewBuilder = viewBuilder
     }

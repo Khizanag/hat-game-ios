@@ -17,7 +17,7 @@ struct HatGameApp: App {
             NavigationView {
                 HomeView()
             }
-            .environment(appConfiguration)
+            .needsCloseButton()
             .environment(Navigator())
             .environment(GameManager())
             .preferredColorScheme(appConfiguration.colorScheme.colorScheme)

@@ -26,6 +26,7 @@ struct WordSettingsView: View {
             .onAppear {
                 selectedWordCount = appConfiguration.defaultWordsPerPlayer
             }
+            .background()
     }
 }
 
