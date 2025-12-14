@@ -32,32 +32,8 @@ public struct Page<Content: View>: Hashable, Identifiable, Sendable where Conten
 
     // Convert to type-erased version for storage
     @MainActor
-    internal func eraseToAnyPage() -> AnyPage {
+    public func eraseToAnyPage() -> AnyPage {
         let viewBuilder = self.content
         return AnyPage(id: id, viewBuilder: { AnyView(viewBuilder()) })
-    }
-}
-
-// Internal type-erased page for storage in Navigator
-internal struct AnyPage: Hashable, Identifiable, Sendable {
-    let id: String
-    private let viewBuilder: @MainActor @Sendable () -> AnyView
-
-    init(id: String, viewBuilder: @escaping @MainActor @Sendable () -> AnyView) {
-        self.id = id
-        self.viewBuilder = viewBuilder
-    }
-
-    @MainActor @ViewBuilder
-    func view() -> some View {
-        viewBuilder()
-    }
-
-    static func == (lhs: AnyPage, rhs: AnyPage) -> Bool {
-        lhs.id == rhs.id
-    }
-
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
     }
 }
