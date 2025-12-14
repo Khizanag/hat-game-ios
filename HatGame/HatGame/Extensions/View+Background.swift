@@ -12,7 +12,6 @@ extension View {
     func setDefaultBackground() -> some View {
         background(
             DesignBook.Color.Background.primary
-                .ignoresSafeArea()
         )
     }
 
@@ -23,17 +22,11 @@ extension View {
                 .setDefaultBackground()
                 .navigationTitle(title)
                 .navigationBarTitleDisplayMode(.inline)
-                .toolbarColorScheme(.dark, for: .navigationBar)
-                .toolbarBackground(DesignBook.Color.Background.primary, for: .navigationBar)
-                .toolbarBackground(.visible, for: .navigationBar)
                 .needsCloseButton()
                 .closeButtonToolbar()
         } else {
             self
                 .setDefaultBackground()
-                .toolbarColorScheme(.dark, for: .navigationBar)
-                .toolbarBackground(DesignBook.Color.Background.primary, for: .navigationBar)
-                .toolbarBackground(.visible, for: .navigationBar)
                 .needsCloseButton()
                 .closeButtonToolbar()
         }

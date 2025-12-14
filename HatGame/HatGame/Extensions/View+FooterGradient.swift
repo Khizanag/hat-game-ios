@@ -14,24 +14,18 @@ extension View {
     func withFooterGradient() -> some View {
         self
             .background {
-                VStack(spacing: 0) {
-                    LinearGradient(
-                        gradient: Gradient(stops: [
-                            .init(color: DesignBook.Color.Background.primary.opacity(0), location: 0.0),
-                            .init(color: DesignBook.Color.Background.primary.opacity(0.02), location: 0.3),
-                            .init(color: DesignBook.Color.Background.primary.opacity(0.1), location: 0.5),
-                            .init(color: DesignBook.Color.Background.primary.opacity(0.4), location: 0.7),
-                            .init(color: DesignBook.Color.Background.primary.opacity(0.8), location: 0.85),
-                            .init(color: DesignBook.Color.Background.primary, location: 1.0)
-                        ]),
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                    .frame(height: DesignBook.Size.footerGradientHeight)
-
-                    DesignBook.Color.Background.primary
-                }
-                .ignoresSafeArea(edges: .bottom)
+                LinearGradient(
+                    gradient: Gradient(stops: [
+                        .init(color: DesignBook.Color.Background.primary.opacity(0), location: 0.0),
+                        .init(color: DesignBook.Color.Background.primary.opacity(0.02), location: 0.3),
+                        .init(color: DesignBook.Color.Background.primary.opacity(0.1), location: 0.5),
+                        .init(color: DesignBook.Color.Background.primary.opacity(0.4), location: 0.7),
+                        .init(color: DesignBook.Color.Background.primary.opacity(0.8), location: 0.85),
+                        .init(color: DesignBook.Color.Background.primary, location: 1.0)
+                    ]),
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
             }
     }
 }
