@@ -39,6 +39,8 @@ struct NextTeamView: View {
                 NavigationView {
                     ResultsView()
                 }
+                .environment(gameManager)
+                .environment(navigator)
             }
             .onAppear {
                 if let explainerIndex = gameManager.getExplainerIndex(for: team) {

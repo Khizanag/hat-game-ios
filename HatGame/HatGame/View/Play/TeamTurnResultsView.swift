@@ -25,6 +25,8 @@ struct TeamTurnResultsView: View {
                 NavigationView {
                     ResultsView()
                 }
+                .environment(gameManager)
+                .environment(navigator)
             }
     }
 }
