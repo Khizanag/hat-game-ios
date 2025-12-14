@@ -99,22 +99,17 @@ final class AppConfiguration {
             print("Alternate icons are not supported on this device")
             return
         }
-        
+
         let desiredName = icon.alternateIconName
         let currentName = UIApplication.shared.alternateIconName
-        
+
         if currentName == desiredName {
             return
         }
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            UIApplication.shared.setAlternateIconName(desiredName) { error in
-                if let error = error {
-                    print("Failed to set app icon '\(desiredName ?? "primary")': \(error.localizedDescription)")
-                    print("Error domain: \(error._domain), code: \(error._code)")
-                } else {
-                    print("Successfully set app icon to '\(desiredName ?? "primary")'")
-                }
+        UIApplication.shared.setAlternateIconName(desiredName) { error in
+            if let error = error {
+                print("Failed to set app icon '\(desiredName ?? "primary")': \(error.localizedDescription)")
             }
         }
         #endif

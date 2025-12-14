@@ -19,11 +19,33 @@ enum AppIcon: String, CaseIterable, Identifiable {
     }
 
     var title: String {
-        String(localized: "settings.appIcon.\(identifier).title")
+        switch self {
+        case .classic:
+            String(localized: "settings.appIcon.classic.title")
+        case .sunset:
+            String(localized: "settings.appIcon.sunset.title")
+        case .neon:
+            String(localized: "settings.appIcon.neon.title")
+        case .vintage:
+            String(localized: "settings.appIcon.vintage.title")
+        case .minimal:
+            String(localized: "settings.appIcon.minimal.title")
+        }
     }
 
     var subtitle: String {
-        String(localized: "settings.appIcon.\(identifier).subtitle")
+        switch self {
+        case .classic:
+            String(localized: "settings.appIcon.classic.subtitle")
+        case .sunset:
+            String(localized: "settings.appIcon.sunset.subtitle")
+        case .neon:
+            String(localized: "settings.appIcon.neon.subtitle")
+        case .vintage:
+            String(localized: "settings.appIcon.vintage.subtitle")
+        case .minimal:
+            String(localized: "settings.appIcon.minimal.subtitle")
+        }
     }
 
     var alternateIconName: String? {
@@ -74,21 +96,6 @@ enum AppIcon: String, CaseIterable, Identifiable {
             [Color.brown, Color.orange.opacity(0.7)]
         case .minimal:
             [Color.gray, Color.white.opacity(0.5)]
-        }
-    }
-
-    private var identifier: String {
-        switch self {
-        case .classic:
-            "classic"
-        case .sunset:
-            "sunset"
-        case .neon:
-            "neon"
-        case .vintage:
-            "vintage"
-        case .minimal:
-            "minimal"
         }
     }
 }

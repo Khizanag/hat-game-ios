@@ -35,7 +35,7 @@ private extension AppIconSelectionView {
     }
 
     var descriptionText: some View {
-        Text("settings.appIcon.description")
+        Text(String(localized: "settings.appIcon.description"))
             .font(DesignBook.Font.body)
             .foregroundColor(DesignBook.Color.Text.secondary)
             .padding(.horizontal, DesignBook.Spacing.sm)
