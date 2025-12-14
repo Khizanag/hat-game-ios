@@ -25,13 +25,8 @@ public struct NavigationView<RootContent: View>: View {
         }
         .environment(navigator)
         .fullScreenCover(item: $navigator.presentedPage) { page in
-            NavigationStack(path: $navigator.navigationPath) {
-                page.view()
-                    .navigationDestination(for: AnyPage.self) { page in
-                        page.view()
-                    }
-            }
-            .environment(navigator)
+            page.view()
+                .environment(navigator)
         }
         .onReceive(navigator.pleaseDismissViewPublisher) {
             dismiss()
