@@ -40,9 +40,9 @@ extension Page {
         }
     }
 
-    static var teamSetup: Page<TeamSetupView> {
-        Page<TeamSetupView>(id: "teamSetup") {
-            TeamSetupView()
+    static var teamSetup: Page<GameFlowView> {
+        Page<GameFlowView>(id: "teamSetup") {
+            GameFlowView()
         }
     }
 
