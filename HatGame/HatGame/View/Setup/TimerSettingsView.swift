@@ -11,8 +11,9 @@ import Navigation
 
 struct TimerSettingsView: View {
     @Environment(GameManager.self) private var gameManager
-    private let appConfiguration = AppConfiguration.shared
     @Environment(Navigator.self) private var navigator
+
+    private let appConfiguration = AppConfiguration.shared
 
     @State private var selectedDuration: Int
 

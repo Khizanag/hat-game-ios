@@ -14,7 +14,7 @@ struct TeamSetupView: View {
     @Environment(Navigator.self) private var navigator
     private let appConfiguration = AppConfiguration.shared
 
-    @State private var isAddTeamSheetPresented: Bool = false
+    @State private var isAddTeamSheetPresented = false
     @State private var editingTeam: Team?
     @State private var deletingTeam: Team?
     @State private var editMode: EditMode = .inactive
