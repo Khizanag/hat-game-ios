@@ -65,8 +65,12 @@ private extension HomeView {
 
     var actionButtons: some View {
         VStack(spacing: DesignBook.Spacing.md) {
-            PrimaryButton(title: String(localized: "home.startGame"), icon: "play.fill") {
+            PrimaryButton(title: String(localized: "home.localGame"), icon: "person.2.fill") {
                 navigator.present(.teamSetup)
+            }
+
+            PrimaryButton(title: String(localized: "home.onlineGame"), icon: "wifi") {
+                navigator.push(.onlineMenu)
             }
 
             SecondaryButton(title: String(localized: "common.buttons.settings"), icon: "gearshape") {

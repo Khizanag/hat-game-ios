@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		72686A0F2EDB6F8D0006C09D /* DesignBook in Frameworks */ = {isa = PBXBuildFile; productRef = AA0000000000000000000002 /* DesignBook */; };
 		72686BD42EDB72370006C09D /* Navigation in Frameworks */ = {isa = PBXBuildFile; productRef = C27047BB3C7F4864B77B427F /* Navigation */; };
+		AA0000000000000000000004 /* Networking in Frameworks */ = {isa = PBXBuildFile; productRef = AA0000000000000000000005 /* Networking */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -72,6 +73,7 @@
 			files = (
 				72686BD42EDB72370006C09D /* Navigation in Frameworks */,
 				72686A0F2EDB6F8D0006C09D /* DesignBook in Frameworks */,
+				AA0000000000000000000004 /* Networking in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -134,6 +136,7 @@
 			packageProductDependencies = (
 				AA0000000000000000000002 /* DesignBook */,
 				C27047BB3C7F4864B77B427F /* Navigation */,
+				AA0000000000000000000005 /* Networking */,
 			);
 			productName = HatGame;
 			productReference = 725A48222EC9076F00E3EB88 /* HatGame.app */;
@@ -221,6 +224,7 @@
 			packageReferences = (
 				AA0000000000000000000001 /* XCLocalSwiftPackageReference "../DesignBook" */,
 				DECC24037B2C4A7A939F33E0 /* XCLocalSwiftPackageReference "../Navigation" */,
+				AA0000000000000000000003 /* XCLocalSwiftPackageReference "../Networking" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 725A48232EC9076F00E3EB88 /* Products */;
@@ -310,6 +314,7 @@
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = HatGame/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Hat Game";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.board-games";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
@@ -326,7 +331,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.khizanag.Hat-Game";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.khizanag.hat-game";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
@@ -356,6 +361,7 @@
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = HatGame/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Hat Game";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.board-games";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
@@ -372,7 +378,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.khizanag.Hat-Game";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.khizanag.hat-game";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
@@ -654,6 +660,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../DesignBook;
 		};
+		AA0000000000000000000003 /* XCLocalSwiftPackageReference "../Networking" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../Networking;
+		};
 		DECC24037B2C4A7A939F33E0 /* XCLocalSwiftPackageReference "../Navigation" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../Navigation;
@@ -665,6 +675,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = AA0000000000000000000001 /* XCLocalSwiftPackageReference "../DesignBook" */;
 			productName = DesignBook;
+		};
+		AA0000000000000000000005 /* Networking */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AA0000000000000000000003 /* XCLocalSwiftPackageReference "../Networking" */;
+			productName = Networking;
 		};
 		C27047BB3C7F4864B77B427F /* Navigation */ = {
 			isa = XCSwiftPackageProductDependency;

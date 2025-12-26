@@ -6,11 +6,11 @@
 	<dict>
 		<key>CFBundleAlternateIcons</key>
 		<dict>
-			<key>AppIconSunset</key>
+			<key>AppIconMinimal</key>
 			<dict>
 				<key>CFBundleIconFiles</key>
 				<array>
-					<string>AppIconSunset</string>
+					<string>AppIconMinimal</string>
 				</array>
 			</dict>
 			<key>AppIconNeon</key>
@@ -20,18 +20,18 @@
 					<string>AppIconNeon</string>
 				</array>
 			</dict>
+			<key>AppIconSunset</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>AppIconSunset</string>
+				</array>
+			</dict>
 			<key>AppIconVintage</key>
 			<dict>
 				<key>CFBundleIconFiles</key>
 				<array>
 					<string>AppIconVintage</string>
-				</array>
-			</dict>
-			<key>AppIconMinimal</key>
-			<dict>
-				<key>CFBundleIconFiles</key>
-				<array>
-					<string>AppIconMinimal</string>
 				</array>
 			</dict>
 		</dict>
@@ -43,8 +43,6 @@
 			</array>
 		</dict>
 	</dict>
-	<key>CFBundleDisplayName</key>
-	<string>Hat Game</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>remote-notification</string>

@@ -99,4 +99,30 @@ extension Page {
             ResultsView()
         }
     }
+
+    // MARK: - Online Pages
+
+    static var onlineMenu: Page<OnlineMenuView> {
+        Page<OnlineMenuView>(id: "onlineMenu") {
+            OnlineMenuView()
+        }
+    }
+
+    static var createRoom: Page<RoomCreationView> {
+        Page<RoomCreationView>(id: "createRoom") {
+            RoomCreationView()
+        }
+    }
+
+    static var joinRoom: Page<RoomJoinView> {
+        Page<RoomJoinView>(id: "joinRoom") {
+            RoomJoinView()
+        }
+    }
+
+    static func roomLobby(roomCode: String) -> Page<RoomLobbyView> {
+        Page<RoomLobbyView>(id: "roomLobby-\(roomCode)") {
+            RoomLobbyView()
+        }
+    }
 }
