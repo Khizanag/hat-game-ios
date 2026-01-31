@@ -13,6 +13,8 @@ struct HomeView: View {
     @Environment(Navigator.self) private var navigator
     @SceneStorage("HomeView.isHowToPlayExpanded") private var isHowToPlayExpanded: Bool = true
 
+    private let appConfiguration = AppConfiguration.shared
+
     var body: some View {
         content
             .setDefaultBackground()
@@ -69,8 +71,10 @@ private extension HomeView {
                 navigator.present(.teamSetup)
             }
 
-            PrimaryButton(title: String(localized: "home.onlineGame"), icon: "wifi") {
-                navigator.push(.onlineMenu)
+            if appConfiguration.isTestMode {
+                PrimaryButton(title: String(localized: "home.onlineGame"), icon: "wifi") {
+                    navigator.push(.onlineMenu)
+                }
             }
 
             SecondaryButton(title: String(localized: "common.buttons.settings"), icon: "gearshape") {

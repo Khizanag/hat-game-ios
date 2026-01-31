@@ -184,7 +184,7 @@ private extension DeveloperInfoView {
                     set: { appConfiguration.isTestMode = $0 }
                 )) {
                     HStack(spacing: DesignBook.Spacing.sm) {
-                        Image(systemName: appConfiguration.isTestMode ? "testtube.2.fill" : "testtube.2")
+                        Image(systemName: appConfiguration.isTestMode ? "flask.fill" : "flask")
                             .font(DesignBook.Font.body)
                             .foregroundColor(.orange)
                             .contentTransition(.symbolEffect(.replace))
