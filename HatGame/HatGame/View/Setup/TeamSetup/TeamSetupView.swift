@@ -30,7 +30,7 @@ struct TeamSetupView: View {
     var body: some View {
         content
             .environment(\.editMode, $editMode)
-            .setDefaultStyle(title: String(localized: "teamSetup.title"))
+            .setDefaultStyle(title: String(localized: "teamSetup.title"), showCloseButton: true)
             .sheet(isPresented: $isAddTeamSheetPresented) {
                 NavigationView {
                     AddTeamView(

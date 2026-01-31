@@ -16,19 +16,29 @@ extension View {
     }
 
     @ViewBuilder
-    func setDefaultStyle(title: String? = nil) -> some View {
+    func setDefaultStyle(title: String? = nil, showCloseButton: Bool = false) -> some View {
         if let title {
-            self
-                .setDefaultBackground()
-                .navigationTitle(title)
-                .navigationBarTitleDisplayMode(.inline)
-                .needsCloseButton()
-                .closeButtonToolbar()
+            if showCloseButton {
+                self
+                    .setDefaultBackground()
+                    .navigationTitle(title)
+                    .navigationBarTitleDisplayMode(.inline)
+                    .closeButtonToolbar()
+            } else {
+                self
+                    .setDefaultBackground()
+                    .navigationTitle(title)
+                    .navigationBarTitleDisplayMode(.inline)
+            }
         } else {
-            self
-                .setDefaultBackground()
-                .needsCloseButton()
-                .closeButtonToolbar()
+            if showCloseButton {
+                self
+                    .setDefaultBackground()
+                    .closeButtonToolbar()
+            } else {
+                self
+                    .setDefaultBackground()
+            }
         }
     }
 }
