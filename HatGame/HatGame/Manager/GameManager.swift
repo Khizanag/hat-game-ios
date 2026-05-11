@@ -6,7 +6,10 @@
 //
 
 import Observation
+import OSLog
 import SwiftUI
+
+private let logger = Logger(subsystem: "com.khizanag.hat-game", category: "GameManager")
 
 @Observable
 final class GameManager {
@@ -20,7 +23,8 @@ final class GameManager {
     private var roundIterator = GameConfiguration.rounds.makeIterator()
     var currentRound: GameRound?
 
-    var isGameFinished: Bool { currentRound == nil } // or currentWord == nil
+    /// True once the round iterator has run out — the game is over and no more rounds will play.
+    var isGameFinished: Bool { currentRound == nil }
 
     // MARK: - Words
     private var remainingWords: Set<Word> = []
@@ -63,8 +67,8 @@ final class GameManager {
 
     func commitWordGuess() {
         guard let currentWord, let currentRound else {
-            // Safety: This should never happen in normal flow, but prevents crash
-            print("⚠️ Warning: commitWordGuess called with no current word or round")
+            // Safety: this should never happen in normal flow, but prevents a crash.
+            logger.warning("commitWordGuess called with no current word or round")
             return
         }
 
@@ -73,6 +77,19 @@ final class GameManager {
         remainingWords.remove(currentWord)
 
         self.currentWord = remainingWords.randomElement()
+    }
+
+    /// Skip the current word without scoring it.
+    /// The word stays in the hat for the next try; the next word is chosen randomly.
+    /// If only one word remains, the same word stays (nothing to swap with).
+    func skipCurrentWord() {
+        guard let currentWord, remainingWords.count > 1 else { return }
+
+        // Pick a different word so the player isn't handed the same one back.
+        let candidates = remainingWords.subtracting([currentWord])
+        if let next = candidates.randomElement() {
+            self.currentWord = next
+        }
     }
 
     func prepareForNewPlay() {
@@ -239,40 +256,35 @@ extension GameManager {
 
 // MARK: - Private
 private extension GameManager {
+    /// Advance to the next round, preserving the current team's leftover time so they
+    /// don't get an unfair fresh-timer start, and resetting everyone else's time pool.
     func setUpNextRound() {
-        resetWords()
-        // Preserve current team's remaining time if they finished the round early
-        // Clear all other teams' times
-        let currentTeamTime = teamRemainingTimes[currentTeam.id]
-        resetTeamTimes()
-        if let currentTeamTime {
-            teamRemainingTimes[currentTeam.id] = currentTeamTime
+        // Preserve only the current team's leftover time (they finished the round early).
+        let preserved = teamRemainingTimes[currentTeam.id]
+        teamRemainingTimes.removeAll()
+        if let preserved {
+            teamRemainingTimes[currentTeam.id] = preserved
         }
 
         currentRound = roundIterator.next()
 
         if let currentRound {
+            remainingWords = Set(configuration.words)
             historyManager.prepareForNewRound(currentRound)
+            currentWord = remainingWords.randomElement()
         } else {
             finishGame()
         }
-
-        currentWord = remainingWords.randomElement()
     }
 
     func setNextTeam() {
         currentTeamIndex = (currentTeamIndex + 1) % configuration.teams.count
     }
 
-    func resetWords() {
-        remainingWords = Set(configuration.words)
-    }
-
-    func resetTeamTimes() {
-        teamRemainingTimes.removeAll()
-    }
-
+    /// Clean up state once the final round has been played.
     func finishGame() {
-        // TODO: Implement
+        remainingWords = []
+        currentWord = nil
+        teamRemainingTimes.removeAll()
     }
 }
