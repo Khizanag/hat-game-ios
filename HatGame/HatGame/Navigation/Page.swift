@@ -102,6 +102,12 @@ extension Page {
 
     // MARK: - Online Pages
 
+    static var onlineFlow: Page<OnlineFlowView> {
+        Page<OnlineFlowView>(id: "onlineFlow") {
+            OnlineFlowView()
+        }
+    }
+
     static var onlineMenu: Page<OnlineMenuView> {
         Page<OnlineMenuView>(id: "onlineMenu") {
             OnlineMenuView()
