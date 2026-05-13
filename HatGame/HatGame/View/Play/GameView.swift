@@ -5,203 +5,156 @@
 //  Created by Giga Khizanishvili on 15.11.25.
 //
 
-import SwiftUI
 import DesignBook
 import Navigation
+import SwiftUI
 
 struct GameView: View {
     @Environment(GameManager.self) private var gameManager
     @Environment(Navigator.self) private var navigator
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    let round: GameRound
 
     @State private var timer: Timer?
     @State private var remainingSeconds: Int = 0
     @State private var showingGiveUpConfirmation: Bool = false
     @State private var isPaused: Bool = false
-
-    let round: GameRound
-
     @State private var guessedWords: [Word] = []
+    @State private var hasPlayedFinalWarning: Bool = false
 
-    @State private var word: Word = .init(text: "")
-
-    // MARK: - Body
     var body: some View {
         content
             .setDefaultBackground()
-            .overlay {
-                if isPaused {
-                    pauseOverlay
-                }
-            }
+            .navigationBarBackButtonHidden()
             .toolbar { gameToolbar }
-            .onAppear {
-                guard let currentWord = gameManager.currentWord else {
-                    // Edge case: View appeared but no word available (race condition)
-                    // This can happen when all words are guessed and navigation is processing
-                    stopTimer()
-                    return
-                }
-                word = currentWord
-                startTimer()
-            }
-            .onDisappear {
-                stopTimer()
+            .onAppear(perform: handleAppear)
+            .onDisappear(perform: stopTimer)
+            .onChange(of: gameManager.currentWord) { _, newWord in
+                handleCurrentWordChange(newWord)
             }
             .alert(String(localized: "game.giveUp.title"), isPresented: $showingGiveUpConfirmation) {
                 giveUpAlertActions
             } message: {
-                giveUpAlertMessage
+                Text("game.giveUp.confirmationMessage")
             }
-            .navigationBarBackButtonHidden()
-            .onChange(of: gameManager.currentWord) { oldValue, newValue in
-                if let newValue {
-                    word = newValue
-                } else {
-                    // All words guessed - don't rotate roles and save remaining time
-                    stopTimer()
-                    gameManager.markPlayEndedWithTimeRemaining()
-                    if remainingSeconds > 0 {
-                        gameManager.saveRemainingTime(remainingSeconds, for: gameManager.currentTeam)
-                    }
-                    navigator.push(.teamTurnResults(guessedWords: guessedWords, completionReason: .allWordsGuessed))
+            .overlay {
+                if isPaused {
+                    GamePausedOverlay(onResume: togglePause)
+                        .transition(.opacity)
                 }
             }
     }
 }
 
-// MARK: - Components
+// MARK: - Subviews
 private extension GameView {
     var content: some View {
-        VStack(spacing: DesignBook.Spacing.md) {
-            roundInfoCard
+        VStack(spacing: DesignBook.Spacing.lg) {
+            GameHeaderBar(
+                round: round,
+                team: gameManager.currentTeam,
+                guessedCount: guessedWords.count
+            )
+
+            CircularTimerView(
+                remainingSeconds: remainingSeconds,
+                totalSeconds: gameManager.configuration.roundDuration,
+                isPaused: isPaused,
+                tint: gameManager.currentTeam.color
+            )
+            .frame(width: 168, height: 168)
+            .padding(.top, DesignBook.Spacing.sm)
 
             wordSection
 
-            progressCard
+            actionButtons
+
+            GameProgressFooter(
+                passed: gameManager.configuration.words.count - gameManager.remainingWordCount,
+                total: gameManager.configuration.words.count,
+                tint: gameManager.currentTeam.color
+            )
         }
         .padding(.top, DesignBook.Spacing.lg)
         .paddingHorizontalDefault()
     }
 
-    @ToolbarContentBuilder
-    var gameToolbar: some ToolbarContent {
-        ToolbarItem(placement: .principal) {
-            Text(formatTime(remainingSeconds))
-                .font(DesignBook.Font.title3)
-                .foregroundColor(DesignBook.Color.Text.accent)
-                .monospacedDigit()
-        }
-
-        ToolbarItem(placement: .automatic) {
-            Button {
-                togglePause()
-            } label: {
-                Image(systemName: isPaused ? "play.fill" : "pause.fill")
-                    .foregroundColor(DesignBook.Color.Text.primary)
-            }
-        }
-
-        ToolbarItem(placement: .cancellationAction) {
-            DestructiveButton(
-                action: {
-                    showingGiveUpConfirmation = true
-                },
-                label: {
-                    Label(String(localized: "game.giveUp.button"), systemImage: "hand.raised.fill")
-                }
-            )
-        }
-    }
-
-    var roundInfoCard: some View {
-        HeaderCard(
-            title: round.title,
-            description: round.description
-        ) {
-            Text(String(format: String(localized: "game.currentTeamLabel"), gameManager.currentTeam.name))
-                .font(DesignBook.Font.headline)
-                .foregroundColor(gameManager.currentTeam.color)
-        }
-    }
-
     @ViewBuilder
     var wordSection: some View {
         if let word = gameManager.currentWord {
-            activeWordCard(for: word)
-        }
-    }
-
-    func activeWordCard(for word: Word) -> some View {
-        GameCard {
-            VStack(spacing: 0) {
-                Spacer()
-
-                Text(word.text)
-                    .font(DesignBook.Font.largeTitle)
-                    .foregroundColor(DesignBook.Color.Text.primary)
-                    .multilineTextAlignment(.center)
-
-                Spacer()
-
-                PrimaryButton(title: String(localized: "game.gotIt"), icon: "checkmark.circle.fill") {
-                    markAsGuessed()
-                }
-            }
-        }
-    }
-
-    var progressCard: some View {
-        GameCard {
-            VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
-                let passedWordCount = gameManager.configuration.words.count - gameManager.remainingWordCount
-                let totalWordsCount = gameManager.configuration.words.count
-
-                HStack {
-                    Text("game.progress.title")
-                        .font(DesignBook.Font.headline)
-                        .foregroundColor(DesignBook.Color.Text.primary)
-
-                    Spacer()
-
-                    Text("\(passedWordCount)/\(totalWordsCount)")
-                        .font(DesignBook.Font.headline)
-                        .foregroundColor(DesignBook.Color.Text.accent)
-                }
-
-                ProgressView(
-                    value: Double(passedWordCount),
-                    total: Double(totalWordsCount)
+            WordCard(
+                word: word.text,
+                teamTint: gameManager.currentTeam.color,
+                onGuessed: markCurrentWordGuessed,
+                onSkip: skipCurrentWord,
+                isSkipEnabled: gameManager.remainingWordCount > 1
+            )
+            .id(word.id)
+            .transition(
+                .asymmetric(
+                    insertion: .opacity.combined(with: .scale(scale: 0.92)),
+                    removal: .opacity
                 )
-                .tint(DesignBook.Color.Text.accent)
-            }
+            )
+        } else {
+            // Brief placeholder while transitioning to the turn results screen.
+            RoundedRectangle(cornerRadius: 32, style: .continuous)
+                .fill(DesignBook.Color.Background.card)
+                .aspectRatio(1.05, contentMode: .fit)
+                .opacity(0.4)
         }
     }
 
-    var pauseOverlay: some View {
-        ZStack {
-            Rectangle()
-                .fill(.thinMaterial)
-                .ignoresSafeArea()
-
-            VStack(spacing: DesignBook.Spacing.xl) {
-                Image(systemName: "pause.circle.fill")
-                    .font(DesignBook.IconFont.emoji)
-                    .foregroundColor(DesignBook.Color.Text.primary)
-
-                Text("game.paused.title")
-                    .font(DesignBook.Font.largeTitle)
-                    .foregroundColor(DesignBook.Color.Text.primary)
-
-                PrimaryButton(title: String(localized: "common.buttons.continue"), icon: "play.fill") {
-                    isPaused = false
-                }
-                .frame(width: 216)
+    var actionButtons: some View {
+        HStack(spacing: DesignBook.Spacing.md) {
+            Button(action: skipCurrentWord) {
+                Label("game.skip", systemImage: "arrow.uturn.forward")
+                    .font(DesignBook.Font.headline)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, DesignBook.Spacing.sm)
             }
+            .buttonStyle(.glass)
+            .tint(DesignBook.Color.Status.warning)
+            .disabled(isSkipDisabled)
+            .opacity(isSkipDisabled ? DesignBook.Opacity.disabled : DesignBook.Opacity.enabled)
+
+            Button(action: markCurrentWordGuessed) {
+                Label("game.gotIt", systemImage: "checkmark.circle.fill")
+                    .font(DesignBook.Font.headline)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, DesignBook.Spacing.sm)
+            }
+            .buttonStyle(.glassProminent)
+            .tint(DesignBook.Color.Status.success)
+            .disabled(isPaused || gameManager.currentWord == nil)
         }
     }
 
-    var timeUsed: Int {
-        max(gameManager.configuration.roundDuration - remainingSeconds, 0)
+    @ToolbarContentBuilder
+    var gameToolbar: some ToolbarContent {
+        ToolbarItem(placement: .cancellationAction) {
+            Button {
+                showingGiveUpConfirmation = true
+            } label: {
+                Label("game.giveUp.button", systemImage: "flag")
+                    .foregroundStyle(DesignBook.Color.Status.error)
+            }
+            .buttonStyle(.plain)
+        }
+
+        ToolbarItem(placement: .primaryAction) {
+            Button(action: togglePause) {
+                Image(systemName: isPaused ? "play.fill" : "pause.fill")
+                    .foregroundStyle(DesignBook.Color.Text.primary)
+                    .padding(8)
+                    .background {
+                        Circle().fill(DesignBook.Color.Background.card)
+                    }
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(isPaused ? Text("game.timer.resume") : Text("game.timer.paused"))
+        }
     }
 
     @ViewBuilder
@@ -210,24 +163,50 @@ private extension GameView {
             showingGiveUpConfirmation = false
         }
         Button(String(localized: "game.giveUp.button"), role: .destructive) {
-            giveUpWord()
             showingGiveUpConfirmation = false
+            giveUpTurn()
         }
-    }
-
-    var giveUpAlertMessage: some View {
-        Text(String(localized: "game.giveUp.confirmationMessage"))
     }
 }
 
-// MARK: - Private functions
+// MARK: - Derived state
+private extension GameView {
+    var isSkipDisabled: Bool {
+        gameManager.remainingWordCount <= 1 || isPaused || gameManager.currentWord == nil
+    }
+}
+
+// MARK: - Lifecycle / state
+private extension GameView {
+    func handleAppear() {
+        guard gameManager.currentWord != nil else {
+            // Edge case: arrived with no word; nothing to play.
+            stopTimer()
+            return
+        }
+        startTimer()
+    }
+
+    func handleCurrentWordChange(_ newWord: Word?) {
+        guard newWord == nil else { return }
+        // All words exhausted — preserve time and exit to turn results.
+        stopTimer()
+        gameManager.markPlayEndedWithTimeRemaining()
+        if remainingSeconds > 0 {
+            gameManager.saveRemainingTime(remainingSeconds, for: gameManager.currentTeam)
+        }
+        DesignBook.Haptics.success()
+        navigator.push(.teamTurnResults(guessedWords: guessedWords, completionReason: .allWordsGuessed))
+    }
+}
+
+// MARK: - Timer
 private extension GameView {
     func startTimer() {
         stopTimer()
         isPaused = false
-        // Get remaining time for this team, or use full duration
+        hasPlayedFinalWarning = false
         remainingSeconds = gameManager.getRemainingTime(for: gameManager.currentTeam) ?? gameManager.configuration.roundDuration
-        // Clear the saved time after using it
         gameManager.clearRemainingTime(for: gameManager.currentTeam)
         timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
             tickTimer()
@@ -238,15 +217,23 @@ private extension GameView {
         guard !isPaused else { return }
         guard remainingSeconds > 0 else {
             stopTimer()
-            timeExpired()
+            handleTimeExpired()
             return
         }
         remainingSeconds -= 1
+        playUrgencyHaptics(at: remainingSeconds)
     }
 
-    func togglePause() {
-        withAnimation {
-            isPaused.toggle()
+    func playUrgencyHaptics(at seconds: Int) {
+        // Final 3-second urgency feedback: one warning at 3s, ticks at 2s and 1s.
+        switch seconds {
+        case 3 where !hasPlayedFinalWarning:
+            DesignBook.Haptics.warning()
+            hasPlayedFinalWarning = true
+        case 1, 2:
+            DesignBook.Haptics.tap()
+        default:
+            break
         }
     }
 
@@ -255,38 +242,45 @@ private extension GameView {
         timer = nil
     }
 
-    func formatTime(_ seconds: Int) -> String {
-        let minutes = seconds / 60
-        let remainder = seconds % 60
-        return String(format: "%02d:%02d", minutes, remainder)
+    func togglePause() {
+        DesignBook.Haptics.tap()
+        withAnimation(reduceMotion ? nil : DesignBook.Motion.smooth) {
+            isPaused.toggle()
+        }
+    }
+}
+
+// MARK: - Actions
+private extension GameView {
+    func markCurrentWordGuessed() {
+        guard !isPaused, let word = gameManager.currentWord else { return }
+        DesignBook.Haptics.confirm()
+        let animation = reduceMotion ? nil : DesignBook.Motion.smooth
+        withAnimation(animation) {
+            guessedWords.append(word)
+            gameManager.commitWordGuess()
+        }
     }
 
-    func timeExpired() {
+    func skipCurrentWord() {
+        guard !isPaused, gameManager.remainingWordCount > 1 else { return }
+        DesignBook.Haptics.soft()
+        let animation = reduceMotion ? nil : DesignBook.Motion.smooth
+        withAnimation(animation) {
+            gameManager.skipCurrentWord()
+        }
+    }
+
+    func giveUpTurn() {
         stopTimer()
         gameManager.markPlayEndedWithTimeOut()
-        showTeamTurnResults()
-    }
-
-    func showTeamTurnResults() {
+        DesignBook.Haptics.rigid()
         navigator.push(.teamTurnResults(guessedWords: guessedWords, completionReason: .timeExpired))
     }
 
-    func markAsGuessed() {
-        guard gameManager.currentWord != nil else {
-            // Safety check: prevent duplicate calls when word is already processed
-            return
-        }
-        guessedWords.append(word)
-        gameManager.commitWordGuess()
-    }
-
-    func giveUpWord() {
-        finishRound()
-    }
-
-    func finishRound() {
-        stopTimer()
-
+    func handleTimeExpired() {
+        gameManager.markPlayEndedWithTimeOut()
+        DesignBook.Haptics.error()
         navigator.push(.teamTurnResults(guessedWords: guessedWords, completionReason: .timeExpired))
     }
 }
