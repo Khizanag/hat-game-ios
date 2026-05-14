@@ -5,9 +5,9 @@
 //  Created by Giga Khizanishvili on 16.11.25.
 //
 
-import SwiftUI
 import DesignBook
 import Navigation
+import SwiftUI
 
 struct TeamTurnResultsView: View {
     @Environment(GameManager.self) private var gameManager
@@ -16,17 +16,33 @@ struct TeamTurnResultsView: View {
     let guessedWords: [Word]
     let completionReason: PlayCompletionReason
     @State private var isStandingsPresented = false
+    @State private var hasCelebrated: Bool = false
+
+    private var isCelebratory: Bool { completionReason == .allWordsGuessed }
 
     var body: some View {
         resultsScroll
             .setDefaultBackground()
             .navigationBarBackButtonHidden()
+            .overlay {
+                if isCelebratory {
+                    ConfettiView(isActive: hasCelebrated)
+                        .ignoresSafeArea()
+                        .allowsHitTesting(false)
+                }
+            }
             .sheet(isPresented: $isStandingsPresented) {
                 NavigationView {
                     ResultsView()
                 }
                 .environment(gameManager)
                 .environment(navigator)
+            }
+            .onAppear {
+                guard !hasCelebrated else { return }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.12) {
+                    hasCelebrated = true
+                }
             }
     }
 }
@@ -36,8 +52,7 @@ private extension TeamTurnResultsView {
     var resultsScroll: some View {
         ScrollView {
             VStack(spacing: DesignBook.Spacing.lg) {
-                Spacer()
-                    .frame(height: DesignBook.Spacing.lg)
+                Spacer().frame(height: DesignBook.Spacing.lg)
                 header
                 resultsCard
                 wordsSection
@@ -53,29 +68,52 @@ private extension TeamTurnResultsView {
     }
 
     var header: some View {
-        VStack(spacing: DesignBook.Spacing.md) {
-            Text(completionReason == .timeExpired ? "⏱️" : "✨")
-                .font(DesignBook.IconFont.emoji)
+        VStack(spacing: DesignBook.Spacing.sm) {
+            ZStack {
+                Circle()
+                    .fill(
+                        isCelebratory
+                            ? DesignBook.Color.Status.success.opacity(0.18)
+                            : DesignBook.Color.Status.error.opacity(0.18)
+                    )
+                    .frame(width: 88, height: 88)
 
-            Text(completionReason == .timeExpired ? "game.turnResults.timeUp" : "game.turnResults.allWordsGuessed")
+                Image(systemName: isCelebratory ? "sparkles" : "hourglass")
+                    .font(.system(size: 38, weight: .bold))
+                    .foregroundStyle(
+                        isCelebratory ? DesignBook.Color.Status.success : DesignBook.Color.Status.error
+                    )
+                    .symbolEffect(.bounce, options: .nonRepeating, value: hasCelebrated)
+            }
+
+            Text(isCelebratory ? "game.turnResults.allWordsGuessed" : "game.turnResults.timeUp")
                 .font(DesignBook.Font.largeTitle)
-                .foregroundColor(DesignBook.Color.Text.primary)
+                .foregroundStyle(DesignBook.Color.Text.primary)
+                .multilineTextAlignment(.center)
         }
     }
 
-    @ViewBuilder
     var resultsCard: some View {
         let team = gameManager.currentTeam
-
-        GameCard {
-            VStack(spacing: DesignBook.Spacing.md) {
+        return GameCard {
+            VStack(spacing: DesignBook.Spacing.sm) {
                 Text(String(format: String(localized: "game.turnResults.teamTitle"), team.name))
-                    .font(DesignBook.Font.title2)
-                    .foregroundColor(team.color)
-
-                Text(String(format: String(localized: "game.turnResults.wordsGuessedCount"), guessedWords.count))
                     .font(DesignBook.Font.headline)
-                    .foregroundColor(DesignBook.Color.Text.secondary)
+                    .foregroundStyle(DesignBook.Color.Text.secondary)
+                    .multilineTextAlignment(.center)
+
+                HStack(alignment: .firstTextBaseline, spacing: DesignBook.Spacing.sm) {
+                    AnimatedScoreText(
+                        value: guessedWords.count,
+                        font: .system(size: 64, weight: .bold, design: .rounded),
+                        color: team.color,
+                        duration: 0.7
+                    )
+                    Text(guessedWords.count == 1 ? "word" : "words")
+                        .font(DesignBook.Font.headline)
+                        .foregroundStyle(DesignBook.Color.Text.tertiary)
+                }
+                .padding(.top, DesignBook.Spacing.xs)
             }
         }
     }
@@ -94,7 +132,7 @@ private extension TeamTurnResultsView {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
                 Text("game.turnResults.wordsGuessed")
                     .font(DesignBook.Font.headline)
-                    .foregroundColor(DesignBook.Color.Text.primary)
+                    .foregroundStyle(DesignBook.Color.Text.primary)
 
                 LazyVGrid(
                     columns: [GridItem(.flexible()), GridItem(.flexible())],
@@ -103,7 +141,7 @@ private extension TeamTurnResultsView {
                     ForEach(guessedWords) { word in
                         Text(word.text)
                             .font(DesignBook.Font.body)
-                            .foregroundColor(DesignBook.Color.Text.secondary)
+                            .foregroundStyle(DesignBook.Color.Text.secondary)
                             .padding(DesignBook.Spacing.sm)
                             .frame(maxWidth: .infinity)
                             .background(DesignBook.Color.Background.secondary)
@@ -116,19 +154,29 @@ private extension TeamTurnResultsView {
 
     var emptyStateCard: some View {
         GameCard {
-            Text("game.turnResults.noWordsGuessed")
-                .font(DesignBook.Font.body)
-                .foregroundColor(DesignBook.Color.Text.secondary)
+            VStack(spacing: DesignBook.Spacing.sm) {
+                Image(systemName: "moon.stars.fill")
+                    .font(DesignBook.IconFont.large)
+                    .foregroundStyle(DesignBook.Color.Text.tertiary)
+                Text("game.turnResults.noWordsGuessed")
+                    .font(DesignBook.Font.body)
+                    .foregroundStyle(DesignBook.Color.Text.secondary)
+                    .multilineTextAlignment(.center)
+            }
+            .padding(DesignBook.Spacing.sm)
+            .frame(maxWidth: .infinity)
         }
     }
 
     var buttonsSection: some View {
         VStack(spacing: DesignBook.Spacing.md) {
             SecondaryButton(title: String(localized: "game.turnResults.checkStandings"), icon: "list.bullet.rectangle") {
+                DesignBook.Haptics.tap()
                 isStandingsPresented = true
             }
 
             PrimaryButton(title: String(localized: "common.buttons.continue"), icon: "arrow.right.circle.fill") {
+                DesignBook.Haptics.tap()
                 gameManager.prepareForNewPlay()
 
                 if let round = gameManager.currentRound {
