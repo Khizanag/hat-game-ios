@@ -5,8 +5,8 @@
 //  Created by Giga Khizanishvili on 16.11.25.
 //
 
-import SwiftUI
 import DesignBook
+import SwiftUI
 
 struct TeamScoreRowView: View {
     let team: Team
@@ -16,61 +16,91 @@ struct TeamScoreRowView: View {
 
     var body: some View {
         HStack(spacing: DesignBook.Spacing.md) {
-            rankView
+            rankBadge
             indicator
             nameView
             Spacer()
             scoreView
-            crownView
         }
-        .padding(DesignBook.Spacing.md)
-        .background(rowBackgroundColor)
-        .cornerRadius(DesignBook.Size.smallCardCornerRadius)
+        .padding(.horizontal, DesignBook.Spacing.md)
+        .padding(.vertical, DesignBook.Spacing.sm + 2)
+        .background {
+            RoundedRectangle(cornerRadius: DesignBook.Size.smallCardCornerRadius, style: .continuous)
+                .fill(rowBackgroundColor)
+                .overlay {
+                    if isWinner {
+                        RoundedRectangle(cornerRadius: DesignBook.Size.smallCardCornerRadius, style: .continuous)
+                            .strokeBorder(team.color.opacity(0.35), lineWidth: 1.5)
+                    }
+                }
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(accessibilityLabel)
     }
 }
 
 // MARK: - Components
 private extension TeamScoreRowView {
-    var rankView: some View {
-        Text("\(rank)")
-            .font(DesignBook.Font.title3)
-            .foregroundColor(rankColor)
-            .frame(width: 40, alignment: .leading)
+    var rankBadge: some View {
+        ZStack {
+            Circle()
+                .fill(rankBackgroundColor)
+                .frame(width: 32, height: 32)
+
+            if rank == 1 {
+                Image(systemName: "crown.fill")
+                    .font(DesignBook.Font.captionBold)
+                    .foregroundStyle(rankForegroundColor)
+            } else {
+                Text("\(rank)")
+                    .font(DesignBook.Font.captionBold)
+                    .foregroundStyle(rankForegroundColor)
+                    .monospacedDigit()
+            }
+        }
     }
 
     var indicator: some View {
         Circle()
             .fill(team.color)
-            .frame(width: 12, height: 12)
+            .frame(width: 10, height: 10)
     }
 
     var nameView: some View {
         Text(team.name)
             .font(DesignBook.Font.headline)
             .foregroundColor(DesignBook.Color.Text.primary)
+            .lineLimit(1)
     }
 
     var scoreView: some View {
-        Text("\(score)")
-            .font(DesignBook.Font.title3)
-            .foregroundColor(isWinner ? team.color : DesignBook.Color.Text.secondary)
-    }
-
-    @ViewBuilder
-    var crownView: some View {
-        if isWinner {
-            Image(systemName: "crown.fill")
-                .font(DesignBook.Font.caption)
-                .foregroundColor(team.color)
-        }
+        AnimatedScoreText(
+            value: score,
+            font: DesignBook.Font.title3,
+            color: isWinner ? team.color : DesignBook.Color.Text.secondary,
+            duration: 0.6
+        )
     }
 
     var rowBackgroundColor: Color {
-        isWinner ? team.color.opacity(DesignBook.Opacity.highlight) : DesignBook.Color.Background.secondary
+        isWinner ? team.color.opacity(0.10) : DesignBook.Color.Background.secondary
     }
 
-    var rankColor: Color {
-        rank <= 3 ? team.color : DesignBook.Color.Text.tertiary
+    var rankBackgroundColor: Color {
+        switch rank {
+        case 1: return team.color
+        case 2: return DesignBook.Color.Text.tertiary.opacity(0.4)
+        case 3: return DesignBook.Color.Text.tertiary.opacity(0.25)
+        default: return DesignBook.Color.Background.secondary
+        }
+    }
+
+    var rankForegroundColor: Color {
+        rank == 1 ? .white : DesignBook.Color.Text.primary
+    }
+
+    var accessibilityLabel: Text {
+        Text("\(team.name), rank \(rank), \(score) points")
     }
 }
 
