@@ -5,24 +5,21 @@
 //  Created by Giga Khizanishvili on 15.11.25.
 //
 
-import SwiftUI
 import DesignBook
 import Navigation
+import SwiftUI
 
 struct ResultsView: View {
     @Environment(GameManager.self) private var gameManager
     @Environment(Navigator.self) private var navigator
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     @State private var isTotalScoresExpanded = false
     @State private var expandedRounds: Set<GameRound> = []
+    @State private var hasCelebrated = false
 
-    private var round: GameRound? {
-        gameManager.currentRound
-    }
-
-    private var isFinal: Bool {
-        round == nil
-    }
+    private var round: GameRound? { gameManager.currentRound }
+    private var isFinal: Bool { round == nil }
 
     private var winners: [Team] {
         let sortedTeams = gameManager.getSortedTeamsByTotalScore()
@@ -34,23 +31,22 @@ struct ResultsView: View {
 
     var body: some View {
         content
-            .setDefaultStyle(
-                title: String(
-                    localized: isFinal ? "game.results.gameOverTitle" : "game.results.roundResultsTitle"
-                )
+            .navigationTitle(
+                String(localized: isFinal ? "game.results.gameOverTitle" : "game.results.roundResultsTitle")
             )
-            .navigationBarBackButtonHidden()
-            .onAppear {
-                if !isFinal, let currentRound = round {
-                    expandedRounds = [currentRound]
-                } else if isFinal {
-                    expandedRounds = Set(GameRound.allCases)
+            .setDefaultStyle()
+            .overlay(alignment: .top) {
+                if isFinal {
+                    ConfettiView(isActive: hasCelebrated)
+                        .ignoresSafeArea()
+                        .allowsHitTesting(false)
                 }
             }
+            .onAppear(perform: handleAppear)
     }
 }
 
-// MARK: - Private
+// MARK: - Composition
 private extension ResultsView {
     var content: some View {
         ScrollView {
@@ -76,6 +72,105 @@ private extension ResultsView {
         }
     }
 
+    @ViewBuilder
+    var winnerSection: some View {
+        if isFinal {
+            winnerCard
+        }
+    }
+
+    var winnerCard: some View {
+        VStack(spacing: DesignBook.Spacing.lg) {
+            trophyIcon
+
+            if winners.count == 1, let winner = winners.first {
+                singleWinnerLabel(winner: winner)
+            } else {
+                multipleWinnersLabel
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .padding(DesignBook.Spacing.lg)
+        .background {
+            RoundedRectangle(cornerRadius: DesignBook.Size.cardCornerRadius, style: .continuous)
+                .fill(DesignBook.Color.Background.card)
+                .overlay {
+                    RoundedRectangle(cornerRadius: DesignBook.Size.cardCornerRadius, style: .continuous)
+                        .fill(DesignBook.Gradient.celebration.opacity(0.18))
+                }
+        }
+        .shadow(.large)
+    }
+
+    var trophyIcon: some View {
+        ZStack {
+            Circle()
+                .fill(DesignBook.Gradient.celebration)
+                .frame(width: 96, height: 96)
+                .shadow(color: Color(red: 1.0, green: 0.6, blue: 0.2).opacity(0.4), radius: 18, x: 0, y: 8)
+
+            Image(systemName: "trophy.fill")
+                .font(.system(size: 44, weight: .bold))
+                .foregroundStyle(.white)
+                .symbolEffect(.bounce.up.byLayer, options: .nonRepeating, value: hasCelebrated)
+        }
+        .accessibilityHidden(true)
+    }
+
+    func singleWinnerLabel(winner: Team) -> some View {
+        VStack(spacing: DesignBook.Spacing.sm) {
+            Text("game.results.winner")
+                .font(DesignBook.Font.headline)
+                .foregroundStyle(DesignBook.Color.Text.secondary)
+                .textCase(.uppercase)
+                .tracking(1.6)
+
+            Text(winner.name)
+                .font(DesignBook.Font.title)
+                .foregroundStyle(winner.color)
+                .multilineTextAlignment(.center)
+
+            AnimatedScoreText(
+                value: gameManager.getTotalScore(for: winner),
+                font: .system(size: 56, weight: .bold, design: .rounded),
+                color: winner.color
+            )
+
+            Text("game.results.totalPoints")
+                .font(DesignBook.Font.caption)
+                .foregroundStyle(DesignBook.Color.Text.tertiary)
+                .textCase(.uppercase)
+                .tracking(1.2)
+        }
+    }
+
+    var multipleWinnersLabel: some View {
+        VStack(spacing: DesignBook.Spacing.md) {
+            Text("game.results.winners")
+                .font(DesignBook.Font.title2)
+                .foregroundStyle(DesignBook.Color.Text.primary)
+
+            VStack(spacing: DesignBook.Spacing.sm) {
+                ForEach(winners) { winner in
+                    VStack(spacing: DesignBook.Spacing.xs) {
+                        Text(winner.name)
+                            .font(DesignBook.Font.title3)
+                            .foregroundStyle(winner.color)
+
+                        AnimatedScoreText(
+                            value: gameManager.getTotalScore(for: winner),
+                            font: DesignBook.Font.title2,
+                            color: winner.color
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+// MARK: - Round sections
+private extension ResultsView {
     var allRoundsSection: some View {
         VStack(spacing: DesignBook.Spacing.md) {
             ForEach(gameManager.getStartedRounds(), id: \.rawValue) { round in
@@ -100,15 +195,6 @@ private extension ResultsView {
             description: round.description
         ) {
             roundScores(for: round)
-        }
-    }
-
-    @ViewBuilder
-    var winnerSection: some View {
-        if isFinal {
-            GameCard {
-                winnerCardContent
-            }
         }
     }
 
@@ -146,7 +232,10 @@ private extension ResultsView {
             }
         }
     }
+}
 
+// MARK: - Actions
+private extension ResultsView {
     @ViewBuilder
     var actionSection: some View {
         if isFinal {
@@ -175,59 +264,28 @@ private extension ResultsView {
         }
     }
 
-    @ViewBuilder
-    var winnerCardContent: some View {
-        VStack(spacing: DesignBook.Spacing.md) {
-            Text("🏆")
-                .font(DesignBook.IconFont.emoji)
-
-            if winners.count == 1 {
-                Text("game.results.winner")
-                    .font(DesignBook.Font.title2)
-                    .foregroundColor(DesignBook.Color.Text.primary)
-
-                if let winner = winners.first {
-                    Text(winner.name)
-                        .font(DesignBook.Font.largeTitle)
-                        .foregroundColor(teamColor(for: winner))
-
-                    Text("\(gameManager.getTotalScore(for: winner)) points")
-                        .font(DesignBook.Font.headline)
-                        .foregroundColor(DesignBook.Color.Text.secondary)
-                }
-            } else {
-                Text("game.results.winners")
-                    .font(DesignBook.Font.title2)
-                    .foregroundColor(DesignBook.Color.Text.primary)
-
-                VStack(spacing: DesignBook.Spacing.sm) {
-                    ForEach(winners) { winner in
-                        VStack(spacing: DesignBook.Spacing.xs) {
-                            Text(winner.name)
-                                .font(DesignBook.Font.title3)
-                                .foregroundColor(teamColor(for: winner))
-
-                            Text("\(gameManager.getTotalScore(for: winner)) points")
-                                .font(DesignBook.Font.body)
-                                .foregroundColor(DesignBook.Color.Text.secondary)
-                        }
-                    }
-                }
+    func handleAppear() {
+        if !isFinal, let currentRound = round {
+            expandedRounds = [currentRound]
+        } else if isFinal {
+            expandedRounds = Set(GameRound.allCases)
+            // Slight delay so confetti + counter feel choreographed.
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.18) {
+                DesignBook.Haptics.success()
+                hasCelebrated = true
             }
         }
     }
 
-    func teamColor(for team: Team) -> Color {
-        team.color
-    }
-
     func handlePlayAgain() {
+        DesignBook.Haptics.tap()
         gameManager.resetForNewGame()
         navigator.dismissToRoot()
         navigator.push(.wordSettings)
     }
 
     func handleReturnToMain() {
+        DesignBook.Haptics.tap()
         navigator.dismissToRoot()
         navigator.dismiss()
     }
