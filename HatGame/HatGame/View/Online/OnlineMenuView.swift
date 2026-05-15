@@ -15,7 +15,7 @@ struct OnlineMenuView: View {
     var body: some View {
         content
             .navigationTitle(String(localized: "online.title"))
-            .setDefaultBackground()
+            .setDefaultStyle()
     }
 }
 

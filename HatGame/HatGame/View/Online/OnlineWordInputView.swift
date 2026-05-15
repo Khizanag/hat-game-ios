@@ -30,7 +30,8 @@ struct OnlineWordInputView: View {
 
     var body: some View {
         content
-            .setDefaultStyle(title: String(localized: "onlineWordInput.title"))
+            .navigationTitle(String(localized: "onlineWordInput.title"))
+            .setDefaultStyle()
             .onAppear {
                 isWordFieldFocused = true
             }
@@ -203,7 +204,7 @@ private extension OnlineWordInputView {
     }
 
     func removeWord(at index: Int) {
-        withAnimation {
+        _ = withAnimation {
             playerWords.remove(at: index)
         }
     }

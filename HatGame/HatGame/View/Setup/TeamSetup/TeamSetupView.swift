@@ -30,7 +30,8 @@ struct TeamSetupView: View {
     var body: some View {
         content
             .environment(\.editMode, $editMode)
-            .setDefaultStyle(title: String(localized: "teamSetup.title"), showCloseButton: true)
+            .navigationTitle(String(localized: "teamSetup.title"))
+            .setDefaultStyle()
             .sheet(isPresented: $isAddTeamSheetPresented) {
                 NavigationView {
                     AddTeamView(
@@ -188,6 +189,7 @@ private extension TeamSetupView {
     var continueSection: some View {
         VStack(spacing: DesignBook.Spacing.sm) {
             PrimaryButton(title: String(localized: "common.buttons.continue"), icon: "arrow.right.circle.fill") {
+                DesignBook.Haptics.tap()
                 navigator.push(.wordSettings)
             }
             .disabled(!canContinue)

@@ -14,7 +14,8 @@ struct DefaultsSettingsView: View {
 
     var body: some View {
         content
-            .setDefaultStyle(title: String(localized: "settings.defaults.title"))
+            .navigationTitle(String(localized: "settings.defaults.title"))
+            .setDefaultStyle()
     }
 }
 

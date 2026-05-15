@@ -43,7 +43,6 @@ struct OnlineTurnResultsView: View {
     var body: some View {
         content
             .setDefaultStyle()
-            .navigationBarBackButtonHidden()
     }
 }
 

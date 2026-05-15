@@ -10,35 +10,20 @@ import DesignBook
 
 extension View {
     func setDefaultBackground() -> some View {
-        background(
-            DesignBook.Color.Background.primary
-        )
+        background(DesignBook.Color.Background.primary)
     }
 
-    @ViewBuilder
-    func setDefaultStyle(title: String? = nil, showCloseButton: Bool = false) -> some View {
-        if let title {
-            if showCloseButton {
-                self
-                    .setDefaultBackground()
-                    .navigationTitle(title)
-                    .navigationBarTitleDisplayMode(.inline)
-                    .closeButtonToolbar()
-            } else {
-                self
-                    .setDefaultBackground()
-                    .navigationTitle(title)
-                    .navigationBarTitleDisplayMode(.inline)
-            }
-        } else {
-            if showCloseButton {
-                self
-                    .setDefaultBackground()
-                    .closeButtonToolbar()
-            } else {
-                self
-                    .setDefaultBackground()
-            }
-        }
+    func setDefaultStyle() -> some View {
+        modifier(DefaultStyleModifier())
+    }
+}
+
+// MARK: - Default Style Modifier
+private struct DefaultStyleModifier: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .setDefaultBackground()
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationButtonToolbar()
     }
 }

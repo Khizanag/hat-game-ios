@@ -38,12 +38,12 @@ struct RoomLobbyView: View {
             .navigationTitle(String(localized: "lobby.title"))
             .navigationBarBackButtonHidden(true)
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
+                ToolbarItem(placement: .topBarTrailing) {
                     Button {
                         leaveRoom()
                     } label: {
-                        Image(systemName: "xmark.circle.fill")
-                            .foregroundColor(DesignBook.Color.Text.secondary)
+                        Image(systemName: "xmark")
+                            .foregroundColor(DesignBook.Color.Text.primary)
                     }
                 }
             }

@@ -59,7 +59,6 @@ struct OnlineNextTeamView: View {
     var body: some View {
         content
             .setDefaultStyle()
-            .navigationBarBackButtonHidden()
             .onAppear {
                 if let index = gameState?.currentExplainerIndex {
                     selectedExplainerIndex = index

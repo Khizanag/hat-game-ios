@@ -36,7 +36,6 @@ struct OnlineRoundResultsView: View {
     var body: some View {
         content
             .setDefaultStyle()
-            .navigationBarBackButtonHidden()
     }
 }
 

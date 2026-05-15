@@ -25,7 +25,8 @@ struct DeveloperInfoView: View {
             .padding(.top, DesignBook.Spacing.lg)
             .padding(.bottom, DesignBook.Spacing.xxl)
         }
-        .setDefaultStyle(title: String(localized: "settings.developerInfo.title"))
+        .navigationTitle(String(localized: "settings.developerInfo.title"))
+        .setDefaultStyle()
     }
 }
 

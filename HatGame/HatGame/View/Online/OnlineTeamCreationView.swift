@@ -30,9 +30,12 @@ struct OnlineTeamCreationView: View {
                 .navigationTitle(String(localized: "createTeam.title"))
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
-                    ToolbarItem(placement: .topBarLeading) {
-                        Button(String(localized: "common.buttons.cancel")) {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button {
                             dismiss()
+                        } label: {
+                            Image(systemName: "xmark")
+                                .foregroundColor(DesignBook.Color.Text.primary)
                         }
                     }
                 }
