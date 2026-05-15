@@ -5,36 +5,34 @@
 //  Created by Giga Khizanishvili on 15.11.25.
 //
 
-import SwiftUI
 import DesignBook
 import Navigation
+import SwiftUI
 
 struct NextTeamView: View {
     @Environment(Navigator.self) private var navigator
     @Environment(GameManager.self) private var gameManager
-
-    @State private var isStandingsPresented = false
-    @State private var selectedExplainerIndex: Int = 0
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     let round: GameRound
     let team: Team
 
-    private var isFirstPlay: Bool {
-        gameManager.canSelectRoles(for: team)
-    }
+    @State private var isStandingsPresented = false
+    @State private var selectedExplainerIndex: Int = 0
 
-    private var currentExplainer: Player? {
-        gameManager.getExplainer(for: team)
-    }
+    private var isFirstPlay: Bool { gameManager.canSelectRoles(for: team) }
+    private var currentExplainer: Player? { gameManager.getExplainer(for: team) }
+    private var currentGuessers: [Player] { gameManager.getGuessers(for: team) }
 
-    private var currentGuessers: [Player] {
-        gameManager.getGuessers(for: team)
+    private var hasGameStarted: Bool {
+        gameManager.configuration.teams.contains { team in
+            gameManager.getTotalScore(for: team) > 0
+        }
     }
 
     var body: some View {
         content
             .setDefaultStyle()
-            .navigationBarBackButtonHidden()
             .sheet(isPresented: $isStandingsPresented) {
                 NavigationView {
                     ResultsView()
@@ -50,14 +48,16 @@ struct NextTeamView: View {
     }
 }
 
-// MARK: - Components
+// MARK: - Composition
 private extension NextTeamView {
     var content: some View {
         ScrollView {
-            VStack {
-                teamDetails
-                    .paddingHorizontalDefault()
+            VStack(spacing: DesignBook.Spacing.lg) {
+                hero
+                rolesCard
+                roundStatusCard
             }
+            .paddingHorizontalDefault()
             .padding(.bottom, DesignBook.Spacing.xxl)
         }
         .safeAreaInset(edge: .bottom) {
@@ -67,59 +67,80 @@ private extension NextTeamView {
         }
     }
 
-    var teamDetails: some View {
-        VStack(spacing: DesignBook.Spacing.lg) {
-            Text("🎯")
-                .font(DesignBook.IconFont.emoji)
+    var hero: some View {
+        VStack(spacing: DesignBook.Spacing.md) {
+            ZStack {
+                Circle()
+                    .fill(team.color.opacity(0.15))
+                    .frame(width: 120, height: 120)
+
+                Circle()
+                    .strokeBorder(team.color.opacity(0.4), lineWidth: 2)
+                    .frame(width: 120, height: 120)
+
+                Text("🎯")
+                    .font(.system(size: 72))
+            }
+            .accessibilityHidden(true)
 
             Text("game.nextTeam.title")
+                .font(DesignBook.Font.smallCaption)
+                .textCase(.uppercase)
+                .tracking(1.6)
+                .foregroundStyle(DesignBook.Color.Text.tertiary)
+
+            Text(team.name)
                 .font(DesignBook.Font.largeTitle)
-                .foregroundColor(DesignBook.Color.Text.primary)
+                .foregroundStyle(team.color)
+                .multilineTextAlignment(.center)
 
-            teamScoreCard
-            rolesCard
-            roundStatusCard
-        }
-    }
-
-    var teamScoreCard: some View {
-        GameCard {
-            VStack(spacing: DesignBook.Spacing.md) {
-                Text(team.name)
-                    .font(DesignBook.Font.title2)
-                    .foregroundColor(team.color)
-
-                // Only show score if game has started (not the very first play)
-                if hasGameStarted {
-                    Text(String(format: String(localized: "game.currentScoreLabel"), gameManager.getTotalScore(for: team)))
-                        .font(DesignBook.Font.headline)
-                        .foregroundColor(DesignBook.Color.Text.accent)
+            if hasGameStarted {
+                HStack(spacing: DesignBook.Spacing.xs) {
+                    Image(systemName: "star.fill")
+                        .font(DesignBook.Font.captionBold)
+                    AnimatedScoreText(
+                        value: gameManager.getTotalScore(for: team),
+                        font: DesignBook.Font.headline,
+                        color: team.color
+                    )
+                    Text("game.currentScoreLabel.suffix")
+                        .font(DesignBook.Font.captionBold)
+                        .foregroundStyle(DesignBook.Color.Text.tertiary)
+                        .textCase(.uppercase)
+                        .tracking(1.2)
+                }
+                .foregroundStyle(team.color)
+                .padding(.horizontal, DesignBook.Spacing.md)
+                .padding(.vertical, DesignBook.Spacing.sm)
+                .background {
+                    Capsule().fill(team.color.opacity(0.12))
                 }
             }
         }
-    }
-
-    private var hasGameStarted: Bool {
-        // Check if any team has a score > 0
-        gameManager.configuration.teams.contains { team in
-            gameManager.getTotalScore(for: team) > 0
-        }
+        .padding(.top, DesignBook.Spacing.md)
     }
 
     var roundStatusCard: some View {
         GameCard {
-            VStack(spacing: DesignBook.Spacing.md) {
-                Text("game.nextTeam.roundStatus")
-                    .font(DesignBook.Font.headline)
-                    .foregroundColor(DesignBook.Color.Text.primary)
+            HStack(spacing: DesignBook.Spacing.md) {
+                CircularIconContainer(
+                    icon: "flag.fill",
+                    size: 48,
+                    iconSize: 22,
+                    color: team.color,
+                    backgroundColor: team.color.opacity(0.12)
+                )
 
-                Text(round.title)
-                    .font(DesignBook.Font.title3)
-                    .foregroundColor(DesignBook.Color.Text.secondary)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(round.title)
+                        .font(DesignBook.Font.headline)
+                        .foregroundStyle(DesignBook.Color.Text.primary)
+                    Text(String(format: String(localized: "game.wordsRemainingLabel"), gameManager.remainingWordCount))
+                        .font(DesignBook.Font.caption)
+                        .foregroundStyle(DesignBook.Color.Text.secondary)
+                }
 
-                Text(String(format: String(localized: "game.wordsRemainingLabel"), gameManager.remainingWordCount))
-                    .font(DesignBook.Font.body)
-                    .foregroundColor(DesignBook.Color.Text.secondary)
+                Spacer()
             }
         }
     }
@@ -140,17 +161,18 @@ private extension NextTeamView {
                     VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
                         Text("game.nextTeam.selectExplainer")
                             .font(DesignBook.Font.headline)
-                            .foregroundColor(DesignBook.Color.Text.primary)
+                            .foregroundStyle(DesignBook.Color.Text.primary)
 
                         Text("game.nextTeam.selectExplainer.description")
                             .font(DesignBook.Font.caption)
-                            .foregroundColor(DesignBook.Color.Text.secondary)
+                            .foregroundStyle(DesignBook.Color.Text.secondary)
                     }
 
                     Spacer()
 
                     Button {
-                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                        DesignBook.Haptics.tap()
+                        withAnimation(reduceMotion ? nil : DesignBook.Motion.snappy) {
                             selectedExplainerIndex = Int.random(in: 0..<team.players.count)
                         }
                     } label: {
@@ -161,13 +183,15 @@ private extension NextTeamView {
                             .background(DesignBook.Color.Background.secondary)
                             .cornerRadius(DesignBook.Size.smallCardCornerRadius)
                     }
+                    .accessibilityLabel(Text("game.nextTeam.shuffleExplainer"))
                 }
 
                 VStack(spacing: DesignBook.Spacing.sm) {
                     ForEach(Array(team.players.enumerated()), id: \.element.id) { index, player in
                         playerSelectionRow(player: player, index: index, isSelected: selectedExplainerIndex == index)
                             .onTapGesture {
-                                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                DesignBook.Haptics.selection()
+                                withAnimation(reduceMotion ? nil : DesignBook.Motion.snappy) {
                                     selectedExplainerIndex = index
                                 }
                             }
@@ -179,7 +203,6 @@ private extension NextTeamView {
 
     func playerSelectionRow(player: Player, index: Int, isSelected: Bool) -> some View {
         HStack(spacing: DesignBook.Spacing.md) {
-            // Selection indicator
             ZStack {
                 Circle()
                     .stroke(
@@ -195,46 +218,44 @@ private extension NextTeamView {
                 }
             }
 
-            // Player name
             Text(player.name)
                 .font(isSelected ? DesignBook.Font.bodyBold : DesignBook.Font.body)
                 .foregroundColor(DesignBook.Color.Text.primary)
 
             Spacer()
 
-            // Role badge
-            if isSelected {
-                Text("game.nextTeam.role.explaining")
-                    .font(DesignBook.Font.caption)
-                    .foregroundColor(team.color)
-                    .padding(.horizontal, DesignBook.Spacing.sm)
-                    .padding(.vertical, DesignBook.Spacing.xs)
-                    .background(team.color.opacity(0.15))
-                    .cornerRadius(DesignBook.Size.smallCardCornerRadius)
-            } else {
-                Text("game.nextTeam.role.guessing")
-                    .font(DesignBook.Font.caption)
-                    .foregroundColor(DesignBook.Color.Text.secondary)
-                    .padding(.horizontal, DesignBook.Spacing.sm)
-                    .padding(.vertical, DesignBook.Spacing.xs)
-                    .background(DesignBook.Color.Background.secondary)
-                    .cornerRadius(DesignBook.Size.smallCardCornerRadius)
-            }
+            roleBadge(isSelected: isSelected)
         }
         .padding(DesignBook.Spacing.md)
         .background(
-            RoundedRectangle(cornerRadius: DesignBook.Size.cardCornerRadius)
-                .fill(isSelected ? team.color.opacity(0.05) : DesignBook.Color.Background.secondary)
+            RoundedRectangle(cornerRadius: DesignBook.Size.cardCornerRadius, style: .continuous)
+                .fill(isSelected ? team.color.opacity(0.08) : DesignBook.Color.Background.secondary)
         )
         .overlay(
-            RoundedRectangle(cornerRadius: DesignBook.Size.cardCornerRadius)
-                .stroke(isSelected ? team.color.opacity(0.3) : Color.clear, lineWidth: 1)
+            RoundedRectangle(cornerRadius: DesignBook.Size.cardCornerRadius, style: .continuous)
+                .strokeBorder(isSelected ? team.color.opacity(0.35) : Color.clear, lineWidth: 1.5)
         )
+        .contentShape(Rectangle())
+    }
+
+    func roleBadge(isSelected: Bool) -> some View {
+        let text: LocalizedStringKey = isSelected ? "game.nextTeam.role.explaining" : "game.nextTeam.role.guessing"
+        let fg: Color = isSelected ? team.color : DesignBook.Color.Text.secondary
+        let bg: Color = isSelected ? team.color.opacity(0.15) : DesignBook.Color.Background.card
+
+        return Text(text)
+            .font(DesignBook.Font.captionBold)
+            .textCase(.uppercase)
+            .tracking(1.1)
+            .foregroundStyle(fg)
+            .padding(.horizontal, DesignBook.Spacing.sm)
+            .padding(.vertical, 6)
+            .background(Capsule().fill(bg))
     }
 
     var currentRolesCard: some View {
         GameCard {
-            VStack(spacing: DesignBook.Spacing.md) {
+            VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
                 HStack {
                     Text("game.nextTeam.teamRoles")
                         .font(DesignBook.Font.headline)
@@ -242,89 +263,103 @@ private extension NextTeamView {
 
                     Spacer()
 
-                    // Show rotation indicator if roles changed
                     Image(systemName: "arrow.triangle.2.circlepath")
                         .font(DesignBook.Font.caption)
                         .foregroundColor(DesignBook.Color.Text.accent)
                 }
 
-                VStack(spacing: DesignBook.Spacing.md) {
-                    // Explainer section
+                VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
                     if let explainer = currentExplainer {
-                        VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
-                            HStack(spacing: DesignBook.Spacing.xs) {
-                                Image(systemName: "person.wave.2.fill")
-                                    .font(DesignBook.Font.caption)
-                                    .foregroundColor(team.color)
-
-                                Text("game.nextTeam.role.explaining")
-                                    .font(DesignBook.Font.caption)
-                                    .foregroundColor(DesignBook.Color.Text.secondary)
-                            }
-
-                            HStack(spacing: DesignBook.Spacing.sm) {
-                                Circle()
-                                    .fill(team.color.opacity(DesignBook.Opacity.semiTransparent))
-                                    .frame(width: DesignBook.Size.dotSmall, height: DesignBook.Size.dotSmall)
-
-                                Text(explainer.name)
-                                    .font(DesignBook.Font.bodyBold)
-                                    .foregroundColor(team.color)
-                            }
-                            .padding(DesignBook.Spacing.sm)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .background(team.color.opacity(DesignBook.Opacity.light))
-                            .cornerRadius(DesignBook.Size.smallCardCornerRadius)
-                        }
+                        roleSection(
+                            icon: "person.wave.2.fill",
+                            iconColor: team.color,
+                            label: "game.nextTeam.role.explaining",
+                            content: { explainerRow(explainer) }
+                        )
                     }
 
-                    // Guessers section
                     if !currentGuessers.isEmpty {
-                        VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
-                            HStack(spacing: DesignBook.Spacing.xs) {
-                                Image(systemName: "lightbulb.fill")
-                                    .font(DesignBook.Font.caption)
-                                    .foregroundColor(DesignBook.Color.Text.accent)
-
-                                Text("game.nextTeam.role.guessing")
-                                    .font(DesignBook.Font.caption)
-                                    .foregroundColor(DesignBook.Color.Text.secondary)
-                            }
-
-                            VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
-                                ForEach(currentGuessers) { guesser in
-                                    HStack(spacing: DesignBook.Spacing.sm) {
-                                        Circle()
-                                            .fill(DesignBook.Color.Text.accent.opacity(DesignBook.Opacity.medium))
-                                            .frame(width: DesignBook.Size.dotSmall, height: DesignBook.Size.dotSmall)
-
-                                        Text(guesser.name)
-                                            .font(DesignBook.Font.body)
-                                            .foregroundColor(DesignBook.Color.Text.primary)
-                                    }
-                                    .padding(.horizontal, DesignBook.Spacing.sm)
-                                    .padding(.vertical, DesignBook.Spacing.xs)
-                                }
-                            }
-                            .padding(DesignBook.Spacing.sm)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .background(DesignBook.Color.Background.secondary)
-                            .cornerRadius(DesignBook.Size.smallCardCornerRadius)
-                        }
+                        roleSection(
+                            icon: "lightbulb.fill",
+                            iconColor: DesignBook.Color.Text.accent,
+                            label: "game.nextTeam.role.guessing",
+                            content: { guessersList }
+                        )
                     }
                 }
             }
         }
     }
 
+    func roleSection<Content: View>(
+        icon: String,
+        iconColor: Color,
+        label: LocalizedStringKey,
+        @ViewBuilder content: () -> Content
+    ) -> some View {
+        VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
+            HStack(spacing: DesignBook.Spacing.xs) {
+                Image(systemName: icon)
+                    .font(DesignBook.Font.caption)
+                    .foregroundColor(iconColor)
+
+                Text(label)
+                    .font(DesignBook.Font.smallCaption)
+                    .textCase(.uppercase)
+                    .tracking(1.2)
+                    .foregroundColor(DesignBook.Color.Text.tertiary)
+            }
+            content()
+        }
+    }
+
+    func explainerRow(_ explainer: Player) -> some View {
+        HStack(spacing: DesignBook.Spacing.sm) {
+            Circle()
+                .fill(team.color.opacity(DesignBook.Opacity.semiTransparent))
+                .frame(width: DesignBook.Size.dotSmall, height: DesignBook.Size.dotSmall)
+
+            Text(explainer.name)
+                .font(DesignBook.Font.bodyBold)
+                .foregroundColor(team.color)
+        }
+        .padding(DesignBook.Spacing.sm)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(team.color.opacity(DesignBook.Opacity.light))
+        .cornerRadius(DesignBook.Size.smallCardCornerRadius)
+    }
+
+    var guessersList: some View {
+        VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
+            ForEach(currentGuessers) { guesser in
+                HStack(spacing: DesignBook.Spacing.sm) {
+                    Circle()
+                        .fill(DesignBook.Color.Text.accent.opacity(DesignBook.Opacity.medium))
+                        .frame(width: DesignBook.Size.dotSmall, height: DesignBook.Size.dotSmall)
+
+                    Text(guesser.name)
+                        .font(DesignBook.Font.body)
+                        .foregroundColor(DesignBook.Color.Text.primary)
+                }
+                .padding(.horizontal, DesignBook.Spacing.sm)
+                .padding(.vertical, DesignBook.Spacing.xs)
+            }
+        }
+        .padding(DesignBook.Spacing.sm)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(DesignBook.Color.Background.secondary)
+        .cornerRadius(DesignBook.Size.smallCardCornerRadius)
+    }
+
     var buttonsSection: some View {
         VStack(spacing: DesignBook.Spacing.md) {
             SecondaryButton(title: String(localized: "game.turnResults.checkStandings"), icon: "list.bullet.rectangle") {
+                DesignBook.Haptics.tap()
                 isStandingsPresented = true
             }
 
             PrimaryButton(title: String(localized: "common.buttons.play"), icon: "play.fill") {
-                // Ensure explainer is set before playing
+                DesignBook.Haptics.confirm()
                 if isFirstPlay {
                     gameManager.setExplainer(playerIndex: selectedExplainerIndex, for: team)
                 }
