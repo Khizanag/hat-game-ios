@@ -5,25 +5,23 @@
 //  Created by Giga Khizanishvili on 15.11.25.
 //
 
-import SwiftUI
 import DesignBook
 import Navigation
+import SwiftUI
 
 struct TimerSettingsView: View {
     @Environment(GameManager.self) private var gameManager
     @Environment(Navigator.self) private var navigator
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private let appConfiguration = AppConfiguration.shared
 
-    @State private var selectedDuration: Int
-
-    init() {
-        _selectedDuration = State(initialValue: 60)
-    }
+    @State private var selectedDuration: Int = 60
 
     var body: some View {
         content
-            .setDefaultStyle(title: String(localized: "timerSettings.title"))
+            .navigationTitle(String(localized: "timerSettings.title"))
+            .setDefaultStyle()
             .onAppear {
                 selectedDuration = appConfiguration.defaultRoundDuration
             }
@@ -35,7 +33,7 @@ private extension TimerSettingsView {
     var content: some View {
         ScrollView {
             VStack(spacing: DesignBook.Spacing.lg) {
-                headerCard
+                heroValueCard
                 controlsCard
             }
             .paddingHorizontalDefault()
@@ -48,17 +46,36 @@ private extension TimerSettingsView {
         }
     }
 
-    var headerCard: some View {
-        HeaderCard(
-            title: String(localized: "timerSettings.headerTitle"),
-            description: String(localized: "timerSettings.headerDescription")
-        )
+    var heroValueCard: some View {
+        VStack(spacing: DesignBook.Spacing.md) {
+            HStack(alignment: .firstTextBaseline, spacing: DesignBook.Spacing.xs) {
+                Text("\(selectedDuration)")
+                    .font(.system(size: 96, weight: .bold, design: .rounded))
+                    .monospacedDigit()
+                    .contentTransition(.numericText(value: Double(selectedDuration)))
+                    .animation(reduceMotion ? nil : DesignBook.Motion.snappy, value: selectedDuration)
+                    .foregroundStyle(DesignBook.Gradient.primary)
+                Text("s")
+                    .font(DesignBook.Font.title)
+                    .foregroundStyle(DesignBook.Color.Text.tertiary)
+            }
+
+            Text("timerSettings.headerTitle")
+                .font(DesignBook.Font.headline)
+                .foregroundStyle(DesignBook.Color.Text.primary)
+
+            Text("timerSettings.headerDescription")
+                .font(DesignBook.Font.body)
+                .foregroundStyle(DesignBook.Color.Text.secondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, DesignBook.Spacing.lg)
+        }
+        .padding(.top, DesignBook.Spacing.xl)
     }
 
     var controlsCard: some View {
         GameCard {
             VStack(spacing: DesignBook.Spacing.md) {
-                durationHeader
                 durationSlider
                 durationStepper
                 timerTags
@@ -66,23 +83,18 @@ private extension TimerSettingsView {
         }
     }
 
-    var durationHeader: some View {
-        HStack {
-            Text(String(localized: "timerSettings.secondsPerTeam"))
-                .font(DesignBook.Font.headline)
-                .foregroundColor(DesignBook.Color.Text.primary)
-
-            Spacer()
-
-            Text("\(selectedDuration)s")
-                .font(DesignBook.Font.title2)
-                .foregroundColor(DesignBook.Color.Text.accent)
-        }
-    }
-
     var durationSlider: some View {
-        Slider(value: durationBinding, in: 5...120, step: 5)
-            .tint(DesignBook.Color.Text.accent)
+        Slider(
+            value: durationBinding,
+            in: 5...120,
+            step: 5,
+            onEditingChanged: { editing in
+                if !editing {
+                    DesignBook.Haptics.selection()
+                }
+            }
+        )
+        .tint(DesignBook.Color.Text.accent)
     }
 
     var durationStepper: some View {
@@ -90,6 +102,9 @@ private extension TimerSettingsView {
             Text(String(localized: "common.tapOrHoldToAdjust"))
                 .font(DesignBook.Font.caption)
                 .foregroundColor(DesignBook.Color.Text.secondary)
+        }
+        .onChange(of: selectedDuration) { _, _ in
+            DesignBook.Haptics.selection()
         }
     }
 
@@ -115,6 +130,7 @@ private extension TimerSettingsView {
 
     var continueButton: some View {
         PrimaryButton(title: String(localized: "common.buttons.continue"), icon: "arrow.right.circle.fill") {
+            DesignBook.Haptics.tap()
             handleContinue()
         }
     }
@@ -122,7 +138,12 @@ private extension TimerSettingsView {
     var durationBinding: Binding<Double> {
         Binding(
             get: { Double(selectedDuration) },
-            set: { selectedDuration = Int($0) }
+            set: { newValue in
+                let stepped = Int(newValue)
+                if stepped != selectedDuration {
+                    selectedDuration = stepped
+                }
+            }
         )
     }
 

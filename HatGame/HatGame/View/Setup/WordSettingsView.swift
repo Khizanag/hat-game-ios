@@ -5,28 +5,26 @@
 //  Created by Giga Khizanishvili on 15.11.25.
 //
 
-import SwiftUI
 import DesignBook
 import Navigation
+import SwiftUI
 
 struct WordSettingsView: View {
     @Environment(GameManager.self) private var gameManager
-    private let appConfiguration = AppConfiguration.shared
     @Environment(Navigator.self) private var navigator
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
-    @State private var selectedWordCount: Int
+    private let appConfiguration = AppConfiguration.shared
 
-    init() {
-        _selectedWordCount = State(initialValue: 10)
-    }
+    @State private var selectedWordCount: Int = 10
 
     var body: some View {
         content
-            .setDefaultStyle(title: String(localized: "wordSettings.title"))
+            .navigationTitle(String(localized: "wordSettings.title"))
+            .setDefaultStyle()
             .onAppear {
                 selectedWordCount = appConfiguration.defaultWordsPerPlayer
             }
-            .background()
     }
 }
 
@@ -35,7 +33,7 @@ private extension WordSettingsView {
     var content: some View {
         ScrollView {
             VStack(spacing: DesignBook.Spacing.lg) {
-                headerCard
+                heroValueCard
                 controlsCard
             }
             .paddingHorizontalDefault()
@@ -48,17 +46,36 @@ private extension WordSettingsView {
         }
     }
 
-    var headerCard: some View {
-        HeaderCard(
-            title: String(localized: "wordSettings.headerTitle"),
-            description: String(localized: "wordSettings.headerDescription")
-        )
+    var heroValueCard: some View {
+        VStack(spacing: DesignBook.Spacing.md) {
+            HStack(alignment: .firstTextBaseline, spacing: DesignBook.Spacing.xs) {
+                Text("\(selectedWordCount)")
+                    .font(.system(size: 96, weight: .bold, design: .rounded))
+                    .monospacedDigit()
+                    .contentTransition(.numericText(value: Double(selectedWordCount)))
+                    .animation(reduceMotion ? nil : DesignBook.Motion.snappy, value: selectedWordCount)
+                    .foregroundStyle(DesignBook.Gradient.primary)
+                Image(systemName: "text.bubble.fill")
+                    .font(DesignBook.Font.title2)
+                    .foregroundStyle(DesignBook.Color.Text.tertiary)
+            }
+
+            Text("wordSettings.headerTitle")
+                .font(DesignBook.Font.headline)
+                .foregroundStyle(DesignBook.Color.Text.primary)
+
+            Text("wordSettings.headerDescription")
+                .font(DesignBook.Font.body)
+                .foregroundStyle(DesignBook.Color.Text.secondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, DesignBook.Spacing.lg)
+        }
+        .padding(.top, DesignBook.Spacing.xl)
     }
 
     var controlsCard: some View {
         GameCard {
             VStack(spacing: DesignBook.Spacing.md) {
-                header
                 slider
                 stepper
                 legendTags
@@ -66,23 +83,18 @@ private extension WordSettingsView {
         }
     }
 
-    var header: some View {
-        HStack {
-            Text("wordSettings.wordsPerPlayer")
-                .font(DesignBook.Font.headline)
-                .foregroundColor(DesignBook.Color.Text.primary)
-
-            Spacer()
-
-            Text("\(selectedWordCount)")
-                .font(DesignBook.Font.title2)
-                .foregroundColor(DesignBook.Color.Text.accent)
-        }
-    }
-
     var slider: some View {
-        Slider(value: wordCountBinding, in: 3...20, step: 1)
-            .tint(DesignBook.Color.Text.accent)
+        Slider(
+            value: wordCountBinding,
+            in: 3...20,
+            step: 1,
+            onEditingChanged: { editing in
+                if !editing {
+                    DesignBook.Haptics.selection()
+                }
+            }
+        )
+        .tint(DesignBook.Color.Text.accent)
     }
 
     var stepper: some View {
@@ -90,6 +102,9 @@ private extension WordSettingsView {
             Text("common.tapOrHoldToAdjust")
                 .font(DesignBook.Font.caption)
                 .foregroundColor(DesignBook.Color.Text.secondary)
+        }
+        .onChange(of: selectedWordCount) { _, _ in
+            DesignBook.Haptics.selection()
         }
     }
 
@@ -116,15 +131,22 @@ private extension WordSettingsView {
     var continueButton: some View {
         PrimaryButton(
             title: String(localized: "common.buttons.continue"),
-            icon: "arrow.right.circle.fill",
-            action: handleContinue
-        )
+            icon: "arrow.right.circle.fill"
+        ) {
+            DesignBook.Haptics.tap()
+            handleContinue()
+        }
     }
 
     var wordCountBinding: Binding<Double> {
         Binding(
             get: { Double(selectedWordCount) },
-            set: { selectedWordCount = Int($0) }
+            set: { newValue in
+                let stepped = Int(newValue)
+                if stepped != selectedWordCount {
+                    selectedWordCount = stepped
+                }
+            }
         )
     }
 
