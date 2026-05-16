@@ -5,108 +5,47 @@
 //  Created by Giga Khizanishvili on 15.11.25.
 //
 
-import SwiftUI
 import DesignBook
 import Navigation
+import SwiftUI
 
 struct RandomizationView: View {
     @Environment(GameManager.self) private var gameManager
     @Environment(Navigator.self) private var navigator
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
     @State private var isShuffling: Bool = false
     @State private var isRandomizingTeam: Bool = false
     @State private var selectedStartingTeamIndex: Int = 0
     @State private var showTeamReveal: Bool = false
-    @State private var rotationAngle: Double = 0
+
+    private var selectedTeam: Team {
+        gameManager.configuration.teams[selectedStartingTeamIndex]
+    }
 
     var body: some View {
-        content
-            .setDefaultStyle(title: String(localized: "randomization.title"))
-            .navigationBarBackButtonHidden()
-    }
-}
-
-// MARK: - Private
-private extension RandomizationView {
-    var content: some View {
         ZStack {
             readyContent
                 .blur(radius: isShuffling ? 10 : 0)
                 .opacity(isShuffling ? 0.3 : 1)
 
             if isShuffling {
-                shufflingOverlay
+                ShufflingOverlay(reduceMotion: reduceMotion)
             }
         }
+        .navigationTitle(String(localized: "randomization.title"))
+        .setDefaultStyle()
     }
+}
 
-    var shufflingOverlay: some View {
-        ZStack {
-            Color.black.opacity(0.4)
-                .ignoresSafeArea()
-
-            VStack(spacing: DesignBook.Spacing.xl) {
-                // Animated dice
-                ZStack {
-                    RoundedRectangle(cornerRadius: 20)
-                        .fill(
-                            LinearGradient(
-                                colors: [
-                                    DesignBook.Color.Text.accent,
-                                    DesignBook.Color.Text.accent.opacity(0.7)
-                                ],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
-                        .frame(width: 100, height: 100)
-                        .shadow(color: DesignBook.Color.Text.accent.opacity(0.5), radius: 20, x: 0, y: 10)
-                        .rotation3DEffect(
-                            .degrees(rotationAngle),
-                            axis: (x: 1, y: 1, z: 0)
-                        )
-
-                    Image(systemName: "dice.fill")
-                        .font(.system(size: 50))
-                        .foregroundColor(.white)
-                        .rotation3DEffect(
-                            .degrees(rotationAngle),
-                            axis: (x: 1, y: 1, z: 0)
-                        )
-                }
-
-                VStack(spacing: DesignBook.Spacing.sm) {
-                    Text("randomization.shuffling.message")
-                        .font(DesignBook.Font.title2)
-                        .foregroundColor(.white)
-
-                    ProgressDotIndicator(
-                        count: 3,
-                        currentIndex: 1,
-                        dotSize: DesignBook.Size.dotMedium,
-                        spacing: 4,
-                        completedColor: .white.opacity(DesignBook.Opacity.mostlyOpaque),
-                        currentColor: .white.opacity(DesignBook.Opacity.mostlyOpaque),
-                        pendingColor: .white.opacity(DesignBook.Opacity.mostlyOpaque)
-                    )
-                }
-            }
-        }
-        .onAppear {
-            withAnimation(.linear(duration: 2.5).repeatForever(autoreverses: false)) {
-                rotationAngle = 360
-            }
-        }
-    }
-
+// MARK: - Subviews
+private extension RandomizationView {
     var readyContent: some View {
         ScrollView {
             VStack(spacing: DesignBook.Spacing.xl) {
-                headerCard
-
-                wordsReadyCard
-
+                RandomizationHeaderCard()
+                WordsReadyCard(wordCount: gameManager.configuration.words.count)
                 startingTeamSection
-
                 Spacer()
             }
             .paddingHorizontalDefault()
@@ -121,7 +60,133 @@ private extension RandomizationView {
         }
     }
 
-    var headerCard: some View {
+    var startingTeamSection: some View {
+        VStack(spacing: DesignBook.Spacing.md) {
+            startingTeamHeader
+
+            if showTeamReveal {
+                RevealedTeamCard(team: selectedTeam, isRevealed: showTeamReveal)
+                    .transition(.scale.combined(with: .opacity))
+            } else {
+                teamsList
+            }
+        }
+    }
+
+    var startingTeamHeader: some View {
+        HStack {
+            Text("randomization.startingTeam.title")
+                .font(DesignBook.Font.title3)
+                .foregroundStyle(DesignBook.Color.Text.primary)
+
+            Spacer()
+
+            if !showTeamReveal {
+                Button(action: randomizeStartingTeam) {
+                    HStack(spacing: DesignBook.Spacing.xs) {
+                        Image(systemName: isRandomizingTeam ? "sparkles" : "shuffle")
+                            .font(DesignBook.Font.caption)
+                            .symbolEffect(.pulse, options: .repeating, isActive: isRandomizingTeam)
+
+                        Text("randomization.startingTeam.randomize")
+                            .font(DesignBook.Font.caption)
+                    }
+                    .foregroundStyle(DesignBook.Color.Text.accent)
+                    .padding(.horizontal, DesignBook.Spacing.md)
+                    .padding(.vertical, DesignBook.Spacing.sm)
+                    .background(DesignBook.Color.Text.accent.opacity(0.1))
+                    .cornerRadius(DesignBook.Size.smallCardCornerRadius)
+                }
+                .buttonStyle(.plain)
+                .disabled(isRandomizingTeam)
+            }
+        }
+    }
+
+    var teamsList: some View {
+        VStack(spacing: DesignBook.Spacing.md) {
+            ForEach(Array(gameManager.configuration.teams.enumerated()), id: \.offset) { index, team in
+                TeamSelectionRow(
+                    team: team,
+                    isSelected: selectedStartingTeamIndex == index
+                )
+                .onTapGesture {
+                    selectTeam(at: index)
+                }
+            }
+        }
+    }
+
+    var shuffleButton: some View {
+        PrimaryButton(
+            title: String(localized: "randomization.shuffleAndStart"),
+            icon: "play.fill",
+            action: shuffleAndStart
+        )
+        .disabled(isShuffling || isRandomizingTeam)
+    }
+}
+
+// MARK: - Actions
+private extension RandomizationView {
+    func selectTeam(at index: Int) {
+        DesignBook.Haptics.selection()
+        withAnimation(reduceMotion ? nil : DesignBook.Motion.snappy) {
+            selectedStartingTeamIndex = index
+            showTeamReveal = false
+        }
+    }
+
+    func randomizeStartingTeam() {
+        guard !isRandomizingTeam else { return }
+        DesignBook.Haptics.tap()
+        withAnimation(reduceMotion ? nil : DesignBook.Motion.standard) {
+            isRandomizingTeam = true
+            showTeamReveal = false
+        }
+
+        var cycleCount = 0
+        Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { timer in
+            cycleCount += 1
+            let teamCount = gameManager.configuration.teams.count
+            withAnimation(.easeInOut(duration: 0.1)) {
+                selectedStartingTeamIndex = Int.random(in: 0..<teamCount)
+            }
+            if cycleCount % 3 == 0 {
+                Task { @MainActor in DesignBook.Haptics.selection() }
+            }
+            guard cycleCount >= 20 else { return }
+            timer.invalidate()
+            finalizeRandomTeamSelection(teamCount: teamCount)
+        }
+    }
+
+    func finalizeRandomTeamSelection(teamCount: Int) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            withAnimation(.spring(response: 0.5, dampingFraction: 0.6)) {
+                selectedStartingTeamIndex = Int.random(in: 0..<teamCount)
+                isRandomizingTeam = false
+                showTeamReveal = true
+            }
+            DesignBook.Haptics.success()
+        }
+    }
+
+    func shuffleAndStart() {
+        DesignBook.Haptics.confirm()
+        withAnimation(reduceMotion ? nil : DesignBook.Motion.standard) {
+            isShuffling = true
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
+            gameManager.start(startingTeamIndex: selectedStartingTeamIndex)
+            navigator.push(.nextTeam(round: .first, team: gameManager.currentTeam))
+        }
+    }
+}
+
+// MARK: - Subview types
+private struct RandomizationHeaderCard: View {
+    var body: some View {
         GameCard {
             VStack(spacing: DesignBook.Spacing.md) {
                 CircularIconContainer(
@@ -131,7 +196,7 @@ private extension RandomizationView {
                     color: DesignBook.Color.Text.accent,
                     gradientColors: [
                         DesignBook.Color.Text.accent.opacity(DesignBook.Opacity.highlight),
-                        DesignBook.Color.Text.accent.opacity(DesignBook.Opacity.veryLight)
+                        DesignBook.Color.Text.accent.opacity(DesignBook.Opacity.veryLight),
                     ]
                 )
                 .symbolEffect(.pulse, options: .repeating)
@@ -139,19 +204,23 @@ private extension RandomizationView {
                 VStack(spacing: DesignBook.Spacing.xs) {
                     Text("randomization.header.title")
                         .font(DesignBook.Font.title2)
-                        .foregroundColor(DesignBook.Color.Text.primary)
+                        .foregroundStyle(DesignBook.Color.Text.primary)
 
                     Text("randomization.header.subtitle")
                         .font(DesignBook.Font.body)
-                        .foregroundColor(DesignBook.Color.Text.secondary)
+                        .foregroundStyle(DesignBook.Color.Text.secondary)
                         .multilineTextAlignment(.center)
                 }
             }
             .padding(DesignBook.Spacing.md)
         }
     }
+}
 
-    var wordsReadyCard: some View {
+private struct WordsReadyCard: View {
+    let wordCount: Int
+
+    var body: some View {
         GameCard {
             HStack(spacing: DesignBook.Spacing.md) {
                 ZStack {
@@ -161,17 +230,17 @@ private extension RandomizationView {
 
                     Image(systemName: "checkmark.circle.fill")
                         .font(.system(size: 28))
-                        .foregroundColor(DesignBook.Color.Status.success)
+                        .foregroundStyle(DesignBook.Color.Status.success)
                 }
 
                 VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
                     Text("randomization.wordsReady.title")
                         .font(DesignBook.Font.headline)
-                        .foregroundColor(DesignBook.Color.Text.primary)
+                        .foregroundStyle(DesignBook.Color.Text.primary)
 
-                    Text(String(format: String(localized: "randomization.wordsReady.count"), gameManager.configuration.words.count))
+                    Text(String(format: String(localized: "randomization.wordsReady.count"), wordCount))
                         .font(DesignBook.Font.body)
-                        .foregroundColor(DesignBook.Color.Text.secondary)
+                        .foregroundStyle(DesignBook.Color.Text.secondary)
                 }
 
                 Spacer()
@@ -179,222 +248,186 @@ private extension RandomizationView {
             .padding(DesignBook.Spacing.md)
         }
     }
+}
 
-    var startingTeamSection: some View {
-        VStack(spacing: DesignBook.Spacing.md) {
-            HStack {
-                Text("randomization.startingTeam.title")
-                    .font(DesignBook.Font.title3)
-                    .foregroundColor(DesignBook.Color.Text.primary)
+private struct TeamSelectionRow: View {
+    let team: Team
+    let isSelected: Bool
 
-                Spacer()
-
-                if !showTeamReveal {
-                    Button {
-                        randomizeStartingTeam()
-                    } label: {
-                        HStack(spacing: DesignBook.Spacing.xs) {
-                            Image(systemName: isRandomizingTeam ? "sparkles" : "shuffle")
-                                .font(DesignBook.Font.caption)
-                                .symbolEffect(.pulse, options: .repeating, isActive: isRandomizingTeam)
-
-                            Text("randomization.startingTeam.randomize")
-                                .font(DesignBook.Font.caption)
-                        }
-                        .foregroundColor(DesignBook.Color.Text.accent)
-                        .padding(.horizontal, DesignBook.Spacing.md)
-                        .padding(.vertical, DesignBook.Spacing.sm)
-                        .background(DesignBook.Color.Text.accent.opacity(0.1))
-                        .cornerRadius(DesignBook.Size.smallCardCornerRadius)
-                    }
-                    .disabled(isRandomizingTeam)
-                }
-            }
-
-            if showTeamReveal {
-                revealedTeamCard
-                    .transition(.scale.combined(with: .opacity))
-            } else {
-                teamsGrid
-            }
-        }
-    }
-
-    var teamsGrid: some View {
-        VStack(spacing: DesignBook.Spacing.md) {
-            ForEach(Array(gameManager.configuration.teams.enumerated()), id: \.offset) { index, team in
-                teamCard(team: team, index: index, isSelected: selectedStartingTeamIndex == index)
-                    .onTapGesture {
-                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                            selectedStartingTeamIndex = index
-                            showTeamReveal = false
-                        }
-                    }
-            }
-        }
-    }
-
-    func teamCard(team: Team, index: Int, isSelected: Bool) -> some View {
+    var body: some View {
         HStack(spacing: DesignBook.Spacing.md) {
-            // Team color indicator
             RoundedRectangle(cornerRadius: DesignBook.Size.smallCardCornerRadius)
                 .fill(team.color)
                 .frame(width: 8)
 
-            // Team info
             VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
                 Text(team.name)
                     .font(DesignBook.Font.headline)
-                    .foregroundColor(DesignBook.Color.Text.primary)
+                    .foregroundStyle(DesignBook.Color.Text.primary)
 
                 Text(String(format: String(localized: "randomization.team.players"), team.players.count))
                     .font(DesignBook.Font.caption)
-                    .foregroundColor(DesignBook.Color.Text.secondary)
+                    .foregroundStyle(DesignBook.Color.Text.secondary)
             }
 
             Spacer()
 
-            // Selection indicator
-            if isSelected {
-                Image(systemName: "checkmark.circle.fill")
-                    .font(DesignBook.IconFont.medium)
-                    .foregroundColor(DesignBook.Color.Text.accent)
-            } else {
-                Image(systemName: "circle")
-                    .font(DesignBook.IconFont.medium)
-                    .foregroundColor(DesignBook.Color.Text.tertiary)
-            }
+            Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                .font(DesignBook.IconFont.medium)
+                .foregroundStyle(isSelected ? DesignBook.Color.Text.accent : DesignBook.Color.Text.tertiary)
         }
         .padding(DesignBook.Spacing.md)
-        .background(
+        .background {
             RoundedRectangle(cornerRadius: DesignBook.Size.cardCornerRadius)
                 .fill(DesignBook.Color.Background.card)
-                .overlay(
+                .overlay {
                     RoundedRectangle(cornerRadius: DesignBook.Size.cardCornerRadius)
                         .stroke(isSelected ? team.color : Color.clear, lineWidth: 2)
-                )
-        )
-        .scaleEffect(isSelected ? 1.02 : 1.0)
-    }
-
-    var revealedTeamCard: some View {
-        let team = gameManager.configuration.teams[selectedStartingTeamIndex]
-
-        return GameCard {
-            VStack(spacing: DesignBook.Spacing.lg) {
-                // Trophy icon
-                ZStack {
-                    Circle()
-                        .fill(
-                            LinearGradient(
-                                colors: [
-                                    team.color.opacity(0.3),
-                                    team.color.opacity(0.1)
-                                ],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
-                        .frame(width: 80, height: 80)
-
-                    Image(systemName: "trophy.fill")
-                        .font(.system(size: 40))
-                        .foregroundColor(team.color)
-                        .symbolEffect(.bounce, value: showTeamReveal)
                 }
+        }
+        .scaleEffect(isSelected ? 1.02 : 1.0)
+        .accessibilityElement(children: .combine)
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
+    }
+}
+
+private struct RevealedTeamCard: View {
+    let team: Team
+    let isRevealed: Bool
+
+    var body: some View {
+        GameCard {
+            VStack(spacing: DesignBook.Spacing.lg) {
+                trophyIcon
 
                 VStack(spacing: DesignBook.Spacing.sm) {
                     Text("randomization.startingTeam.selected")
                         .font(DesignBook.Font.caption)
-                        .foregroundColor(DesignBook.Color.Text.secondary)
+                        .foregroundStyle(DesignBook.Color.Text.secondary)
 
                     Text(team.name)
                         .font(DesignBook.Font.title)
                         .fontWeight(.bold)
-                        .foregroundColor(team.color)
+                        .foregroundStyle(team.color)
 
                     Text("randomization.startingTeam.goesFirst")
                         .font(DesignBook.Font.body)
-                        .foregroundColor(DesignBook.Color.Text.secondary)
+                        .foregroundStyle(DesignBook.Color.Text.secondary)
                 }
 
-                // Players list
-                VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
-                    ForEach(team.players) { player in
-                        HStack(spacing: DesignBook.Spacing.sm) {
-                            Circle()
-                                .fill(team.color.opacity(0.3))
-                                .frame(width: 8, height: 8)
-
-                            Text(player.name)
-                                .font(DesignBook.Font.body)
-                                .foregroundColor(DesignBook.Color.Text.primary)
-                        }
-                    }
-                }
-                .padding(DesignBook.Spacing.md)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .background(DesignBook.Color.Background.secondary)
-                .cornerRadius(DesignBook.Size.smallCardCornerRadius)
+                playersList
             }
             .padding(DesignBook.Spacing.lg)
         }
     }
 
-    var shuffleButton: some View {
-        PrimaryButton(
-            title: String(localized: "randomization.shuffleAndStart"),
-            icon: "play.fill"
-        ) {
-            shuffleAndStart()
+    private var trophyIcon: some View {
+        ZStack {
+            Circle()
+                .fill(
+                    LinearGradient(
+                        colors: [team.color.opacity(0.3), team.color.opacity(0.1)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+                .frame(width: 80, height: 80)
+
+            Image(systemName: "trophy.fill")
+                .font(.system(size: 40))
+                .foregroundStyle(team.color)
+                .symbolEffect(.bounce, value: isRevealed)
         }
-        .disabled(isShuffling || isRandomizingTeam)
     }
 
-    func randomizeStartingTeam() {
-        guard !isRandomizingTeam else { return }
+    private var playersList: some View {
+        VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
+            ForEach(team.players) { player in
+                HStack(spacing: DesignBook.Spacing.sm) {
+                    Circle()
+                        .fill(team.color.opacity(0.3))
+                        .frame(width: 8, height: 8)
 
-        withAnimation(.easeInOut(duration: 0.3)) {
-            isRandomizingTeam = true
-            showTeamReveal = false
-        }
-
-        // Cycle through teams rapidly for drama
-        var cycleCount = 0
-        Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { timer in
-            cycleCount += 1
-            withAnimation(.easeInOut(duration: 0.1)) {
-                selectedStartingTeamIndex = Int.random(in: 0..<gameManager.configuration.teams.count)
-            }
-
-            if cycleCount >= 20 {
-                timer.invalidate()
-                // Final selection
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                    withAnimation(.spring(response: 0.5, dampingFraction: 0.6)) {
-                        selectedStartingTeamIndex = Int.random(in: 0..<gameManager.configuration.teams.count)
-                        isRandomizingTeam = false
-                        showTeamReveal = true
-                    }
+                    Text(player.name)
+                        .font(DesignBook.Font.body)
+                        .foregroundStyle(DesignBook.Color.Text.primary)
                 }
             }
         }
+        .padding(DesignBook.Spacing.md)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(DesignBook.Color.Background.secondary)
+        .cornerRadius(DesignBook.Size.smallCardCornerRadius)
+    }
+}
+
+private struct ShufflingOverlay: View {
+    @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+    let reduceMotion: Bool
+
+    @State private var rotationAngle: Double = 0
+
+    var body: some View {
+        ZStack {
+            Color.black.opacity(0.55).ignoresSafeArea()
+
+            VStack(spacing: DesignBook.Spacing.xl) {
+                hatBadge
+
+                VStack(spacing: DesignBook.Spacing.sm) {
+                    Text("randomization.shuffling.message")
+                        .font(DesignBook.Font.title2)
+                        .foregroundStyle(.white)
+
+                    ProgressDotIndicator(
+                        count: 3,
+                        currentIndex: 1,
+                        dotSize: DesignBook.Size.dotMedium,
+                        spacing: 4,
+                        completedColor: .white.opacity(DesignBook.Opacity.mostlyOpaque),
+                        currentColor: .white.opacity(DesignBook.Opacity.mostlyOpaque),
+                        pendingColor: .white.opacity(DesignBook.Opacity.mostlyOpaque)
+                    )
+                }
+            }
+        }
+        .onAppear {
+            guard !reduceMotion else { return }
+            withAnimation(.linear(duration: 2.5).repeatForever(autoreverses: false)) {
+                rotationAngle = 360
+            }
+        }
     }
 
-    func shuffleAndStart() {
-        withAnimation(.easeInOut(duration: 0.3)) {
-            isShuffling = true
-        }
+    private var hatBadge: some View {
+        ZStack {
+            Circle()
+                .fill(DesignBook.Gradient.primary)
+                .frame(width: 144, height: 144)
+                .blur(radius: 24)
+                .opacity(0.7)
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
-            gameManager.start(startingTeamIndex: selectedStartingTeamIndex)
-            navigator.push(
-                .nextTeam(
-                    round: .first,
-                    team: gameManager.currentTeam
-                )
-            )
+            disc
+
+            Text("🎩")
+                .font(.system(size: 72))
+                .rotation3DEffect(.degrees(rotationAngle), axis: (x: 0.2, y: 1.0, z: 0.0))
         }
+    }
+
+    private var disc: some View {
+        ZStack {
+            if reduceTransparency {
+                Circle().fill(DesignBook.Color.Background.card)
+            } else {
+                Circle().fill(.thinMaterial)
+            }
+        }
+        .frame(width: 128, height: 128)
+        .overlay {
+            Circle().strokeBorder(Color.white.opacity(0.18), lineWidth: 1)
+        }
+        .shadow(color: .black.opacity(0.35), radius: 20, x: 0, y: 12)
     }
 }
 
