@@ -5,15 +5,14 @@
 //  Created by Giga Khizanishvili on 15.11.25.
 //
 
-import SwiftUI
 import DesignBook
 import Navigation
+import SwiftUI
 
 struct WordInputView: View {
     @Environment(GameManager.self) private var gameManager
     @Environment(Navigator.self) private var navigator
-    
-    private let appConfiguration = AppConfiguration.shared
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     @State private var currentPlayerIndex: Int = 0
     @State private var playerWords: [String] = []
@@ -21,46 +20,44 @@ struct WordInputView: View {
     @State private var shouldScrollToTextField: Bool = false
     @State private var shouldScrollToLatestWord: Bool = false
     @State private var isAutoFilling: Bool = false
+
     @FocusState private var isWordFieldFocused: Bool
     @Namespace private var addButtonNamespace
 
+    private let appConfiguration = AppConfiguration.shared
+
+    private var allPlayers: [Player] {
+        gameManager.configuration.teams.flatMap(\.players)
+    }
+
     private var currentPlayer: Player? {
-        guard currentPlayerIndex < allPlayers.count else { return nil }
-        return allPlayers[currentPlayerIndex]
+        allPlayers[safe: currentPlayerIndex]
     }
 
     private var nextPlayerName: String? {
-        let nextIndex = currentPlayerIndex + 1
-        guard nextIndex < allPlayers.count else { return nil }
-        return allPlayers[nextIndex].name
+        allPlayers[safe: currentPlayerIndex + 1]?.name
     }
 
-    private var wordsPerPlayer: Int {
-        gameManager.configuration.wordsPerPlayer
+    private var wordsPerPlayer: Int { gameManager.configuration.wordsPerPlayer }
+
+    private var isCurrentPlayerDone: Bool { playerWords.count >= wordsPerPlayer }
+
+    private var isAddWordButtonDisabled: Bool {
+        currentWord.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || isCurrentPlayerDone
     }
 
-    private var allPlayers: [Player] {
-        gameManager.configuration.teams.flatMap { $0.players }
-    }
-
-    private var progress: Double {
-        guard !allPlayers.isEmpty else { return 0 }
-        return Double(currentPlayerIndex) / Double(allPlayers.count)
-    }
+    private var isLastPlayer: Bool { currentPlayerIndex == allPlayers.indices.last }
 
     var body: some View {
         content
-            .setDefaultStyle(title: String(localized: "wordInput.title"))
-            .onAppear {
-                prepareCurrentPlayer()
-            }
-            .onChange(of: currentPlayerIndex) { _, _ in
-                prepareCurrentPlayer()
-            }
+            .navigationTitle(String(localized: "wordInput.title"))
+            .setDefaultStyle()
+            .onAppear(perform: prepareCurrentPlayer)
+            .onChange(of: currentPlayerIndex) { _, _ in prepareCurrentPlayer() }
     }
 }
 
-// MARK: - Private
+// MARK: - Subviews
 private extension WordInputView {
     var content: some View {
         ScrollViewReader { proxy in
@@ -72,28 +69,10 @@ private extension WordInputView {
                 .paddingHorizontalDefault()
                 .padding(.bottom, DesignBook.Spacing.xxl)
             }
-            .safeAreaInset(edge: .bottom) {
-                Group {
-                    if isWordFieldFocused, playerWords.count < wordsPerPlayer {
-                        HStack {
-                            Spacer()
-                            floatingAddButton
-                        }
-                    } else {
-                        actionButton
-                    }
-                }
-                .paddingHorizontalDefault()
-                .padding(.bottom, DesignBook.Spacing.sm)
-                .withFooterGradient()
-            }
-            .onAppear {
-                scrollToTextField(proxy: proxy, delay: 0.5)
-            }
-            .onChange(of: isWordFieldFocused) { _, isFocused in
-                if isFocused {
-                    scrollToTextField(proxy: proxy, delay: 0.2)
-                }
+            .safeAreaInset(edge: .bottom) { footer }
+            .onAppear { scrollToTextField(proxy: proxy, delay: 0.5) }
+            .onChange(of: isWordFieldFocused) { _, focused in
+                if focused { scrollToTextField(proxy: proxy, delay: 0.2) }
             }
             .onChange(of: playerWords.count) { _, _ in
                 scrollToTextField(proxy: proxy, delay: 0.15)
@@ -101,35 +80,15 @@ private extension WordInputView {
             .onChange(of: currentPlayerIndex) { _, _ in
                 scrollToTextField(proxy: proxy, delay: 0.4)
             }
-            .onChange(of: shouldScrollToTextField) { _, shouldScroll in
-                if shouldScroll {
-                    scrollToTextField(proxy: proxy, delay: 0.1)
-                    shouldScrollToTextField = false
-                }
+            .onChange(of: shouldScrollToTextField) { _, scroll in
+                guard scroll else { return }
+                scrollToTextField(proxy: proxy, delay: 0.1)
+                shouldScrollToTextField = false
             }
-            .onChange(of: shouldScrollToLatestWord) { _, shouldScroll in
-                if shouldScroll {
-                    scrollToLatestWord(proxy: proxy)
-                    shouldScrollToLatestWord = false
-                }
-            }
-        }
-    }
-
-    func scrollToTextField(proxy: ScrollViewProxy, delay: TimeInterval = 0.2) {
-        DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
-            withAnimation(.easeInOut(duration: 0.3)) {
-                proxy.scrollTo("wordTextField", anchor: .center)
-            }
-        }
-    }
-
-    func scrollToLatestWord(proxy: ScrollViewProxy) {
-        guard !playerWords.isEmpty else { return }
-        let latestIndex = playerWords.count - 1
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            withAnimation(.easeInOut(duration: 0.3)) {
-                proxy.scrollTo("word_\(latestIndex)", anchor: .top)
+            .onChange(of: shouldScrollToLatestWord) { _, scroll in
+                guard scroll else { return }
+                scrollToLatestWord(proxy: proxy)
+                shouldScrollToLatestWord = false
             }
         }
     }
@@ -145,62 +104,44 @@ private extension WordInputView {
                 )
             }
         ) {
-            playerStepIndicator
-        }
-    }
-
-    var playerStepIndicator: some View {
-        HStack(spacing: DesignBook.Spacing.xs) {
-            ForEach(allPlayers.indices, id: \.self) { index in
-                Capsule()
-                    .fill(stepColor(for: index))
-                    .frame(height: 6)
-                    .overlay {
-                        if index == currentPlayerIndex {
-                            Capsule()
-                                .stroke(DesignBook.Color.Text.accent, lineWidth: 2)
-                        }
-                    }
-            }
-        }
-    }
-
-    func stepColor(for index: Int) -> Color {
-        if index < currentPlayerIndex {
-            // Completed players
-            return DesignBook.Color.Status.success
-        } else if index == currentPlayerIndex {
-            // Current player
-            return DesignBook.Color.Text.accent
-        } else {
-            // Remaining players
-            return DesignBook.Color.Background.secondary
+            PlayerStepIndicator(
+                playerCount: allPlayers.count,
+                currentIndex: currentPlayerIndex
+            )
         }
     }
 
     @ViewBuilder
     var wordEntrySection: some View {
         if currentPlayer != nil {
-            if playerWords.count < wordsPerPlayer {
-                wordInputCard
-            } else {
+            if isCurrentPlayerDone {
                 VStack(spacing: DesignBook.Spacing.md) {
-                    completionCard
-                    wordsListCard
+                    CompletionCard(nextPlayerName: nextPlayerName)
+                    WordsListCard(
+                        playerWords: playerWords,
+                        wordsPerPlayer: wordsPerPlayer,
+                        onRemove: removeWord
+                    )
                 }
+            } else {
+                activeInputCard
             }
         }
     }
 
-    var wordInputCard: some View {
+    var activeInputCard: some View {
         GameCard {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.lg) {
                 progressHeader
 
-                autoFillButton
+                AutoFillButton(
+                    isAutoFilling: isAutoFilling,
+                    isDisabled: isCurrentPlayerDone || isAutoFilling,
+                    action: handleAutoFillWords
+                )
 
                 if !playerWords.isEmpty {
-                    wordsList
+                    WordsList(playerWords: playerWords, onRemove: removeWord)
                         .transition(.move(edge: .top).combined(with: .opacity))
                 }
 
@@ -214,200 +155,60 @@ private extension WordInputView {
             HStack {
                 Text("wordInput.wordsAdded")
                     .font(DesignBook.Font.headline)
-                    .foregroundColor(DesignBook.Color.Text.primary)
-
+                    .foregroundStyle(DesignBook.Color.Text.primary)
                 Spacer()
-
-                Text("\(playerWords.count)/\(wordsPerPlayer)")
+                Text(verbatim: "\(playerWords.count)/\(wordsPerPlayer)")
                     .font(DesignBook.Font.title3)
-                    .foregroundColor(DesignBook.Color.Text.accent)
+                    .foregroundStyle(DesignBook.Color.Text.accent)
+                    .monospacedDigit()
             }
-
             ProgressView(value: Double(playerWords.count), total: Double(wordsPerPlayer))
                 .tint(DesignBook.Color.Text.accent)
                 .progressViewStyle(.linear)
         }
     }
 
-    var autoFillButton: some View {
-        Button {
-            handleAutoFillWords()
-        } label: {
-            HStack(spacing: DesignBook.Spacing.sm) {
-                Image(systemName: isAutoFilling ? "sparkles" : "wand.and.stars")
-                    .font(DesignBook.Font.body)
-                    .fontWeight(.semibold)
-                    .symbolEffect(.pulse, options: .repeating, isActive: isAutoFilling)
-
-                Text(isAutoFilling ? "wordInput.autoFill.thinking" : "wordInput.autoFill")
-                    .font(DesignBook.Font.body)
-                    .fontWeight(.medium)
-            }
-            .foregroundStyle(
-                LinearGradient(
-                    colors: [
-                        DesignBook.Color.Text.accent,
-                        DesignBook.Color.Text.accent.opacity(0.8)
-                    ],
-                    startPoint: .leading,
-                    endPoint: .trailing
-                )
-            )
-            .padding(.vertical, DesignBook.Spacing.md)
-            .padding(.horizontal, DesignBook.Spacing.lg)
-            .frame(maxWidth: .infinity)
-            .background {
-                ZStack {
-                    // Glass effect background
-                    RoundedRectangle(cornerRadius: DesignBook.Size.cardCornerRadius)
-                        .fill(.ultraThinMaterial)
-
-                    // Gradient overlay for glass effect
-                    RoundedRectangle(cornerRadius: DesignBook.Size.cardCornerRadius)
-                        .fill(
-                            LinearGradient(
-                                colors: [
-                                    DesignBook.Color.Text.accent.opacity(0.15),
-                                    DesignBook.Color.Text.accent.opacity(0.05)
-                                ],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
-
-                    // Border for glass effect
-                    RoundedRectangle(cornerRadius: DesignBook.Size.cardCornerRadius)
-                        .strokeBorder(
-                            LinearGradient(
-                                colors: [
-                                    DesignBook.Color.Text.accent.opacity(0.3),
-                                    DesignBook.Color.Text.accent.opacity(0.1)
-                                ],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            ),
-                            lineWidth: 1.5
-                        )
-                }
-            }
-            .shadow(color: DesignBook.Color.Text.accent.opacity(0.2), radius: 8, x: 0, y: 4)
-        }
-        .buttonStyle(.plain)
-        .disabled(playerWords.count >= wordsPerPlayer || isAutoFilling)
-        .opacity((playerWords.count >= wordsPerPlayer || isAutoFilling) ? DesignBook.Opacity.disabled : DesignBook.Opacity.enabled)
-    }
-
     var wordTextField: some View {
         TextField("wordInput.enterWord", text: $currentWord)
             .textFieldStyle(.plain)
             .font(DesignBook.Font.body)
-            .foregroundColor(DesignBook.Color.Text.primary)
+            .foregroundStyle(DesignBook.Color.Text.primary)
             .padding(DesignBook.Spacing.md)
             .background(DesignBook.Color.Background.secondary)
             .cornerRadius(DesignBook.Size.smallCardCornerRadius)
             .focused($isWordFieldFocused)
             .onSubmit {
-                if !isAddWordButtonDisabled {
-                    handleAddWord()
-                    shouldScrollToTextField = true
-                }
+                guard !isAddWordButtonDisabled else { return }
+                handleAddWord()
+                shouldScrollToTextField = true
             }
             .id("wordTextField")
     }
 
-    var wordsList: some View {
-        VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
-            ForEach(playerWords.indices, id: \.self) { index in
-                wordRow(at: index)
-                    .id("word_\(index)")
-                    .transition(
-                        .asymmetric(
-                            insertion: .scale.combined(with: .opacity),
-                            removal: .scale.combined(with: .opacity)
-                        )
+    @ViewBuilder
+    var footer: some View {
+        Group {
+            if isWordFieldFocused, !isCurrentPlayerDone {
+                HStack {
+                    Spacer()
+                    FloatingAddButton(
+                        action: handleAddWord,
+                        isDisabled: isAddWordButtonDisabled,
+                        namespace: addButtonNamespace
                     )
-                    .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                        Button(role: .destructive) {
-                            removeWord(at: index)
-                        } label: {
-                            Label("Delete", systemImage: "trash.fill")
-                        }
-                    }
-            }
-        }
-    }
-
-    func wordRow(at index: Int) -> some View {
-        HStack(spacing: DesignBook.Spacing.sm) {
-            Text("\(index + 1)")
-                .font(DesignBook.Font.caption)
-                .foregroundColor(DesignBook.Color.Text.tertiary)
-                .frame(width: DesignBook.Size.badgeSize, height: DesignBook.Size.badgeSize)
-                .background(DesignBook.Color.Background.secondary)
-                .clipShape(Circle())
-
-            Text(playerWords[index])
-                .font(DesignBook.Font.body)
-                .foregroundColor(DesignBook.Color.Text.primary)
-
-            Spacer()
-
-            Button {
-                removeWord(at: index)
-            } label: {
-                Image(systemName: "xmark.circle.fill")
-                    .font(DesignBook.IconFont.small)
-                    .foregroundColor(DesignBook.Color.Status.error.opacity(0.7))
-            }
-            .buttonStyle(.plain)
-        }
-        .padding(DesignBook.Spacing.md)
-        .background(DesignBook.Color.Background.secondary)
-        .cornerRadius(DesignBook.Size.smallCardCornerRadius)
-    }
-
-    var completionCard: some View {
-        GameCard {
-            VStack(spacing: DesignBook.Spacing.md) {
-                Image(systemName: "checkmark.circle.fill")
-                    .font(DesignBook.IconFont.extraLarge)
-                    .foregroundColor(DesignBook.Color.Status.success)
-
-                Text("wordInput.allWordsAdded")
-                    .font(DesignBook.Font.title3)
-                    .foregroundColor(DesignBook.Color.Text.primary)
-
-                if let nextPlayerName {
-                    Text(String(format: String(localized: "wordInput.readyToPass"), nextPlayerName))
-                        .font(DesignBook.Font.body)
-                        .foregroundColor(DesignBook.Color.Text.secondary)
-                        .multilineTextAlignment(.center)
-                } else {
-                    Text("wordInput.allPlayersEntered")
-                        .font(DesignBook.Font.body)
-                        .foregroundColor(DesignBook.Color.Text.secondary)
-                        .multilineTextAlignment(.center)
                 }
-            }
-            .padding(DesignBook.Spacing.lg)
-        }
-    }
-
-    var wordsListCard: some View {
-        GameCard {
-            VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
-                Text(String(format: String(localized: "wordInput.wordsAddedProgress"), playerWords.count, wordsPerPlayer))
-                    .font(DesignBook.Font.headline)
-                    .foregroundColor(DesignBook.Color.Text.primary)
-
-                wordsList
+            } else {
+                actionButton
             }
         }
+        .paddingHorizontalDefault()
+        .padding(.bottom, DesignBook.Spacing.sm)
+        .withFooterGradient()
     }
 
     @ViewBuilder
     var actionButton: some View {
-        if playerWords.count < wordsPerPlayer {
+        if !isCurrentPlayerDone {
             PrimaryButton(title: String(localized: "wordInput.addWord"), icon: "plus.circle.fill") {
                 handleAddWord()
             }
@@ -415,118 +216,114 @@ private extension WordInputView {
             .opacity(isAddWordButtonDisabled ? DesignBook.Opacity.disabled : DesignBook.Opacity.enabled)
             .matchedGeometryEffect(id: "addButton", in: addButtonNamespace)
         } else {
-            PrimaryButton(title: actionButtonTitle, icon: actionButtonIcon) {
-                handleSaveWords()
+            PrimaryButton(title: nextActionTitle, icon: nextActionIcon, action: handleSaveWords)
+        }
+    }
+
+    var nextActionTitle: String {
+        isLastPlayer ? String(localized: "wordInput.finish") : String(localized: "wordInput.nextPlayer")
+    }
+
+    var nextActionIcon: String {
+        isLastPlayer ? "checkmark.circle.fill" : "arrow.right.circle.fill"
+    }
+}
+
+// MARK: - Scrolling
+private extension WordInputView {
+    func scrollToTextField(proxy: ScrollViewProxy, delay: TimeInterval = 0.2) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+            withAnimation(reduceMotion ? nil : DesignBook.Motion.standard) {
+                proxy.scrollTo("wordTextField", anchor: .center)
             }
         }
     }
 
-    var floatingAddButton: some View {
-        Button(action: handleAddWord) {
-            Image(systemName: "plus.circle.fill")
-                .font(DesignBook.IconFont.large)
-                .frame(width: DesignBook.Size.floatingButtonSize, height: DesignBook.Size.floatingButtonSize)
+    func scrollToLatestWord(proxy: ScrollViewProxy) {
+        guard !playerWords.isEmpty else { return }
+        let latestIndex = playerWords.count - 1
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            withAnimation(reduceMotion ? nil : DesignBook.Motion.standard) {
+                proxy.scrollTo("word_\(latestIndex)", anchor: .top)
+            }
         }
-        .buttonStyle(.glassProminent)
-        .disabled(isAddWordButtonDisabled)
-        .opacity(isAddWordButtonDisabled ? DesignBook.Opacity.disabled : DesignBook.Opacity.enabled)
-        .matchedGeometryEffect(id: "addButton", in: addButtonNamespace)
     }
+}
 
-    var isAddWordButtonDisabled: Bool {
-        currentWord.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-    }
-
-    var actionButtonTitle: String {
-        currentPlayerIndex < allPlayers.count - 1
-            ? String(localized: "wordInput.nextPlayer")
-            : String(localized: "wordInput.finish")
-    }
-
-    var actionButtonIcon: String {
-        currentPlayerIndex < allPlayers.count - 1 ? "arrow.right.circle.fill" : "checkmark.circle.fill"
-    }
-
+// MARK: - Actions
+private extension WordInputView {
     func prepareCurrentPlayer() {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
             isWordFieldFocused = true
         }
     }
 
-    func removeWord(at index: Int) {
-        _ = withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-            playerWords.remove(at: index)
-        }
-    }
-
     func handleAddWord() {
-        let trimmedWord = currentWord.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmedWord.isEmpty, playerWords.count < wordsPerPlayer else { return }
-        guard !playerWords.contains(trimmedWord) else { return }
+        let trimmed = currentWord.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty, !isCurrentPlayerDone, !playerWords.contains(trimmed) else { return }
 
-        withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
-            playerWords.append(trimmedWord)
+        DesignBook.Haptics.tap()
+        let animation = reduceMotion ? nil : DesignBook.Motion.bouncy
+        withAnimation(animation) {
+            playerWords.append(trimmed)
         }
-
         currentWord = ""
 
-        // Scroll to show the newly added word
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
             shouldScrollToLatestWord = true
         }
-
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             isWordFieldFocused = true
         }
     }
 
+    func removeWord(at index: Int) {
+        DesignBook.Haptics.soft()
+        let animation = reduceMotion ? nil : DesignBook.Motion.snappy
+        _ = withAnimation(animation) {
+            playerWords.remove(at: index)
+        }
+    }
+
     func handleSaveWords() {
         guard let currentPlayer else { return }
+        DesignBook.Haptics.confirm()
         gameManager.addWords(playerWords, by: currentPlayer)
 
-        if currentPlayerIndex != allPlayers.indices.last {
+        if isLastPlayer {
+            navigator.push(.randomization)
+        } else {
             currentPlayerIndex += 1
             playerWords = []
-        } else {
-            navigator.push(.randomization)
         }
     }
 
     func handleAutoFillWords() {
         let remainingCount = wordsPerPlayer - playerWords.count
-        guard remainingCount > 0 else { return }
-        guard !isAutoFilling else { return }
+        guard remainingCount > 0, !isAutoFilling else { return }
 
-        // Dismiss keyboard first for better visibility
+        DesignBook.Haptics.tap()
         isWordFieldFocused = false
 
-        var excludedWords = Set(playerWords)
-
-        // If duplicates not allowed, exclude words used by other players
+        var excluded = Set(playerWords)
         if !appConfiguration.allowDuplicateWords {
-            let usedWords = gameManager.getAllUsedWords()
-            excludedWords.formUnion(usedWords)
+            excluded.formUnion(gameManager.getAllUsedWords())
         }
 
-        // Get available words from database
-        let availableWords = WordDatabase.words.filter { !excludedWords.contains($0) }
+        let newWords = WordDatabase.words
+            .filter { !excluded.contains($0) }
+            .shuffled()
+            .prefix(remainingCount)
 
-        // Shuffle and take what we need
-        let newWords = Array(availableWords.shuffled().prefix(remainingCount))
-
-        // Start AI thinking animation
         withAnimation(.easeInOut(duration: 0.3)) {
             isAutoFilling = true
         }
 
-        // Add words one by one with delay for AI thinking effect
         for (index, word) in newWords.enumerated() {
             DispatchQueue.main.asyncAfter(deadline: .now() + Double(index) * 0.3 + 0.5) {
-                withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
+                withAnimation(reduceMotion ? nil : DesignBook.Motion.bouncy) {
                     playerWords.append(word)
                 }
-
-                // Stop animation after last word
                 if index == newWords.count - 1 {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                         withAnimation(.easeInOut(duration: 0.3)) {
@@ -536,6 +333,246 @@ private extension WordInputView {
                 }
             }
         }
+    }
+}
+
+// MARK: - Subview types
+private struct PlayerStepIndicator: View {
+    let playerCount: Int
+    let currentIndex: Int
+
+    var body: some View {
+        HStack(spacing: DesignBook.Spacing.xs) {
+            ForEach(0..<playerCount, id: \.self) { index in
+                Capsule()
+                    .fill(color(for: index))
+                    .frame(height: 6)
+                    .overlay {
+                        if index == currentIndex {
+                            Capsule().stroke(DesignBook.Color.Text.accent, lineWidth: 2)
+                        }
+                    }
+            }
+        }
+    }
+
+    private func color(for index: Int) -> Color {
+        if index < currentIndex {
+            DesignBook.Color.Status.success
+        } else if index == currentIndex {
+            DesignBook.Color.Text.accent
+        } else {
+            DesignBook.Color.Background.secondary
+        }
+    }
+}
+
+private struct AutoFillButton: View {
+    let isAutoFilling: Bool
+    let isDisabled: Bool
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: DesignBook.Spacing.sm) {
+                Image(systemName: isAutoFilling ? "sparkles" : "wand.and.stars")
+                    .font(DesignBook.Font.body)
+                    .fontWeight(.semibold)
+                    .symbolEffect(.pulse, options: .repeating, isActive: isAutoFilling)
+                Text(isAutoFilling ? "wordInput.autoFill.thinking" : "wordInput.autoFill")
+                    .font(DesignBook.Font.body)
+                    .fontWeight(.medium)
+            }
+            .foregroundStyle(
+                LinearGradient(
+                    colors: [
+                        DesignBook.Color.Text.accent,
+                        DesignBook.Color.Text.accent.opacity(0.8),
+                    ],
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
+            )
+            .padding(.vertical, DesignBook.Spacing.md)
+            .padding(.horizontal, DesignBook.Spacing.lg)
+            .frame(maxWidth: .infinity)
+            .background(background)
+            .shadow(color: DesignBook.Color.Text.accent.opacity(0.2), radius: 8, x: 0, y: 4)
+        }
+        .buttonStyle(.plain)
+        .disabled(isDisabled)
+        .opacity(isDisabled ? DesignBook.Opacity.disabled : DesignBook.Opacity.enabled)
+    }
+
+    private var background: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: DesignBook.Size.cardCornerRadius)
+                .fill(.ultraThinMaterial)
+
+            RoundedRectangle(cornerRadius: DesignBook.Size.cardCornerRadius)
+                .fill(
+                    LinearGradient(
+                        colors: [
+                            DesignBook.Color.Text.accent.opacity(0.15),
+                            DesignBook.Color.Text.accent.opacity(0.05),
+                        ],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+
+            RoundedRectangle(cornerRadius: DesignBook.Size.cardCornerRadius)
+                .strokeBorder(
+                    LinearGradient(
+                        colors: [
+                            DesignBook.Color.Text.accent.opacity(0.3),
+                            DesignBook.Color.Text.accent.opacity(0.1),
+                        ],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ),
+                    lineWidth: 1.5
+                )
+        }
+    }
+}
+
+private struct FloatingAddButton: View {
+    let action: () -> Void
+    let isDisabled: Bool
+    let namespace: Namespace.ID
+
+    var body: some View {
+        Button(action: action) {
+            Image(systemName: "plus.circle.fill")
+                .font(DesignBook.IconFont.large)
+                .frame(width: DesignBook.Size.floatingButtonSize, height: DesignBook.Size.floatingButtonSize)
+        }
+        .buttonStyle(.glassProminent)
+        .disabled(isDisabled)
+        .opacity(isDisabled ? DesignBook.Opacity.disabled : DesignBook.Opacity.enabled)
+        .matchedGeometryEffect(id: "addButton", in: namespace)
+    }
+}
+
+private struct WordsList: View {
+    let playerWords: [String]
+    let onRemove: (Int) -> Void
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
+            ForEach(playerWords.indices, id: \.self) { index in
+                WordRow(
+                    index: index,
+                    text: playerWords[index],
+                    onRemove: { onRemove(index) }
+                )
+                .id("word_\(index)")
+                .transition(
+                    .asymmetric(
+                        insertion: .scale.combined(with: .opacity),
+                        removal: .scale.combined(with: .opacity)
+                    )
+                )
+                .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                    Button(role: .destructive) {
+                        onRemove(index)
+                    } label: {
+                        Label("Delete", systemImage: "trash.fill")
+                    }
+                }
+            }
+        }
+    }
+}
+
+private struct WordRow: View {
+    let index: Int
+    let text: String
+    let onRemove: () -> Void
+
+    var body: some View {
+        HStack(spacing: DesignBook.Spacing.sm) {
+            Text(verbatim: "\(index + 1)")
+                .font(DesignBook.Font.caption)
+                .foregroundStyle(DesignBook.Color.Text.tertiary)
+                .frame(width: DesignBook.Size.badgeSize, height: DesignBook.Size.badgeSize)
+                .background(DesignBook.Color.Background.secondary)
+                .clipShape(Circle())
+
+            Text(text)
+                .font(DesignBook.Font.body)
+                .foregroundStyle(DesignBook.Color.Text.primary)
+
+            Spacer()
+
+            Button(action: onRemove) {
+                Image(systemName: "xmark.circle.fill")
+                    .font(DesignBook.IconFont.small)
+                    .foregroundStyle(DesignBook.Color.Status.error.opacity(0.7))
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(Text("Remove word"))
+        }
+        .padding(DesignBook.Spacing.md)
+        .background(DesignBook.Color.Background.secondary)
+        .cornerRadius(DesignBook.Size.smallCardCornerRadius)
+    }
+}
+
+private struct CompletionCard: View {
+    let nextPlayerName: String?
+
+    var body: some View {
+        GameCard {
+            VStack(spacing: DesignBook.Spacing.md) {
+                Image(systemName: "checkmark.circle.fill")
+                    .font(DesignBook.IconFont.extraLarge)
+                    .foregroundStyle(DesignBook.Color.Status.success)
+
+                Text("wordInput.allWordsAdded")
+                    .font(DesignBook.Font.title3)
+                    .foregroundStyle(DesignBook.Color.Text.primary)
+
+                if let nextPlayerName {
+                    Text(String(format: String(localized: "wordInput.readyToPass"), nextPlayerName))
+                        .font(DesignBook.Font.body)
+                        .foregroundStyle(DesignBook.Color.Text.secondary)
+                        .multilineTextAlignment(.center)
+                } else {
+                    Text("wordInput.allPlayersEntered")
+                        .font(DesignBook.Font.body)
+                        .foregroundStyle(DesignBook.Color.Text.secondary)
+                        .multilineTextAlignment(.center)
+                }
+            }
+            .padding(DesignBook.Spacing.lg)
+        }
+    }
+}
+
+private struct WordsListCard: View {
+    let playerWords: [String]
+    let wordsPerPlayer: Int
+    let onRemove: (Int) -> Void
+
+    var body: some View {
+        GameCard {
+            VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
+                Text(String(format: String(localized: "wordInput.wordsAddedProgress"), playerWords.count, wordsPerPlayer))
+                    .font(DesignBook.Font.headline)
+                    .foregroundStyle(DesignBook.Color.Text.primary)
+
+                WordsList(playerWords: playerWords, onRemove: onRemove)
+            }
+        }
+    }
+}
+
+// MARK: - Safe collection subscript
+private extension Array {
+    subscript(safe index: Int) -> Element? {
+        indices.contains(index) ? self[index] : nil
     }
 }
 
