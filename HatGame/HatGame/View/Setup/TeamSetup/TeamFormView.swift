@@ -5,58 +5,56 @@
 //  Created by Giga Khizanishvili on 16.11.25.
 //
 
-import SwiftUI
 import DesignBook
 import Navigation
+import SwiftUI
 
 struct TeamFormView: View {
-    @Environment(Navigator.self) private var navigator
-    @Environment(GameManager.self) private var gameManager
-
-    let team: Team?
-    let onPrimaryAction: (Team) -> Void
-
-    private let appConfiguration = AppConfiguration.shared
-    @State private var teamName: String = ""
-    @State private var playerNames: [String] = []
-    @State private var teamColor: Color = TeamDefaultColorGenerator.defaultColors[0]
-    @State private var isColorSectionExpanded: Bool = false
-    @State private var isKeyboardVisible: Bool = false
-    @FocusState private var focusedField: Field?
-
     enum Field: Hashable {
         case teamName
         case player(Int)
     }
 
-    init(
-        team: Team? = nil,
-        onPrimaryAction: @escaping (Team) -> Void
-    ) {
-        self.team = team
-        self.onPrimaryAction = onPrimaryAction
+    @Environment(GameManager.self) private var gameManager
+    @Environment(Navigator.self) private var navigator
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    let team: Team?
+    let onPrimaryAction: (Team) -> Void
+
+    @State private var teamName: String = ""
+    @State private var playerNames: [String] = []
+    @State private var teamColor: Color = TeamDefaultColorGenerator.defaultColors[0]
+    @State private var isColorSectionExpanded: Bool = false
+    @State private var nameSuggestions: [String] = TeamNameSuggestions.random()
+
+    @FocusState private var focusedField: Field?
+
+    private let appConfiguration = AppConfiguration.shared
+
+    private var isKeyboardVisible: Bool { focusedField != nil }
+
+    private var trimmedTeamName: String {
+        teamName.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
-    private var canSave: Bool {
-        let trimmedName = teamName.trimmingCharacters(in: .whitespacesAndNewlines)
-        let nonEmptyPlayers = playerNames.filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+    private var filledPlayerNames: [String] {
+        playerNames
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty }
+    }
 
-        return !trimmedName.isEmpty &&
-               nonEmptyPlayers.count == gameManager.configuration.playersPerTeam
+    private var requiredPlayers: Int { gameManager.configuration.playersPerTeam }
+
+    private var canSave: Bool {
+        !trimmedTeamName.isEmpty && filledPlayerNames.count == requiredPlayers
     }
 
     private var validationMessage: String? {
-        let nonEmptyPlayers = playerNames.filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
-        let required = gameManager.configuration.playersPerTeam
-
-        if !teamName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
-           nonEmptyPlayers.count < required {
-            return String(
-                format: String(localized: "teamForm.validation.exactPlayers"),
-                required
-            )
+        guard !trimmedTeamName.isEmpty, filledPlayerNames.count < requiredPlayers else {
+            return nil
         }
-        return nil
+        return String(format: String(localized: "teamForm.validation.exactPlayers"), requiredPlayers)
     }
 
     private var title: String {
@@ -67,62 +65,56 @@ struct TeamFormView: View {
         team == nil ? String(localized: "teamForm.primary.create") : String(localized: "teamForm.primary.save")
     }
 
-    private var primaryButtonIcon: String? {
+    private var primaryButtonIcon: String {
         team == nil ? "plus.circle.fill" : "checkmark.circle.fill"
     }
 
-    private var currentTeamId: UUID? {
-        team?.id
+    init(
+        team: Team? = nil,
+        onPrimaryAction: @escaping (Team) -> Void
+    ) {
+        self.team = team
+        self.onPrimaryAction = onPrimaryAction
     }
 
     var body: some View {
         ScrollView {
             VStack(spacing: DesignBook.Spacing.lg) {
                 teamNameCard
-                colorCard
+                teamColorCard
                 playersCard
             }
             .paddingHorizontalDefault()
             .padding(.top, DesignBook.Spacing.lg)
             .padding(.bottom, DesignBook.Spacing.xxl)
         }
+        .navigationTitle(title)
+        .setDefaultStyle()
         .safeAreaInset(edge: .bottom) {
-            actionButtons
-                .withFooterGradient()
-        }
-        .setDefaultStyle(title: title)
-        .onAppear {
-            loadInitialData()
-            if teamName.isEmpty {
-                focusedField = .teamName
+            if !isKeyboardVisible {
+                stackedActions
+                    .paddingHorizontalDefault()
+                    .padding(.top, DesignBook.Spacing.md)
+                    .padding(.bottom, DesignBook.Spacing.sm)
+                    .withFooterGradient()
             }
-            setupKeyboardObservers()
         }
-        .onDisappear {
-            removeKeyboardObservers()
-        }
+        .toolbar { keyboardToolbar }
+        .onAppear(perform: handleAppear)
     }
 }
 
-// MARK: - Private
+// MARK: - Subviews
 private extension TeamFormView {
     var teamNameCard: some View {
         GameCard {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
-                HStack(spacing: DesignBook.Spacing.sm) {
-                    Image(systemName: "person.3.fill")
-                        .font(DesignBook.IconFont.medium)
-                        .foregroundColor(DesignBook.Color.Text.accent)
-
-                    Text("teamForm.teamName")
-                        .font(DesignBook.Font.captionBold)
-                        .foregroundColor(DesignBook.Color.Text.secondary)
-                }
+                FieldLabel(icon: "person.3.fill", title: "teamForm.teamName")
 
                 TextField("teamForm.enterTeamName", text: $teamName)
                     .textFieldStyle(.plain)
                     .font(DesignBook.Font.headline)
-                    .foregroundColor(DesignBook.Color.Text.primary)
+                    .foregroundStyle(DesignBook.Color.Text.primary)
                     .padding(DesignBook.Spacing.md)
                     .background(DesignBook.Color.Background.secondary)
                     .cornerRadius(DesignBook.Size.smallCardCornerRadius)
@@ -132,39 +124,24 @@ private extension TeamFormView {
                             focusedField = .player(0)
                         }
                     }
+
+                if showNameSuggestions {
+                    TeamNameSuggestionRow(
+                        suggestions: nameSuggestions,
+                        onPick: pickSuggestion,
+                        onRefresh: refreshSuggestions
+                    )
+                    .transition(.opacity.combined(with: .move(edge: .top)))
+                }
             }
         }
+        .animation(reduceMotion ? nil : DesignBook.Motion.standard, value: showNameSuggestions)
     }
 
-    var colorCard: some View {
+    var teamColorCard: some View {
         GameCard {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
-                Button {
-                    withAnimation(.easeInOut) {
-                        isColorSectionExpanded.toggle()
-                    }
-                } label: {
-                    HStack(spacing: DesignBook.Spacing.sm) {
-                        Image(systemName: "paintpalette.fill")
-                            .font(DesignBook.IconFont.medium)
-                            .foregroundColor(DesignBook.Color.Text.accent)
-
-                        Text("teamForm.teamColor")
-                            .font(DesignBook.Font.captionBold)
-                            .foregroundColor(DesignBook.Color.Text.secondary)
-
-                        Spacer()
-
-                        if !isColorSectionExpanded {
-                            Circle()
-                                .fill(teamColor)
-                                .frame(width: 24, height: 24)
-                        }
-
-                        Image(systemName: isColorSectionExpanded ? "chevron.up" : "chevron.down")
-                            .foregroundColor(DesignBook.Color.Text.secondary)
-                    }
-                }
+                colorCardHeader
 
                 if isColorSectionExpanded {
                     colorPicker
@@ -172,6 +149,36 @@ private extension TeamFormView {
                 }
             }
         }
+    }
+
+    var colorCardHeader: some View {
+        Button {
+            withAnimation(reduceMotion ? nil : DesignBook.Motion.standard) {
+                isColorSectionExpanded.toggle()
+            }
+        } label: {
+            HStack(spacing: DesignBook.Spacing.sm) {
+                Image(systemName: "paintpalette.fill")
+                    .font(DesignBook.IconFont.medium)
+                    .foregroundStyle(DesignBook.Color.Text.accent)
+
+                Text("teamForm.teamColor")
+                    .font(DesignBook.Font.captionBold)
+                    .foregroundStyle(DesignBook.Color.Text.secondary)
+
+                Spacer()
+
+                if !isColorSectionExpanded {
+                    Circle()
+                        .fill(teamColor)
+                        .frame(width: 24, height: 24)
+                }
+
+                Image(systemName: isColorSectionExpanded ? "chevron.up" : "chevron.down")
+                    .foregroundStyle(DesignBook.Color.Text.secondary)
+            }
+        }
+        .buttonStyle(.plain)
     }
 
     var colorPicker: some View {
@@ -185,19 +192,19 @@ private extension TeamFormView {
                 spacing: DesignBook.Spacing.md
             ) {
                 ForEach(suggestedColorOptions.indices, id: \.self) { index in
-                    colorOption(color: suggestedColorOptions[index], index: index)
+                    ColorSwatchButton(
+                        color: suggestedColorOptions[index],
+                        isSelected: isColorSelected(suggestedColorOptions[index]),
+                        isDisabled: isColorOccupiedByOtherTeam(suggestedColorOptions[index]),
+                        onSelect: { selectColor(suggestedColorOptions[index]) }
+                    )
                 }
 
                 ColorPicker(
                     "teamForm.customColor",
                     selection: Binding(
                         get: { teamColor },
-                        set: { newColor in
-                            withAnimation(.easeInOut) {
-                                teamColor = newColor
-                                isColorSectionExpanded = false
-                            }
-                        }
+                        set: { selectColor($0) }
                     ),
                     supportsOpacity: true
                 )
@@ -211,89 +218,22 @@ private extension TeamFormView {
         }
     }
 
-    var suggestedColorOptions: [Color] {
-        TeamDefaultColorGenerator.defaultColors
-    }
-
-    func colorOption(color: Color, index: Int) -> some View {
-        let isDisabled = isColorOccupiedByOtherTeam(color)
-
-        return Button {
-            if !isDisabled {
-                withAnimation(.easeInOut) {
-                    teamColor = color
-                    isColorSectionExpanded = false
-                }
-            }
-        } label: {
-            Circle()
-                .fill(color)
-                .frame(width: DesignBook.Size.colorSwatchSize, height: DesignBook.Size.colorSwatchSize)
-                .overlay {
-                    if isSuggestedColorSelected(index) {
-                        Image(systemName: "checkmark")
-                            .font(DesignBook.Font.subheadlineBold)
-                            .foregroundColor(.white)
-                    } else if isDisabled {
-                        Image(systemName: "xmark")
-                            .font(DesignBook.Font.footnoteBold)
-                            .foregroundColor(.white)
-                            .opacity(DesignBook.Opacity.disabled)
-                    }
-                }
-                .opacity(isDisabled ? DesignBook.Opacity.disabled : DesignBook.Opacity.enabled)
-        }
-        .buttonStyle(.plain)
-        .disabled(isDisabled)
-    }
-
-    func isSuggestedColorSelected(_ index: Int) -> Bool {
-        guard index < suggestedColorOptions.count else { return false }
-        let suggestedColor = suggestedColorOptions[index]
-        return isColorSelected(suggestedColor)
-    }
-
-    func isColorSelected(_ color: Color) -> Bool {
-        teamColor.isApproximatelyEqual(to: color)
-    }
-
-    func isColorOccupiedByOtherTeam(_ color: Color) -> Bool {
-        gameManager.configuration.teams.contains { team in
-            // Skip the current team if editing
-            if let currentTeamId = currentTeamId, team.id == currentTeamId {
-                return false
-            }
-            return areColorsEqual(color, team.color)
-        }
-    }
-
-    func areColorsEqual(_ color1: Color, _ color2: Color) -> Bool {
-        color1.isApproximatelyEqual(to: color2)
-    }
-
     var playersCard: some View {
         GameCard {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
                 HStack(spacing: DesignBook.Spacing.sm) {
-                    Image(systemName: "person.2.fill")
-                        .font(DesignBook.IconFont.medium)
-                        .foregroundColor(DesignBook.Color.Text.accent)
-
-                    Text("teamForm.players")
-                        .font(DesignBook.Font.captionBold)
-                        .foregroundColor(DesignBook.Color.Text.secondary)
-
+                    FieldLabel(icon: "person.2.fill", title: "teamForm.players")
                     Spacer()
-
-                    Text("\(playerNames.filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }.count)/\(gameManager.configuration.playersPerTeam)")
+                    Text(verbatim: "\(filledPlayerNames.count)/\(requiredPlayers)")
                         .font(DesignBook.Font.captionBold)
-                        .foregroundColor(DesignBook.Color.Text.tertiary)
+                        .foregroundStyle(DesignBook.Color.Text.tertiary)
+                        .monospacedDigit()
                 }
 
                 if let validationMessage {
                     Text(validationMessage)
                         .font(DesignBook.Font.caption)
-                        .foregroundColor(DesignBook.Color.Status.error)
+                        .foregroundStyle(DesignBook.Color.Status.error)
                 }
 
                 VStack(spacing: DesignBook.Spacing.md) {
@@ -307,167 +247,296 @@ private extension TeamFormView {
 
     func playerField(index: Int) -> some View {
         HStack(spacing: DesignBook.Spacing.md) {
-            Text("\(index + 1)")
+            Text(verbatim: "\(index + 1)")
                 .font(DesignBook.Font.captionBold)
-                .foregroundColor(DesignBook.Color.Text.accent)
+                .foregroundStyle(DesignBook.Color.Text.accent)
                 .frame(width: 24, height: 24)
                 .background(DesignBook.Color.Text.accent.opacity(DesignBook.Opacity.highlight))
                 .clipShape(Circle())
+                .monospacedDigit()
 
-            TextField("teamForm.playerName", text: Binding(
-                get: { playerNames[index] },
-                set: { playerNames[index] = $0 }
-            ))
+            TextField(
+                "teamForm.playerName",
+                text: Binding(
+                    get: { playerNames[index] },
+                    set: { playerNames[index] = $0 }
+                )
+            )
             .textFieldStyle(.plain)
             .font(DesignBook.Font.body)
-            .foregroundColor(DesignBook.Color.Text.primary)
+            .foregroundStyle(DesignBook.Color.Text.primary)
             .padding(DesignBook.Spacing.md)
             .background(DesignBook.Color.Background.secondary)
             .cornerRadius(DesignBook.Size.smallCardCornerRadius)
             .focused($focusedField, equals: .player(index))
             .onSubmit {
                 let nextIndex = index + 1
-                if nextIndex < playerNames.count {
-                    focusedField = .player(nextIndex)
-                } else {
-                    focusedField = nil
-                }
+                focusedField = nextIndex < playerNames.count ? .player(nextIndex) : nil
             }
         }
     }
 
-    // MARK: - Action Buttons
-
-    var actionButtons: some View {
-        Group {
-            if isKeyboardVisible {
-                // Horizontal layout when keyboard is visible
-                HStack(spacing: DesignBook.Spacing.md) {
-                    Button(action: navigator.dismiss) {
-                        Text("common.buttons.cancel")
-                            .font(DesignBook.Font.headline)
-                            .padding(8)
-                            .cornerRadius(DesignBook.Size.smallCardCornerRadius)
-                    }
-                    .buttonStyle(.glassProminent)
-                    .tint(DesignBook.Color.Status.error)
-
-                    Group {
-                        if let icon = primaryButtonIcon {
-                            PrimaryButton(title: primaryButtonTitle, icon: icon) {
-                                handlePrimaryAction()
-                            }
-                        } else {
-                            PrimaryButton(title: primaryButtonTitle) {
-                                handlePrimaryAction()
-                            }
-                        }
-                    }
-                    .disabled(!canSave)
-                    .opacity(canSave ? DesignBook.Opacity.enabled : DesignBook.Opacity.disabled)
-                }
-                .paddingHorizontalDefault()
-                .padding(.top, DesignBook.Spacing.md)
-                .padding(.bottom, DesignBook.Spacing.sm)
-            } else {
-                // Vertical layout when keyboard is hidden
-                VStack(spacing: DesignBook.Spacing.md) {
-                    Group {
-                        if let icon = primaryButtonIcon {
-                            PrimaryButton(title: primaryButtonTitle, icon: icon) {
-                                handlePrimaryAction()
-                            }
-                        } else {
-                            PrimaryButton(title: primaryButtonTitle) {
-                                handlePrimaryAction()
-                            }
-                        }
-                    }
-                    .disabled(!canSave)
-                    .opacity(canSave ? DesignBook.Opacity.enabled : DesignBook.Opacity.disabled)
-
-                    DestructiveButton(title: String(localized: "common.buttons.cancel")) {
-                        navigator.dismiss()
-                    }
-                }
-                .paddingHorizontalDefault()
-                .padding(.top, DesignBook.Spacing.md)
-                .padding(.bottom, DesignBook.Spacing.sm)
+    @ToolbarContentBuilder
+    var keyboardToolbar: some ToolbarContent {
+        ToolbarItemGroup(placement: .keyboard) {
+            Button(action: dismiss) {
+                Text("common.buttons.cancel")
+                    .foregroundStyle(DesignBook.Color.Status.error)
             }
-        }
-        .animation(.easeInOut(duration: 0.25), value: isKeyboardVisible)
-    }
 
-    // MARK: - Keyboard Handling
+            Spacer()
 
-    func setupKeyboardObservers() {
-        NotificationCenter.default.addObserver(
-            forName: UIResponder.keyboardWillShowNotification,
-            object: nil,
-            queue: .main
-        ) { _ in
-            isKeyboardVisible = true
-        }
-
-        NotificationCenter.default.addObserver(
-            forName: UIResponder.keyboardWillHideNotification,
-            object: nil,
-            queue: .main
-        ) { _ in
-            isKeyboardVisible = false
+            Button(action: handlePrimaryAction) {
+                Label(primaryButtonTitle, systemImage: primaryButtonIcon)
+                    .labelStyle(.titleAndIcon)
+                    .fontWeight(.semibold)
+            }
+            .disabled(!canSave)
         }
     }
 
-    func removeKeyboardObservers() {
-        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+    var stackedActions: some View {
+        VStack(spacing: DesignBook.Spacing.md) {
+            primarySubmitButton
+            DestructiveButton(title: String(localized: "common.buttons.cancel"), action: dismiss)
+        }
     }
 
-    // MARK: - Data Handling
+    var primarySubmitButton: some View {
+        PrimaryButton(title: primaryButtonTitle, icon: primaryButtonIcon, action: handlePrimaryAction)
+            .disabled(!canSave)
+            .opacity(canSave ? DesignBook.Opacity.enabled : DesignBook.Opacity.disabled)
+    }
+
+    var suggestedColorOptions: [Color] {
+        TeamDefaultColorGenerator.defaultColors
+    }
+}
+
+// MARK: - Derived state
+private extension TeamFormView {
+    /// Show inline suggestions only when the user is actively focused on the team-name
+    /// field with no text yet — i.e. they're looking for inspiration, not editing.
+    var showNameSuggestions: Bool {
+        focusedField == .teamName && trimmedTeamName.isEmpty
+    }
+
+    func isColorSelected(_ color: Color) -> Bool {
+        teamColor.isApproximatelyEqual(to: color)
+    }
+
+    func isColorOccupiedByOtherTeam(_ color: Color) -> Bool {
+        gameManager.configuration.teams.contains { other in
+            // Skip the current team if editing.
+            if other.id == team?.id { return false }
+            return color.isApproximatelyEqual(to: other.color)
+        }
+    }
+}
+
+// MARK: - Actions
+private extension TeamFormView {
+    func handleAppear() {
+        loadInitialData()
+        if teamName.isEmpty {
+            focusedField = .teamName
+        }
+    }
+
+    func selectColor(_ color: Color) {
+        DesignBook.Haptics.selection()
+        withAnimation(reduceMotion ? nil : DesignBook.Motion.standard) {
+            teamColor = color
+            isColorSectionExpanded = false
+        }
+    }
+
+    func pickSuggestion(_ name: String) {
+        DesignBook.Haptics.tap()
+        withAnimation(reduceMotion ? nil : DesignBook.Motion.snappy) {
+            teamName = name
+        }
+        // Advance focus so the user can keep moving without an extra tap.
+        focusedField = playerNames.isEmpty ? nil : .player(0)
+    }
+
+    func refreshSuggestions() {
+        DesignBook.Haptics.selection()
+        let fresh = TeamNameSuggestions.random()
+        withAnimation(reduceMotion ? nil : DesignBook.Motion.snappy) {
+            nameSuggestions = fresh
+        }
+    }
 
     func loadInitialData() {
-        if let team = team {
+        if let team {
             teamName = team.name
-            // Always use exact playersPerTeam count
-            var names = team.players.map { $0.name }
-            while names.count < gameManager.configuration.playersPerTeam {
-                names.append("")
-            }
-            // Trim if team has more players than current setting
-            if names.count > gameManager.configuration.playersPerTeam {
-                names = Array(names.prefix(gameManager.configuration.playersPerTeam))
-            }
+            var names = team.players.map(\.name)
+            while names.count < requiredPlayers { names.append("") }
+            if names.count > requiredPlayers { names = Array(names.prefix(requiredPlayers)) }
             playerNames = names
             teamColor = team.color
         } else {
             teamName = ""
-            // Always create exactly playersPerTeam fields
-            playerNames = Array(repeating: "", count: gameManager.configuration.playersPerTeam)
-            updateDefaultColor()
+            playerNames = Array(repeating: "", count: requiredPlayers)
+            teamColor = TeamDefaultColorGenerator().generateDefaultColor(for: gameManager.configuration)
         }
     }
 
-    func updateDefaultColor() {
-        let generator = TeamDefaultColorGenerator()
-        teamColor = generator.generateDefaultColor(for: gameManager.configuration)
-    }
-
     func handlePrimaryAction() {
-        let trimmedName = teamName.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmedName.isEmpty else { return }
+        guard !trimmedTeamName.isEmpty else { return }
+        DesignBook.Haptics.confirm()
 
         let teamId = team?.id ?? UUID()
         let updatedTeam = Team(
             id: teamId,
-            name: trimmedName,
-            players: playerNames
-                .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
-                .filter { !$0.isEmpty }
-                .map { Player(name: $0, teamId: teamId) },
+            name: trimmedTeamName,
+            players: filledPlayerNames.map { Player(name: $0, teamId: teamId) },
             color: teamColor
         )
 
         onPrimaryAction(updatedTeam)
         navigator.dismiss()
+    }
+
+    func dismiss() {
+        DesignBook.Haptics.tap()
+        navigator.dismiss()
+    }
+}
+
+// MARK: - Subview types
+private struct FieldLabel: View {
+    let icon: String
+    let title: LocalizedStringKey
+
+    var body: some View {
+        HStack(spacing: DesignBook.Spacing.sm) {
+            Image(systemName: icon)
+                .font(DesignBook.IconFont.medium)
+                .foregroundStyle(DesignBook.Color.Text.accent)
+
+            Text(title)
+                .font(DesignBook.Font.captionBold)
+                .foregroundStyle(DesignBook.Color.Text.secondary)
+        }
+    }
+}
+
+/// Inline row of tappable team-name suggestions with a shuffle button.
+/// Appears below the team-name field when it's focused and empty.
+private struct TeamNameSuggestionRow: View {
+    let suggestions: [String]
+    let onPick: (String) -> Void
+    let onRefresh: () -> Void
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
+            header
+
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: DesignBook.Spacing.sm) {
+                    ForEach(suggestions, id: \.self) { suggestion in
+                        SuggestionChip(text: suggestion) {
+                            onPick(suggestion)
+                        }
+                    }
+                }
+                .padding(.vertical, 2)
+            }
+            .scrollClipDisabled()
+        }
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel(Text("teamForm.suggestions.accessibility"))
+    }
+
+    private var header: some View {
+        HStack(spacing: DesignBook.Spacing.xs) {
+            Image(systemName: "wand.and.stars")
+                .font(DesignBook.Font.smallCaption)
+                .foregroundStyle(DesignBook.Color.Text.accent)
+
+            Text("teamForm.suggestions.title")
+                .font(DesignBook.Font.smallCaption)
+                .textCase(.uppercase)
+                .tracking(1.2)
+                .foregroundStyle(DesignBook.Color.Text.tertiary)
+
+            Spacer()
+
+            Button(action: onRefresh) {
+                Image(systemName: "shuffle")
+                    .font(DesignBook.Font.captionBold)
+                    .foregroundStyle(DesignBook.Color.Text.accent)
+                    .padding(6)
+                    .background {
+                        Circle().fill(DesignBook.Color.Text.accent.opacity(0.12))
+                    }
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(Text("teamForm.suggestions.shuffle"))
+        }
+    }
+}
+
+private struct SuggestionChip: View {
+    let text: String
+    let onTap: () -> Void
+
+    var body: some View {
+        Button(action: onTap) {
+            Text(text)
+                .font(DesignBook.Font.captionBold)
+                .foregroundStyle(DesignBook.Color.Text.accent)
+                .lineLimit(1)
+                .padding(.horizontal, DesignBook.Spacing.md)
+                .padding(.vertical, DesignBook.Spacing.sm)
+                .background {
+                    Capsule()
+                        .fill(DesignBook.Color.Text.accent.opacity(0.10))
+                        .overlay {
+                            Capsule()
+                                .strokeBorder(DesignBook.Color.Text.accent.opacity(0.30), lineWidth: 1)
+                        }
+                }
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(Text("\(text)"))
+        .accessibilityHint(Text("teamForm.suggestions.tap"))
+    }
+}
+
+private struct ColorSwatchButton: View {
+    let color: Color
+    let isSelected: Bool
+    let isDisabled: Bool
+    let onSelect: () -> Void
+
+    var body: some View {
+        Button(action: onSelect) {
+            Circle()
+                .fill(color)
+                .frame(width: DesignBook.Size.colorSwatchSize, height: DesignBook.Size.colorSwatchSize)
+                .overlay(overlay)
+                .opacity(isDisabled ? DesignBook.Opacity.disabled : DesignBook.Opacity.enabled)
+        }
+        .buttonStyle(.plain)
+        .disabled(isDisabled)
+        .accessibilityLabel(isSelected ? Text("Selected color") : Text("Color"))
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
+    }
+
+    @ViewBuilder
+    private var overlay: some View {
+        if isSelected {
+            Image(systemName: "checkmark")
+                .font(DesignBook.Font.subheadlineBold)
+                .foregroundStyle(.white)
+        } else if isDisabled {
+            Image(systemName: "xmark")
+                .font(DesignBook.Font.footnoteBold)
+                .foregroundStyle(.white)
+                .opacity(DesignBook.Opacity.disabled)
+        }
     }
 }
