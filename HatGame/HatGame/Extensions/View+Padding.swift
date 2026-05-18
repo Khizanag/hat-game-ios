@@ -10,6 +10,6 @@ import DesignBook
 
 extension View {
     func paddingHorizontalDefault() -> some View {
-        padding(.horizontal, DesignBook.Spacing.lg)
+        padding(.horizontal, DesignBook.Spacing.md)
     }
 }
