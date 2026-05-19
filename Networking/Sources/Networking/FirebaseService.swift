@@ -25,7 +25,11 @@ public final class FirebaseService: @unchecked Sendable {
     }
 
     public var isAvailable: Bool {
-        FirebaseApp.app() != nil
+        // Requires both FirebaseApp.configure() to have run *and* a DATABASE_URL
+        // in the bundle — operations on the realtime database silently fail
+        // without the URL.
+        guard let url = FirebaseApp.app()?.options.databaseURL else { return false }
+        return !url.isEmpty
     }
 
     // MARK: - Room Operations
