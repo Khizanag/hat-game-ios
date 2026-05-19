@@ -63,3 +63,9 @@ fastlane/test_output
 
 # Claude Code
 .claude/
+
+# Firebase CLI
+.firebase/
+firebase-debug.log
+firestore-debug.log
+database-debug.log

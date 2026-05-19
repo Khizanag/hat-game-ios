@@ -1,0 +1,35 @@
+name: Deploy Firebase Database Rules
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - database.rules.json
+      - firebase.json
+      - .firebaserc
+      - .github/workflows/firebase-database-rules.yml
+  workflow_dispatch: # allow manual runs from the Actions tab
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Firebase CLI
+        run: npm install --global firebase-tools
+
+      - name: Deploy database rules
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/sa.json
+        run: |
+          printf '%s' "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}" > "$GOOGLE_APPLICATION_CREDENTIALS"
+          firebase deploy --only database --non-interactive --project hat-game-e050f
+          rm -f "$GOOGLE_APPLICATION_CREDENTIALS"
