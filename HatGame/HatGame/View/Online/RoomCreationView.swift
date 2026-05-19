@@ -190,6 +190,9 @@ private extension RoomCreationView {
             }
         }
         .paddingHorizontalDefault()
+        // Keeps the button off the top edge of the keyboard once SwiftUI's
+        // keyboard avoidance lifts this safeAreaInset.
+        .padding(.bottom, DesignBook.Spacing.sm)
     }
 
     func createRoom() {
