@@ -135,4 +135,30 @@ extension Page {
             OnlineGameFlowView()
         }
     }
+
+    // MARK: - Local (Multipeer) Pages
+
+    static var localFlow: Page<LocalFlowView> {
+        Page<LocalFlowView>(id: "localFlow") {
+            LocalFlowView()
+        }
+    }
+
+    static var localHostSetup: Page<LocalHostSetupView> {
+        Page<LocalHostSetupView>(id: "localHostSetup") {
+            LocalHostSetupView()
+        }
+    }
+
+    static var localBrowser: Page<LocalRoomBrowser> {
+        Page<LocalRoomBrowser>(id: "localBrowser") {
+            LocalRoomBrowser()
+        }
+    }
+
+    static func localSession(roomCode: String) -> Page<LocalSessionView> {
+        Page<LocalSessionView>(id: "localSession-\(roomCode)") {
+            LocalSessionView()
+        }
+    }
 }

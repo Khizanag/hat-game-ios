@@ -138,6 +138,11 @@ private extension HomeView {
             }
 
             if appConfiguration.isTestMode {
+                SecondaryButton(title: String(localized: "home.nearbyGame"), icon: "dot.radiowaves.left.and.right") {
+                    DesignBook.Haptics.tap()
+                    navigator.present(.localFlow)
+                }
+
                 SecondaryButton(title: String(localized: "home.onlineGame"), icon: "wifi") {
                     DesignBook.Haptics.tap()
                     navigator.present(.onlineFlow)
