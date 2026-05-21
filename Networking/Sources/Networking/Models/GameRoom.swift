@@ -43,6 +43,27 @@ public struct GameRoom: Codable, Identifiable, Sendable {
         self.gameState = gameState
         self.createdAt = createdAt
     }
+
+    // MARK: - Codable
+
+    /// Firebase RTDB drops empty collections from the stored snapshot and
+    /// rewrites collections that were stored under child paths as
+    /// dictionaries keyed by their child ID. Custom decoder handles both.
+    private enum CodingKeys: String, CodingKey {
+        case id, hostId, status, settings, teams, players, gameState, createdAt
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.id = try container.decode(String.self, forKey: .id)
+        self.hostId = try container.decode(String.self, forKey: .hostId)
+        self.status = try container.decode(RoomStatus.self, forKey: .status)
+        self.settings = try container.decode(GameSettings.self, forKey: .settings)
+        self.teams = try container.decodeFirebaseCollection([OnlineTeam].self, forKey: .teams)
+        self.players = try container.decodeFirebaseCollection([OnlinePlayer].self, forKey: .players)
+        self.gameState = try container.decodeIfPresent(OnlineGameState.self, forKey: .gameState)
+        self.createdAt = try container.decode(Date.self, forKey: .createdAt)
+    }
 }
 
 public struct GameSettings: Codable, Sendable {

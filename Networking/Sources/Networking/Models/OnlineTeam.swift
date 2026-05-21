@@ -32,4 +32,20 @@ public struct OnlineTeam: Codable, Identifiable, Hashable, Sendable {
     public static func == (lhs: OnlineTeam, rhs: OnlineTeam) -> Bool {
         lhs.id == rhs.id
     }
+
+    // MARK: - Codable
+
+    /// `playerIds` is omitted from the stored snapshot when empty
+    /// (Firebase strips empty arrays). Custom decoder defaults to [].
+    private enum CodingKeys: String, CodingKey {
+        case id, name, colorHex, playerIds
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.id = try container.decode(String.self, forKey: .id)
+        self.name = try container.decode(String.self, forKey: .name)
+        self.colorHex = try container.decode(String.self, forKey: .colorHex)
+        self.playerIds = (try? container.decode([String].self, forKey: .playerIds)) ?? []
+    }
 }

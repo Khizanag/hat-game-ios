@@ -81,4 +81,29 @@ public struct OnlineGameState: Codable, Sendable {
     public func explainerIndex(for teamId: String) -> Int {
         teamExplainerIndices[teamId] ?? 0
     }
+
+    // MARK: - Codable
+
+    /// Firebase strips empty arrays/dicts and rewrites scores with
+    /// non-string keys. Custom decoder defaults each collection to empty.
+    private enum CodingKeys: String, CodingKey {
+        case currentRound, currentTeamIndex, teamExplainerIndices, currentWordId,
+             remainingWordIds, allWordIds, scores, phase, activePlayerId,
+             timerStartedAt, roundDuration
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.currentRound = try container.decode(OnlineGameRound.self, forKey: .currentRound)
+        self.currentTeamIndex = try container.decode(Int.self, forKey: .currentTeamIndex)
+        self.teamExplainerIndices = (try? container.decode([String: Int].self, forKey: .teamExplainerIndices)) ?? [:]
+        self.currentWordId = try container.decodeIfPresent(String.self, forKey: .currentWordId)
+        self.remainingWordIds = (try? container.decode([String].self, forKey: .remainingWordIds)) ?? []
+        self.allWordIds = (try? container.decode([String].self, forKey: .allWordIds)) ?? []
+        self.scores = (try? container.decode([String: [OnlineGameRound: Int]].self, forKey: .scores)) ?? [:]
+        self.phase = try container.decode(GamePhase.self, forKey: .phase)
+        self.activePlayerId = try container.decodeIfPresent(String.self, forKey: .activePlayerId)
+        self.timerStartedAt = try container.decodeIfPresent(Date.self, forKey: .timerStartedAt)
+        self.roundDuration = try container.decode(Int.self, forKey: .roundDuration)
+    }
 }
