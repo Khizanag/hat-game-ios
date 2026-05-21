@@ -5,66 +5,62 @@
 //  Created by Giga Khizanishvili on 22.12.24.
 //
 
-import SwiftUI
 import DesignBook
 import Navigation
 import Networking
+import SwiftUI
 
 struct RoomLobbyView: View {
     @Environment(Navigator.self) private var navigator
     @Environment(RoomManager.self) private var roomManager
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     @State private var showingTeamCreation: Bool = false
+    @State private var showingLeaveConfirmation: Bool = false
     @State private var error: Error?
 
-    private var room: GameRoom? {
-        roomManager.room
-    }
+    private var room: GameRoom? { roomManager.room }
+    private var isHost: Bool { roomManager.isHost }
+    private var allTeams: [OnlineTeam] { room?.teams ?? [] }
+    private var allPlayers: [OnlinePlayer] { room?.players ?? [] }
 
-    private var isHost: Bool {
-        roomManager.isHost
-    }
-
+    /// Every team must have ≥ 2 players for the round to be playable.
     private var canStartGame: Bool {
-        guard let room else { return false }
-        return room.teams.count >= 2 &&
-               room.teams.allSatisfy { team in
-                   room.players.filter { $0.teamId == team.id }.count >= 2
-               }
+        guard allTeams.count >= 2 else { return false }
+        return allTeams.allSatisfy { team in
+            allPlayers.filter { $0.teamId == team.id }.count >= 2
+        }
     }
 
     var body: some View {
         content
             .navigationTitle(String(localized: "lobby.title"))
-            .navigationBarBackButtonHidden(true)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        leaveRoom()
-                    } label: {
-                        Image(systemName: "xmark")
-                            .foregroundColor(DesignBook.Color.Text.primary)
-                    }
-                }
-            }
-            .setDefaultBackground()
+            .setDefaultStyle()
+            .toolbar { leaveToolbar }
             .sheet(isPresented: $showingTeamCreation) {
                 OnlineTeamCreationView()
             }
-            .alert("common.error", isPresented: .init(
-                get: { error != nil },
-                set: { if !$0 { error = nil } }
-            )) {
-                Button("common.ok") {
-                    error = nil
+            .alert(String(localized: "lobby.leave.title"), isPresented: $showingLeaveConfirmation) {
+                Button(String(localized: "common.buttons.cancel"), role: .cancel) { }
+                Button(String(localized: "lobby.leave.confirm"), role: .destructive) {
+                    leaveRoom()
                 }
+            } message: {
+                Text(isHost ? "lobby.leave.hostMessage" : "lobby.leave.guestMessage")
+            }
+            .alert("common.error", isPresented: errorBinding) {
+                Button("common.ok") { error = nil }
             } message: {
                 Text(error?.localizedDescription ?? "")
             }
     }
+
+    private var errorBinding: Binding<Bool> {
+        Binding(get: { error != nil }, set: { if !$0 { error = nil } })
+    }
 }
 
-// MARK: - Private
+// MARK: - Composition
 private extension RoomLobbyView {
     var content: some View {
         ScrollView {
@@ -78,8 +74,26 @@ private extension RoomLobbyView {
             .padding(.bottom, DesignBook.Spacing.xxl)
         }
         .safeAreaInset(edge: .bottom) {
-            actionButtons
+            actionFooter
+                .paddingHorizontalDefault()
+                .padding(.top, DesignBook.Spacing.md)
+                .padding(.bottom, DesignBook.Spacing.sm)
                 .withFooterGradient()
+        }
+        .animation(reduceMotion ? nil : DesignBook.Motion.smooth, value: allTeams.map(\.id))
+        .animation(reduceMotion ? nil : DesignBook.Motion.smooth, value: allPlayers.map(\.id))
+    }
+
+    @ToolbarContentBuilder
+    var leaveToolbar: some ToolbarContent {
+        ToolbarItem(placement: .topBarTrailing) {
+            Button {
+                showingLeaveConfirmation = true
+            } label: {
+                Image(systemName: "xmark")
+                    .foregroundStyle(DesignBook.Color.Text.primary)
+            }
+            .accessibilityLabel(Text("lobby.leave.title"))
         }
     }
 
@@ -87,23 +101,37 @@ private extension RoomLobbyView {
         GameCard {
             VStack(spacing: DesignBook.Spacing.md) {
                 Text("lobby.shareCode")
-                    .font(DesignBook.Font.caption)
-                    .foregroundColor(DesignBook.Color.Text.secondary)
+                    .font(DesignBook.Font.smallCaption)
+                    .textCase(.uppercase)
+                    .tracking(1.6)
+                    .foregroundStyle(DesignBook.Color.Text.tertiary)
 
                 Text(room?.id ?? "------")
-                    .font(.system(size: 40, weight: .bold, design: .monospaced))
-                    .foregroundColor(DesignBook.Color.Text.primary)
+                    .font(.system(size: 44, weight: .bold, design: .monospaced))
+                    .foregroundStyle(DesignBook.Color.Text.primary)
                     .kerning(8)
+                    .accessibilityLabel(Text("lobby.shareCode"))
 
-                Button {
-                    UIPasteboard.general.string = room?.id
-                } label: {
-                    HStack(spacing: DesignBook.Spacing.xs) {
-                        Image(systemName: "doc.on.doc")
-                        Text("lobby.copyCode")
+                HStack(spacing: DesignBook.Spacing.md) {
+                    if let code = room?.id {
+                        Button {
+                            DesignBook.Haptics.tap()
+                            UIPasteboard.general.string = code
+                        } label: {
+                            Label("lobby.copyCode", systemImage: "doc.on.doc")
+                                .font(DesignBook.Font.caption)
+                        }
+                        .buttonStyle(.glass)
+
+                        ShareLink(
+                            item: String(format: String(localized: "lobby.shareMessage"), code),
+                            preview: SharePreview(String(localized: "online.title"))
+                        ) {
+                            Label("lobby.share", systemImage: "square.and.arrow.up")
+                                .font(DesignBook.Font.caption)
+                        }
+                        .buttonStyle(.glass)
                     }
-                    .font(DesignBook.Font.caption)
-                    .foregroundColor(DesignBook.Color.Text.accent)
                 }
             }
             .frame(maxWidth: .infinity)
@@ -116,23 +144,19 @@ private extension RoomLobbyView {
                 HStack(spacing: DesignBook.Spacing.sm) {
                     Image(systemName: "person.3.fill")
                         .font(DesignBook.IconFont.medium)
-                        .foregroundColor(DesignBook.Color.Text.accent)
-
+                        .foregroundStyle(DesignBook.Color.Text.accent)
                     Text("lobby.players")
                         .font(DesignBook.Font.captionBold)
-                        .foregroundColor(DesignBook.Color.Text.secondary)
-
+                        .foregroundStyle(DesignBook.Color.Text.secondary)
                     Spacer()
-
-                    Text("\(room?.players.count ?? 0)")
+                    Text(verbatim: "\(allPlayers.count)")
                         .font(DesignBook.Font.captionBold)
-                        .foregroundColor(DesignBook.Color.Text.tertiary)
+                        .foregroundStyle(DesignBook.Color.Text.tertiary)
+                        .monospacedDigit()
                 }
 
-                if let players = room?.players {
-                    ForEach(players) { player in
-                        playerRow(player)
-                    }
+                ForEach(allPlayers, id: \.id) { player in
+                    playerRow(player)
                 }
             }
         }
@@ -146,27 +170,39 @@ private extension RoomLobbyView {
 
             Text(player.name)
                 .font(DesignBook.Font.body)
-                .foregroundColor(DesignBook.Color.Text.primary)
+                .foregroundStyle(DesignBook.Color.Text.primary)
 
             if player.id == room?.hostId {
                 Text("lobby.host")
-                    .font(DesignBook.Font.caption)
-                    .foregroundColor(DesignBook.Color.Text.accent)
-                    .padding(.horizontal, DesignBook.Spacing.xs)
-                    .padding(.vertical, 2)
-                    .background(DesignBook.Color.Text.accent.opacity(0.2))
-                    .cornerRadius(4)
+                    .font(DesignBook.Font.smallCaption)
+                    .textCase(.uppercase)
+                    .tracking(1.0)
+                    .foregroundStyle(DesignBook.Color.Text.accent)
+                    .padding(.horizontal, DesignBook.Spacing.sm)
+                    .padding(.vertical, 3)
+                    .background { Capsule().fill(DesignBook.Color.Text.accent.opacity(0.15)) }
+            }
+
+            if player.id == roomManager.currentPlayerId {
+                Text("onlineNextTeam.you")
+                    .font(DesignBook.Font.smallCaption)
+                    .textCase(.uppercase)
+                    .tracking(1.0)
+                    .foregroundStyle(DesignBook.Color.Text.primary)
+                    .padding(.horizontal, DesignBook.Spacing.sm)
+                    .padding(.vertical, 3)
+                    .background { Capsule().fill(DesignBook.Color.Background.secondary) }
             }
 
             Spacer()
 
             if player.teamId != nil {
                 Image(systemName: "checkmark.circle.fill")
-                    .foregroundColor(DesignBook.Color.Status.success)
+                    .foregroundStyle(DesignBook.Color.Status.success)
             } else {
                 Text("lobby.noTeam")
                     .font(DesignBook.Font.caption)
-                    .foregroundColor(DesignBook.Color.Text.tertiary)
+                    .foregroundStyle(DesignBook.Color.Text.tertiary)
             }
         }
         .padding(.vertical, DesignBook.Spacing.xs)
@@ -174,124 +210,139 @@ private extension RoomLobbyView {
 
     func teamColor(for teamId: String?) -> Color {
         guard let teamId,
-              let team = room?.teams.first(where: { $0.id == teamId }) else {
+              let team = allTeams.first(where: { $0.id == teamId }) else {
             return DesignBook.Color.Text.tertiary
         }
         return Color(hex: team.colorHex) ?? DesignBook.Color.Text.accent
     }
 
     var teamsSection: some View {
-        VStack(spacing: DesignBook.Spacing.md) {
+        VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
             HStack {
                 Text("lobby.teams")
                     .font(DesignBook.Font.captionBold)
-                    .foregroundColor(DesignBook.Color.Text.secondary)
-
+                    .foregroundStyle(DesignBook.Color.Text.secondary)
                 Spacer()
-
                 if isHost {
                     Button {
+                        DesignBook.Haptics.tap()
                         showingTeamCreation = true
                     } label: {
-                        HStack(spacing: DesignBook.Spacing.xs) {
-                            Image(systemName: "plus.circle.fill")
-                            Text("lobby.addTeam")
-                        }
-                        .font(DesignBook.Font.caption)
-                        .foregroundColor(DesignBook.Color.Text.accent)
+                        Label("lobby.addTeam", systemImage: "plus.circle.fill")
+                            .font(DesignBook.Font.caption)
+                            .foregroundStyle(DesignBook.Color.Text.accent)
                     }
+                    .buttonStyle(.plain)
                 }
             }
 
-            if let teams = room?.teams, !teams.isEmpty {
-                ForEach(teams) { team in
-                    teamCard(team)
-                }
+            if allTeams.isEmpty {
+                emptyTeamsCard
             } else {
-                GameCard {
-                    VStack(spacing: DesignBook.Spacing.sm) {
-                        Image(systemName: "person.2.slash")
-                            .font(.system(size: 40))
-                            .foregroundColor(DesignBook.Color.Text.tertiary)
-
-                        Text("lobby.noTeams")
-                            .font(DesignBook.Font.body)
-                            .foregroundColor(DesignBook.Color.Text.tertiary)
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, DesignBook.Spacing.lg)
+                ForEach(allTeams, id: \.id) { team in
+                    teamCard(team)
                 }
             }
         }
     }
 
+    var emptyTeamsCard: some View {
+        GameCard {
+            VStack(spacing: DesignBook.Spacing.sm) {
+                Image(systemName: "person.2.slash")
+                    .font(.system(size: 40))
+                    .foregroundStyle(DesignBook.Color.Text.tertiary)
+                Text("lobby.noTeams")
+                    .font(DesignBook.Font.body)
+                    .foregroundStyle(DesignBook.Color.Text.tertiary)
+                if isHost {
+                    Text("lobby.noTeams.host")
+                        .font(DesignBook.Font.caption)
+                        .foregroundStyle(DesignBook.Color.Text.tertiary)
+                        .multilineTextAlignment(.center)
+                }
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, DesignBook.Spacing.lg)
+        }
+    }
+
     func teamCard(_ team: OnlineTeam) -> some View {
-        let teamPlayers = room?.players.filter { $0.teamId == team.id } ?? []
-        let isCurrentPlayerInTeam = roomManager.currentPlayer?.teamId == team.id
+        let players = allPlayers.filter { $0.teamId == team.id }
+        let amIInTeam = roomManager.currentPlayer?.teamId == team.id
+        let color = Color(hex: team.colorHex) ?? DesignBook.Color.Text.accent
 
         return GameCard {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
                 HStack {
-                    Circle()
-                        .fill(Color(hex: team.colorHex) ?? DesignBook.Color.Text.accent)
-                        .frame(width: 16, height: 16)
-
+                    Circle().fill(color).frame(width: 14, height: 14)
                     Text(team.name)
                         .font(DesignBook.Font.headline)
-                        .foregroundColor(DesignBook.Color.Text.primary)
-
+                        .foregroundStyle(color)
                     Spacer()
-
-                    Text("\(teamPlayers.count) " + String(localized: "lobby.playersCount"))
-                        .font(DesignBook.Font.caption)
-                        .foregroundColor(DesignBook.Color.Text.tertiary)
+                    Text(verbatim: "\(players.count)")
+                        .font(DesignBook.Font.captionBold)
+                        .foregroundStyle(DesignBook.Color.Text.tertiary)
+                        .monospacedDigit()
+                        .padding(.horizontal, DesignBook.Spacing.sm)
+                        .padding(.vertical, 2)
+                        .background { Capsule().fill(color.opacity(0.15)) }
                 }
 
-                if !teamPlayers.isEmpty {
-                    ForEach(teamPlayers) { player in
-                        Text(player.name)
-                            .font(DesignBook.Font.body)
-                            .foregroundColor(DesignBook.Color.Text.secondary)
+                if players.isEmpty {
+                    Text("lobby.teamEmpty")
+                        .font(DesignBook.Font.caption)
+                        .foregroundStyle(DesignBook.Color.Text.tertiary)
+                } else {
+                    VStack(alignment: .leading, spacing: 4) {
+                        ForEach(players, id: \.id) { player in
+                            HStack(spacing: DesignBook.Spacing.sm) {
+                                Circle().fill(color.opacity(0.5)).frame(width: 6, height: 6)
+                                Text(player.name)
+                                    .font(DesignBook.Font.body)
+                                    .foregroundStyle(DesignBook.Color.Text.secondary)
+                            }
+                        }
                     }
                 }
 
-                HStack {
-                    if isCurrentPlayerInTeam {
-                        Button {
-                            leaveTeam()
-                        } label: {
-                            Text("lobby.leaveTeam")
-                                .font(DesignBook.Font.caption)
-                                .foregroundColor(DesignBook.Color.Status.error)
+                HStack(spacing: DesignBook.Spacing.md) {
+                    if amIInTeam {
+                        Button(action: { leaveTeam() }) {
+                            Label("lobby.leaveTeam", systemImage: "arrow.uturn.left")
+                                .font(DesignBook.Font.captionBold)
                         }
+                        .buttonStyle(.glass)
+                        .tint(DesignBook.Color.Status.error)
                     } else {
-                        Button {
-                            joinTeam(team.id)
-                        } label: {
-                            Text("lobby.joinTeam")
-                                .font(DesignBook.Font.caption)
-                                .foregroundColor(DesignBook.Color.Text.accent)
+                        Button(action: { joinTeam(team.id) }) {
+                            Label("lobby.joinTeam", systemImage: "person.crop.circle.fill.badge.plus")
+                                .font(DesignBook.Font.captionBold)
                         }
+                        .buttonStyle(.glassProminent)
+                        .tint(color)
                     }
 
                     Spacer()
 
                     if isHost {
-                        Button {
-                            removeTeam(team.id)
-                        } label: {
+                        Button(action: { removeTeam(team.id) }) {
                             Image(systemName: "trash")
-                                .foregroundColor(DesignBook.Color.Status.error)
+                                .font(DesignBook.Font.body)
+                                .foregroundStyle(DesignBook.Color.Status.error)
                         }
+                        .buttonStyle(.plain)
+                        .accessibilityLabel(Text("teamCard.delete"))
                     }
                 }
             }
         }
     }
 
-    var actionButtons: some View {
-        VStack(spacing: DesignBook.Spacing.md) {
-            if isHost {
+    @ViewBuilder
+    var actionFooter: some View {
+        if isHost {
+            VStack(spacing: DesignBook.Spacing.sm) {
                 PrimaryButton(title: String(localized: "lobby.startGame"), icon: "play.fill") {
                     startGame()
                 }
@@ -301,62 +352,53 @@ private extension RoomLobbyView {
                 if !canStartGame {
                     Text("lobby.needMorePlayers")
                         .font(DesignBook.Font.caption)
-                        .foregroundColor(DesignBook.Color.Text.tertiary)
+                        .foregroundStyle(DesignBook.Color.Text.tertiary)
                         .multilineTextAlignment(.center)
                 }
-            } else {
-                VStack(spacing: DesignBook.Spacing.sm) {
-                    ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle(tint: DesignBook.Color.Text.accent))
-
-                    Text("lobby.waitingForHost")
-                        .font(DesignBook.Font.body)
-                        .foregroundColor(DesignBook.Color.Text.secondary)
-                }
+            }
+        } else {
+            VStack(spacing: DesignBook.Spacing.sm) {
+                ProgressView()
+                    .progressViewStyle(CircularProgressViewStyle(tint: DesignBook.Color.Text.accent))
+                Text("lobby.waitingForHost")
+                    .font(DesignBook.Font.body)
+                    .foregroundStyle(DesignBook.Color.Text.secondary)
             }
         }
-        .paddingHorizontalDefault()
     }
+}
 
-    // MARK: - Actions
-
+// MARK: - Actions
+private extension RoomLobbyView {
     func joinTeam(_ teamId: String) {
+        DesignBook.Haptics.selection()
         Task {
-            do {
-                try await roomManager.joinTeam(teamId: teamId)
-            } catch {
-                self.error = error
-            }
+            do { try await roomManager.joinTeam(teamId: teamId) }
+            catch { self.error = error }
         }
     }
 
     func leaveTeam() {
+        DesignBook.Haptics.soft()
         Task {
-            do {
-                try await roomManager.leaveTeam()
-            } catch {
-                self.error = error
-            }
+            do { try await roomManager.leaveTeam() }
+            catch { self.error = error }
         }
     }
 
     func removeTeam(_ teamId: String) {
+        DesignBook.Haptics.rigid()
         Task {
-            do {
-                try await roomManager.removeTeam(teamId: teamId)
-            } catch {
-                self.error = error
-            }
+            do { try await roomManager.removeTeam(teamId: teamId) }
+            catch { self.error = error }
         }
     }
 
     func startGame() {
+        DesignBook.Haptics.confirm()
         Task {
-            do {
-                try await roomManager.startGame()
-            } catch {
-                self.error = error
-            }
+            do { try await roomManager.startGame() }
+            catch { self.error = error }
         }
     }
 
@@ -372,11 +414,8 @@ private extension RoomLobbyView {
     }
 }
 
-// MARK: - Preview
 #Preview {
-    NavigationView {
-        RoomLobbyView()
-    }
-    .environment(Navigator())
-    .environment(RoomManager())
+    NavigationView { RoomLobbyView() }
+        .environment(Navigator())
+        .environment(RoomManager())
 }

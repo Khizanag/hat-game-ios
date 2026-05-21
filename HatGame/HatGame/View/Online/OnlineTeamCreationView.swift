@@ -5,24 +5,30 @@
 //  Created by Giga Khizanishvili on 22.12.24.
 //
 
-import SwiftUI
 import DesignBook
 import Navigation
 import Networking
+import SwiftUI
 
 struct OnlineTeamCreationView: View {
+    enum Field: Hashable { case name }
+
     @Environment(\.dismiss) private var dismiss
     @Environment(RoomManager.self) private var roomManager
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     @State private var teamName: String = ""
     @State private var teamColor: Color = TeamDefaultColorGenerator.defaultColors[0]
     @State private var isCreating: Bool = false
     @State private var error: Error?
-    @FocusState private var isNameFocused: Bool
 
-    private var canCreate: Bool {
-        !teamName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !isCreating
+    @FocusState private var focusedField: Field?
+
+    private var trimmedName: String {
+        teamName.trimmingCharacters(in: .whitespacesAndNewlines)
     }
+
+    private var canCreate: Bool { !trimmedName.isEmpty && !isCreating }
 
     var body: some View {
         NavigationStack {
@@ -31,71 +37,73 @@ struct OnlineTeamCreationView: View {
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
-                        Button {
-                            dismiss()
-                        } label: {
+                        Button { dismiss() } label: {
                             Image(systemName: "xmark")
-                                .foregroundColor(DesignBook.Color.Text.primary)
+                                .foregroundStyle(DesignBook.Color.Text.primary)
                         }
                     }
+                    keyboardToolbar
                 }
                 .setDefaultBackground()
-                .alert("common.error", isPresented: .init(
-                    get: { error != nil },
-                    set: { if !$0 { error = nil } }
-                )) {
-                    Button("common.ok") {
-                        error = nil
-                    }
+                .alert("common.error", isPresented: errorBinding) {
+                    Button("common.ok") { error = nil }
                 } message: {
                     Text(error?.localizedDescription ?? "")
                 }
         }
     }
+
+    private var errorBinding: Binding<Bool> {
+        Binding(get: { error != nil }, set: { if !$0 { error = nil } })
+    }
 }
 
-// MARK: - Private
+// MARK: - Composition
 private extension OnlineTeamCreationView {
     var content: some View {
         ScrollView {
             VStack(spacing: DesignBook.Spacing.lg) {
-                teamNameCard
+                nameCard
                 colorCard
             }
             .paddingHorizontalDefault()
             .padding(.top, DesignBook.Spacing.lg)
+            .padding(.bottom, DesignBook.Spacing.xxl)
         }
         .safeAreaInset(edge: .bottom) {
-            actionButton
-                .withFooterGradient()
+            if focusedField == nil {
+                primaryButton
+                    .paddingHorizontalDefault()
+                    .padding(.top, DesignBook.Spacing.md)
+                    .padding(.bottom, DesignBook.Spacing.sm)
+                    .withFooterGradient()
+            }
         }
         .onAppear {
-            isNameFocused = true
+            focusedField = .name
             selectAvailableColor()
         }
     }
 
-    var teamNameCard: some View {
+    var nameCard: some View {
         GameCard {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
                 HStack(spacing: DesignBook.Spacing.sm) {
                     Image(systemName: "person.3.fill")
                         .font(DesignBook.IconFont.medium)
-                        .foregroundColor(DesignBook.Color.Text.accent)
-
+                        .foregroundStyle(DesignBook.Color.Text.accent)
                     Text("createTeam.teamName")
                         .font(DesignBook.Font.captionBold)
-                        .foregroundColor(DesignBook.Color.Text.secondary)
+                        .foregroundStyle(DesignBook.Color.Text.secondary)
                 }
-
                 TextField("createTeam.enterName", text: $teamName)
                     .textFieldStyle(.plain)
                     .font(DesignBook.Font.headline)
-                    .foregroundColor(DesignBook.Color.Text.primary)
+                    .foregroundStyle(DesignBook.Color.Text.primary)
                     .padding(DesignBook.Spacing.md)
                     .background(DesignBook.Color.Background.secondary)
                     .cornerRadius(DesignBook.Size.smallCardCornerRadius)
-                    .focused($isNameFocused)
+                    .focused($focusedField, equals: .name)
             }
         }
     }
@@ -106,13 +114,13 @@ private extension OnlineTeamCreationView {
                 HStack(spacing: DesignBook.Spacing.sm) {
                     Image(systemName: "paintpalette.fill")
                         .font(DesignBook.IconFont.medium)
-                        .foregroundColor(DesignBook.Color.Text.accent)
-
+                        .foregroundStyle(DesignBook.Color.Text.accent)
                     Text("createTeam.teamColor")
                         .font(DesignBook.Font.captionBold)
-                        .foregroundColor(DesignBook.Color.Text.secondary)
+                        .foregroundStyle(DesignBook.Color.Text.secondary)
+                    Spacer()
+                    Circle().fill(teamColor).frame(width: 24, height: 24)
                 }
-
                 colorPicker
             }
         }
@@ -124,28 +132,25 @@ private extension OnlineTeamCreationView {
             spacing: DesignBook.Spacing.md
         ) {
             ForEach(TeamDefaultColorGenerator.defaultColors.indices, id: \.self) { index in
-                colorOption(color: TeamDefaultColorGenerator.defaultColors[index])
+                colorOption(TeamDefaultColorGenerator.defaultColors[index])
             }
-
-            ColorPicker(
-                "",
-                selection: $teamColor,
-                supportsOpacity: false
-            )
-            .labelsHidden()
-            .frame(width: DesignBook.Size.colorSwatchSize, height: DesignBook.Size.colorSwatchSize)
-            .padding(DesignBook.Spacing.sm)
-            .background(DesignBook.Color.Background.secondary)
-            .cornerRadius(DesignBook.Size.smallCardCornerRadius)
+            ColorPicker("", selection: $teamColor, supportsOpacity: false)
+                .labelsHidden()
+                .frame(width: DesignBook.Size.colorSwatchSize, height: DesignBook.Size.colorSwatchSize)
+                .padding(DesignBook.Spacing.sm)
+                .background(DesignBook.Color.Background.secondary)
+                .cornerRadius(DesignBook.Size.smallCardCornerRadius)
         }
     }
 
-    func colorOption(color: Color) -> some View {
+    func colorOption(_ color: Color) -> some View {
         let isSelected = teamColor.isApproximatelyEqual(to: color)
         let isUsed = isColorUsedByOtherTeam(color)
 
         return Button {
-            if !isUsed {
+            guard !isUsed else { return }
+            DesignBook.Haptics.selection()
+            withAnimation(reduceMotion ? nil : DesignBook.Motion.standard) {
                 teamColor = color
             }
         } label: {
@@ -156,11 +161,11 @@ private extension OnlineTeamCreationView {
                     if isSelected {
                         Image(systemName: "checkmark")
                             .font(DesignBook.Font.subheadlineBold)
-                            .foregroundColor(.white)
+                            .foregroundStyle(.white)
                     } else if isUsed {
                         Image(systemName: "xmark")
                             .font(DesignBook.Font.footnoteBold)
-                            .foregroundColor(.white)
+                            .foregroundStyle(.white)
                             .opacity(DesignBook.Opacity.disabled)
                     }
                 }
@@ -187,27 +192,50 @@ private extension OnlineTeamCreationView {
         }
     }
 
-    var actionButton: some View {
-        VStack(spacing: DesignBook.Spacing.md) {
-            PrimaryButton(title: String(localized: "createTeam.create"), icon: "plus.circle.fill") {
-                createTeam()
+    var primaryButton: some View {
+        Group {
+            if isCreating {
+                ProgressView()
+                    .progressViewStyle(CircularProgressViewStyle(tint: DesignBook.Color.Text.accent))
+                    .scaleEffect(1.2)
+                    .padding(.vertical, DesignBook.Spacing.md)
+            } else {
+                PrimaryButton(title: String(localized: "createTeam.create"), icon: "plus.circle.fill") {
+                    createTeam()
+                }
+                .disabled(!canCreate)
+                .opacity(canCreate ? DesignBook.Opacity.enabled : DesignBook.Opacity.disabled)
             }
-            .disabled(!canCreate)
-            .opacity(canCreate ? DesignBook.Opacity.enabled : DesignBook.Opacity.disabled)
         }
-        .paddingHorizontalDefault()
     }
 
+    @ToolbarContentBuilder
+    var keyboardToolbar: some ToolbarContent {
+        ToolbarItemGroup(placement: .keyboard) {
+            Spacer()
+            Button(action: createTeam) {
+                Label(String(localized: "createTeam.create"), systemImage: "plus.circle.fill")
+                    .labelStyle(.titleAndIcon)
+                    .fontWeight(.semibold)
+            }
+            .disabled(!canCreate)
+        }
+    }
+}
+
+// MARK: - Actions
+private extension OnlineTeamCreationView {
     func createTeam() {
         guard canCreate else { return }
-
+        DesignBook.Haptics.confirm()
         isCreating = true
-        let trimmedName = teamName.trimmingCharacters(in: .whitespacesAndNewlines)
+        focusedField = nil
+        let name = trimmedName
         let colorHex = teamColor.hexString
 
         Task {
             do {
-                try await roomManager.createTeam(name: trimmedName, colorHex: colorHex)
+                try await roomManager.createTeam(name: name, colorHex: colorHex)
                 dismiss()
             } catch {
                 self.error = error
@@ -217,7 +245,6 @@ private extension OnlineTeamCreationView {
     }
 }
 
-// MARK: - Preview
 #Preview {
     OnlineTeamCreationView()
         .environment(RoomManager())
