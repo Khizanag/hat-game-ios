@@ -126,9 +126,13 @@ extension Page {
         }
     }
 
-    static func roomLobby(roomCode: String) -> Page<RoomLobbyView> {
-        Page<RoomLobbyView>(id: "roomLobby-\(roomCode)") {
-            RoomLobbyView()
+    /// The "session" destination once a player has joined or created a room.
+    /// Internally it's `OnlineGameFlowView`, which renders the lobby while
+    /// waiting and swaps in the gameplay views as the room status / game
+    /// phase progresses.
+    static func roomLobby(roomCode: String) -> Page<OnlineGameFlowView> {
+        Page<OnlineGameFlowView>(id: "roomLobby-\(roomCode)") {
+            OnlineGameFlowView()
         }
     }
 }

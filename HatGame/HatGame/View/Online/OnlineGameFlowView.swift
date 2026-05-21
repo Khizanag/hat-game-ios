@@ -5,56 +5,41 @@
 //  Created by Giga Khizanishvili on 22.12.24.
 //
 
-import SwiftUI
+import DesignBook
 import Navigation
 import Networking
-import DesignBook
+import SwiftUI
 
+/// Single-screen controller pushed onto the OnlineFlow navigation stack once
+/// a player has joined or created a room. Routes between the lobby, the
+/// word-submission screens, and the game-phase views based on room status
+/// and the live `OnlineGameState.phase`. Re-uses the GameSyncManager
+/// already in the environment from `OnlineFlowView`.
 struct OnlineGameFlowView: View {
-    @Environment(\.dismiss) private var dismiss
     @Environment(RoomManager.self) private var roomManager
-    @State private var gameNavigator = Navigator()
-    @State private var gameSyncManager = GameSyncManager()
-    @State private var hasInitializedGame = false
+    @Environment(GameSyncManager.self) private var gameSyncManager
 
-    private var roomStatus: RoomStatus? {
-        roomManager.room?.status
-    }
+    @State private var hasInitializedGame: Bool = false
 
-    private var gamePhase: GamePhase? {
-        roomManager.room?.gameState?.phase
-    }
+    private var room: GameRoom? { roomManager.room }
+    private var roomStatus: RoomStatus? { room?.status }
+    private var gamePhase: GamePhase? { room?.gameState?.phase }
 
     private var allPlayersSubmittedWords: Bool {
-        guard let players = roomManager.room?.players else { return false }
-        return players.allSatisfy { $0.hasSubmittedWords }
+        guard let players = room?.players, !players.isEmpty else { return false }
+        return players.allSatisfy(\.hasSubmittedWords)
     }
 
     var body: some View {
-        NavigationStack(path: Bindable(gameNavigator).navigationPath) {
-            content
-                .navigationDestination(for: AnyPage.self) { page in
-                    page.view()
-                        .environment(roomManager)
-                        .environment(gameNavigator)
-                        .environment(gameSyncManager)
-                }
-        }
-        .environment(roomManager)
-        .environment(gameNavigator)
-        .environment(gameSyncManager)
-        .onReceive(gameNavigator.pleaseDismissViewPublisher) {
-            dismiss()
-        }
-        .onChange(of: allPlayersSubmittedWords) { _, allSubmitted in
-            if allSubmitted && roomManager.isHost && !hasInitializedGame {
+        content
+            .onChange(of: allPlayersSubmittedWords) { _, allSubmitted in
+                guard allSubmitted, roomManager.isHost else { return }
                 initializeGameIfNeeded()
             }
-        }
     }
 }
 
-// MARK: - Private
+// MARK: - Composition
 private extension OnlineGameFlowView {
     @ViewBuilder
     var content: some View {
@@ -73,14 +58,12 @@ private extension OnlineGameFlowView {
     @ViewBuilder
     var playingContent: some View {
         if !allPlayersSubmittedWords {
-            // Word submission phase
             if roomManager.currentPlayer?.hasSubmittedWords == true {
                 OnlineWaitingView(message: String(localized: "online.waitingForOthers"))
             } else {
                 OnlineWordInputView()
             }
         } else {
-            // Game phase
             gamePhaseContent
         }
     }
@@ -88,48 +71,34 @@ private extension OnlineGameFlowView {
     @ViewBuilder
     var gamePhaseContent: some View {
         switch gamePhase {
-        case .teamPrep:
-            OnlineNextTeamView()
-        case .playing:
-            OnlinePlayView()
-        case .turnResults:
-            OnlineTurnResultsView()
-        case .roundResults:
-            OnlineRoundResultsView()
-        case .finished:
-            OnlineResultsView()
-        case nil:
-            OnlineWaitingView(message: String(localized: "online.preparingGame"))
+        case .teamPrep: OnlineNextTeamView()
+        case .playing: OnlinePlayView()
+        case .turnResults: OnlineTurnResultsView()
+        case .roundResults: OnlineRoundResultsView()
+        case .finished: OnlineResultsView()
+        case nil: OnlineWaitingView(message: String(localized: "online.preparingGame"))
         }
     }
 
     func initializeGameIfNeeded() {
         guard !hasInitializedGame,
-              let room = roomManager.room,
+              let room,
               room.gameState == nil else { return }
-
         hasInitializedGame = true
 
         Task {
             do {
                 let words = try await roomManager.getWords()
-                let _ = try await gameSyncManager.initializeGame(
+                _ = try await gameSyncManager.initializeGame(
                     for: room.id,
                     teams: room.teams,
+                    players: room.players,
                     words: words,
                     roundDuration: room.settings.roundDuration
                 )
             } catch {
-                print("Failed to initialize game: \(error)")
                 hasInitializedGame = false
             }
         }
     }
-}
-
-// MARK: - Preview
-#Preview {
-    OnlineGameFlowView()
-        .environment(Navigator())
-        .environment(RoomManager())
 }

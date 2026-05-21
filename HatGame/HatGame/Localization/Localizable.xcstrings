@@ -860,6 +860,174 @@
         }
       }
     },
+    "onlineSpectator.yourTurn" : {
+      "comment" : "Banner shown to same-team guessers during the Playing phase.",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Your team is playing" } },
+        "ka" : { "stringUnit" : { "state" : "translated", "value" : "შენი გუნდი თამაშობს" } }
+      }
+    },
+    "onlineSpectator.othersTurn" : {
+      "comment" : "Banner shown to opposing-team spectators during the Playing phase.",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Other team's turn" } },
+        "ka" : { "stringUnit" : { "state" : "translated", "value" : "მეორე გუნდის ჯერი" } }
+      }
+    },
+    "onlineSpectator.listen" : {
+      "comment" : "Same-team guessers see this — they should listen to the explainer (voice happens off-app).",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Listen to your teammate!" } },
+        "ka" : { "stringUnit" : { "state" : "translated", "value" : "მოუსმინე გუნდელს!" } }
+      }
+    },
+    "onlineSpectator.watching" : {
+      "comment" : "Opposing spectators see this — they're just watching the round play out.",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Watching the round" } },
+        "ka" : { "stringUnit" : { "state" : "translated", "value" : "უყურებ რაუნდს" } }
+      }
+    },
+    "onlineSpectator.explainerLabel" : {
+      "comment" : "Sub-label naming the player who is currently explaining. Argument is the player's name.",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "%@ is explaining" } },
+        "ka" : { "stringUnit" : { "state" : "translated", "value" : "%@ ხსნის სიტყვებს" } }
+      }
+    },
+    "onlineSpectator.score.accessibility %lld" : {
+      "comment" : "Accessibility label for the score chip on the spectator view. Argument is the current team's round score.",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "%lld words guessed this turn" } },
+        "ka" : { "stringUnit" : { "state" : "translated", "value" : "%lld სიტყვა ამ ჯერზე" } }
+      }
+    },
+    "onlineNextTeam.waitingForName" : {
+      "comment" : "Footer shown to same-team guessers while waiting for their explainer to start the turn. Argument is the explainer's name.",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Waiting for %@ to start…" } },
+        "ka" : { "stringUnit" : { "state" : "translated", "value" : "ველოდებით %@-ს რომ დაიწყოს…" } }
+      }
+    },
+    "onlineNextTeam.spectating" : {
+      "comment" : "Footer shown to opposing players while another team is preparing to play. Argument is the team name.",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Spectating Team %@…" } },
+        "ka" : { "stringUnit" : { "state" : "translated", "value" : "უყურებ %@-ის ჯერს…" } }
+      }
+    },
+    "lobby.leave.title" : {
+      "comment" : "Title of the confirmation alert shown when a player taps the close button in the lobby.",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Leave room?" } },
+        "ka" : { "stringUnit" : { "state" : "translated", "value" : "დატოვო ოთახი?" } }
+      }
+    },
+    "lobby.leave.confirm" : {
+      "comment" : "Confirm-leave action in the leave-room alert.",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Leave" } },
+        "ka" : { "stringUnit" : { "state" : "translated", "value" : "დატოვება" } }
+      }
+    },
+    "lobby.leave.hostMessage" : {
+      "comment" : "Body text of the leave-room alert when the current player is the host. Leaving deletes the room for everyone.",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "You're the host. Leaving will end the room for everyone." } },
+        "ka" : { "stringUnit" : { "state" : "translated", "value" : "შენ ხარ ჰოსტი. გასვლა ოთახს ყველასთვის ხურავს." } }
+      }
+    },
+    "lobby.leave.guestMessage" : {
+      "comment" : "Body text of the leave-room alert for non-host players.",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Leaving will remove you from the room. You can re-join with the code." } },
+        "ka" : { "stringUnit" : { "state" : "translated", "value" : "გასვლა ამოგიყვანს ოთახიდან. შემოგიძლია უკან კოდით." } }
+      }
+    },
+    "lobby.shareMessage" : {
+      "comment" : "Body of the ShareLink message when sharing a room code. Argument is the 6-character code.",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Join my Hat Game room with code %@" } },
+        "ka" : { "stringUnit" : { "state" : "translated", "value" : "შემოუერთდი ჩემს Hat Game ოთახს კოდით %@" } }
+      }
+    },
+    "lobby.share" : {
+      "comment" : "Title of the ShareLink button next to the room code.",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Share" } },
+        "ka" : { "stringUnit" : { "state" : "translated", "value" : "გაზიარება" } }
+      }
+    },
+    "lobby.teamEmpty" : {
+      "comment" : "Placeholder text shown inside a team card when no players have joined it yet.",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "No players yet" } },
+        "ka" : { "stringUnit" : { "state" : "translated", "value" : "ჯერ არავინ" } }
+      }
+    },
+    "lobby.noTeams.host" : {
+      "comment" : "Sub-hint under the no-teams empty state for the host.",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Tap Add Team to create one." } },
+        "ka" : { "stringUnit" : { "state" : "translated", "value" : "შეეხე „გუნდის დამატება“-ს." } }
+      }
+    },
+    "onlineWordInput.ready" : {
+      "comment" : "Title of the ready card after all words have been added.",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "All words ready" } },
+        "ka" : { "stringUnit" : { "state" : "translated", "value" : "ყველა სიტყვა მზადაა" } }
+      }
+    },
+    "onlineWordInput.readyHint" : {
+      "comment" : "Sub-hint under the ready card prompting the player to submit.",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Submit when you're happy with your list." } },
+        "ka" : { "stringUnit" : { "state" : "translated", "value" : "გააგზავნე როცა მზად ხარ." } }
+      }
+    },
+    "onlineWordInput.summary" : {
+      "comment" : "Header of the summary card listing the player's chosen words.",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Your words" } },
+        "ka" : { "stringUnit" : { "state" : "translated", "value" : "შენი სიტყვები" } }
+      }
+    },
+    "online.playersStatus" : {
+      "comment" : "Header above the player-status list in the waiting view.",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Players" } },
+        "ka" : { "stringUnit" : { "state" : "translated", "value" : "მოთამაშეები" } }
+      }
+    },
+    "online.submitted" : {
+      "comment" : "Status pill shown next to a player who has submitted their words.",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Submitted" } },
+        "ka" : { "stringUnit" : { "state" : "translated", "value" : "გაგზავნა" } }
+      }
+    },
+    "online.typing" : {
+      "comment" : "Status pill shown next to a player who is still typing their words.",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Typing…" } },
+        "ka" : { "stringUnit" : { "state" : "translated", "value" : "ბეჭდავს…" } }
+      }
+    },
+    "onlineResults.byRound" : {
+      "comment" : "Header of the per-round breakdown card on the final results screen.",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Round by round" } },
+        "ka" : { "stringUnit" : { "state" : "translated", "value" : "რაუნდი რაუნდად" } }
+      }
+    },
+    "onlineRoundResults.finish" : {
+      "comment" : "CTA shown on the round-results screen after Round 3 — finishes the game.",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "See final results" } },
+        "ka" : { "stringUnit" : { "state" : "translated", "value" : "ფინალური შედეგები" } }
+      }
+    },
     "game.card.hint.gotIt" : {
       "comment" : "Inline hint shown on the word card when the player drags right to mark a word as guessed.",
       "localizations" : {
