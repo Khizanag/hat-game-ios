@@ -5,9 +5,9 @@
 //  Created by Giga Khizanishvili on 22.12.24.
 //
 
+import FirebaseDatabase
 import Foundation
 import Observation
-import FirebaseDatabase
 
 @MainActor
 @Observable
@@ -19,200 +19,201 @@ public final class GameSyncManager {
 
     public init() {}
 
-    // MARK: - Game Initialization
+    // MARK: - Game initialization
 
-    public func initializeGame(for roomId: String, teams: [OnlineTeam], words: [OnlineWord], roundDuration: Int) async throws -> OnlineGameState {
-        let wordIds = words.map { $0.id }
-        let shuffledWordIds = wordIds.shuffled()
+    /// Sets up the very first `OnlineGameState` once all players have
+    /// submitted their words. Picks team 0 as the starting team and the
+    /// first player in that team as the explainer.
+    public func initializeGame(
+        for roomId: String,
+        teams: [OnlineTeam],
+        players: [OnlinePlayer],
+        words: [OnlineWord],
+        roundDuration: Int
+    ) async throws -> OnlineGameState {
+        let shuffledWordIds = words.map(\.id).shuffled()
 
         var initialScores: [String: [OnlineGameRound: Int]] = [:]
+        var initialExplainerIndices: [String: Int] = [:]
         for team in teams {
-            initialScores[team.id] = [
-                .first: 0,
-                .second: 0,
-                .third: 0
-            ]
+            initialScores[team.id] = [.first: 0, .second: 0, .third: 0]
+            initialExplainerIndices[team.id] = 0
         }
 
         let firstTeam = teams.first
-        let firstPlayerId = firstTeam?.playerIds.first
+        let firstExplainerId = firstTeam.flatMap { team in
+            playersInTeam(team, allPlayers: players).first?.id
+        }
 
-        let gameState = OnlineGameState(
+        let state = OnlineGameState(
             currentRound: .first,
             currentTeamIndex: 0,
-            currentExplainerIndex: 0,
+            teamExplainerIndices: initialExplainerIndices,
             currentWordId: shuffledWordIds.first,
             remainingWordIds: shuffledWordIds,
             allWordIds: shuffledWordIds,
             scores: initialScores,
             phase: .teamPrep,
-            activePlayerId: firstPlayerId,
+            activePlayerId: firstExplainerId,
             roundDuration: roundDuration
         )
 
-        try await firebaseService.updateGameState(gameState, forRoomId: roomId)
-        return gameState
+        try await firebaseService.updateGameState(state, forRoomId: roomId)
+        return state
     }
 
-    // MARK: - Turn Management
+    // MARK: - Turn lifecycle
 
+    /// The explainer flips the room from `.teamPrep` to `.playing` and the
+    /// server timestamps the timer start. All other clients compute their
+    /// countdown off this anchor.
     public func startTurn(roomId: String, gameState: OnlineGameState) async throws {
-        var newState = gameState
-        newState.phase = .playing
-        newState.timerStartedAt = Date()
-        try await firebaseService.updateGameState(newState, forRoomId: roomId)
+        var next = gameState
+        next.phase = .playing
+        next.timerStartedAt = Date()
+        try await firebaseService.updateGameState(next, forRoomId: roomId)
     }
 
-    public func endTurn(roomId: String, gameState: OnlineGameState, guessedWordIds: [String]) async throws {
-        var newState = gameState
+    /// Active player marks the current word guessed: score++ for the
+    /// current team in the current round, word removed from the pool,
+    /// next word picked. If the pool is empty after this, currentWordId
+    /// becomes nil and the explainer's local turn-end pathway fires.
+    public func markWordGuessed(
+        roomId: String,
+        gameState: OnlineGameState,
+        teams: [OnlineTeam]
+    ) async throws {
+        guard let wordId = gameState.currentWordId else { return }
+        var next = gameState
 
-        // Update scores
-        let currentTeamId = getCurrentTeamId(from: gameState, teams: [])
-        if let teamId = currentTeamId {
-            var teamScores = newState.scores[teamId] ?? [:]
-            let currentRoundScore = teamScores[gameState.currentRound] ?? 0
-            teamScores[gameState.currentRound] = currentRoundScore + guessedWordIds.count
-            newState.scores[teamId] = teamScores
+        if let teamId = currentTeamId(state: gameState, teams: teams) {
+            var perRound = next.scores[teamId] ?? [:]
+            perRound[gameState.currentRound, default: 0] += 1
+            next.scores[teamId] = perRound
         }
 
-        // Remove guessed words
-        newState.remainingWordIds.removeAll { guessedWordIds.contains($0) }
-
-        newState.phase = .turnResults
-        newState.timerStartedAt = nil
-
-        try await firebaseService.updateGameState(newState, forRoomId: roomId)
+        next.remainingWordIds.removeAll { $0 == wordId }
+        next.currentWordId = next.remainingWordIds.first
+        try await firebaseService.updateGameState(next, forRoomId: roomId)
     }
 
-    public func advanceToNextTurn(roomId: String, gameState: OnlineGameState, teams: [OnlineTeam]) async throws {
-        var newState = gameState
-
-        // Check if round is over (no more words)
-        if newState.remainingWordIds.isEmpty {
-            // Move to next round or end game
-            try await advanceToNextRound(roomId: roomId, gameState: &newState)
-        } else {
-            // Move to next team
-            newState.currentTeamIndex = (newState.currentTeamIndex + 1) % teams.count
-
-            // Rotate explainer within the team
-            let currentTeam = teams[newState.currentTeamIndex]
-            newState.currentExplainerIndex = (newState.currentExplainerIndex + 1) % max(1, currentTeam.playerIds.count)
-
-            // Set active player
-            if !currentTeam.playerIds.isEmpty {
-                let explainerIndex = newState.currentExplainerIndex % currentTeam.playerIds.count
-                newState.activePlayerId = currentTeam.playerIds[explainerIndex]
-            }
-        }
-
-        newState.phase = .teamPrep
-        newState.currentWordId = newState.remainingWordIds.first
-
-        try await firebaseService.updateGameState(newState, forRoomId: roomId)
-    }
-
-    private func advanceToNextRound(roomId: String, gameState: inout OnlineGameState) async throws {
-        switch gameState.currentRound {
-        case .first:
-            gameState.currentRound = .second
-            gameState.remainingWordIds = gameState.allWordIds.shuffled()
-            gameState.phase = .roundResults
-        case .second:
-            gameState.currentRound = .third
-            gameState.remainingWordIds = gameState.allWordIds.shuffled()
-            gameState.phase = .roundResults
-        case .third:
-            gameState.phase = .finished
-            try await firebaseService.updateRoomStatus(.finished, forRoomId: roomId)
-        }
-    }
-
-    // MARK: - Word Actions
-
-    public func markWordGuessed(roomId: String, gameState: OnlineGameState, wordId: String, teams: [OnlineTeam]) async throws {
-        var newState = gameState
-
-        // Update score for current team
-        let currentTeam = teams[safe: newState.currentTeamIndex]
-        if let teamId = currentTeam?.id {
-            var teamScores = newState.scores[teamId] ?? [:]
-            let currentRoundScore = teamScores[gameState.currentRound] ?? 0
-            teamScores[gameState.currentRound] = currentRoundScore + 1
-            newState.scores[teamId] = teamScores
-        }
-
-        // Remove word from remaining
-        newState.remainingWordIds.removeAll { $0 == wordId }
-
-        // Set next word or end round
-        if newState.remainingWordIds.isEmpty {
-            // All words guessed - round complete
-            newState.currentWordId = nil
-        } else {
-            newState.currentWordId = newState.remainingWordIds.first
-        }
-
-        try await firebaseService.updateGameState(newState, forRoomId: roomId)
-    }
-
+    /// Skip moves the current word to the back of the remaining pool with
+    /// no scoring effect. If only one word remains we no-op (parity with
+    /// the offline `skipCurrentWord`).
     public func skipWord(roomId: String, gameState: OnlineGameState) async throws {
-        var newState = gameState
+        guard let currentId = gameState.currentWordId,
+              gameState.remainingWordIds.count > 1 else { return }
+        var next = gameState
+        next.remainingWordIds.removeAll { $0 == currentId }
+        next.remainingWordIds.append(currentId)
+        next.currentWordId = next.remainingWordIds.first
+        try await firebaseService.updateGameState(next, forRoomId: roomId)
+    }
 
-        // Move current word to end of remaining words
-        if let currentWordId = newState.currentWordId,
-           let index = newState.remainingWordIds.firstIndex(of: currentWordId) {
-            newState.remainingWordIds.remove(at: index)
-            newState.remainingWordIds.append(currentWordId)
+    /// Called by the active player when the timer hits 0, they tap "give
+    /// up", or when they've cleared the hat (currentWordId == nil).
+    /// Transitions to `.turnResults` and clears the timer anchor.
+    public func endTurn(roomId: String, gameState: OnlineGameState) async throws {
+        var next = gameState
+        next.phase = .turnResults
+        next.timerStartedAt = nil
+        try await firebaseService.updateGameState(next, forRoomId: roomId)
+    }
+
+    // MARK: - Phase advancement
+
+    /// Single source of truth for moving the game forward after the
+    /// turn-results screen. Decides whether the next slot is the next
+    /// team's `.teamPrep`, the next round's `.roundResults`, or
+    /// `.finished`.
+    public func advanceAfterTurnResults(
+        roomId: String,
+        gameState: OnlineGameState,
+        teams: [OnlineTeam],
+        players: [OnlinePlayer]
+    ) async throws {
+        guard !teams.isEmpty else { return }
+        var next = gameState
+
+        if next.remainingWordIds.isEmpty {
+            // Round complete. Surface the round results screen; rotation
+            // happens when the host advances to the next round.
+            next.phase = .roundResults
+            try await firebaseService.updateGameState(next, forRoomId: roomId)
+            return
         }
 
-        // Get next word
-        newState.currentWordId = newState.remainingWordIds.first
-
-        try await firebaseService.updateGameState(newState, forRoomId: roomId)
-    }
-
-    // MARK: - Phase Management
-
-    public func setPhase(_ phase: GamePhase, roomId: String, gameState: OnlineGameState) async throws {
-        var newState = gameState
-        newState.phase = phase
-        try await firebaseService.updateGameState(newState, forRoomId: roomId)
-    }
-
-    public func continueFromRoundResults(roomId: String, gameState: OnlineGameState) async throws {
-        var newState = gameState
-        newState.phase = .teamPrep
-        try await firebaseService.updateGameState(newState, forRoomId: roomId)
-    }
-
-    // MARK: - Explainer Selection
-
-    public func setExplainer(roomId: String, gameState: OnlineGameState, playerIndex: Int, teams: [OnlineTeam]) async throws {
-        var newState = gameState
-        newState.currentExplainerIndex = playerIndex
-
-        // Set active player
-        let currentTeam = teams[safe: newState.currentTeamIndex]
-        if let playerIds = currentTeam?.playerIds, playerIndex < playerIds.count {
-            newState.activePlayerId = playerIds[playerIndex]
+        // More words to play in this round — pass the hat to the next team.
+        if let previousTeam = teams[safe: gameState.currentTeamIndex] {
+            let previousIndex = next.teamExplainerIndices[previousTeam.id] ?? 0
+            let teamSize = max(playersInTeam(previousTeam, allPlayers: players).count, 1)
+            next.teamExplainerIndices[previousTeam.id] = (previousIndex + 1) % teamSize
         }
 
-        try await firebaseService.updateGameState(newState, forRoomId: roomId)
+        next.currentTeamIndex = (gameState.currentTeamIndex + 1) % teams.count
+        let nextTeam = teams[next.currentTeamIndex]
+        let nextTeamPlayers = playersInTeam(nextTeam, allPlayers: players)
+        let nextExplainerIndex = next.teamExplainerIndices[nextTeam.id] ?? 0
+        next.activePlayerId = nextTeamPlayers[safe: nextExplainerIndex]?.id
+        next.phase = .teamPrep
+        next.currentWordId = next.remainingWordIds.first
+        try await firebaseService.updateGameState(next, forRoomId: roomId)
+    }
+
+    /// Host-only. After the round results screen, advances to the next
+    /// round (reshuffles all words) or finishes the game.
+    public func advanceAfterRoundResults(
+        roomId: String,
+        gameState: OnlineGameState,
+        teams: [OnlineTeam],
+        players: [OnlinePlayer]
+    ) async throws {
+        var next = gameState
+
+        guard let upcoming = gameState.currentRound.next else {
+            // Round 3 just finished — wrap the game.
+            next.phase = .finished
+            try await firebaseService.updateGameState(next, forRoomId: roomId)
+            try await firebaseService.updateRoomStatus(.finished, forRoomId: roomId)
+            return
+        }
+
+        next.currentRound = upcoming
+        next.remainingWordIds = gameState.allWordIds.shuffled()
+        next.currentWordId = next.remainingWordIds.first
+
+        // Keep the same team / explainer for continuity — they earned the
+        // jump into the next round by being the one who cleared the hat.
+        let team = teams[safe: next.currentTeamIndex]
+        let teamPlayers = team.map { playersInTeam($0, allPlayers: players) } ?? []
+        let explainerIndex = team.map { next.teamExplainerIndices[$0.id] ?? 0 } ?? 0
+        next.activePlayerId = teamPlayers[safe: explainerIndex]?.id
+
+        next.phase = .teamPrep
+        next.timerStartedAt = nil
+        try await firebaseService.updateGameState(next, forRoomId: roomId)
     }
 
     // MARK: - Helpers
 
-    private func getCurrentTeamId(from gameState: OnlineGameState, teams: [OnlineTeam]) -> String? {
-        guard gameState.currentTeamIndex < teams.count else { return nil }
-        return teams[gameState.currentTeamIndex].id
+    private func playersInTeam(_ team: OnlineTeam, allPlayers: [OnlinePlayer]) -> [OnlinePlayer] {
+        // Prefer team.playerIds order (matches join order); fall back to a
+        // filter on player.teamId for resilience to legacy data.
+        if !team.playerIds.isEmpty {
+            let lookup = Dictionary(uniqueKeysWithValues: allPlayers.map { ($0.id, $0) })
+            return team.playerIds.compactMap { lookup[$0] }
+        }
+        return allPlayers.filter { $0.teamId == team.id }
+    }
+
+    private func currentTeamId(state: OnlineGameState, teams: [OnlineTeam]) -> String? {
+        teams[safe: state.currentTeamIndex]?.id
     }
 }
 
-// MARK: - Array Extension
+// MARK: - Array safe subscript
 private extension Array {
     subscript(safe index: Int) -> Element? {
-        guard index >= 0, index < count else { return nil }
-        return self[index]
+        indices.contains(index) ? self[index] : nil
     }
 }

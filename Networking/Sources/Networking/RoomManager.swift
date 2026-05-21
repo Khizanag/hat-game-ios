@@ -118,15 +118,25 @@ public final class RoomManager {
     }
 
     public func joinTeam(teamId: String) async throws {
-        guard var player = currentPlayer, let roomId = room?.id else { return }
-        player.teamId = teamId
-        try await firebaseService.updatePlayer(player, inRoomId: roomId)
+        guard let player = currentPlayer, let room else { return }
+        try await firebaseService.reassignPlayerToTeam(
+            playerId: player.id,
+            previousTeamId: player.teamId,
+            newTeamId: teamId,
+            teams: room.teams,
+            inRoomId: room.id
+        )
     }
 
     public func leaveTeam() async throws {
-        guard var player = currentPlayer, let roomId = room?.id else { return }
-        player.teamId = nil
-        try await firebaseService.updatePlayer(player, inRoomId: roomId)
+        guard let player = currentPlayer, let room else { return }
+        try await firebaseService.reassignPlayerToTeam(
+            playerId: player.id,
+            previousTeamId: player.teamId,
+            newTeamId: nil,
+            teams: room.teams,
+            inRoomId: room.id
+        )
     }
 
     public func markWordsSubmitted() async throws {

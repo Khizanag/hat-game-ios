@@ -135,6 +135,36 @@ public final class FirebaseService: @unchecked Sendable {
         try await roomsRef.child(roomId).child("teams").child(teamId).removeValue()
     }
 
+    /// Atomically reassigns a player to a team: clears the previous team's
+    /// playerIds, sets the player's teamId, and appends the player to the
+    /// new team's playerIds. Pass `nil` for `newTeamId` to leave the player
+    /// without a team. Single multi-path update so the two sides of the
+    /// relationship cannot diverge.
+    public func reassignPlayerToTeam(
+        playerId: String,
+        previousTeamId: String?,
+        newTeamId: String?,
+        teams: [OnlineTeam],
+        inRoomId roomId: String
+    ) async throws {
+        guard isAvailable else { throw NetworkingError.firebaseNotConfigured }
+
+        var updates: [String: Any] = [:]
+        updates["players/\(playerId)/teamId"] = newTeamId as Any? ?? NSNull()
+
+        if let previousTeamId, let previous = teams.first(where: { $0.id == previousTeamId }) {
+            updates["teams/\(previousTeamId)/playerIds"] = previous.playerIds.filter { $0 != playerId }
+        }
+
+        if let newTeamId, let next = teams.first(where: { $0.id == newTeamId }) {
+            var ids = next.playerIds.filter { $0 != playerId }
+            ids.append(playerId)
+            updates["teams/\(newTeamId)/playerIds"] = ids
+        }
+
+        try await roomsRef.child(roomId).updateChildValues(updates)
+    }
+
     // MARK: - Word Operations
 
     public func addWords(_ words: [OnlineWord], toRoomId roomId: String) async throws {

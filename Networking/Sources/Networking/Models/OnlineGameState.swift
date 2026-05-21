@@ -19,12 +19,22 @@ public enum OnlineGameRound: Int, Codable, CaseIterable, Sendable {
     case first = 1
     case second = 2
     case third = 3
+
+    public var next: OnlineGameRound? {
+        switch self {
+        case .first: .second
+        case .second: .third
+        case .third: nil
+        }
+    }
 }
 
 public struct OnlineGameState: Codable, Sendable {
     public var currentRound: OnlineGameRound
     public var currentTeamIndex: Int
-    public var currentExplainerIndex: Int
+    /// Per-team explainer index. Each team rotates its own explainer
+    /// independently of other teams.
+    public var teamExplainerIndices: [String: Int]
     public var currentWordId: String?
     public var remainingWordIds: [String]
     public var allWordIds: [String]
@@ -37,7 +47,7 @@ public struct OnlineGameState: Codable, Sendable {
     public init(
         currentRound: OnlineGameRound = .first,
         currentTeamIndex: Int = 0,
-        currentExplainerIndex: Int = 0,
+        teamExplainerIndices: [String: Int] = [:],
         currentWordId: String? = nil,
         remainingWordIds: [String] = [],
         allWordIds: [String] = [],
@@ -49,7 +59,7 @@ public struct OnlineGameState: Codable, Sendable {
     ) {
         self.currentRound = currentRound
         self.currentTeamIndex = currentTeamIndex
-        self.currentExplainerIndex = currentExplainerIndex
+        self.teamExplainerIndices = teamExplainerIndices
         self.currentWordId = currentWordId
         self.remainingWordIds = remainingWordIds
         self.allWordIds = allWordIds
@@ -66,5 +76,9 @@ public struct OnlineGameState: Codable, Sendable {
 
     public func getTotalScore(for teamId: String) -> Int {
         scores[teamId]?.values.reduce(0, +) ?? 0
+    }
+
+    public func explainerIndex(for teamId: String) -> Int {
+        teamExplainerIndices[teamId] ?? 0
     }
 }
