@@ -38,7 +38,7 @@ private extension DefaultsSettingsView {
     var descriptionText: some View {
         Text("settings.defaults.description")
             .font(DesignBook.Font.body)
-            .foregroundColor(DesignBook.Color.Text.secondary)
+            .foregroundStyle(DesignBook.Color.Text.secondary)
             .padding(.horizontal, DesignBook.Spacing.sm)
     }
 
@@ -52,18 +52,18 @@ private extension DefaultsSettingsView {
                 HStack {
                     Image(systemName: "text.bubble.fill")
                         .font(DesignBook.Font.body)
-                        .foregroundColor(.orange)
+                        .foregroundStyle(.orange)
 
                     Text("settings.defaultWordsPerPlayer.title")
                         .font(DesignBook.Font.headline)
-                        .foregroundColor(DesignBook.Color.Text.primary)
+                        .foregroundStyle(DesignBook.Color.Text.primary)
 
                     Spacer()
 
                     Text("\(appConfiguration.defaultWordsPerPlayer)")
                         .font(DesignBook.Font.title2)
                         .fontWeight(.bold)
-                        .foregroundColor(.orange)
+                        .foregroundStyle(.orange)
                 }
 
                 Stepper(
@@ -92,18 +92,18 @@ private extension DefaultsSettingsView {
                 HStack {
                     Image(systemName: "timer.circle.fill")
                         .font(DesignBook.Font.body)
-                        .foregroundColor(.blue)
+                        .foregroundStyle(.blue)
 
                     Text("settings.defaultRoundDuration.title")
                         .font(DesignBook.Font.headline)
-                        .foregroundColor(DesignBook.Color.Text.primary)
+                        .foregroundStyle(DesignBook.Color.Text.primary)
 
                     Spacer()
 
                     Text("\(appConfiguration.defaultRoundDuration)s")
                         .font(DesignBook.Font.title2)
                         .fontWeight(.bold)
-                        .foregroundColor(.blue)
+                        .foregroundStyle(.blue)
                 }
 
                 Stepper(
@@ -137,11 +137,11 @@ private extension DefaultsSettingsView {
                     HStack(spacing: DesignBook.Spacing.sm) {
                         Image(systemName: "doc.on.doc.fill")
                             .font(DesignBook.Font.body)
-                            .foregroundColor(.purple)
+                            .foregroundStyle(.purple)
 
                         Text("settings.allowDuplicateWords.title")
                             .font(DesignBook.Font.headline)
-                            .foregroundColor(DesignBook.Color.Text.primary)
+                            .foregroundStyle(DesignBook.Color.Text.primary)
                     }
                 }
                 .tint(.purple)

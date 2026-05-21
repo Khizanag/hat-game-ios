@@ -20,17 +20,17 @@ struct NavigationCard: View {
                 HStack(spacing: DesignBook.Spacing.md) {
                     Image(systemName: icon)
                         .font(DesignBook.IconFont.extraLarge)
-                        .foregroundColor(DesignBook.Color.Text.accent)
+                        .foregroundStyle(DesignBook.Color.Text.accent)
                         .frame(width: DesignBook.Size.largeIconSize, height: DesignBook.Size.largeIconSize)
 
                     VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
                         Text(title)
                             .font(DesignBook.Font.headline)
-                            .foregroundColor(DesignBook.Color.Text.primary)
+                            .foregroundStyle(DesignBook.Color.Text.primary)
 
                         Text(description)
                             .font(DesignBook.Font.caption)
-                            .foregroundColor(DesignBook.Color.Text.secondary)
+                            .foregroundStyle(DesignBook.Color.Text.secondary)
                             .lineLimit(2)
                     }
 
@@ -38,7 +38,7 @@ struct NavigationCard: View {
 
                     Image(systemName: "chevron.right")
                         .font(DesignBook.Font.body)
-                        .foregroundColor(DesignBook.Color.Text.tertiary)
+                        .foregroundStyle(DesignBook.Color.Text.tertiary)
                 }
             }
         }

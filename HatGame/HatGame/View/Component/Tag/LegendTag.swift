@@ -17,11 +17,11 @@ struct LegendTag: View {
         VStack(spacing: DesignBook.Spacing.xs) {
             Text(title)
                 .font(DesignBook.Font.captionBold)
-                .foregroundColor(isHighlighted ? DesignBook.Color.Text.accent : DesignBook.Color.Text.primary)
+                .foregroundStyle(isHighlighted ? DesignBook.Color.Text.accent : DesignBook.Color.Text.primary)
 
             Text(range)
                 .font(DesignBook.Font.caption)
-                .foregroundColor(isHighlighted ? DesignBook.Color.Text.accent : DesignBook.Color.Text.secondary)
+                .foregroundStyle(isHighlighted ? DesignBook.Color.Text.accent : DesignBook.Color.Text.secondary)
         }
         .padding(.vertical, DesignBook.Spacing.sm)
         .padding(.horizontal, DesignBook.Spacing.md)

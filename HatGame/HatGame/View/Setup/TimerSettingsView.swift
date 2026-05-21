@@ -101,7 +101,7 @@ private extension TimerSettingsView {
         Stepper(value: $selectedDuration, in: 5...120, step: 5) {
             Text(String(localized: "common.tapOrHoldToAdjust"))
                 .font(DesignBook.Font.caption)
-                .foregroundColor(DesignBook.Color.Text.secondary)
+                .foregroundStyle(DesignBook.Color.Text.secondary)
         }
         .onChange(of: selectedDuration) { _, _ in
             DesignBook.Haptics.selection()

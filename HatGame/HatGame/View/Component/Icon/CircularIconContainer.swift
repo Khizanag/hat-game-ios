@@ -55,7 +55,7 @@ struct CircularIconContainer: View {
 
             Image(systemName: icon)
                 .font(.system(size: calculatedIconSize))
-                .foregroundColor(color)
+                .foregroundStyle(color)
         }
         .shadow(
             color: hasShadow ? .black.opacity(DesignBook.Opacity.highlight) : .clear,

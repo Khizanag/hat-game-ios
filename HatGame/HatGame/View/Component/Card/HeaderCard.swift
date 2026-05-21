@@ -24,13 +24,13 @@ struct HeaderCard<Content: View>: View {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
                 Text(title)
                     .font(DesignBook.Font.headline)
-                    .foregroundColor(DesignBook.Color.Text.primary)
+                    .foregroundStyle(DesignBook.Color.Text.primary)
                     .frame(maxWidth: .infinity, alignment: .leading)
 
                 if let description {
                     Text(description)
                         .font(DesignBook.Font.body)
-                        .foregroundColor(DesignBook.Color.Text.secondary)
+                        .foregroundStyle(DesignBook.Color.Text.secondary)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
 

@@ -35,7 +35,7 @@ private extension DeveloperInfoView {
     var headerText: some View {
         Text("settings.developerInfo.createdBy")
             .font(DesignBook.Font.body)
-            .foregroundColor(DesignBook.Color.Text.secondary)
+            .foregroundStyle(DesignBook.Color.Text.secondary)
             .padding(.horizontal, DesignBook.Spacing.sm)
     }
 
@@ -48,11 +48,11 @@ private extension DeveloperInfoView {
                 HStack(spacing: DesignBook.Spacing.sm) {
                     Image(systemName: "star.circle.fill")
                         .font(DesignBook.Font.body)
-                        .foregroundColor(.yellow)
+                        .foregroundStyle(.yellow)
 
                     Text("settings.developerInfo.credits.title")
                         .font(DesignBook.Font.headline)
-                        .foregroundColor(DesignBook.Color.Text.primary)
+                        .foregroundStyle(DesignBook.Color.Text.primary)
 
                     Spacer()
                 }
@@ -60,12 +60,12 @@ private extension DeveloperInfoView {
                 HStack(alignment: .center, spacing: DesignBook.Spacing.sm) {
                     Image(systemName: "person.fill")
                         .font(DesignBook.Font.body)
-                        .foregroundColor(.yellow)
+                        .foregroundStyle(.yellow)
 
                     VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
                         Text("home.director.name")
                             .font(DesignBook.Font.body)
-                            .foregroundColor(DesignBook.Color.Text.primary)
+                            .foregroundStyle(DesignBook.Color.Text.primary)
 
                         HStack(spacing: DesignBook.Spacing.xs) {
                             Image(systemName: "sparkles")
@@ -109,18 +109,18 @@ private extension DeveloperInfoView {
                 HStack(spacing: DesignBook.Spacing.sm) {
                     Image(systemName: "person.circle.fill")
                         .font(DesignBook.Font.body)
-                        .foregroundColor(.purple)
+                        .foregroundStyle(.purple)
 
                     Text("settings.developerInfo.about.title")
                         .font(DesignBook.Font.headline)
-                        .foregroundColor(DesignBook.Color.Text.primary)
+                        .foregroundStyle(DesignBook.Color.Text.primary)
 
                     Spacer()
                 }
 
                 Text("settings.developerInfo.about.description")
                     .font(DesignBook.Font.body)
-                    .foregroundColor(DesignBook.Color.Text.secondary)
+                    .foregroundStyle(DesignBook.Color.Text.secondary)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
             .padding(DesignBook.Spacing.md)
@@ -138,11 +138,11 @@ private extension DeveloperInfoView {
                 HStack(spacing: DesignBook.Spacing.sm) {
                     Image(systemName: "hammer.circle.fill")
                         .font(DesignBook.Font.body)
-                        .foregroundColor(.blue)
+                        .foregroundStyle(.blue)
 
                     Text("settings.developerInfo.technologies.title")
                         .font(DesignBook.Font.headline)
-                        .foregroundColor(DesignBook.Color.Text.primary)
+                        .foregroundStyle(DesignBook.Color.Text.primary)
 
                     Spacer()
                 }
@@ -164,12 +164,12 @@ private extension DeveloperInfoView {
         HStack(alignment: .top, spacing: DesignBook.Spacing.sm) {
             Image(systemName: "checkmark.circle.fill")
                 .font(DesignBook.Font.caption)
-                .foregroundColor(.blue)
+                .foregroundStyle(.blue)
                 .padding(.top, 2)
 
             Text(LocalizedStringKey(text))
                 .font(DesignBook.Font.body)
-                .foregroundColor(DesignBook.Color.Text.secondary)
+                .foregroundStyle(DesignBook.Color.Text.secondary)
         }
     }
 
@@ -187,12 +187,12 @@ private extension DeveloperInfoView {
                     HStack(spacing: DesignBook.Spacing.sm) {
                         Image(systemName: appConfiguration.isTestMode ? "flask.fill" : "flask")
                             .font(DesignBook.Font.body)
-                            .foregroundColor(.orange)
+                            .foregroundStyle(.orange)
                             .contentTransition(.symbolEffect(.replace))
 
                         Text("settings.testMode.title")
                             .font(DesignBook.Font.headline)
-                            .foregroundColor(DesignBook.Color.Text.primary)
+                            .foregroundStyle(DesignBook.Color.Text.primary)
                     }
                 }
                 .tint(.orange)
@@ -212,11 +212,11 @@ private extension DeveloperInfoView {
                 HStack(spacing: DesignBook.Spacing.sm) {
                     Image(systemName: "envelope.circle.fill")
                         .font(DesignBook.Font.body)
-                        .foregroundColor(.green)
+                        .foregroundStyle(.green)
 
                     Text("settings.developerInfo.contact.title")
                         .font(DesignBook.Font.headline)
-                        .foregroundColor(DesignBook.Color.Text.primary)
+                        .foregroundStyle(DesignBook.Color.Text.primary)
 
                     Spacer()
                 }
@@ -224,24 +224,24 @@ private extension DeveloperInfoView {
                 VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
                     Text("settings.developerInfo.contact.message")
                         .font(DesignBook.Font.body)
-                        .foregroundColor(DesignBook.Color.Text.secondary)
+                        .foregroundStyle(DesignBook.Color.Text.secondary)
                         .frame(maxWidth: .infinity, alignment: .leading)
 
                     Link(destination: URL(string: "https://github.com/gigakhizanishvili")!) {
                         HStack(spacing: DesignBook.Spacing.sm) {
                             Image(systemName: "link.circle.fill")
                                 .font(DesignBook.Font.body)
-                                .foregroundColor(.green)
+                                .foregroundStyle(.green)
 
                             Text("GitHub: @gigakhizanishvili")
                                 .font(DesignBook.Font.body)
-                                .foregroundColor(.green)
+                                .foregroundStyle(.green)
 
                             Spacer()
 
                             Image(systemName: "arrow.up.right")
                                 .font(DesignBook.Font.caption)
-                                .foregroundColor(.green)
+                                .foregroundStyle(.green)
                         }
                         .padding(DesignBook.Spacing.sm)
                         .background(Color.green.opacity(0.1))

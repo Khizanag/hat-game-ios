@@ -65,12 +65,12 @@ private extension FoldableCard {
                         if let icon {
                             Image(systemName: icon)
                                 .font(titleFont)
-                                .foregroundColor(DesignBook.Color.Text.accent)
+                                .foregroundStyle(DesignBook.Color.Text.accent)
                         }
 
                         Text(title)
                             .font(titleFont)
-                            .foregroundColor(DesignBook.Color.Text.primary)
+                            .foregroundStyle(DesignBook.Color.Text.primary)
                     }
 
                     Spacer()
@@ -81,7 +81,7 @@ private extension FoldableCard {
                 if let description {
                     Text(description)
                         .font(descriptionFont)
-                        .foregroundColor(DesignBook.Color.Text.secondary)
+                        .foregroundStyle(DesignBook.Color.Text.secondary)
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -93,7 +93,7 @@ private extension FoldableCard {
     var chevronIcon: some View {
         Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
             .font(DesignBook.Font.headline)
-            .foregroundColor(DesignBook.Color.Text.accent)
+            .foregroundStyle(DesignBook.Color.Text.accent)
     }
 }
 

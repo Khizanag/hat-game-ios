@@ -29,7 +29,7 @@ struct GameCard<Content: View>: View {
 #Preview {
     GameCard {
         Text("Card Content")
-            .foregroundColor(DesignBook.Color.Text.primary)
+            .foregroundStyle(DesignBook.Color.Text.primary)
     }
     .padding()
     .background(DesignBook.Color.Background.primary)

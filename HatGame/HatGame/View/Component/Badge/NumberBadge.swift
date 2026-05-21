@@ -32,7 +32,7 @@ struct NumberBadge: View {
     var body: some View {
         Text("\(number)")
             .font(font)
-            .foregroundColor(textColor)
+            .foregroundStyle(textColor)
             .frame(width: size, height: size)
             .background(backgroundColor)
             .clipShape(Circle())

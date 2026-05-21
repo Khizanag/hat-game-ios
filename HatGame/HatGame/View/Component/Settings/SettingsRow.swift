@@ -43,19 +43,19 @@ struct SettingsRow<Content: View>: View {
 
                 Image(systemName: icon)
                     .font(DesignBook.Font.body)
-                    .foregroundColor(iconColor)
+                    .foregroundStyle(iconColor)
             }
 
             // Title and subtitle
             VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
                 Text(title)
                     .font(DesignBook.Font.body)
-                    .foregroundColor(DesignBook.Color.Text.primary)
+                    .foregroundStyle(DesignBook.Color.Text.primary)
 
                 if let subtitle {
                     Text(subtitle)
                         .font(DesignBook.Font.caption)
-                        .foregroundColor(DesignBook.Color.Text.secondary)
+                        .foregroundStyle(DesignBook.Color.Text.secondary)
                 }
             }
 
@@ -66,7 +66,7 @@ struct SettingsRow<Content: View>: View {
             if showChevron {
                 Image(systemName: "chevron.right")
                     .font(DesignBook.Font.caption)
-                    .foregroundColor(DesignBook.Color.Text.tertiary)
+                    .foregroundStyle(DesignBook.Color.Text.tertiary)
             }
         }
         .padding(DesignBook.Spacing.md)

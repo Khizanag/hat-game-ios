@@ -37,13 +37,13 @@ private extension TeamCard {
         HStack {
             Text(team.name)
                 .font(DesignBook.Font.headline)
-                .foregroundColor(team.color)
+                .foregroundStyle(team.color)
 
             Spacer()
 
             Text("\(team.players.count)/\(playersPerTeam)")
                 .font(DesignBook.Font.captionBold)
-                .foregroundColor(DesignBook.Color.Text.secondary)
+                .foregroundStyle(DesignBook.Color.Text.secondary)
         }
     }
 
@@ -57,7 +57,7 @@ private extension TeamCard {
 
                     Text(player.name)
                         .font(DesignBook.Font.body)
-                        .foregroundColor(DesignBook.Color.Text.secondary)
+                        .foregroundStyle(DesignBook.Color.Text.secondary)
                 }
             }
         }
@@ -68,7 +68,7 @@ private extension TeamCard {
             Button(action: onEditTeam) {
                 Image(systemName: "pencil.circle.fill")
                     .font(.system(size: 32))
-                    .foregroundColor(DesignBook.Color.Text.accent)
+                    .foregroundStyle(DesignBook.Color.Text.accent)
             }
             .buttonStyle(.plain)
             .frame(width: 44, height: 44)
@@ -76,7 +76,7 @@ private extension TeamCard {
             Button(action: onRemoveTeam) {
                 Image(systemName: "trash.circle.fill")
                     .font(.system(size: 32))
-                    .foregroundColor(DesignBook.Color.Status.error)
+                    .foregroundStyle(DesignBook.Color.Status.error)
             }
             .buttonStyle(.plain)
             .frame(width: 44, height: 44)

@@ -101,7 +101,7 @@ private extension WordSettingsView {
         Stepper(value: $selectedWordCount, in: 3...20) {
             Text("common.tapOrHoldToAdjust")
                 .font(DesignBook.Font.caption)
-                .foregroundColor(DesignBook.Color.Text.secondary)
+                .foregroundStyle(DesignBook.Color.Text.secondary)
         }
         .onChange(of: selectedWordCount) { _, _ in
             DesignBook.Haptics.selection()

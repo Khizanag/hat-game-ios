@@ -43,7 +43,7 @@ struct SettingsSection<Content: View>: View {
     private func sectionHeader(_ text: String) -> some View {
         Text(text)
             .font(DesignBook.Font.caption)
-            .foregroundColor(DesignBook.Color.Text.secondary)
+            .foregroundStyle(DesignBook.Color.Text.secondary)
             .textCase(.uppercase)
             .padding(.horizontal, DesignBook.Spacing.sm)
             .padding(.bottom, DesignBook.Spacing.xs)
@@ -52,7 +52,7 @@ struct SettingsSection<Content: View>: View {
     private func sectionFooter(_ text: String) -> some View {
         Text(text)
             .font(DesignBook.Font.caption)
-            .foregroundColor(DesignBook.Color.Text.tertiary)
+            .foregroundStyle(DesignBook.Color.Text.tertiary)
             .padding(.horizontal, DesignBook.Spacing.sm)
             .padding(.top, DesignBook.Spacing.xs)
     }

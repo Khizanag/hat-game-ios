@@ -33,7 +33,7 @@ struct InstructionRow: View {
 
             Text(text)
                 .font(DesignBook.Font.body)
-                .foregroundColor(DesignBook.Color.Text.secondary)
+                .foregroundStyle(DesignBook.Color.Text.secondary)
                 .fixedSize(horizontal: false, vertical: true)
 
             Spacer()

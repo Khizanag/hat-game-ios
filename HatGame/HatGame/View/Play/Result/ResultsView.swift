@@ -254,7 +254,7 @@ private extension ResultsView {
 
             Text("game.results.playAgain.note")
                 .font(DesignBook.Font.caption)
-                .foregroundColor(DesignBook.Color.Text.secondary)
+                .foregroundStyle(DesignBook.Color.Text.secondary)
         }
     }
 

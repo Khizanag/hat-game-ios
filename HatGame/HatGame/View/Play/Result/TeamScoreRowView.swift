@@ -69,7 +69,7 @@ private extension TeamScoreRowView {
     var nameView: some View {
         Text(team.name)
             .font(DesignBook.Font.headline)
-            .foregroundColor(DesignBook.Color.Text.primary)
+            .foregroundStyle(DesignBook.Color.Text.primary)
             .lineLimit(1)
     }
 

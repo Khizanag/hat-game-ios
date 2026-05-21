@@ -178,7 +178,7 @@ private extension NextTeamView {
                     } label: {
                         Image(systemName: "shuffle")
                             .font(DesignBook.Font.body)
-                            .foregroundColor(DesignBook.Color.Text.accent)
+                            .foregroundStyle(DesignBook.Color.Text.accent)
                             .padding(DesignBook.Spacing.sm)
                             .background(DesignBook.Color.Background.secondary)
                             .cornerRadius(DesignBook.Size.smallCardCornerRadius)
@@ -220,7 +220,7 @@ private extension NextTeamView {
 
             Text(player.name)
                 .font(isSelected ? DesignBook.Font.bodyBold : DesignBook.Font.body)
-                .foregroundColor(DesignBook.Color.Text.primary)
+                .foregroundStyle(DesignBook.Color.Text.primary)
 
             Spacer()
 
@@ -259,13 +259,13 @@ private extension NextTeamView {
                 HStack {
                     Text("game.nextTeam.teamRoles")
                         .font(DesignBook.Font.headline)
-                        .foregroundColor(DesignBook.Color.Text.primary)
+                        .foregroundStyle(DesignBook.Color.Text.primary)
 
                     Spacer()
 
                     Image(systemName: "arrow.triangle.2.circlepath")
                         .font(DesignBook.Font.caption)
-                        .foregroundColor(DesignBook.Color.Text.accent)
+                        .foregroundStyle(DesignBook.Color.Text.accent)
                 }
 
                 VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
@@ -301,13 +301,13 @@ private extension NextTeamView {
             HStack(spacing: DesignBook.Spacing.xs) {
                 Image(systemName: icon)
                     .font(DesignBook.Font.caption)
-                    .foregroundColor(iconColor)
+                    .foregroundStyle(iconColor)
 
                 Text(label)
                     .font(DesignBook.Font.smallCaption)
                     .textCase(.uppercase)
                     .tracking(1.2)
-                    .foregroundColor(DesignBook.Color.Text.tertiary)
+                    .foregroundStyle(DesignBook.Color.Text.tertiary)
             }
             content()
         }
@@ -321,7 +321,7 @@ private extension NextTeamView {
 
             Text(explainer.name)
                 .font(DesignBook.Font.bodyBold)
-                .foregroundColor(team.color)
+                .foregroundStyle(team.color)
         }
         .padding(DesignBook.Spacing.sm)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -339,7 +339,7 @@ private extension NextTeamView {
 
                     Text(guesser.name)
                         .font(DesignBook.Font.body)
-                        .foregroundColor(DesignBook.Color.Text.primary)
+                        .foregroundStyle(DesignBook.Color.Text.primary)
                 }
                 .padding(.horizontal, DesignBook.Spacing.sm)
                 .padding(.vertical, DesignBook.Spacing.xs)

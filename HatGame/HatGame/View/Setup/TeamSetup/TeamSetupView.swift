@@ -204,7 +204,7 @@ private extension TeamSetupView {
     var requirementText: some View {
         Text(String(format: String(localized: "teamSetup.minTeamsRequired"), gameManager.configuration.minTeams))
             .font(DesignBook.Font.caption)
-            .foregroundColor(DesignBook.Color.Text.secondary)
+            .foregroundStyle(DesignBook.Color.Text.secondary)
             .multilineTextAlignment(.center)
             .paddingHorizontalDefault()
     }
@@ -266,7 +266,7 @@ private extension TeamSetupView {
                 Text(isEditMode ? String(localized: "common.buttons.done") : String(localized: "common.buttons.edit"))
                     .font(DesignBook.Font.bodyBold)
             }
-            .foregroundColor(isEditMode ? DesignBook.Color.Status.success : DesignBook.Color.Text.accent)
+            .foregroundStyle(isEditMode ? DesignBook.Color.Status.success : DesignBook.Color.Text.accent)
             .padding(.horizontal, DesignBook.Spacing.md)
             .padding(.vertical, DesignBook.Spacing.sm)
             .background(

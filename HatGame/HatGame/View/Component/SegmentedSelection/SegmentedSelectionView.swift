@@ -62,7 +62,7 @@ private extension SegmentedSelectionView {
     func titleText(for item: SegmentedSelectionItem<ID>, isSelected: Bool) -> some View {
         Text(LocalizedStringKey(item.title))
             .font(DesignBook.Font.captionBold)
-            .foregroundColor(
+            .foregroundStyle(
                 isSelected
                     ? DesignBook.Color.Text.primary
                     : DesignBook.Color.Text.secondary
@@ -74,7 +74,7 @@ private extension SegmentedSelectionView {
             if let subtitle = item.subtitle {
                 Text(LocalizedStringKey(subtitle))
                     .font(DesignBook.Font.caption)
-                    .foregroundColor(
+                    .foregroundStyle(
                         isSelected
                             ? DesignBook.Color.Text.secondary
                             : DesignBook.Color.Text.tertiary
@@ -107,7 +107,7 @@ private extension SegmentedSelectionView {
     func iconImage(for item: SegmentedSelectionItem<ID>, isSelected: Bool) -> some View {
         item.icon
             .font(DesignBook.Font.callout)
-            .foregroundColor(
+            .foregroundStyle(
                 isSelected
                     ? DesignBook.Color.Text.accent
                     : DesignBook.Color.Text.secondary
