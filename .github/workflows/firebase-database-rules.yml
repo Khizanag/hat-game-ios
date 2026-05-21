@@ -29,7 +29,11 @@ jobs:
       - name: Deploy database rules
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/sa.json
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
         run: |
-          printf '%s' "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}" > "$GOOGLE_APPLICATION_CREDENTIALS"
+          # Pass the secret through an env var so bash never has to parse the
+          # JSON's double-quotes inside its own command string — inlining the
+          # secret directly broke quoting.
+          printf '%s' "$FIREBASE_SERVICE_ACCOUNT" > "$GOOGLE_APPLICATION_CREDENTIALS"
           firebase deploy --only database --non-interactive --project hat-game-e050f
           rm -f "$GOOGLE_APPLICATION_CREDENTIALS"
