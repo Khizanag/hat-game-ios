@@ -50,6 +50,7 @@ struct LocalMenuView: View {
                 Image(systemName: "dot.radiowaves.left.and.right")
                     .font(.system(size: 60, weight: .bold))
                     .foregroundStyle(DesignBook.Gradient.primary)
+                    .symbolEffect(.variableColor.iterative, options: .repeating, isActive: !reduceMotion)
                     .scaleEffect(reduceMotion ? 1.0 : (isPulsing ? 1.04 : 0.96))
             }
             .accessibilityHidden(true)

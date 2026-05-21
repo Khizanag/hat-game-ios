@@ -47,8 +47,44 @@ struct LocalSessionView: View {
         case .finished:
             OnlineResultsView()
         case nil:
-            ProgressView()
+            connectingState
         }
+    }
+
+    /// Shown while the snapshot from the host hasn't arrived yet — the
+    /// MC handshake has fired but `roomSnapshot` is still in flight.
+    private var connectingState: some View {
+        VStack(spacing: DesignBook.Spacing.lg) {
+            Spacer()
+            ZStack {
+                Circle()
+                    .fill(DesignBook.Gradient.primary)
+                    .frame(width: 120, height: 120)
+                    .blur(radius: 28)
+                    .opacity(0.55)
+                Circle()
+                    .fill(DesignBook.Color.Background.card)
+                    .frame(width: 96, height: 96)
+                    .shadow(.medium)
+                Image(systemName: "antenna.radiowaves.left.and.right")
+                    .font(.system(size: 42, weight: .bold))
+                    .foregroundStyle(DesignBook.Gradient.primary)
+                    .symbolEffect(.variableColor.iterative, options: .repeating)
+            }
+            .accessibilityHidden(true)
+            Text("local.session.connecting")
+                .font(DesignBook.Font.title3)
+                .foregroundStyle(DesignBook.Color.Text.primary)
+                .multilineTextAlignment(.center)
+            Text("local.session.connectingHint")
+                .font(DesignBook.Font.body)
+                .foregroundStyle(DesignBook.Color.Text.secondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, DesignBook.Spacing.lg)
+            Spacer()
+        }
+        .frame(maxWidth: .infinity)
+        .setDefaultBackground()
     }
 
     @ViewBuilder

@@ -121,9 +121,10 @@ private extension LocalRoomBrowser {
     var emptyState: some View {
         GameCard {
             VStack(spacing: DesignBook.Spacing.md) {
-                Image(systemName: "antenna.radiowaves.left.and.right.slash")
+                Image(systemName: "antenna.radiowaves.left.and.right")
                     .font(.system(size: 40))
                     .foregroundStyle(DesignBook.Color.Text.tertiary)
+                    .symbolEffect(.variableColor.iterative.dimInactiveLayers, options: .repeating)
                 Text("local.browser.empty")
                     .font(DesignBook.Font.body)
                     .foregroundStyle(DesignBook.Color.Text.tertiary)

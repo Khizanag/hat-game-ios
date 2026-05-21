@@ -2626,6 +2626,20 @@
         "ka" : { "stringUnit" : { "state" : "translated", "value" : "ვეძებთ ახლომდებარე ოთახებს…\nდარწმუნდი რომ ჰოსტმა „გახსნა“ დააჭირა." } }
       }
     },
+    "local.session.connecting" : {
+      "comment" : "Title shown while a guest is connecting to a host over Multipeer Connectivity (before the first roomSnapshot arrives).",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Connecting…" } },
+        "ka" : { "stringUnit" : { "state" : "translated", "value" : "ვუკავშირდები…" } }
+      }
+    },
+    "local.session.connectingHint" : {
+      "comment" : "Sub-hint shown beneath the connecting indicator on the local session screen.",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Handshaking with the host. Hold tight." } },
+        "ka" : { "stringUnit" : { "state" : "translated", "value" : "ვუკავშირდები ჰოსტს." } }
+      }
+    },
     "onlineRoundResults.nextRound" : {
       "localizations" : {
         "en" : {
