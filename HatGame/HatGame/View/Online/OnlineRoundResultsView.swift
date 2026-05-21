@@ -5,10 +5,10 @@
 //  Created by Giga Khizanishvili on 22.12.24.
 //
 
-import SwiftUI
 import DesignBook
 import Navigation
 import Networking
+import SwiftUI
 
 struct OnlineRoundResultsView: View {
     @Environment(Navigator.self) private var navigator
@@ -16,50 +16,50 @@ struct OnlineRoundResultsView: View {
     @Environment(GameSyncManager.self) private var gameSyncManager
 
     @State private var isLoading: Bool = false
+    @State private var hasCelebrated: Bool = false
 
     private var room: GameRoom? { roomManager.room }
     private var gameState: OnlineGameState? { room?.gameState }
     private var teams: [OnlineTeam] { room?.teams ?? [] }
+    private var players: [OnlinePlayer] { room?.players ?? [] }
 
-    private var currentRound: OnlineGameRound {
-        gameState?.currentRound ?? .first
-    }
+    private var currentRound: OnlineGameRound { gameState?.currentRound ?? .first }
+    /// On the round-results screen `currentRound` is the round that just ended.
+    private var nextRound: OnlineGameRound? { currentRound.next }
 
-    private var previousRound: OnlineGameRound? {
-        switch currentRound {
-        case .first: nil
-        case .second: .first
-        case .third: .second
+    private var roundLeader: OnlineTeam? {
+        teams.max { lhs, rhs in
+            (gameState?.getScore(for: lhs.id, in: currentRound) ?? 0)
+                < (gameState?.getScore(for: rhs.id, in: currentRound) ?? 0)
         }
     }
 
     var body: some View {
         content
             .setDefaultStyle()
+            .overlay {
+                if hasCelebrated {
+                    ConfettiView(isActive: true).ignoresSafeArea().allowsHitTesting(false)
+                }
+            }
+            .onAppear {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.18) {
+                    DesignBook.Haptics.success()
+                    hasCelebrated = true
+                }
+            }
     }
 }
 
-// MARK: - Private
+// MARK: - Composition
 private extension OnlineRoundResultsView {
     var content: some View {
         ScrollView {
             VStack(spacing: DesignBook.Spacing.lg) {
-                Text("🏁")
-                    .font(DesignBook.IconFont.emoji)
-
-                Text("onlineRoundResults.roundComplete")
-                    .font(DesignBook.Font.largeTitle)
-                    .foregroundColor(DesignBook.Color.Text.primary)
-
-                if let round = previousRound {
-                    Text(round.title)
-                        .font(DesignBook.Font.title3)
-                        .foregroundColor(DesignBook.Color.Text.secondary)
-                }
-
+                header
                 roundScoresCard
                 totalScoresCard
-                nextRoundCard
+                if let nextRound { nextRoundCard(nextRound) }
             }
             .paddingHorizontalDefault()
             .padding(.bottom, DesignBook.Spacing.xxl)
@@ -67,8 +67,23 @@ private extension OnlineRoundResultsView {
         .safeAreaInset(edge: .bottom) {
             actionSection
                 .paddingHorizontalDefault()
+                .padding(.bottom, DesignBook.Spacing.sm)
                 .withFooterGradient()
         }
+    }
+
+    var header: some View {
+        VStack(spacing: DesignBook.Spacing.sm) {
+            Text("🏁").font(DesignBook.IconFont.emoji)
+            Text("onlineRoundResults.roundComplete")
+                .font(DesignBook.Font.largeTitle)
+                .foregroundStyle(DesignBook.Color.Text.primary)
+                .multilineTextAlignment(.center)
+            Text(currentRound.title)
+                .font(DesignBook.Font.title3)
+                .foregroundStyle(DesignBook.Color.Text.secondary)
+        }
+        .padding(.top, DesignBook.Spacing.lg)
     }
 
     var roundScoresCard: some View {
@@ -76,35 +91,36 @@ private extension OnlineRoundResultsView {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
                 Text("onlineRoundResults.roundScores")
                     .font(DesignBook.Font.headline)
-                    .foregroundColor(DesignBook.Color.Text.primary)
+                    .foregroundStyle(DesignBook.Color.Text.primary)
 
-                let sortedTeams = teams.sorted { team1, team2 in
-                    let score1 = previousRound.map { gameState?.getScore(for: team1.id, in: $0) ?? 0 } ?? 0
-                    let score2 = previousRound.map { gameState?.getScore(for: team2.id, in: $0) ?? 0 } ?? 0
-                    return score1 > score2
-                }
+                let ranked = teams.enumerated()
+                    .sorted { lhs, rhs in
+                        (gameState?.getScore(for: lhs.element.id, in: currentRound) ?? 0)
+                            > (gameState?.getScore(for: rhs.element.id, in: currentRound) ?? 0)
+                    }
 
-                ForEach(Array(sortedTeams.enumerated()), id: \.element.id) { index, team in
+                ForEach(Array(ranked.enumerated()), id: \.element.element.id) { rank, item in
+                    let team = item.element
+                    let isLeader = team.id == roundLeader?.id
                     HStack(spacing: DesignBook.Spacing.md) {
-                        medalIcon(for: index)
-                            .frame(width: 30)
-
+                        medalIcon(for: rank).frame(width: 30)
                         Circle()
                             .fill(Color(hex: team.colorHex) ?? DesignBook.Color.Text.accent)
-                            .frame(width: 16, height: 16)
-
+                            .frame(width: 10, height: 10)
                         Text(team.name)
                             .font(DesignBook.Font.body)
-                            .foregroundColor(DesignBook.Color.Text.primary)
-
+                            .foregroundStyle(DesignBook.Color.Text.primary)
                         Spacer()
-
-                        let roundScore = previousRound.map { gameState?.getScore(for: team.id, in: $0) ?? 0 } ?? 0
-                        Text("\(roundScore)")
-                            .font(DesignBook.Font.headline)
-                            .foregroundColor(DesignBook.Color.Text.accent)
+                        AnimatedScoreText(
+                            value: gameState?.getScore(for: team.id, in: currentRound) ?? 0,
+                            font: DesignBook.Font.title3,
+                            color: isLeader
+                                ? (Color(hex: team.colorHex) ?? DesignBook.Color.Text.accent)
+                                : DesignBook.Color.Text.secondary,
+                            duration: 0.6
+                        )
                     }
-                    .padding(.vertical, DesignBook.Spacing.sm)
+                    .padding(.vertical, DesignBook.Spacing.xs)
                 }
             }
         }
@@ -115,56 +131,69 @@ private extension OnlineRoundResultsView {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
                 Text("onlineRoundResults.totalScores")
                     .font(DesignBook.Font.headline)
-                    .foregroundColor(DesignBook.Color.Text.primary)
+                    .foregroundStyle(DesignBook.Color.Text.primary)
 
-                let sortedTeams = teams.sorted { team1, team2 in
-                    (gameState?.getTotalScore(for: team1.id) ?? 0) > (gameState?.getTotalScore(for: team2.id) ?? 0)
+                let ranked = teams.sorted { lhs, rhs in
+                    (gameState?.getTotalScore(for: lhs.id) ?? 0)
+                        > (gameState?.getTotalScore(for: rhs.id) ?? 0)
                 }
 
-                ForEach(Array(sortedTeams.enumerated()), id: \.element.id) { index, team in
+                ForEach(Array(ranked.enumerated()), id: \.element.id) { rank, team in
                     HStack(spacing: DesignBook.Spacing.md) {
-                        Text("\(index + 1)")
-                            .font(DesignBook.Font.headline)
-                            .foregroundColor(DesignBook.Color.Text.primary)
-                            .frame(width: 30)
+                        Text(verbatim: "\(rank + 1)")
+                            .font(DesignBook.Font.captionBold)
+                            .foregroundStyle(.white)
+                            .frame(width: 28, height: 28)
+                            .background {
+                                Circle().fill(rank == 0
+                                    ? (Color(hex: team.colorHex) ?? DesignBook.Color.Text.accent)
+                                    : DesignBook.Color.Text.tertiary.opacity(0.4))
+                            }
+                            .monospacedDigit()
 
                         Circle()
                             .fill(Color(hex: team.colorHex) ?? DesignBook.Color.Text.accent)
-                            .frame(width: 16, height: 16)
+                            .frame(width: 10, height: 10)
 
                         Text(team.name)
                             .font(DesignBook.Font.body)
-                            .foregroundColor(DesignBook.Color.Text.primary)
+                            .foregroundStyle(DesignBook.Color.Text.primary)
 
                         Spacer()
 
-                        Text("\(gameState?.getTotalScore(for: team.id) ?? 0)")
-                            .font(DesignBook.Font.headline)
-                            .foregroundColor(DesignBook.Color.Text.accent)
+                        AnimatedScoreText(
+                            value: gameState?.getTotalScore(for: team.id) ?? 0,
+                            font: DesignBook.Font.title3,
+                            color: rank == 0
+                                ? (Color(hex: team.colorHex) ?? DesignBook.Color.Text.accent)
+                                : DesignBook.Color.Text.secondary,
+                            duration: 0.7
+                        )
                     }
-                    .padding(.vertical, DesignBook.Spacing.sm)
+                    .padding(.vertical, DesignBook.Spacing.xs)
                 }
             }
         }
     }
 
-    var nextRoundCard: some View {
+    func nextRoundCard(_ round: OnlineGameRound) -> some View {
         GameCard {
-            VStack(spacing: DesignBook.Spacing.md) {
+            VStack(spacing: DesignBook.Spacing.sm) {
                 Text("onlineRoundResults.nextRound")
-                    .font(DesignBook.Font.headline)
-                    .foregroundColor(DesignBook.Color.Text.primary)
+                    .font(DesignBook.Font.smallCaption)
+                    .textCase(.uppercase)
+                    .tracking(1.6)
+                    .foregroundStyle(DesignBook.Color.Text.tertiary)
 
-                Text(currentRound.title)
+                Text(round.title)
                     .font(DesignBook.Font.title2)
-                    .foregroundColor(DesignBook.Color.Text.accent)
+                    .foregroundStyle(DesignBook.Color.Text.accent)
 
-                Text(currentRound.description)
+                Text(round.description)
                     .font(DesignBook.Font.body)
-                    .foregroundColor(DesignBook.Color.Text.secondary)
+                    .foregroundStyle(DesignBook.Color.Text.secondary)
                     .multilineTextAlignment(.center)
             }
-            .frame(maxWidth: .infinity)
             .padding(.vertical, DesignBook.Spacing.sm)
         }
     }
@@ -172,59 +201,58 @@ private extension OnlineRoundResultsView {
     @ViewBuilder
     func medalIcon(for index: Int) -> some View {
         switch index {
-        case 0:
-            Text("🥇")
-                .font(DesignBook.Font.title3)
-        case 1:
-            Text("🥈")
-                .font(DesignBook.Font.title3)
-        case 2:
-            Text("🥉")
-                .font(DesignBook.Font.title3)
+        case 0: Text("🥇").font(DesignBook.Font.title3)
+        case 1: Text("🥈").font(DesignBook.Font.title3)
+        case 2: Text("🥉").font(DesignBook.Font.title3)
         default:
-            Text("\(index + 1)")
+            Text(verbatim: "\(index + 1)")
                 .font(DesignBook.Font.headline)
-                .foregroundColor(DesignBook.Color.Text.primary)
+                .foregroundStyle(DesignBook.Color.Text.tertiary)
         }
     }
 
     @ViewBuilder
     var actionSection: some View {
         if roomManager.isHost {
-            PrimaryButton(title: String(localized: "onlineRoundResults.startNextRound"), icon: "play.fill") {
-                startNextRound()
+            PrimaryButton(
+                title: nextRound == nil
+                    ? String(localized: "onlineRoundResults.finish")
+                    : String(localized: "onlineRoundResults.startNextRound"),
+                icon: "play.fill"
+            ) {
+                advance()
             }
             .disabled(isLoading)
         } else {
-            VStack(spacing: DesignBook.Spacing.md) {
+            VStack(spacing: DesignBook.Spacing.sm) {
                 Text("onlineRoundResults.waitingForHost")
                     .font(DesignBook.Font.body)
-                    .foregroundColor(DesignBook.Color.Text.secondary)
+                    .foregroundStyle(DesignBook.Color.Text.secondary)
                     .multilineTextAlignment(.center)
-
                 ProgressView()
             }
         }
     }
+}
 
-    func startNextRound() {
-        guard let roomId = room?.id,
-              let state = gameState else { return }
-
+// MARK: - Actions
+private extension OnlineRoundResultsView {
+    func advance() {
+        guard let roomId = room?.id, let state = gameState else { return }
         isLoading = true
-
+        DesignBook.Haptics.confirm()
         Task {
-            do {
-                try await gameSyncManager.continueFromRoundResults(roomId: roomId, gameState: state)
-            } catch {
-                print("Failed to start next round: \(error)")
-            }
+            try? await gameSyncManager.advanceAfterRoundResults(
+                roomId: roomId,
+                gameState: state,
+                teams: teams,
+                players: players
+            )
             isLoading = false
         }
     }
 }
 
-// MARK: - OnlineGameRound Extension
 private extension OnlineGameRound {
     var title: String {
         switch self {
@@ -241,12 +269,4 @@ private extension OnlineGameRound {
         case .third: String(localized: "round.third.description")
         }
     }
-}
-
-// MARK: - Preview
-#Preview {
-    OnlineRoundResultsView()
-        .environment(Navigator())
-        .environment(RoomManager())
-        .environment(GameSyncManager())
 }

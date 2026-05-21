@@ -5,17 +5,16 @@
 //  Created by Giga Khizanishvili on 22.12.24.
 //
 
-import SwiftUI
 import DesignBook
 import Navigation
 import Networking
+import SwiftUI
 
 struct OnlineNextTeamView: View {
     @Environment(Navigator.self) private var navigator
     @Environment(RoomManager.self) private var roomManager
     @Environment(GameSyncManager.self) private var gameSyncManager
 
-    @State private var selectedExplainerIndex: Int = 0
     @State private var isLoading: Bool = false
 
     private var room: GameRoom? { roomManager.room }
@@ -24,64 +23,60 @@ struct OnlineNextTeamView: View {
     private var players: [OnlinePlayer] { room?.players ?? [] }
 
     private var currentTeam: OnlineTeam? {
-        guard let index = gameState?.currentTeamIndex,
-              index < teams.count else { return nil }
-        return teams[index]
-    }
-
-    private var currentRound: OnlineGameRound {
-        gameState?.currentRound ?? .first
+        guard let state = gameState else { return nil }
+        return teams[safe: state.currentTeamIndex]
     }
 
     private var teamPlayers: [OnlinePlayer] {
-        guard let teamId = currentTeam?.id else { return [] }
-        return players.filter { $0.teamId == teamId }
+        guard let team = currentTeam else { return [] }
+        if !team.playerIds.isEmpty {
+            let lookup = Dictionary(uniqueKeysWithValues: players.map { ($0.id, $0) })
+            return team.playerIds.compactMap { lookup[$0] }
+        }
+        return players.filter { $0.teamId == team.id }
+    }
+
+    private var explainer: OnlinePlayer? {
+        guard let team = currentTeam, let state = gameState else { return nil }
+        let index = state.explainerIndex(for: team.id)
+        return teamPlayers[safe: index]
+    }
+
+    private var guessers: [OnlinePlayer] {
+        guard let explainerId = explainer?.id else { return [] }
+        return teamPlayers.filter { $0.id != explainerId }
     }
 
     private var isActivePlayer: Bool {
         gameState?.activePlayerId == roomManager.currentPlayerId
     }
 
-    private var currentExplainer: OnlinePlayer? {
-        guard let index = gameState?.currentExplainerIndex,
-              index < teamPlayers.count else { return nil }
-        return teamPlayers[index]
-    }
-
-    private var remainingWordCount: Int {
-        gameState?.remainingWordIds.count ?? 0
-    }
-
     private var isMyTeamsTurn: Bool {
-        currentTeam?.playerIds.contains(roomManager.currentPlayerId ?? "") ?? false
+        guard let teamId = currentTeam?.id else { return false }
+        return roomManager.currentPlayer?.teamId == teamId
     }
+
+    private var tint: Color {
+        currentTeam.flatMap { Color(hex: $0.colorHex) } ?? DesignBook.Color.Text.accent
+    }
+
+    private var currentRound: OnlineGameRound { gameState?.currentRound ?? .first }
+    private var remainingWordCount: Int { gameState?.remainingWordIds.count ?? 0 }
 
     var body: some View {
         content
             .setDefaultStyle()
-            .onAppear {
-                if let index = gameState?.currentExplainerIndex {
-                    selectedExplainerIndex = index
-                }
-            }
     }
 }
 
-// MARK: - Private
+// MARK: - Composition
 private extension OnlineNextTeamView {
     var content: some View {
         ScrollView {
             VStack(spacing: DesignBook.Spacing.lg) {
-                Text("🎯")
-                    .font(DesignBook.IconFont.emoji)
-
-                Text("onlineNextTeam.title")
-                    .font(DesignBook.Font.largeTitle)
-                    .foregroundColor(DesignBook.Color.Text.primary)
-
-                teamCard
+                hero
                 rolesCard
-                roundStatusCard
+                statusCard
             }
             .paddingHorizontalDefault()
             .padding(.bottom, DesignBook.Spacing.xxl)
@@ -89,115 +84,93 @@ private extension OnlineNextTeamView {
         .safeAreaInset(edge: .bottom) {
             actionSection
                 .paddingHorizontalDefault()
+                .padding(.bottom, DesignBook.Spacing.sm)
                 .withFooterGradient()
         }
     }
 
-    var teamCard: some View {
-        GameCard {
-            VStack(spacing: DesignBook.Spacing.md) {
-                if let team = currentTeam {
-                    Text(team.name)
-                        .font(DesignBook.Font.title2)
-                        .foregroundColor(Color(hex: team.colorHex) ?? DesignBook.Color.Text.accent)
+    var hero: some View {
+        VStack(spacing: DesignBook.Spacing.md) {
+            ZStack {
+                Circle().fill(tint.opacity(0.15)).frame(width: 120, height: 120)
+                Circle().strokeBorder(tint.opacity(0.4), lineWidth: 2).frame(width: 120, height: 120)
+                Text("🎯").font(.system(size: 72))
+            }
+            .accessibilityHidden(true)
 
-                    if let totalScore = gameState?.getTotalScore(for: team.id), totalScore > 0 {
-                        Text(String(format: String(localized: "game.currentScoreLabel"), totalScore))
-                            .font(DesignBook.Font.headline)
-                            .foregroundColor(DesignBook.Color.Text.accent)
-                    }
+            Text("game.nextTeam.title")
+                .font(DesignBook.Font.smallCaption)
+                .textCase(.uppercase)
+                .tracking(1.6)
+                .foregroundStyle(DesignBook.Color.Text.tertiary)
+
+            if let team = currentTeam {
+                Text(team.name)
+                    .font(DesignBook.Font.largeTitle)
+                    .foregroundStyle(tint)
+                    .multilineTextAlignment(.center)
+
+                if let totalScore = gameState?.getTotalScore(for: team.id), totalScore > 0 {
+                    Text(String(format: String(localized: "game.currentScoreLabel"), totalScore))
+                        .font(DesignBook.Font.headline)
+                        .foregroundStyle(tint)
                 }
             }
         }
+        .padding(.top, DesignBook.Spacing.md)
     }
 
     var rolesCard: some View {
         GameCard {
-            VStack(alignment: .leading, spacing: DesignBook.Spacing.lg) {
+            VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
                 HStack {
                     Text("onlineNextTeam.teamRoles")
                         .font(DesignBook.Font.headline)
-                        .foregroundColor(DesignBook.Color.Text.primary)
-
+                        .foregroundStyle(DesignBook.Color.Text.primary)
                     Spacer()
-
                     Image(systemName: "arrow.triangle.2.circlepath")
                         .font(DesignBook.Font.caption)
-                        .foregroundColor(DesignBook.Color.Text.accent)
+                        .foregroundStyle(DesignBook.Color.Text.accent)
                 }
 
-                // Explainer section
-                VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
-                    HStack(spacing: DesignBook.Spacing.xs) {
-                        Image(systemName: "person.wave.2.fill")
-                            .font(DesignBook.Font.caption)
-                            .foregroundColor(DesignBook.Color.Text.accent)
-
-                        Text("game.nextTeam.role.explaining")
-                            .font(DesignBook.Font.caption)
-                            .foregroundColor(DesignBook.Color.Text.secondary)
-                    }
-
-                    if let explainer = currentExplainer {
-                        HStack(spacing: DesignBook.Spacing.sm) {
-                            Circle()
-                                .fill(DesignBook.Color.Text.accent.opacity(DesignBook.Opacity.semiTransparent))
-                                .frame(width: DesignBook.Size.dotSmall, height: DesignBook.Size.dotSmall)
-
-                            Text(explainer.name)
-                                .font(DesignBook.Font.bodyBold)
-                                .foregroundColor(DesignBook.Color.Text.accent)
-
-                            if explainer.id == roomManager.currentPlayerId {
-                                Text("onlineNextTeam.you")
-                                    .font(DesignBook.Font.caption)
-                                    .foregroundColor(DesignBook.Color.Text.secondary)
-                                    .padding(.horizontal, DesignBook.Spacing.sm)
-                                    .padding(.vertical, DesignBook.Spacing.xs)
-                                    .background(DesignBook.Color.Background.secondary)
-                                    .cornerRadius(DesignBook.Size.smallCardCornerRadius)
-                            }
-                        }
-                        .padding(DesignBook.Spacing.sm)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(DesignBook.Color.Text.accent.opacity(DesignBook.Opacity.light))
-                        .cornerRadius(DesignBook.Size.smallCardCornerRadius)
-                    }
+                if let explainer {
+                    rolePill(
+                        icon: "person.wave.2.fill",
+                        label: "game.nextTeam.role.explaining",
+                        playerName: explainer.name,
+                        isMe: explainer.id == roomManager.currentPlayerId,
+                        emphasized: true
+                    )
                 }
 
-                // Guessers section
-                let guessers = teamPlayers.filter { $0.id != currentExplainer?.id }
                 if !guessers.isEmpty {
                     VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
                         HStack(spacing: DesignBook.Spacing.xs) {
                             Image(systemName: "lightbulb.fill")
                                 .font(DesignBook.Font.caption)
-                                .foregroundColor(DesignBook.Color.Text.accent)
-
+                                .foregroundStyle(DesignBook.Color.Text.accent)
                             Text("game.nextTeam.role.guessing")
-                                .font(DesignBook.Font.caption)
-                                .foregroundColor(DesignBook.Color.Text.secondary)
+                                .font(DesignBook.Font.smallCaption)
+                                .textCase(.uppercase)
+                                .tracking(1.2)
+                                .foregroundStyle(DesignBook.Color.Text.tertiary)
                         }
 
-                        VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
+                        VStack(alignment: .leading, spacing: 6) {
                             ForEach(guessers, id: \.id) { guesser in
                                 HStack(spacing: DesignBook.Spacing.sm) {
                                     Circle()
                                         .fill(DesignBook.Color.Text.accent.opacity(DesignBook.Opacity.medium))
                                         .frame(width: DesignBook.Size.dotSmall, height: DesignBook.Size.dotSmall)
-
                                     Text(guesser.name)
                                         .font(DesignBook.Font.body)
-                                        .foregroundColor(DesignBook.Color.Text.primary)
-
+                                        .foregroundStyle(DesignBook.Color.Text.primary)
                                     if guesser.id == roomManager.currentPlayerId {
                                         Text("onlineNextTeam.you")
-                                            .font(DesignBook.Font.caption)
-                                            .foregroundColor(DesignBook.Color.Text.secondary)
+                                            .font(DesignBook.Font.captionBold)
+                                            .foregroundStyle(DesignBook.Color.Text.accent)
                                     }
                                 }
-                                .padding(.horizontal, DesignBook.Spacing.sm)
-                                .padding(.vertical, DesignBook.Spacing.xs)
                             }
                         }
                         .padding(DesignBook.Spacing.sm)
@@ -210,20 +183,65 @@ private extension OnlineNextTeamView {
         }
     }
 
-    var roundStatusCard: some View {
+    func rolePill(
+        icon: String,
+        label: LocalizedStringKey,
+        playerName: String,
+        isMe: Bool,
+        emphasized: Bool
+    ) -> some View {
+        VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
+            HStack(spacing: DesignBook.Spacing.xs) {
+                Image(systemName: icon)
+                    .font(DesignBook.Font.caption)
+                    .foregroundStyle(tint)
+                Text(label)
+                    .font(DesignBook.Font.smallCaption)
+                    .textCase(.uppercase)
+                    .tracking(1.2)
+                    .foregroundStyle(DesignBook.Color.Text.tertiary)
+            }
+            HStack(spacing: DesignBook.Spacing.sm) {
+                Circle().fill(tint).frame(width: 8, height: 8)
+                Text(playerName)
+                    .font(DesignBook.Font.bodyBold)
+                    .foregroundStyle(tint)
+                if isMe {
+                    Text("onlineNextTeam.you")
+                        .font(DesignBook.Font.captionBold)
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, DesignBook.Spacing.sm)
+                        .padding(.vertical, 2)
+                        .background(Capsule().fill(tint))
+                }
+            }
+            .padding(DesignBook.Spacing.sm)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(tint.opacity(emphasized ? 0.12 : 0.08))
+            .cornerRadius(DesignBook.Size.smallCardCornerRadius)
+        }
+    }
+
+    var statusCard: some View {
         GameCard {
-            VStack(spacing: DesignBook.Spacing.md) {
-                Text("game.nextTeam.roundStatus")
-                    .font(DesignBook.Font.headline)
-                    .foregroundColor(DesignBook.Color.Text.primary)
+            HStack(spacing: DesignBook.Spacing.md) {
+                CircularIconContainer(
+                    icon: "flag.fill",
+                    size: 48,
+                    iconSize: 22,
+                    color: tint,
+                    backgroundColor: tint.opacity(0.12)
+                )
 
-                Text(currentRound.title)
-                    .font(DesignBook.Font.title3)
-                    .foregroundColor(DesignBook.Color.Text.secondary)
-
-                Text(String(format: String(localized: "game.wordsRemainingLabel"), remainingWordCount))
-                    .font(DesignBook.Font.body)
-                    .foregroundColor(DesignBook.Color.Text.secondary)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(currentRound.title)
+                        .font(DesignBook.Font.headline)
+                        .foregroundStyle(DesignBook.Color.Text.primary)
+                    Text(String(format: String(localized: "game.wordsRemainingLabel"), remainingWordCount))
+                        .font(DesignBook.Font.caption)
+                        .foregroundStyle(DesignBook.Color.Text.secondary)
+                }
+                Spacer()
             }
         }
     }
@@ -236,44 +254,39 @@ private extension OnlineNextTeamView {
             }
             .disabled(isLoading)
         } else if isMyTeamsTurn {
-            VStack(spacing: DesignBook.Spacing.md) {
-                Text("onlineNextTeam.waitingForExplainer")
+            VStack(spacing: DesignBook.Spacing.sm) {
+                Text(String(format: String(localized: "onlineNextTeam.waitingForName"), explainer?.name ?? ""))
                     .font(DesignBook.Font.body)
-                    .foregroundColor(DesignBook.Color.Text.secondary)
+                    .foregroundStyle(DesignBook.Color.Text.secondary)
                     .multilineTextAlignment(.center)
-
                 ProgressView()
             }
         } else {
-            VStack(spacing: DesignBook.Spacing.md) {
-                Text("onlineNextTeam.otherTeamsTurn")
+            VStack(spacing: DesignBook.Spacing.sm) {
+                Text(String(format: String(localized: "onlineNextTeam.spectating"), currentTeam?.name ?? ""))
                     .font(DesignBook.Font.body)
-                    .foregroundColor(DesignBook.Color.Text.secondary)
+                    .foregroundStyle(DesignBook.Color.Text.secondary)
                     .multilineTextAlignment(.center)
-
                 ProgressView()
             }
         }
     }
+}
 
+// MARK: - Actions
+private extension OnlineNextTeamView {
     func startTurn() {
-        guard let roomId = room?.id,
-              let state = gameState else { return }
-
+        guard let roomId = room?.id, let state = gameState else { return }
         isLoading = true
-
+        DesignBook.Haptics.confirm()
         Task {
-            do {
-                try await gameSyncManager.startTurn(roomId: roomId, gameState: state)
-            } catch {
-                print("Failed to start turn: \(error)")
-            }
+            try? await gameSyncManager.startTurn(roomId: roomId, gameState: state)
             isLoading = false
         }
     }
 }
 
-// MARK: - OnlineGameRound Extension
+// MARK: - Round title helper
 private extension OnlineGameRound {
     var title: String {
         switch self {
@@ -284,10 +297,8 @@ private extension OnlineGameRound {
     }
 }
 
-// MARK: - Preview
-#Preview {
-    OnlineNextTeamView()
-        .environment(Navigator())
-        .environment(RoomManager())
-        .environment(GameSyncManager())
+private extension Array {
+    subscript(safe index: Int) -> Element? {
+        indices.contains(index) ? self[index] : nil
+    }
 }
