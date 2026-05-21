@@ -11,15 +11,17 @@ import FirebaseDatabase
 
 @MainActor
 @Observable
-public final class RoomManager {
-    public private(set) var room: GameRoom?
-    public private(set) var currentPlayerId: String?
-    public private(set) var isConnected: Bool = false
-    public private(set) var error: Error?
+open class RoomManager {
+    public internal(set) var room: GameRoom?
+    public internal(set) var currentPlayerId: String?
+    public internal(set) var isConnected: Bool = false
+    public internal(set) var error: Error?
 
     private let firebaseService = FirebaseService.shared
     private var roomObserverHandle: DatabaseHandle?
-    private var deviceId: String
+    /// Stable per-device UUID kept in UserDefaults so reconnects map back
+    /// to the same player record.
+    internal var deviceId: String
 
     public var isHost: Bool {
         room?.hostId == currentPlayerId
@@ -41,7 +43,7 @@ public final class RoomManager {
 
     // MARK: - Room Creation
 
-    public func createRoom(hostName: String, settings: GameSettings) async throws -> String {
+    open func createRoom(hostName: String, settings: GameSettings) async throws -> String {
         let roomCode = try await firebaseService.generateUniqueRoomCode()
         let playerId = UUID().uuidString
 
@@ -69,7 +71,7 @@ public final class RoomManager {
 
     // MARK: - Room Joining
 
-    public func joinRoom(code: String, playerName: String) async throws {
+    open func joinRoom(code: String, playerName: String) async throws {
         guard let existingRoom = try await firebaseService.getRoom(id: code) else {
             throw NetworkingError.roomNotFound
         }
@@ -101,7 +103,7 @@ public final class RoomManager {
         }
     }
 
-    public func stopObserving() {
+    open func stopObserving() {
         guard let handle = roomObserverHandle, let roomId = room?.id else { return }
         firebaseService.removeObserver(handle: handle, forRoomId: roomId)
         roomObserverHandle = nil
@@ -111,13 +113,13 @@ public final class RoomManager {
 
     // MARK: - Player Actions
 
-    public func updatePlayerReady(_ isReady: Bool) async throws {
+    open func updatePlayerReady(_ isReady: Bool) async throws {
         guard var player = currentPlayer, let roomId = room?.id else { return }
         player.isReady = isReady
         try await firebaseService.updatePlayer(player, inRoomId: roomId)
     }
 
-    public func joinTeam(teamId: String) async throws {
+    open func joinTeam(teamId: String) async throws {
         guard let player = currentPlayer, let room else { return }
         try await firebaseService.reassignPlayerToTeam(
             playerId: player.id,
@@ -128,7 +130,7 @@ public final class RoomManager {
         )
     }
 
-    public func leaveTeam() async throws {
+    open func leaveTeam() async throws {
         guard let player = currentPlayer, let room else { return }
         try await firebaseService.reassignPlayerToTeam(
             playerId: player.id,
@@ -139,13 +141,13 @@ public final class RoomManager {
         )
     }
 
-    public func markWordsSubmitted() async throws {
+    open func markWordsSubmitted() async throws {
         guard var player = currentPlayer, let roomId = room?.id else { return }
         player.hasSubmittedWords = true
         try await firebaseService.updatePlayer(player, inRoomId: roomId)
     }
 
-    public func leaveRoom() async throws {
+    open func leaveRoom() async throws {
         guard let playerId = currentPlayerId, let roomId = room?.id else { return }
 
         stopObserving()
@@ -161,7 +163,7 @@ public final class RoomManager {
 
     // MARK: - Host Actions
 
-    public func createTeam(name: String, colorHex: String) async throws {
+    open func createTeam(name: String, colorHex: String) async throws {
         guard isHost, let roomId = room?.id else {
             throw NetworkingError.notAuthorized
         }
@@ -170,7 +172,7 @@ public final class RoomManager {
         try await firebaseService.addTeam(team, toRoomId: roomId)
     }
 
-    public func removeTeam(teamId: String) async throws {
+    open func removeTeam(teamId: String) async throws {
         guard isHost, let roomId = room?.id else {
             throw NetworkingError.notAuthorized
         }
@@ -178,7 +180,7 @@ public final class RoomManager {
         try await firebaseService.removeTeam(teamId: teamId, fromRoomId: roomId)
     }
 
-    public func updateSettings(_ settings: GameSettings) async throws {
+    open func updateSettings(_ settings: GameSettings) async throws {
         guard isHost, var room = room else {
             throw NetworkingError.notAuthorized
         }
@@ -187,7 +189,7 @@ public final class RoomManager {
         try await firebaseService.updateRoom(room)
     }
 
-    public func updateRoomStatus(_ status: RoomStatus) async throws {
+    open func updateRoomStatus(_ status: RoomStatus) async throws {
         guard isHost, let roomId = room?.id else {
             throw NetworkingError.notAuthorized
         }
@@ -195,7 +197,7 @@ public final class RoomManager {
         try await firebaseService.updateRoomStatus(status, forRoomId: roomId)
     }
 
-    public func startGame() async throws {
+    open func startGame() async throws {
         guard isHost else {
             throw NetworkingError.notAuthorized
         }
@@ -205,7 +207,7 @@ public final class RoomManager {
 
     // MARK: - Word Submission
 
-    public func submitWords(_ words: [String]) async throws {
+    open func submitWords(_ words: [String]) async throws {
         guard let playerId = currentPlayerId, let roomId = room?.id else { return }
 
         let onlineWords = words.map { OnlineWord(text: $0, addedByPlayerId: playerId) }
@@ -215,12 +217,12 @@ public final class RoomManager {
 
     // MARK: - Game State
 
-    public func updateGameState(_ state: OnlineGameState) async throws {
+    open func updateGameState(_ state: OnlineGameState) async throws {
         guard let roomId = room?.id else { return }
         try await firebaseService.updateGameState(state, forRoomId: roomId)
     }
 
-    public func getWords() async throws -> [OnlineWord] {
+    open func getWords() async throws -> [OnlineWord] {
         guard let roomId = room?.id else { return [] }
         return try await firebaseService.getWords(forRoomId: roomId)
     }
