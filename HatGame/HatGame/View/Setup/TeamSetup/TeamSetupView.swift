@@ -74,7 +74,7 @@ private extension TeamSetupView {
     var headerSection: some View {
         Section {
             headerCard
-                .padding(.horizontal, DesignBook.Spacing.lg)
+                .paddingHorizontalDefault()
                 .padding(.top, DesignBook.Spacing.md)
                 .listRowInsets(EdgeInsets())
                 .listRowBackground(Color.clear)
@@ -109,7 +109,7 @@ private extension TeamSetupView {
             Spacer()
             editModeButton
         }
-        .padding(.horizontal, DesignBook.Spacing.lg)
+        .paddingHorizontalDefault()
         .padding(.top, DesignBook.Spacing.sm)
         .listRowInsets(EdgeInsets())
         .listRowBackground(Color.clear)
@@ -131,7 +131,7 @@ private extension TeamSetupView {
             onEditTeam: { editingTeam = team },
             isEditMode: isEditMode
         )
-        .padding(.horizontal, DesignBook.Spacing.lg)
+        .paddingHorizontalDefault()
         .padding(.vertical, DesignBook.Spacing.sm)
         .listRowInsets(EdgeInsets())
         .listRowBackground(Color.clear)
@@ -166,7 +166,7 @@ private extension TeamSetupView {
         ) {
             isAddTeamSheetPresented = true
         }
-        .padding(.horizontal, DesignBook.Spacing.lg)
+        .paddingHorizontalDefault()
         .padding(.vertical, DesignBook.Spacing.xs)
         .listRowInsets(EdgeInsets())
         .listRowBackground(Color.clear)
