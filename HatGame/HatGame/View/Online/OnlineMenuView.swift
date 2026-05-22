@@ -26,7 +26,7 @@ private extension OnlineMenuView {
             Spacer()
             ConnectivityMenuHero(
                 symbol: "globe.americas.fill",
-                title: "online.title",
+                title: "online.hero.title",
                 description: "online.description",
                 animation: .pulse
             )

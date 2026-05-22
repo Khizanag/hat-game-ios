@@ -18,7 +18,7 @@ struct LocalMenuView: View {
             Spacer()
             ConnectivityMenuHero(
                 symbol: "dot.radiowaves.left.and.right",
-                title: "local.title",
+                title: "local.hero.title",
                 description: "local.description",
                 animation: .iterating
             )

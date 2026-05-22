@@ -2280,6 +2280,13 @@
         }
       }
     },
+    "online.hero.title" : {
+      "comment" : "Hero headline on the online entry menu — distinct from the nav title.",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Play anywhere" } },
+        "ka" : { "stringUnit" : { "state" : "translated", "value" : "ითამაშე ნებისმიერ ადგილას" } }
+      }
+    },
     "online.typing" : {
       "comment" : "Status pill shown next to a player who is still typing their words.",
       "localizations" : {
@@ -2592,6 +2599,13 @@
       "localizations" : {
         "en" : { "stringUnit" : { "state" : "translated", "value" : "Play Nearby" } },
         "ka" : { "stringUnit" : { "state" : "translated", "value" : "ახლომდებარე თამაში" } }
+      }
+    },
+    "local.hero.title" : {
+      "comment" : "Hero headline on the nearby-play entry menu — distinct from the nav title.",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Same room. Same hat." } },
+        "ka" : { "stringUnit" : { "state" : "translated", "value" : "ერთად. ერთ ცილინდრში." } }
       }
     },
     "local.description" : {
