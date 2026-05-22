@@ -32,6 +32,8 @@ struct TeamFormView: View {
 
     private let appConfiguration = AppConfiguration.shared
 
+    private var isKeyboardVisible: Bool { focusedField != nil }
+
     private var trimmedTeamName: String {
         teamName.trimmingCharacters(in: .whitespacesAndNewlines)
     }
@@ -271,10 +273,20 @@ private extension TeamFormView {
         }
     }
 
+    @ViewBuilder
     var stackedActions: some View {
-        VStack(spacing: DesignBook.Spacing.md) {
-            primarySubmitButton
-            DestructiveButton(title: String(localized: "common.buttons.cancel"), action: dismiss)
+        if isKeyboardVisible {
+            HStack(spacing: DesignBook.Spacing.md) {
+                DestructiveButton(title: String(localized: "common.buttons.cancel"), action: dismiss)
+                    .frame(maxWidth: .infinity)
+                primarySubmitButton
+                    .frame(maxWidth: .infinity)
+            }
+        } else {
+            VStack(spacing: DesignBook.Spacing.md) {
+                primarySubmitButton
+                DestructiveButton(title: String(localized: "common.buttons.cancel"), action: dismiss)
+            }
         }
     }
 
