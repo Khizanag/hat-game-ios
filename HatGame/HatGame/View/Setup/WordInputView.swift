@@ -478,7 +478,7 @@ private struct WordsList: View {
                     Button(role: .destructive) {
                         onRemove(index)
                     } label: {
-                        Label("Delete", systemImage: "trash.fill")
+                        Label(String(localized: "common.buttons.delete"), systemImage: "trash.fill")
                     }
                 }
             }
@@ -512,7 +512,7 @@ private struct WordRow: View {
                     .foregroundStyle(DesignBook.Color.Status.error.opacity(0.7))
             }
             .buttonStyle(.plain)
-            .accessibilityLabel(Text("Remove word"))
+            .accessibilityLabel(Text("wordInput.removeWord"))
         }
         .padding(DesignBook.Spacing.md)
         .background(DesignBook.Color.Background.secondary)

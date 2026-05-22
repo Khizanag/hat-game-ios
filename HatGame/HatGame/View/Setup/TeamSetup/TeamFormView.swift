@@ -510,7 +510,7 @@ private struct ColorSwatchButton: View {
         }
         .buttonStyle(.plain)
         .disabled(isDisabled)
-        .accessibilityLabel(isSelected ? Text("Selected color") : Text("Color"))
+        .accessibilityLabel(isSelected ? Text("teamForm.color.swatch.selected") : Text("teamForm.color.swatch.unselected"))
         .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 

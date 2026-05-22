@@ -150,7 +150,7 @@ private extension OnlineWordInputView {
                     .foregroundStyle(DesignBook.Color.Status.error.opacity(0.7))
             }
             .buttonStyle(.plain)
-            .accessibilityLabel(Text("Remove word"))
+            .accessibilityLabel(Text("wordInput.removeWord"))
         }
         .padding(DesignBook.Spacing.md)
         .background(DesignBook.Color.Background.secondary)

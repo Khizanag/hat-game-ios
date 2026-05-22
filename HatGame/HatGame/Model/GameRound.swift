@@ -26,4 +26,13 @@ enum GameRound: Int, Codable, CaseIterable, Equatable, Hashable {
     var title: String {
         String(format: String(localized: "gameRound.title"), rawValue)
     }
+
+    /// SF Symbol that hints at the round's flavor — describe / hint / mime.
+    var symbol: String {
+        switch self {
+        case .first: "bubble.left.and.bubble.right.fill"
+        case .second: "lightbulb.fill"
+        case .third: "hand.raised.fingers.spread.fill"
+        }
+    }
 }

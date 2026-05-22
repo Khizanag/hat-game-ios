@@ -68,23 +68,28 @@ private extension TeamTurnResultsView {
     }
 
     var header: some View {
-        VStack(spacing: DesignBook.Spacing.sm) {
+        let team = gameManager.currentTeam
+        return VStack(spacing: DesignBook.Spacing.sm) {
             ZStack {
                 Circle()
-                    .fill(
-                        isCelebratory
-                            ? DesignBook.Color.Status.success.opacity(0.18)
-                            : DesignBook.Color.Status.error.opacity(0.18)
-                    )
+                    .fill(team.color.opacity(0.12))
+                    .frame(width: 104, height: 104)
+                    .blur(radius: 16)
+
+                Circle()
+                    .fill(team.color.opacity(0.22))
+                    .frame(width: 88, height: 88)
+
+                Circle()
+                    .strokeBorder(team.color.opacity(0.45), lineWidth: 1.5)
                     .frame(width: 88, height: 88)
 
                 Image(systemName: isCelebratory ? "sparkles" : "hourglass")
                     .font(.system(size: 38, weight: .bold))
-                    .foregroundStyle(
-                        isCelebratory ? DesignBook.Color.Status.success : DesignBook.Color.Status.error
-                    )
+                    .foregroundStyle(team.color)
                     .symbolEffect(.bounce, options: .nonRepeating, value: hasCelebrated)
             }
+            .accessibilityHidden(true)
 
             Text(isCelebratory ? "game.turnResults.allWordsGuessed" : "game.turnResults.timeUp")
                 .font(DesignBook.Font.largeTitle)
@@ -99,7 +104,7 @@ private extension TeamTurnResultsView {
             VStack(spacing: DesignBook.Spacing.sm) {
                 Text(String(format: String(localized: "game.turnResults.teamTitle"), team.name))
                     .font(DesignBook.Font.headline)
-                    .foregroundStyle(DesignBook.Color.Text.secondary)
+                    .foregroundStyle(team.color)
                     .multilineTextAlignment(.center)
 
                 HStack(alignment: .firstTextBaseline, spacing: DesignBook.Spacing.sm) {
@@ -109,7 +114,7 @@ private extension TeamTurnResultsView {
                         color: team.color,
                         duration: 0.7
                     )
-                    Text(guessedWords.count == 1 ? "word" : "words")
+                    Text("game.turnResults.wordsUnit")
                         .font(DesignBook.Font.headline)
                         .foregroundStyle(DesignBook.Color.Text.tertiary)
                 }

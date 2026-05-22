@@ -96,7 +96,21 @@ private extension ResultsView {
                 .fill(DesignBook.Color.Background.card)
                 .overlay {
                     RoundedRectangle(cornerRadius: DesignBook.Size.cardCornerRadius, style: .continuous)
-                        .fill(DesignBook.Gradient.celebration.opacity(0.18))
+                        .fill(DesignBook.Gradient.celebration.opacity(0.32))
+                }
+                .overlay {
+                    RoundedRectangle(cornerRadius: DesignBook.Size.cardCornerRadius, style: .continuous)
+                        .strokeBorder(
+                            LinearGradient(
+                                colors: [
+                                    Color(red: 1.0, green: 0.78, blue: 0.27).opacity(0.6),
+                                    Color(red: 1.0, green: 0.45, blue: 0.40).opacity(0.2),
+                                ],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ),
+                            lineWidth: 1.5
+                        )
                 }
         }
         .shadow(.large)
@@ -104,10 +118,17 @@ private extension ResultsView {
 
     var trophyIcon: some View {
         ZStack {
+            // Ambient halo behind the trophy disc.
+            Circle()
+                .fill(DesignBook.Gradient.celebration)
+                .frame(width: 140, height: 140)
+                .blur(radius: 32)
+                .opacity(0.65)
+
             Circle()
                 .fill(DesignBook.Gradient.celebration)
                 .frame(width: 96, height: 96)
-                .shadow(color: Color(red: 1.0, green: 0.6, blue: 0.2).opacity(0.4), radius: 18, x: 0, y: 8)
+                .shadow(color: Color(red: 1.0, green: 0.6, blue: 0.2).opacity(0.55), radius: 22, x: 0, y: 10)
 
             Image(systemName: "trophy.fill")
                 .font(.system(size: 44, weight: .bold))
@@ -192,7 +213,8 @@ private extension ResultsView {
                 }
             ),
             title: round.title,
-            description: round.description
+            description: round.description,
+            icon: round.symbol
         ) {
             roundScores(for: round)
         }
