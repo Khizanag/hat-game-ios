@@ -37,7 +37,7 @@ struct RoomCreationView: View {
             .setDefaultStyle()
             .toolbar { keyboardToolbar }
             .alert("common.error", isPresented: errorBinding) {
-                Button("common.ok") { error = nil }
+                Button("common.gotIt") { error = nil }
             } message: {
                 Text(error?.localizedDescription ?? "")
             }
@@ -108,14 +108,14 @@ private extension RoomCreationView {
                 }
 
                 VStack(spacing: DesignBook.Spacing.md) {
-                    settingRow(
+                    GameSettingsRow(
                         icon: "text.bubble.fill",
                         title: String(localized: "createRoom.wordsPerPlayer"),
                         value: $wordsPerPlayer,
                         range: 3...10,
                         step: 1
                     )
-                    settingRow(
+                    GameSettingsRow(
                         icon: "timer",
                         title: String(localized: "createRoom.roundDuration"),
                         value: $roundDuration,
@@ -126,53 +126,6 @@ private extension RoomCreationView {
                 }
             }
         }
-    }
-
-    func settingRow(
-        icon: String,
-        title: String,
-        value: Binding<Int>,
-        range: ClosedRange<Int>,
-        step: Int,
-        suffix: String? = nil
-    ) -> some View {
-        HStack {
-            Image(systemName: icon)
-                .font(DesignBook.IconFont.small)
-                .foregroundStyle(DesignBook.Color.Text.tertiary)
-                .frame(width: 24)
-            Text(title)
-                .font(DesignBook.Font.body)
-                .foregroundStyle(DesignBook.Color.Text.primary)
-            Spacer()
-            HStack(spacing: DesignBook.Spacing.sm) {
-                stepperButton(systemName: "minus.circle.fill", enabled: value.wrappedValue - step >= range.lowerBound) {
-                    DesignBook.Haptics.selection()
-                    value.wrappedValue -= step
-                }
-                Text(suffix != nil ? "\(value.wrappedValue) \(suffix!)" : "\(value.wrappedValue)")
-                    .font(DesignBook.Font.headline)
-                    .foregroundStyle(DesignBook.Color.Text.primary)
-                    .monospacedDigit()
-                    .frame(minWidth: 50)
-                    .contentTransition(.numericText(value: Double(value.wrappedValue)))
-                stepperButton(systemName: "plus.circle.fill", enabled: value.wrappedValue + step <= range.upperBound) {
-                    DesignBook.Haptics.selection()
-                    value.wrappedValue += step
-                }
-            }
-        }
-        .padding(.vertical, DesignBook.Spacing.xs)
-    }
-
-    func stepperButton(systemName: String, enabled: Bool, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            Image(systemName: systemName)
-                .font(DesignBook.Font.title3)
-                .foregroundStyle(enabled ? DesignBook.Color.Text.accent : DesignBook.Color.Text.tertiary)
-        }
-        .buttonStyle(.plain)
-        .disabled(!enabled)
     }
 
     var createButton: some View {

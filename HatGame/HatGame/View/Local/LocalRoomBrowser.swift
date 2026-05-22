@@ -38,7 +38,7 @@ struct LocalRoomBrowser: View {
             .navigationTitle(String(localized: "local.browser.title"))
             .setDefaultStyle()
             .alert("common.error", isPresented: errorBinding) {
-                Button("common.ok") { error = nil }
+                Button("common.gotIt") { error = nil }
             } message: {
                 Text(error?.localizedDescription ?? "")
             }
@@ -119,20 +119,11 @@ private extension LocalRoomBrowser {
     }
 
     var emptyState: some View {
-        GameCard {
-            VStack(spacing: DesignBook.Spacing.md) {
-                Image(systemName: "antenna.radiowaves.left.and.right")
-                    .font(.system(size: 40))
-                    .foregroundStyle(DesignBook.Color.Text.tertiary)
-                    .symbolEffect(.variableColor.iterative.dimInactiveLayers, options: .repeating)
-                Text("local.browser.empty")
-                    .font(DesignBook.Font.body)
-                    .foregroundStyle(DesignBook.Color.Text.tertiary)
-                    .multilineTextAlignment(.center)
-            }
-            .padding(.vertical, DesignBook.Spacing.lg)
-            .frame(maxWidth: .infinity)
-        }
+        EmptyStateCard(
+            symbol: "antenna.radiowaves.left.and.right",
+            title: "local.browser.empty",
+            animatesSymbol: true
+        )
     }
 
     func hostRow(_ host: LocalMultipeerService.DiscoveredHost) -> some View {

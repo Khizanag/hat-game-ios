@@ -46,7 +46,7 @@ struct OnlineTeamCreationView: View {
                 }
                 .setDefaultBackground()
                 .alert("common.error", isPresented: errorBinding) {
-                    Button("common.ok") { error = nil }
+                    Button("common.gotIt") { error = nil }
                 } message: {
                     Text(error?.localizedDescription ?? "")
                 }

@@ -57,7 +57,7 @@ struct LocalHostSetupView: View {
             }
         }
         .alert("common.error", isPresented: errorBinding) {
-            Button("common.ok") { error = nil }
+            Button("common.gotIt") { error = nil }
         } message: {
             Text(error?.localizedDescription ?? "")
         }
@@ -138,67 +138,23 @@ private extension LocalHostSetupView {
                         .font(DesignBook.Font.captionBold)
                         .foregroundStyle(DesignBook.Color.Text.secondary)
                 }
-                stepRow(icon: "text.bubble.fill",
-                        title: String(localized: "createRoom.wordsPerPlayer"),
-                        value: $wordsPerPlayer, range: 3...10, step: 1)
-                stepRow(icon: "timer",
-                        title: String(localized: "createRoom.roundDuration"),
-                        value: $roundDuration, range: 30...120, step: 10,
-                        suffix: String(localized: "createRoom.seconds"))
+                GameSettingsRow(
+                    icon: "text.bubble.fill",
+                    title: String(localized: "createRoom.wordsPerPlayer"),
+                    value: $wordsPerPlayer,
+                    range: 3...10,
+                    step: 1
+                )
+                GameSettingsRow(
+                    icon: "timer",
+                    title: String(localized: "createRoom.roundDuration"),
+                    value: $roundDuration,
+                    range: 30...120,
+                    step: 10,
+                    suffix: String(localized: "createRoom.seconds")
+                )
             }
         }
-    }
-
-    func stepRow(
-        icon: String,
-        title: String,
-        value: Binding<Int>,
-        range: ClosedRange<Int>,
-        step: Int,
-        suffix: String? = nil
-    ) -> some View {
-        HStack {
-            Image(systemName: icon)
-                .font(DesignBook.IconFont.small)
-                .foregroundStyle(DesignBook.Color.Text.tertiary)
-                .frame(width: 24)
-            Text(title)
-                .font(DesignBook.Font.body)
-                .foregroundStyle(DesignBook.Color.Text.primary)
-            Spacer()
-            HStack(spacing: DesignBook.Spacing.sm) {
-                Button {
-                    DesignBook.Haptics.selection()
-                    value.wrappedValue -= step
-                } label: {
-                    Image(systemName: "minus.circle.fill")
-                        .font(DesignBook.Font.title3)
-                        .foregroundStyle(value.wrappedValue - step >= range.lowerBound
-                            ? DesignBook.Color.Text.accent
-                            : DesignBook.Color.Text.tertiary)
-                }
-                .buttonStyle(.plain)
-                .disabled(value.wrappedValue - step < range.lowerBound)
-                Text(suffix != nil ? "\(value.wrappedValue) \(suffix!)" : "\(value.wrappedValue)")
-                    .font(DesignBook.Font.headline)
-                    .foregroundStyle(DesignBook.Color.Text.primary)
-                    .monospacedDigit()
-                    .frame(minWidth: 50)
-                Button {
-                    DesignBook.Haptics.selection()
-                    value.wrappedValue += step
-                } label: {
-                    Image(systemName: "plus.circle.fill")
-                        .font(DesignBook.Font.title3)
-                        .foregroundStyle(value.wrappedValue + step <= range.upperBound
-                            ? DesignBook.Color.Text.accent
-                            : DesignBook.Color.Text.tertiary)
-                }
-                .buttonStyle(.plain)
-                .disabled(value.wrappedValue + step > range.upperBound)
-            }
-        }
-        .padding(.vertical, DesignBook.Spacing.xs)
     }
 
     var hostButton: some View {

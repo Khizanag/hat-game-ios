@@ -37,7 +37,7 @@ struct RoomJoinView: View {
             .setDefaultStyle()
             .toolbar { keyboardToolbar }
             .alert("common.error", isPresented: errorBinding) {
-                Button("common.ok") { error = nil }
+                Button("common.gotIt") { error = nil }
             } message: {
                 Text(error?.localizedDescription ?? "")
             }

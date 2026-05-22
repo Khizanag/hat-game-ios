@@ -49,7 +49,7 @@ struct RoomLobbyView: View {
                 Text(isHost ? "lobby.leave.hostMessage" : "lobby.leave.guestMessage")
             }
             .alert("common.error", isPresented: errorBinding) {
-                Button("common.ok") { error = nil }
+                Button("common.gotIt") { error = nil }
             } message: {
                 Text(error?.localizedDescription ?? "")
             }
@@ -237,24 +237,11 @@ private extension RoomLobbyView {
     }
 
     var emptyTeamsCard: some View {
-        GameCard {
-            VStack(spacing: DesignBook.Spacing.sm) {
-                Image(systemName: "person.2.slash")
-                    .font(.system(size: 40))
-                    .foregroundStyle(DesignBook.Color.Text.tertiary)
-                Text("lobby.noTeams")
-                    .font(DesignBook.Font.body)
-                    .foregroundStyle(DesignBook.Color.Text.tertiary)
-                if isHost {
-                    Text("lobby.noTeams.host")
-                        .font(DesignBook.Font.caption)
-                        .foregroundStyle(DesignBook.Color.Text.tertiary)
-                        .multilineTextAlignment(.center)
-                }
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, DesignBook.Spacing.lg)
-        }
+        EmptyStateCard(
+            symbol: "person.2.slash",
+            title: "lobby.noTeams",
+            caption: isHost ? "lobby.noTeams.host" : nil
+        )
     }
 
     func teamCard(_ team: OnlineTeam) -> some View {
