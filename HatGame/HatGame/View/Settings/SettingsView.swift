@@ -273,7 +273,7 @@ private struct AppInfoRows: View {
 
 // MARK: - Preview
 #Preview {
-    NavigationView {
+    NavigationStack {
         SettingsView()
     }
     .environment(Navigator())

@@ -433,7 +433,7 @@ private struct ShufflingOverlay: View {
 
 // MARK: - Preview
 #Preview {
-    NavigationView {
+    NavigationStack {
         RandomizationView()
     }
     .environment(Navigator())

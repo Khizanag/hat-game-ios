@@ -80,8 +80,12 @@ private extension RoomLobbyView {
                 .padding(.bottom, DesignBook.Spacing.sm)
                 .withFooterGradient()
         }
-        .animation(reduceMotion ? nil : DesignBook.Motion.smooth, value: allTeams.map(\.id))
-        .animation(reduceMotion ? nil : DesignBook.Motion.smooth, value: allPlayers.map(\.id))
+        // Key on stable composites — team color edits and player team
+        // reassignments only change inner fields, not the array of IDs;
+        // hashing in the relevant inner fields makes the animation actually
+        // catch those mutations.
+        .animation(reduceMotion ? nil : DesignBook.Motion.smooth, value: allTeams.map { "\($0.id):\($0.colorHex):\($0.playerIds.joined())" })
+        .animation(reduceMotion ? nil : DesignBook.Motion.smooth, value: allPlayers.map { "\($0.id):\($0.teamId ?? "_")" })
     }
 
     @ToolbarContentBuilder
@@ -173,25 +177,11 @@ private extension RoomLobbyView {
                 .foregroundStyle(DesignBook.Color.Text.primary)
 
             if player.id == room?.hostId {
-                Text("lobby.host")
-                    .font(DesignBook.Font.smallCaption)
-                    .textCase(.uppercase)
-                    .tracking(1.0)
-                    .foregroundStyle(DesignBook.Color.Text.accent)
-                    .padding(.horizontal, DesignBook.Spacing.sm)
-                    .padding(.vertical, 3)
-                    .background { Capsule().fill(DesignBook.Color.Text.accent.opacity(0.15)) }
+                RoleBadge(style: .host)
             }
 
             if player.id == roomManager.currentPlayerId {
-                Text("onlineNextTeam.you")
-                    .font(DesignBook.Font.smallCaption)
-                    .textCase(.uppercase)
-                    .tracking(1.0)
-                    .foregroundStyle(DesignBook.Color.Text.primary)
-                    .padding(.horizontal, DesignBook.Spacing.sm)
-                    .padding(.vertical, 3)
-                    .background { Capsule().fill(DesignBook.Color.Background.secondary) }
+                RoleBadge(style: .you)
             }
 
             Spacer()
@@ -357,12 +347,29 @@ private extension RoomLobbyView {
                 }
             }
         } else {
-            VStack(spacing: DesignBook.Spacing.sm) {
-                ProgressView()
-                    .progressViewStyle(CircularProgressViewStyle(tint: DesignBook.Color.Text.accent))
-                Text("lobby.waitingForHost")
-                    .font(DesignBook.Font.body)
-                    .foregroundStyle(DesignBook.Color.Text.secondary)
+            HStack(spacing: DesignBook.Spacing.md) {
+                Image(systemName: "hourglass")
+                    .font(DesignBook.Font.title3)
+                    .foregroundStyle(DesignBook.Color.Text.accent)
+                    .symbolEffect(.pulse, options: .repeating)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("lobby.waitingForHost")
+                        .font(DesignBook.Font.bodyBold)
+                        .foregroundStyle(DesignBook.Color.Text.primary)
+                    Text("lobby.waitingForHost.hint")
+                        .font(DesignBook.Font.caption)
+                        .foregroundStyle(DesignBook.Color.Text.secondary)
+                }
+                Spacer()
+            }
+            .padding(DesignBook.Spacing.md)
+            .background {
+                RoundedRectangle(cornerRadius: DesignBook.Size.cardCornerRadius, style: .continuous)
+                    .fill(DesignBook.Color.Background.card)
+                    .overlay {
+                        RoundedRectangle(cornerRadius: DesignBook.Size.cardCornerRadius, style: .continuous)
+                            .strokeBorder(DesignBook.Color.Text.accent.opacity(0.18), lineWidth: 1)
+                    }
             }
         }
     }

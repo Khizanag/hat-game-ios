@@ -33,7 +33,7 @@ struct TeamSetupView: View {
             .navigationTitle(String(localized: "teamSetup.title"))
             .setDefaultStyle()
             .sheet(isPresented: $isAddTeamSheetPresented) {
-                NavigationView {
+                NavigationStack {
                     AddTeamView(
                         onTeamCreate: { team in
                             gameManager.addTeam(team)
@@ -219,7 +219,7 @@ private extension TeamSetupView {
     @ViewBuilder
     var editTeamSheet: some View {
         if let team = editingTeam {
-            NavigationView {
+            NavigationStack {
                 TeamEditView(team: team)
             }
             .environment(navigator)
@@ -280,7 +280,7 @@ private extension TeamSetupView {
 
 // MARK: - Preview
 #Preview {
-    NavigationView {
+    NavigationStack {
         TeamSetupView()
     }
     .environment(Navigator())

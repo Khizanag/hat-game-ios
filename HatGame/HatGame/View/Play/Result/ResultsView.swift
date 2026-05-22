@@ -293,7 +293,7 @@ private extension ResultsView {
 
 // MARK: - Preview
 #Preview {
-    NavigationView {
+    NavigationStack {
         ResultsView()
     }
     .environment(Navigator())

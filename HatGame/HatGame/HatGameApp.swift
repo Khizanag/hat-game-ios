@@ -5,9 +5,9 @@
 //  Created by Giga Khizanishvili on 15.11.25.
 //
 
-import SwiftUI
 import Navigation
 import Networking
+import SwiftUI
 
 @main
 struct HatGameApp: App {
@@ -21,7 +21,10 @@ struct HatGameApp: App {
 
     var body: some Scene {
         WindowGroup {
-            NavigationView {
+            // Disambiguate from SwiftUI's deprecated NavigationView — this
+            // is the Navigation package wrapper, which owns a Navigator and
+            // routes AnyPage destinations + full-screen covers underneath.
+            Navigation.NavigationView {
                 HomeView()
             }
             .environment(roomManager)

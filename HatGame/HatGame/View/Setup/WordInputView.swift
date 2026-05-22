@@ -578,7 +578,7 @@ private extension Array {
 
 // MARK: - Preview
 #Preview {
-    NavigationView {
+    NavigationStack {
         WordInputView()
     }
     .environment(Navigator())

@@ -171,7 +171,7 @@ private extension HomeView {
 
 // MARK: - Preview
 #Preview {
-    NavigationView {
+    NavigationStack {
         HomeView()
     }
     .environment(Navigator())

@@ -195,7 +195,7 @@ private struct SelectedBadge: View {
 
 // MARK: - Preview
 #Preview {
-    NavigationView {
+    NavigationStack {
         AppIconSelectionView()
     }
     .environment(AppConfiguration.shared)

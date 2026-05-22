@@ -17,9 +17,9 @@ struct DeveloperInfoView: View {
                 headerText
                 aboutSection
                 technologiesSection
+                contactSection
                 creditsSection
                 testModeSection
-                contactSection
             }
             .paddingHorizontalDefault()
             .padding(.top, DesignBook.Spacing.lg)
@@ -46,9 +46,9 @@ private extension DeveloperInfoView {
         ) {
             VStack(spacing: DesignBook.Spacing.md) {
                 HStack(spacing: DesignBook.Spacing.sm) {
-                    Image(systemName: "star.circle.fill")
+                    Image(systemName: "person.2.circle.fill")
                         .font(DesignBook.Font.body)
-                        .foregroundStyle(.yellow)
+                        .foregroundStyle(DesignBook.Color.Text.accent)
 
                     Text("settings.developerInfo.credits.title")
                         .font(DesignBook.Font.headline)
@@ -60,35 +60,16 @@ private extension DeveloperInfoView {
                 HStack(alignment: .center, spacing: DesignBook.Spacing.sm) {
                     Image(systemName: "person.fill")
                         .font(DesignBook.Font.body)
-                        .foregroundStyle(.yellow)
+                        .foregroundStyle(DesignBook.Color.Text.accent)
 
                     VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
                         Text("home.director.name")
                             .font(DesignBook.Font.body)
                             .foregroundStyle(DesignBook.Color.Text.primary)
 
-                        HStack(spacing: DesignBook.Spacing.xs) {
-                            Image(systemName: "sparkles")
-                                .font(DesignBook.Font.caption)
-                                .foregroundStyle(
-                                    LinearGradient(
-                                        colors: [.yellow, .orange],
-                                        startPoint: .topLeading,
-                                        endPoint: .bottomTrailing
-                                    )
-                                )
-
-                            Text("settings.developerInfo.credits.rulesExplainer")
-                                .font(DesignBook.Font.caption)
-                                .italic()
-                                .foregroundStyle(
-                                    LinearGradient(
-                                        colors: [.yellow, .orange],
-                                        startPoint: .leading,
-                                        endPoint: .trailing
-                                    )
-                                )
-                        }
+                        Text("settings.developerInfo.credits.rulesExplainer")
+                            .font(DesignBook.Font.caption)
+                            .foregroundStyle(DesignBook.Color.Text.secondary)
                     }
 
                     Spacer()
@@ -185,9 +166,9 @@ private extension DeveloperInfoView {
                     set: { appConfiguration.isTestMode = $0 }
                 )) {
                     HStack(spacing: DesignBook.Spacing.sm) {
-                        Image(systemName: appConfiguration.isTestMode ? "flask.fill" : "flask")
+                        Image(systemName: appConfiguration.isTestMode ? "wrench.adjustable.fill" : "wrench.adjustable")
                             .font(DesignBook.Font.body)
-                            .foregroundStyle(.orange)
+                            .foregroundStyle(DesignBook.Color.Text.accent)
                             .contentTransition(.symbolEffect(.replace))
 
                         Text("settings.testMode.title")
@@ -195,7 +176,7 @@ private extension DeveloperInfoView {
                             .foregroundStyle(DesignBook.Color.Text.primary)
                     }
                 }
-                .tint(.orange)
+                .tint(DesignBook.Color.Text.accent)
             }
             .padding(DesignBook.Spacing.md)
             .background(DesignBook.Color.Background.card)
@@ -257,7 +238,7 @@ private extension DeveloperInfoView {
 }
 
 #Preview {
-    NavigationView {
+    NavigationStack {
         DeveloperInfoView()
     }
     .environment(GameManager())

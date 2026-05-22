@@ -162,7 +162,7 @@ private extension Int {
 
 // MARK: - Preview
 #Preview {
-    NavigationView {
+    NavigationStack {
         TimerSettingsView()
     }
     .environment(Navigator())

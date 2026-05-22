@@ -32,6 +32,8 @@ struct OnlineGameFlowView: View {
 
     var body: some View {
         content
+            .animation(DesignBook.Motion.smooth, value: roomStatus)
+            .animation(DesignBook.Motion.smooth, value: gamePhase)
             .onChange(of: allPlayersSubmittedWords) { _, allSubmitted in
                 guard allSubmitted, roomManager.isHost else { return }
                 initializeGameIfNeeded()
@@ -45,14 +47,51 @@ private extension OnlineGameFlowView {
     var content: some View {
         switch roomStatus {
         case .waiting, .setup:
-            RoomLobbyView()
+            RoomLobbyView().transition(.opacity)
         case .playing:
-            playingContent
+            playingContent.transition(.opacity)
         case .finished:
-            OnlineResultsView()
+            OnlineResultsView().transition(.opacity)
         case nil:
-            ProgressView()
+            joiningState.transition(.opacity)
         }
+    }
+
+    /// First-load state before the Firebase room observer delivers a
+    /// snapshot. Mirrors LocalSessionView.connectingState so the two
+    /// modes feel deliberately the same, not accidentally re-used.
+    var joiningState: some View {
+        VStack(spacing: DesignBook.Spacing.lg) {
+            Spacer()
+            ZStack {
+                Circle()
+                    .fill(DesignBook.Gradient.primary)
+                    .frame(width: 120, height: 120)
+                    .blur(radius: 28)
+                    .opacity(0.55)
+                Circle()
+                    .fill(DesignBook.Color.Background.card)
+                    .frame(width: 96, height: 96)
+                    .shadow(.medium)
+                Image(systemName: "wifi")
+                    .font(.system(size: 42, weight: .bold))
+                    .foregroundStyle(DesignBook.Gradient.primary)
+                    .symbolEffect(.variableColor.iterative, options: .repeating)
+            }
+            .accessibilityHidden(true)
+            Text("online.session.joining")
+                .font(DesignBook.Font.title3)
+                .foregroundStyle(DesignBook.Color.Text.primary)
+                .multilineTextAlignment(.center)
+            Text("online.session.joiningHint")
+                .font(DesignBook.Font.body)
+                .foregroundStyle(DesignBook.Color.Text.secondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, DesignBook.Spacing.lg)
+            Spacer()
+        }
+        .frame(maxWidth: .infinity)
+        .setDefaultBackground()
     }
 
     @ViewBuilder

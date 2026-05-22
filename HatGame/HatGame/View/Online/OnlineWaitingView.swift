@@ -112,14 +112,7 @@ private extension OnlineWaitingView {
                 .font(DesignBook.Font.body)
                 .foregroundStyle(DesignBook.Color.Text.primary)
             if player.id == roomManager.currentPlayerId {
-                Text("onlineNextTeam.you")
-                    .font(DesignBook.Font.smallCaption)
-                    .textCase(.uppercase)
-                    .tracking(1.0)
-                    .foregroundStyle(DesignBook.Color.Text.primary)
-                    .padding(.horizontal, DesignBook.Spacing.sm)
-                    .padding(.vertical, 3)
-                    .background { Capsule().fill(DesignBook.Color.Background.secondary) }
+                RoleBadge(style: .you)
             }
             Spacer()
             Text(isDone ? "online.submitted" : "online.typing")

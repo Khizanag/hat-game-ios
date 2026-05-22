@@ -2114,13 +2114,30 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Waiting for host to start the game..."
+            "value" : "Waiting for the host"
           }
         },
         "ka" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ველოდებით მასპინძელის თამაშის დაწყებას..."
+            "value" : "ველოდებით მასპინძელს"
+          }
+        }
+      }
+    },
+    "lobby.waitingForHost.hint" : {
+      "comment" : "Sub-hint shown next to the waiting-for-host indicator in the lobby footer.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "They're getting the round ready."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ის თამაშის დაწყებას ამზადებს."
           }
         }
       }
@@ -2605,6 +2622,27 @@
         "ka" : { "stringUnit" : { "state" : "translated", "value" : "გახსნა" } }
       }
     },
+    "local.host.hero.title" : {
+      "comment" : "Headline above the host-setup form.",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Open a nearby room" } },
+        "ka" : { "stringUnit" : { "state" : "translated", "value" : "ახლომდებარე ოთახის გახსნა" } }
+      }
+    },
+    "local.host.hero.subtitle.empty" : {
+      "comment" : "Subtitle under the host-setup hero when no name is entered yet.",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Pick a name to start broadcasting." } },
+        "ka" : { "stringUnit" : { "state" : "translated", "value" : "ჩაწერეთ სახელი მაუწყებლობის დასაწყებად." } }
+      }
+    },
+    "local.host.hero.subtitle.named" : {
+      "comment" : "Subtitle under the host-setup hero once a name is entered — %@ is the host name.",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Broadcasting as %@" } },
+        "ka" : { "stringUnit" : { "state" : "translated", "value" : "მაუწყებლობს როგორც %@" } }
+      }
+    },
     "local.browser.title" : {
       "comment" : "Navigation title of the local guest-side discovery screen.",
       "localizations" : {
@@ -2633,11 +2671,46 @@
         "ka" : { "stringUnit" : { "state" : "translated", "value" : "ვუკავშირდები…" } }
       }
     },
+    "online.session.joining" : {
+      "comment" : "Title shown while the Firebase RTDB room observer fetches the first snapshot.",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Joining the room…" } },
+        "ka" : { "stringUnit" : { "state" : "translated", "value" : "ვუერთდები ოთახს…" } }
+      }
+    },
+    "online.session.joiningHint" : {
+      "comment" : "Sub-hint shown beneath the joining indicator on the online session screen.",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Syncing with the host's room state." } },
+        "ka" : { "stringUnit" : { "state" : "translated", "value" : "ვსინქრონიზდები ჰოსტთან." } }
+      }
+    },
     "local.session.connectingHint" : {
       "comment" : "Sub-hint shown beneath the connecting indicator on the local session screen.",
       "localizations" : {
         "en" : { "stringUnit" : { "state" : "translated", "value" : "Handshaking with the host. Hold tight." } },
         "ka" : { "stringUnit" : { "state" : "translated", "value" : "ვუკავშირდები ჰოსტს." } }
+      }
+    },
+    "local.session.hostLost" : {
+      "comment" : "Alert title shown to a guest after losing connection to the host.",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Lost the host" } },
+        "ka" : { "stringUnit" : { "state" : "translated", "value" : "კავშირი გაწყდა" } }
+      }
+    },
+    "local.session.hostLost.message" : {
+      "comment" : "Alert body shown after losing connection to the host.",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "The host's device is no longer reachable. The room has closed." } },
+        "ka" : { "stringUnit" : { "state" : "translated", "value" : "მასპინძლის მოწყობილობა აღარაა მისაწვდომი. ოთახი დაიხურა." } }
+      }
+    },
+    "local.session.hostLost.action" : {
+      "comment" : "Primary action on the host-lost alert — returns to the main menu.",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Back to menu" } },
+        "ka" : { "stringUnit" : { "state" : "translated", "value" : "მენიუში დაბრუნება" } }
       }
     },
     "onlineRoundResults.nextRound" : {

@@ -228,7 +228,7 @@ public final class LocalRoomManager: RoomManager {
 
     // MARK: - Host-side mutators
 
-    var isHostInternal: Bool { isLocalHost }
+    public var isHostInternal: Bool { isLocalHost }
 
     func broadcastSnapshot() {
         guard isLocalHost, let room else { return }

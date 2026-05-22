@@ -165,7 +165,7 @@ private extension Int {
 
 // MARK: - Preview
 #Preview {
-    NavigationView {
+    NavigationStack {
         WordSettingsView()
     }
     .environment(Navigator())

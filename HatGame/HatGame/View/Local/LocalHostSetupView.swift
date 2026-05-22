@@ -17,6 +17,7 @@ struct LocalHostSetupView: View {
 
     @Environment(Navigator.self) private var navigator
     @Environment(LocalRoomManager.self) private var roomManager
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     @State private var hostName: String = ""
     @State private var wordsPerPlayer: Int = 5
@@ -35,6 +36,7 @@ struct LocalHostSetupView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: DesignBook.Spacing.lg) {
+                hero
                 nameCard
                 settingsCard
             }
@@ -69,6 +71,39 @@ struct LocalHostSetupView: View {
 
 // MARK: - Subviews
 private extension LocalHostSetupView {
+    var hero: some View {
+        VStack(spacing: DesignBook.Spacing.sm) {
+            ZStack {
+                Circle()
+                    .fill(DesignBook.Gradient.primary)
+                    .frame(width: 96, height: 96)
+                    .blur(radius: 22)
+                    .opacity(0.55)
+                Circle()
+                    .fill(DesignBook.Color.Background.card)
+                    .frame(width: 84, height: 84)
+                    .shadow(.medium)
+                Image(systemName: "antenna.radiowaves.left.and.right")
+                    .font(.system(size: 36, weight: .bold))
+                    .foregroundStyle(DesignBook.Gradient.primary)
+                    .symbolEffect(.variableColor.iterative, options: .repeating, isActive: !reduceMotion)
+            }
+            .accessibilityHidden(true)
+            Text("local.host.hero.title")
+                .font(DesignBook.Font.title3)
+                .foregroundStyle(DesignBook.Color.Text.primary)
+                .multilineTextAlignment(.center)
+            Text(trimmedName.isEmpty
+                ? String(localized: "local.host.hero.subtitle.empty")
+                : String(format: String(localized: "local.host.hero.subtitle.named"), trimmedName))
+                .font(DesignBook.Font.caption)
+                .foregroundStyle(DesignBook.Color.Text.secondary)
+                .multilineTextAlignment(.center)
+                .contentTransition(.opacity)
+                .animation(reduceMotion ? nil : DesignBook.Motion.smooth, value: trimmedName)
+        }
+    }
+
     var nameCard: some View {
         GameCard {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {

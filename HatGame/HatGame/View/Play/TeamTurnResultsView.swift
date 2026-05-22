@@ -32,7 +32,7 @@ struct TeamTurnResultsView: View {
                 }
             }
             .sheet(isPresented: $isStandingsPresented) {
-                NavigationView {
+                NavigationStack {
                     ResultsView()
                 }
                 .environment(gameManager)

@@ -34,7 +34,7 @@ struct NextTeamView: View {
         content
             .setDefaultStyle()
             .sheet(isPresented: $isStandingsPresented) {
-                NavigationView {
+                NavigationStack {
                     ResultsView()
                 }
                 .environment(gameManager)

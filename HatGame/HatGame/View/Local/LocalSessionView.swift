@@ -17,8 +17,11 @@ struct LocalSessionView: View {
     @Environment(RoomManager.self) private var roomManager
     @Environment(GameSyncManager.self) private var gameSyncManager
     @Environment(LocalRoomManager.self) private var localRoomManager
+    @Environment(Navigator.self) private var navigator
 
     @State private var hasInitializedGame: Bool = false
+    @State private var showHostLostAlert: Bool = false
+    @State private var hasBeenConnected: Bool = false
 
     private var room: GameRoom? { roomManager.room }
     private var roomStatus: RoomStatus? { room?.status }
@@ -31,9 +34,26 @@ struct LocalSessionView: View {
 
     var body: some View {
         content
+            .animation(DesignBook.Motion.smooth, value: roomStatus)
+            .animation(DesignBook.Motion.smooth, value: gamePhase)
             .onChange(of: allPlayersSubmittedWords) { _, allSubmitted in
                 guard allSubmitted, roomManager.isHost else { return }
                 initializeGameIfNeeded()
+            }
+            .onChange(of: localRoomManager.isConnected) { _, isConnected in
+                if isConnected {
+                    hasBeenConnected = true
+                } else if hasBeenConnected, !localRoomManager.isHostInternal {
+                    showHostLostAlert = true
+                }
+            }
+            .alert("local.session.hostLost", isPresented: $showHostLostAlert) {
+                Button("local.session.hostLost.action", role: .cancel) {
+                    Task { try? await localRoomManager.leaveRoom() }
+                    navigator.popToRoot()
+                }
+            } message: {
+                Text("local.session.hostLost.message")
             }
     }
 
@@ -41,13 +61,13 @@ struct LocalSessionView: View {
     private var content: some View {
         switch roomStatus {
         case .waiting, .setup:
-            RoomLobbyView()
+            RoomLobbyView().transition(.opacity)
         case .playing:
-            playingContent
+            playingContent.transition(.opacity)
         case .finished:
-            OnlineResultsView()
+            OnlineResultsView().transition(.opacity)
         case nil:
-            connectingState
+            connectingState.transition(.opacity)
         }
     }
 
