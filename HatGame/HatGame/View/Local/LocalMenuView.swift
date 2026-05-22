@@ -30,8 +30,11 @@ struct LocalMenuView: View {
         .navigationTitle(String(localized: "local.title"))
         .setDefaultStyle()
     }
+}
 
-    private var actions: some View {
+// MARK: - Sub-views
+private extension LocalMenuView {
+    var actions: some View {
         VStack(spacing: DesignBook.Spacing.md) {
             PrimaryButton(title: String(localized: "local.host"), icon: "antenna.radiowaves.left.and.right") {
                 DesignBook.Haptics.tap()

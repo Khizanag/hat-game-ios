@@ -27,8 +27,11 @@ struct LegendTag: View {
         .accessibilityElement(children: .combine)
         .accessibilityAddTraits(isHighlighted ? .isSelected : [])
     }
+}
 
-    private var indicator: some View {
+// MARK: - Sub-views
+private extension LegendTag {
+    var indicator: some View {
         Circle()
             .fill(
                 isHighlighted
@@ -40,7 +43,7 @@ struct LegendTag: View {
             .animation(DesignBook.Motion.snappy, value: isHighlighted)
     }
 
-    private var label: some View {
+    var label: some View {
         VStack(spacing: 2) {
             Text(title)
                 .font(DesignBook.Font.captionBold)

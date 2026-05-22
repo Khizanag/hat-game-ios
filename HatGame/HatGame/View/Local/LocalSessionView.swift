@@ -57,8 +57,35 @@ struct LocalSessionView: View {
             }
     }
 
+    private func initializeGameIfNeeded() {
+        guard !hasInitializedGame,
+              let room,
+              room.gameState == nil else { return }
+        hasInitializedGame = true
+
+        Task {
+            do {
+                // For local: words are already in localRoomManager.words
+                // (the host submitted on behalf of everyone via Multipeer).
+                let words = localRoomManager.words
+                _ = try await gameSyncManager.initializeGame(
+                    for: room.id,
+                    teams: room.teams,
+                    players: room.players,
+                    words: words,
+                    roundDuration: room.settings.roundDuration
+                )
+            } catch {
+                hasInitializedGame = false
+            }
+        }
+    }
+}
+
+// MARK: - Sub-views
+private extension LocalSessionView {
     @ViewBuilder
-    private var content: some View {
+    var content: some View {
         switch roomStatus {
         case .waiting, .setup:
             RoomLobbyView().transition(.opacity)
@@ -73,7 +100,7 @@ struct LocalSessionView: View {
 
     /// Shown while the snapshot from the host hasn't arrived yet — the
     /// MC handshake has fired but `roomSnapshot` is still in flight.
-    private var connectingState: some View {
+    var connectingState: some View {
         VStack(spacing: DesignBook.Spacing.lg) {
             Spacer()
             ZStack {
@@ -108,7 +135,7 @@ struct LocalSessionView: View {
     }
 
     @ViewBuilder
-    private var playingContent: some View {
+    var playingContent: some View {
         if !allPlayersSubmittedWords {
             if roomManager.currentPlayer?.hasSubmittedWords == true {
                 OnlineWaitingView(message: String(localized: "online.waitingForOthers"))
@@ -121,7 +148,7 @@ struct LocalSessionView: View {
     }
 
     @ViewBuilder
-    private var gamePhaseContent: some View {
+    var gamePhaseContent: some View {
         switch gamePhase {
         case .teamPrep: OnlineNextTeamView()
         case .playing: OnlinePlayView()
@@ -129,30 +156,6 @@ struct LocalSessionView: View {
         case .roundResults: OnlineRoundResultsView()
         case .finished: OnlineResultsView()
         case nil: OnlineWaitingView(message: String(localized: "online.preparingGame"))
-        }
-    }
-
-    private func initializeGameIfNeeded() {
-        guard !hasInitializedGame,
-              let room,
-              room.gameState == nil else { return }
-        hasInitializedGame = true
-
-        Task {
-            do {
-                // For local: words are already in localRoomManager.words
-                // (the host submitted on behalf of everyone via Multipeer).
-                let words = localRoomManager.words
-                _ = try await gameSyncManager.initializeGame(
-                    for: room.id,
-                    teams: room.teams,
-                    players: room.players,
-                    words: words,
-                    roundDuration: room.settings.roundDuration
-                )
-            } catch {
-                hasInitializedGame = false
-            }
         }
     }
 }

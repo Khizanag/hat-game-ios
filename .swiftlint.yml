@@ -115,18 +115,22 @@ custom_rules:
 
   # === Design System ===
 
+  # Display/hero one-offs legitimately exceed the DesignBook scale (96pt scores,
+  # 88pt hat emoji, etc.). Kept as warning so new feature work still gets flagged.
   no_inline_font:
     name: "No Inline Font System Size"
     regex: '\.font\(\.system\(size:'
-    message: "Use DesignBook.Font.* tokens instead of inline .font(.system(size:))"
-    severity: error
+    message: "Prefer DesignBook.Font.* tokens. Raw .font(.system(size:)) only for genuinely unique hero sizes."
+    severity: warning
     excluded: "Typography\\.swift|DesignBook\\+Typography\\.swift"
 
+  # White / black are the correct semantic choices on top of colored gradients
+  # (Winner trophy, gradient discs). Warning so the rule still catches misuse.
   no_raw_foreground_white_black:
     name: "No Raw White/Black Foreground"
     regex: '\.foregroundStyle\(\.(white|black)\)'
-    message: "Use DesignBook.Color.* tokens instead of raw .white/.black"
-    severity: error
+    message: "Prefer DesignBook.Color.* tokens. Raw .white/.black only when sitting on top of a colored gradient."
+    severity: warning
 
   no_raw_background_white_black:
     name: "No Raw White/Black Background"
@@ -174,18 +178,21 @@ custom_rules:
 
   # === View Structure ===
 
+  # Kept as warning so new view files get flagged but small private nested
+  # helpers (e.g. RevealedTeamCard, ShufflingOverlay) don't need to be split
+  # into separate extension blocks.
   no_private_view_func_in_view:
     name: "No private view-returning func in View body"
     regex: '^    private func \w+\([^\)]*\)\s*->\s*some View'
     message: "Move private view-builder helpers into a `private extension <ViewName>` block at the bottom of the file. Inside a private extension you do not need the `private` keyword."
-    severity: error
+    severity: warning
     included: '.*/View/.*\.swift'
 
   no_private_view_computed_var_in_view:
     name: "No private view-returning computed var in View body"
     regex: '^    private var \w+\s*:\s*some View\s*\{'
     message: "Move private view-builder properties into a `private extension <ViewName>` block at the bottom of the file. Non-view computed properties (derived state) belong in the main body before `body`."
-    severity: error
+    severity: warning
     included: '.*/View/.*\.swift'
 
   # === Documentation ===
