@@ -28,13 +28,18 @@ struct RandomizationView: View {
             readyContent
                 .blur(radius: isShuffling ? 10 : 0)
                 .opacity(isShuffling ? 0.3 : 1)
+                .allowsHitTesting(!isShuffling)
 
             if isShuffling {
                 ShufflingOverlay(reduceMotion: reduceMotion)
+                    .transition(.opacity)
             }
         }
         .navigationTitle(String(localized: "randomization.title"))
         .setDefaultStyle()
+        .navigationBarBackButtonHidden(isShuffling)
+        .toolbar(isShuffling ? .hidden : .automatic, for: .navigationBar)
+        .interactiveDismissDisabled(isShuffling)
     }
 }
 

@@ -19,6 +19,7 @@ struct NextTeamView: View {
 
     @State private var isStandingsPresented = false
     @State private var selectedExplainerIndex: Int = 0
+    @State private var isRandomizingExplainer: Bool = false
 
     private var isFirstPlay: Bool { gameManager.canSelectRoles(for: team) }
     private var currentExplainer: Player? { gameManager.getExplainer(for: team) }
@@ -170,19 +171,16 @@ private extension NextTeamView {
 
                     Spacer()
 
-                    Button {
-                        DesignBook.Haptics.tap()
-                        withAnimation(reduceMotion ? nil : DesignBook.Motion.snappy) {
-                            selectedExplainerIndex = Int.random(in: 0..<team.players.count)
-                        }
-                    } label: {
-                        Image(systemName: "shuffle")
+                    Button(action: randomizeExplainer) {
+                        Image(systemName: isRandomizingExplainer ? "sparkles" : "shuffle")
                             .font(DesignBook.Font.body)
                             .foregroundStyle(DesignBook.Color.Text.accent)
+                            .symbolEffect(.pulse, options: .repeating, isActive: isRandomizingExplainer)
                             .padding(DesignBook.Spacing.sm)
                             .background(DesignBook.Color.Background.secondary)
                             .cornerRadius(DesignBook.Size.smallCardCornerRadius)
                     }
+                    .disabled(isRandomizingExplainer || team.players.count < 2)
                     .accessibilityLabel(Text("game.nextTeam.shuffleExplainer"))
                 }
 
@@ -190,11 +188,13 @@ private extension NextTeamView {
                     ForEach(Array(team.players.enumerated()), id: \.element.id) { index, player in
                         playerSelectionRow(player: player, index: index, isSelected: selectedExplainerIndex == index)
                             .onTapGesture {
+                                guard !isRandomizingExplainer else { return }
                                 DesignBook.Haptics.selection()
                                 withAnimation(reduceMotion ? nil : DesignBook.Motion.snappy) {
                                     selectedExplainerIndex = index
                                 }
                             }
+                            .allowsHitTesting(!isRandomizingExplainer)
                     }
                 }
             }
@@ -365,6 +365,46 @@ private extension NextTeamView {
                 }
                 navigator.push(.play(round: round))
             }
+            .disabled(isRandomizingExplainer)
+        }
+    }
+}
+
+// MARK: - Actions
+private extension NextTeamView {
+    /// Cycles the explainer highlight through the team's players with a
+    /// short haptic-rich animation, then settles on a final random pick —
+    /// mirroring the "which team starts" randomizer for visual consistency.
+    func randomizeExplainer() {
+        guard !isRandomizingExplainer, team.players.count > 1 else { return }
+        DesignBook.Haptics.tap()
+        withAnimation(reduceMotion ? nil : DesignBook.Motion.standard) {
+            isRandomizingExplainer = true
+        }
+
+        let playerCount = team.players.count
+        var cycleCount = 0
+        Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { timer in
+            cycleCount += 1
+            withAnimation(.easeInOut(duration: 0.1)) {
+                selectedExplainerIndex = Int.random(in: 0..<playerCount)
+            }
+            if cycleCount % 3 == 0 {
+                Task { @MainActor in DesignBook.Haptics.selection() }
+            }
+            guard cycleCount >= 20 else { return }
+            timer.invalidate()
+            finalizeExplainerRandomization(playerCount: playerCount)
+        }
+    }
+
+    func finalizeExplainerRandomization(playerCount: Int) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            withAnimation(.spring(response: 0.5, dampingFraction: 0.6)) {
+                selectedExplainerIndex = Int.random(in: 0..<playerCount)
+                isRandomizingExplainer = false
+            }
+            DesignBook.Haptics.success()
         }
     }
 }

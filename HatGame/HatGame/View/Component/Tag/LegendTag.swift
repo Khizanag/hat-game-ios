@@ -8,6 +8,9 @@
 import SwiftUI
 import DesignBook
 
+/// Read-only category indicator used under sliders to show which bucket the
+/// current value falls into. Visually flat (no chip background) so it is not
+/// confused with a tappable control.
 struct LegendTag: View {
     let title: String
     let range: String
@@ -15,30 +18,56 @@ struct LegendTag: View {
 
     var body: some View {
         VStack(spacing: DesignBook.Spacing.xs) {
+            indicator
+            label
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, DesignBook.Spacing.xs)
+        .contentShape(Rectangle())
+        .accessibilityElement(children: .combine)
+        .accessibilityAddTraits(isHighlighted ? .isSelected : [])
+    }
+
+    private var indicator: some View {
+        Circle()
+            .fill(
+                isHighlighted
+                ? DesignBook.Color.Text.accent
+                : DesignBook.Color.Text.tertiary.opacity(0.25)
+            )
+            .frame(width: 6, height: 6)
+            .scaleEffect(isHighlighted ? 1.25 : 1)
+            .animation(DesignBook.Motion.snappy, value: isHighlighted)
+    }
+
+    private var label: some View {
+        VStack(spacing: 2) {
             Text(title)
                 .font(DesignBook.Font.captionBold)
-                .foregroundStyle(isHighlighted ? DesignBook.Color.Text.accent : DesignBook.Color.Text.primary)
+                .foregroundStyle(
+                    isHighlighted
+                    ? DesignBook.Color.Text.accent
+                    : DesignBook.Color.Text.secondary
+                )
 
             Text(range)
                 .font(DesignBook.Font.caption)
-                .foregroundStyle(isHighlighted ? DesignBook.Color.Text.accent : DesignBook.Color.Text.secondary)
+                .foregroundStyle(
+                    isHighlighted
+                    ? DesignBook.Color.Text.accent.opacity(0.8)
+                    : DesignBook.Color.Text.tertiary
+                )
+                .monospacedDigit()
         }
-        .padding(.vertical, DesignBook.Spacing.sm)
-        .padding(.horizontal, DesignBook.Spacing.md)
-        .background(
-            isHighlighted
-            ? DesignBook.Color.Text.accent.opacity(DesignBook.Opacity.highlight)
-            : DesignBook.Color.Background.secondary
-        )
-        .cornerRadius(DesignBook.Size.smallCardCornerRadius)
+        .multilineTextAlignment(.center)
     }
 }
 
 // MARK: - Preview
 #Preview {
     HStack(spacing: DesignBook.Spacing.md) {
-        LegendTag(title: "Lightning", range: "5-30s", isHighlighted: true)
-        LegendTag(title: "Classic", range: "60s", isHighlighted: false)
+        LegendTag(title: "Lightning", range: "5-30s", isHighlighted: false)
+        LegendTag(title: "Classic", range: "60s", isHighlighted: true)
         LegendTag(title: "Marathon", range: "90-120s", isHighlighted: false)
     }
     .padding()

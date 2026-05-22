@@ -32,8 +32,6 @@ struct TeamFormView: View {
 
     private let appConfiguration = AppConfiguration.shared
 
-    private var isKeyboardVisible: Bool { focusedField != nil }
-
     private var trimmedTeamName: String {
         teamName.trimmingCharacters(in: .whitespacesAndNewlines)
     }
@@ -91,15 +89,12 @@ struct TeamFormView: View {
         .navigationTitle(title)
         .setDefaultStyle()
         .safeAreaInset(edge: .bottom) {
-            if !isKeyboardVisible {
-                stackedActions
-                    .paddingHorizontalDefault()
-                    .padding(.top, DesignBook.Spacing.md)
-                    .padding(.bottom, DesignBook.Spacing.sm)
-                    .withFooterGradient()
-            }
+            stackedActions
+                .paddingHorizontalDefault()
+                .padding(.top, DesignBook.Spacing.md)
+                .padding(.bottom, DesignBook.Spacing.md)
+                .withFooterGradient()
         }
-        .toolbar { keyboardToolbar }
         .onAppear(perform: handleAppear)
     }
 }
@@ -273,25 +268,6 @@ private extension TeamFormView {
                 let nextIndex = index + 1
                 focusedField = nextIndex < playerNames.count ? .player(nextIndex) : nil
             }
-        }
-    }
-
-    @ToolbarContentBuilder
-    var keyboardToolbar: some ToolbarContent {
-        ToolbarItemGroup(placement: .keyboard) {
-            Button(action: dismiss) {
-                Text("common.buttons.cancel")
-                    .foregroundStyle(DesignBook.Color.Status.error)
-            }
-
-            Spacer()
-
-            Button(action: handlePrimaryAction) {
-                Label(primaryButtonTitle, systemImage: primaryButtonIcon)
-                    .labelStyle(.titleAndIcon)
-                    .fontWeight(.semibold)
-            }
-            .disabled(!canSave)
         }
     }
 
