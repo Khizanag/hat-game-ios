@@ -5,9 +5,9 @@
 //  Created by Giga Khizanishvili on 22.12.24.
 //
 
+import FirebaseDatabase
 import Foundation
 import Observation
-import FirebaseDatabase
 
 @MainActor
 @Observable
@@ -42,7 +42,6 @@ open class RoomManager {
     }
 
     // MARK: - Room Creation
-
     open func createRoom(hostName: String, settings: GameSettings) async throws -> String {
         let roomCode = try await firebaseService.generateUniqueRoomCode()
         let playerId = UUID().uuidString
@@ -70,7 +69,6 @@ open class RoomManager {
     }
 
     // MARK: - Room Joining
-
     open func joinRoom(code: String, playerName: String) async throws {
         guard let existingRoom = try await firebaseService.getRoom(id: code) else {
             throw NetworkingError.roomNotFound
@@ -93,7 +91,6 @@ open class RoomManager {
     }
 
     // MARK: - Room Observation
-
     private func startObservingRoom(id: String) {
         roomObserverHandle = firebaseService.observeRoom(id: id) { [weak self] room in
             Task { @MainActor in
@@ -112,7 +109,6 @@ open class RoomManager {
     }
 
     // MARK: - Player Actions
-
     open func updatePlayerReady(_ isReady: Bool) async throws {
         guard var player = currentPlayer, let roomId = room?.id else { return }
         player.isReady = isReady
@@ -162,7 +158,6 @@ open class RoomManager {
     }
 
     // MARK: - Host Actions
-
     open func createTeam(name: String, colorHex: String) async throws {
         guard isHost, let roomId = room?.id else {
             throw NetworkingError.notAuthorized
@@ -206,7 +201,6 @@ open class RoomManager {
     }
 
     // MARK: - Word Submission
-
     open func submitWords(_ words: [String]) async throws {
         guard let playerId = currentPlayerId, let roomId = room?.id else { return }
 
@@ -216,7 +210,6 @@ open class RoomManager {
     }
 
     // MARK: - Game State
-
     open func updateGameState(_ state: OnlineGameState) async throws {
         guard let roomId = room?.id else { return }
         try await firebaseService.updateGameState(state, forRoomId: roomId)
@@ -228,7 +221,6 @@ open class RoomManager {
     }
 
     // MARK: - Device ID
-
     private static func getOrCreateDeviceId() -> String {
         let key = "HatGame.deviceId"
         if let existingId = UserDefaults.standard.string(forKey: key) {

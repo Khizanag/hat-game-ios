@@ -5,8 +5,8 @@
 //  Created by Giga Khizanishvili on 15.11.25.
 //
 
-import SwiftUI
 import DesignBook
+import SwiftUI
 
 struct TeamCard: View {
     let team: Team

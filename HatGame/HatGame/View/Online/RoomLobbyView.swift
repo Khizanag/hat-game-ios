@@ -367,32 +367,28 @@ private extension RoomLobbyView {
     func joinTeam(_ teamId: String) {
         DesignBook.Haptics.selection()
         Task {
-            do { try await roomManager.joinTeam(teamId: teamId) }
-            catch { self.error = error }
+            do { try await roomManager.joinTeam(teamId: teamId) } catch { self.error = error }
         }
     }
 
     func leaveTeam() {
         DesignBook.Haptics.soft()
         Task {
-            do { try await roomManager.leaveTeam() }
-            catch { self.error = error }
+            do { try await roomManager.leaveTeam() } catch { self.error = error }
         }
     }
 
     func removeTeam(_ teamId: String) {
         DesignBook.Haptics.rigid()
         Task {
-            do { try await roomManager.removeTeam(teamId: teamId) }
-            catch { self.error = error }
+            do { try await roomManager.removeTeam(teamId: teamId) } catch { self.error = error }
         }
     }
 
     func startGame() {
         DesignBook.Haptics.confirm()
         Task {
-            do { try await roomManager.startGame() }
-            catch { self.error = error }
+            do { try await roomManager.startGame() } catch { self.error = error }
         }
     }
 

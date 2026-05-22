@@ -240,6 +240,7 @@ private extension OnlineResultsView {
     }
 }
 
+// MARK: - Localized round titles
 private extension OnlineGameRound {
     var title: String {
         switch self {

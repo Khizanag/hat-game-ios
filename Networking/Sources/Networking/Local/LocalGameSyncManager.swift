@@ -31,7 +31,6 @@ public final class LocalGameSyncManager: GameSyncManager {
     }
 
     // MARK: - Game initialization
-
     public override func initializeGame(
         for roomId: String,
         teams: [OnlineTeam],
@@ -70,7 +69,6 @@ public final class LocalGameSyncManager: GameSyncManager {
     }
 
     // MARK: - Turn lifecycle
-
     public override func startTurn(roomId: String, gameState: OnlineGameState) async throws {
         var next = gameState
         next.phase = .playing
@@ -113,7 +111,6 @@ public final class LocalGameSyncManager: GameSyncManager {
     }
 
     // MARK: - Phase advancement
-
     public override func advanceAfterTurnResults(
         roomId: String,
         gameState: OnlineGameState,
@@ -173,7 +170,6 @@ public final class LocalGameSyncManager: GameSyncManager {
     }
 
     // MARK: - Routing
-
     /// Host: mutate canonical state via the roomManager (which broadcasts).
     /// Guest: send the matching ClientAction and let the host snapshot
     /// rebound back.
@@ -194,6 +190,7 @@ public final class LocalGameSyncManager: GameSyncManager {
     }
 }
 
+// MARK: - Safe subscript
 private extension Array {
     subscript(safe index: Int) -> Element? {
         indices.contains(index) ? self[index] : nil

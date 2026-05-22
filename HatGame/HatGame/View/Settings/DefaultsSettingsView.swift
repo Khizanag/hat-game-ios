@@ -5,9 +5,9 @@
 //  Created by Giga Khizanishvili on 15.11.25.
 //
 
-import SwiftUI
 import DesignBook
 import Navigation
+import SwiftUI
 
 struct DefaultsSettingsView: View {
     private let appConfiguration = AppConfiguration.shared

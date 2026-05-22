@@ -5,8 +5,8 @@
 //  Created by Giga Khizanishvili on 15.11.25.
 //
 
-import SwiftUI
 import DesignBook
+import SwiftUI
 
 /// Read-only category indicator used under sliders to show which bucket the
 /// current value falls into. Visually flat (no chip background) so it is not

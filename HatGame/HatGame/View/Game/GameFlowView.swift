@@ -5,8 +5,8 @@
 //  Created by Giga Khizanishvili on 15.11.25.
 //
 
-import SwiftUI
 import Navigation
+import SwiftUI
 
 struct GameFlowView: View {
     @Environment(\.dismiss) private var dismiss

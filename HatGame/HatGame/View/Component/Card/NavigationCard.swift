@@ -5,8 +5,8 @@
 //  Created by Giga Khizanishvili on 15.11.25.
 //
 
-import SwiftUI
 import DesignBook
+import SwiftUI
 
 struct NavigationCard: View {
     let icon: String
@@ -64,4 +64,3 @@ struct NavigationCard: View {
     .padding()
     .background(DesignBook.Color.Background.primary)
 }
-

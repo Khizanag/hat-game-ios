@@ -5,8 +5,8 @@
 //  Created by Giga Khizanishvili on 26.11.25.
 //
 
-import SwiftUI
 import DesignBook
+import SwiftUI
 
 /// A reusable section component for organizing settings
 struct SettingsSection<Content: View>: View {

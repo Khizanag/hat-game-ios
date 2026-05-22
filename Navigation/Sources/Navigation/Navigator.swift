@@ -6,8 +6,8 @@
 //
 
 import Combine
-import SwiftUI
 import Observation
+import SwiftUI
 
 @MainActor
 @Observable
@@ -24,7 +24,6 @@ public final class Navigator {
     public init() {}
 
     // MARK: - Navigation Methods
-
     public func push<Content: View>(_ page: Page<Content>) {
         navigationPath.append(page.eraseToAnyPage())
     }

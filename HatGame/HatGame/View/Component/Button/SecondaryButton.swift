@@ -5,8 +5,8 @@
 //  Created by Giga Khizanishvili on 15.11.25.
 //
 
-import SwiftUI
 import DesignBook
+import SwiftUI
 
 struct SecondaryButton<Label: View>: View {
     private let action: () -> Void
@@ -29,6 +29,7 @@ struct SecondaryButton<Label: View>: View {
     }
 }
 
+// MARK: - Convenience initializers
 extension SecondaryButton where Label == Text {
     init(title: String, action: @escaping () -> Void) {
         self.action = action
@@ -36,6 +37,7 @@ extension SecondaryButton where Label == Text {
     }
 }
 
+// MARK: - Title + icon initializer
 extension SecondaryButton where Label == AnyView {
     init(title: String, icon: String, action: @escaping () -> Void) {
         self.action = action

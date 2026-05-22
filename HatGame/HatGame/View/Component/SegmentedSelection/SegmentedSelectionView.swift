@@ -5,8 +5,8 @@
 //  Created by Giga Khizanishvili on 15.11.25.
 //
 
-import SwiftUI
 import DesignBook
+import SwiftUI
 
 struct SegmentedSelectionView<ID: Hashable>: View {
     let items: [SegmentedSelectionItem<ID>]
@@ -163,7 +163,7 @@ private extension SegmentedSelectionView {
                     title: "System",
                     subtitle: "Auto",
                     icon: Image(systemName: "circle.lefthalf.filled")
-                )
+                ),
             ],
             selection: .constant("light")
         )

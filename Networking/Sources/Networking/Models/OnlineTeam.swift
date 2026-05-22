@@ -34,7 +34,6 @@ public struct OnlineTeam: Codable, Identifiable, Hashable, Sendable {
     }
 
     // MARK: - Codable
-
     /// `playerIds` is omitted from the stored snapshot when empty
     /// (Firebase strips empty arrays). Custom decoder defaults to [].
     private enum CodingKeys: String, CodingKey {

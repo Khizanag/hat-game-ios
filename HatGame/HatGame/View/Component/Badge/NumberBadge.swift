@@ -5,8 +5,8 @@
 //  Created by Giga Khizanishvili on 26.11.25.
 //
 
-import SwiftUI
 import DesignBook
+import SwiftUI
 
 struct NumberBadge: View {
     let number: Int

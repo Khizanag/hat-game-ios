@@ -5,8 +5,8 @@
 //  Created by Giga Khizanishvili
 //
 
-import SwiftUI
 import DesignBook
+import SwiftUI
 
 extension View {
     /// Adds a soft scroll-edge fade above footer content and an opaque body

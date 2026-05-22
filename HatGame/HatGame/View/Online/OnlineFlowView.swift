@@ -5,9 +5,9 @@
 //  Created by Giga Khizanishvili on 01.02.26.
 //
 
-import SwiftUI
 import Navigation
 import Networking
+import SwiftUI
 
 struct OnlineFlowView: View {
     @Environment(\.dismiss) private var dismiss

@@ -34,4 +34,3 @@ enum AppColorScheme: String, CaseIterable {
         }
     }
 }
-

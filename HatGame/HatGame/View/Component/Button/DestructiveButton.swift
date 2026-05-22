@@ -5,8 +5,8 @@
 //  Created by Giga Khizanishvili on 15.11.25.
 //
 
-import SwiftUI
 import DesignBook
+import SwiftUI
 
 struct DestructiveButton<Label: View>: View {
     private let action: () -> Void
@@ -30,6 +30,7 @@ struct DestructiveButton<Label: View>: View {
     }
 }
 
+// MARK: - Convenience initializers
 extension DestructiveButton where Label == Text {
     init(title: String, action: @escaping () -> Void) {
         self.action = action

@@ -53,7 +53,6 @@ enum AppIcon: String, CaseIterable, Identifiable {
     }
 
     // MARK: - Visual Properties
-
     var displayColor: Color {
         switch self {
         case .classic:

@@ -45,7 +45,6 @@ public struct GameRoom: Codable, Identifiable, Sendable {
     }
 
     // MARK: - Codable
-
     /// Firebase RTDB drops empty collections from the stored snapshot and
     /// rewrites collections that were stored under child paths as
     /// dictionaries keyed by their child ID. Custom decoder handles both.

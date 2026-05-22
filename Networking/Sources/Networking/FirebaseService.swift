@@ -5,9 +5,9 @@
 //  Created by Giga Khizanishvili on 22.12.24.
 //
 
-import Foundation
-import FirebaseDatabase
 import FirebaseCore
+import FirebaseDatabase
+import Foundation
 
 public final class FirebaseService: @unchecked Sendable {
     public static let shared = FirebaseService()
@@ -33,7 +33,6 @@ public final class FirebaseService: @unchecked Sendable {
     }
 
     // MARK: - Room Operations
-
     public func createRoom(_ room: GameRoom) async throws {
         guard isAvailable else { throw NetworkingError.firebaseNotConfigured }
         let roomData = try encodeToDict(room)
@@ -98,7 +97,6 @@ public final class FirebaseService: @unchecked Sendable {
     }
 
     // MARK: - Player Operations
-
     public func addPlayer(_ player: OnlinePlayer, toRoomId roomId: String) async throws {
         guard isAvailable else { throw NetworkingError.firebaseNotConfigured }
         let playerData = try encodeToDict(player)
@@ -117,7 +115,6 @@ public final class FirebaseService: @unchecked Sendable {
     }
 
     // MARK: - Team Operations
-
     public func addTeam(_ team: OnlineTeam, toRoomId roomId: String) async throws {
         guard isAvailable else { throw NetworkingError.firebaseNotConfigured }
         let teamData = try encodeToDict(team)
@@ -166,7 +163,6 @@ public final class FirebaseService: @unchecked Sendable {
     }
 
     // MARK: - Word Operations
-
     public func addWords(_ words: [OnlineWord], toRoomId roomId: String) async throws {
         guard isAvailable else { throw NetworkingError.firebaseNotConfigured }
         var updates: [String: Any] = [:]
@@ -202,7 +198,6 @@ public final class FirebaseService: @unchecked Sendable {
     }
 
     // MARK: - Game State Operations
-
     public func updateGameState(_ state: OnlineGameState, forRoomId roomId: String) async throws {
         guard isAvailable else { throw NetworkingError.firebaseNotConfigured }
         let stateData = try encodeToDict(state)
@@ -215,7 +210,6 @@ public final class FirebaseService: @unchecked Sendable {
     }
 
     // MARK: - Room Code Generation
-
     public func generateUniqueRoomCode() async throws -> String {
         guard isAvailable else { throw NetworkingError.firebaseNotConfigured }
         let characters = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
@@ -224,7 +218,6 @@ public final class FirebaseService: @unchecked Sendable {
     }
 
     // MARK: - Helpers
-
     private func encodeToDict<T: Encodable>(_ value: T) throws -> [String: Any] {
         let data = try JSONEncoder().encode(value)
         guard let dict = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {

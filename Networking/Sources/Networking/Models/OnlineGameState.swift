@@ -83,7 +83,6 @@ public struct OnlineGameState: Codable, Sendable {
     }
 
     // MARK: - Codable
-
     /// Firebase strips empty arrays/dicts and rewrites scores with
     /// non-string keys. Custom decoder defaults each collection to empty.
     private enum CodingKeys: String, CodingKey {

@@ -125,7 +125,6 @@ final class GameManager {
     }
 
     // MARK: - Role Management
-
     func setExplainer(playerIndex: Int, for team: Team) {
         teamExplainerIndices[team.id] = playerIndex
         // Lock roles for this team - they can never select again

@@ -20,7 +20,6 @@ open class GameSyncManager {
     public init() {}
 
     // MARK: - Game initialization
-
     /// Sets up the very first `OnlineGameState` once all players have
     /// submitted their words. Picks team 0 as the starting team and the
     /// first player in that team as the explainer.
@@ -63,7 +62,6 @@ open class GameSyncManager {
     }
 
     // MARK: - Turn lifecycle
-
     /// The explainer flips the room from `.teamPrep` to `.playing` and the
     /// server timestamps the timer start. All other clients compute their
     /// countdown off this anchor.
@@ -121,7 +119,6 @@ open class GameSyncManager {
     }
 
     // MARK: - Phase advancement
-
     /// Single source of truth for moving the game forward after the
     /// turn-results screen. Decides whether the next slot is the next
     /// team's `.teamPrep`, the next round's `.roundResults`, or
@@ -195,7 +192,6 @@ open class GameSyncManager {
     }
 
     // MARK: - Helpers
-
     private func playersInTeam(_ team: OnlineTeam, allPlayers: [OnlinePlayer]) -> [OnlinePlayer] {
         // Prefer team.playerIds order (matches join order); fall back to a
         // filter on player.teamId for resilience to legacy data.

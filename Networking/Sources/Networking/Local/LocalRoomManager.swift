@@ -5,8 +5,8 @@
 //  Created by Giga Khizanishvili on 21.05.26.
 //
 
-@preconcurrency import MultipeerConnectivity
 import Foundation
+@preconcurrency import MultipeerConnectivity
 import Observation
 import OSLog
 
@@ -76,7 +76,6 @@ public final class LocalRoomManager: RoomManager {
     }
 
     // MARK: - Guest browsing
-
     public func startBrowsingForHosts() {
         discoveredHosts.removeAll()
         service.startBrowsing()
@@ -97,7 +96,6 @@ public final class LocalRoomManager: RoomManager {
     }
 
     // MARK: - RoomManager overrides
-
     public override func createRoom(hostName: String, settings: GameSettings) async throws -> String {
         let host = OnlinePlayer(
             deviceId: deviceId,
@@ -227,7 +225,6 @@ public final class LocalRoomManager: RoomManager {
     }
 
     // MARK: - Host-side mutators
-
     public var isHostInternal: Bool { isLocalHost }
 
     func broadcastSnapshot() {
@@ -313,7 +310,6 @@ public final class LocalRoomManager: RoomManager {
     }
 
     // MARK: - State mutations (host-side)
-
     private func updateLocalPlayer(_ mutate: (inout OnlinePlayer) -> Void) {
         guard var room, let playerId = currentPlayerId else { return }
         guard let index = room.players.firstIndex(where: { $0.id == playerId }) else { return }

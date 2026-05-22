@@ -5,9 +5,9 @@
 //  Created by Giga Khizanishvili on 15.11.25.
 //
 
-import SwiftUI
 import DesignBook
 import Navigation
+import SwiftUI
 
 // MARK: - Automatic Navigation Button
 /// Shows a trailing close (X) only when this view is the root of a modal flow
@@ -33,6 +33,7 @@ private struct NavigationButtonToolbarModifier: ViewModifier {
     }
 }
 
+// MARK: - Navigation toolbar
 extension View {
     func navigationButtonToolbar() -> some View {
         modifier(NavigationButtonToolbarModifier())

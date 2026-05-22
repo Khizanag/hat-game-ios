@@ -5,8 +5,8 @@
 //  Created by Giga Khizanishvili on 15.11.25.
 //
 
-import SwiftUI
 import Navigation
+import SwiftUI
 
 // MARK: - App Pages
 extension Page {
@@ -101,7 +101,6 @@ extension Page {
     }
 
     // MARK: - Online Pages
-
     static var onlineFlow: Page<OnlineFlowView> {
         Page<OnlineFlowView>(id: "onlineFlow") {
             OnlineFlowView()
@@ -137,7 +136,6 @@ extension Page {
     }
 
     // MARK: - Local (Multipeer) Pages
-
     static var localFlow: Page<LocalFlowView> {
         Page<LocalFlowView>(id: "localFlow") {
             LocalFlowView()

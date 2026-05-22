@@ -37,7 +37,6 @@ public final class LocalMultipeerService: NSObject, @unchecked Sendable {
     }
 
     // MARK: - State
-
     public private(set) var role: Role?
     public private(set) var session: MCSession?
     private var advertiser: MCNearbyServiceAdvertiser?
@@ -59,7 +58,6 @@ public final class LocalMultipeerService: NSObject, @unchecked Sendable {
     public var onInvitationReceived: ((MCPeerID, (Bool) -> Void) -> Void)?
 
     // MARK: - Init
-
     public init(displayName: String) {
         let trimmed = String(displayName.prefix(63)) // MCPeerID limit
         self.peerID = MCPeerID(displayName: trimmed.isEmpty ? "Player" : trimmed)
@@ -73,7 +71,6 @@ public final class LocalMultipeerService: NSObject, @unchecked Sendable {
     }
 
     // MARK: - Host advertising
-
     public func startHosting(discoveryInfo: [String: String]) {
         stop()
         role = .host
@@ -94,7 +91,6 @@ public final class LocalMultipeerService: NSObject, @unchecked Sendable {
     }
 
     // MARK: - Guest browsing
-
     public func startBrowsing() {
         stop()
         role = .guest
@@ -126,7 +122,6 @@ public final class LocalMultipeerService: NSObject, @unchecked Sendable {
     }
 
     // MARK: - Sending
-
     public func send(_ message: LocalMessage, to peers: [MCPeerID]? = nil) {
         guard let session else { return }
         let recipients = peers ?? session.connectedPeers

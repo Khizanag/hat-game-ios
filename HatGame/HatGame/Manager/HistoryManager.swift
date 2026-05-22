@@ -6,7 +6,6 @@
 //
 
 final class HistoryManager {
-
     private var configuration: GameConfiguration = .init()
     private var history: [GameRound: [Team: Set<Word>]] = [:]
 

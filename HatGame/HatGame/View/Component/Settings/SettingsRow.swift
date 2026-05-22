@@ -5,8 +5,8 @@
 //  Created by Giga Khizanishvili on 26.11.25.
 //
 
-import SwiftUI
 import DesignBook
+import SwiftUI
 
 /// A reusable row component for settings with consistent styling
 struct SettingsRow<Content: View>: View {

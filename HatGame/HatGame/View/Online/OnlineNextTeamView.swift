@@ -297,6 +297,7 @@ private extension OnlineGameRound {
     }
 }
 
+// MARK: - Safe subscript
 private extension Array {
     subscript(safe index: Int) -> Element? {
         indices.contains(index) ? self[index] : nil

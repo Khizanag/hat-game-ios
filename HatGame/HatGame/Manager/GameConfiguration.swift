@@ -49,6 +49,7 @@ final class GameConfiguration {
     }
 }
 
+// MARK: - Mock data
 extension GameConfiguration {
     static let mockForTesting = makeMockForTesting()
 

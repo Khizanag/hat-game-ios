@@ -15,7 +15,6 @@ extension DesignBook {
     @MainActor
     public enum Haptics {
         // MARK: - Semantic events
-
         /// Light tap — minor selections, picker scrolls.
         public static func selection() {
             #if os(iOS)

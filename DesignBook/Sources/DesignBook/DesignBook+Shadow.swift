@@ -44,6 +44,7 @@ extension DesignBook {
     }
 }
 
+// MARK: - Shadow modifier
 extension View {
     public func shadow(_ shadow: DesignBook.Shadow) -> some View {
         self.shadow(
