@@ -12,7 +12,7 @@ import SwiftUI
 struct HomeView: View {
     @Environment(Navigator.self) private var navigator
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @SceneStorage("HomeView.isHowToPlayExpanded") private var isHowToPlayExpanded: Bool = true
+    @SceneStorage("HomeView.howToPlay.expanded.v2") private var isHowToPlayExpanded: Bool = false
     @State private var isHeroFloating: Bool = false
 
     private let appConfiguration = AppConfiguration.shared
@@ -22,6 +22,7 @@ struct HomeView: View {
             .background {
                 heroBackdrop.ignoresSafeArea()
             }
+            .toolbar { settingsToolbar }
     }
 }
 
@@ -146,14 +147,23 @@ private extension HomeView {
                 DesignBook.Haptics.tap()
                 navigator.present(.onlineFlow)
             }
-
-            SecondaryButton(title: String(localized: "common.buttons.settings"), icon: "gearshape") {
-                DesignBook.Haptics.selection()
-                navigator.push(.settings)
-            }
         }
         .paddingHorizontalDefault()
         .padding(.bottom, DesignBook.Spacing.sm)
+    }
+
+    @ToolbarContentBuilder
+    var settingsToolbar: some ToolbarContent {
+        ToolbarItem(placement: .topBarTrailing) {
+            Button {
+                DesignBook.Haptics.selection()
+                navigator.push(.settings)
+            } label: {
+                Image(systemName: "gearshape")
+                    .foregroundStyle(DesignBook.Color.Text.primary)
+            }
+            .accessibilityLabel(Text("common.buttons.settings"))
+        }
     }
 
     var instructions: [(icon: String, text: String)] {
