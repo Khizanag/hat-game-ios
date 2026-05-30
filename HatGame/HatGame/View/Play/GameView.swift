@@ -289,6 +289,7 @@ private extension GameView {
     func handleTimeExpired() {
         gameManager.markPlayEndedWithTimeOut()
         DesignBook.Haptics.error()
+        SoundPlayer.shared.playTimeUp()
         navigator.push(.teamTurnResults(guessedWords: guessedWords, completionReason: .timeExpired))
     }
 }

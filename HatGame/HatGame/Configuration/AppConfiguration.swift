@@ -23,6 +23,7 @@ final class AppConfiguration {
     private static let appIconKey = "HatGame.appIcon"
     private static let allowDuplicateWordsKey = "HatGame.allowDuplicateWords"
     private static let defaultSkippingEnabledKey = "HatGame.defaultSkippingEnabled"
+    private static let isTimeUpSoundEnabledKey = "HatGame.isTimeUpSoundEnabled"
 
     var isTestMode: Bool {
         didSet {
@@ -74,6 +75,12 @@ final class AppConfiguration {
         }
     }
 
+    /// Whether to play a sound when a turn's timer runs out.
+    var isTimeUpSoundEnabled: Bool {
+        didSet {
+            UserDefaults.standard.set(isTimeUpSoundEnabled, forKey: Self.isTimeUpSoundEnabledKey)
+        }
+    }
 
     private init() {
         isTestMode = UserDefaults.standard.bool(forKey: Self.testModeKey)
@@ -97,6 +104,7 @@ final class AppConfiguration {
 
         allowDuplicateWords = UserDefaults.standard.object(forKey: Self.allowDuplicateWordsKey) as? Bool ?? false
         defaultSkippingEnabled = UserDefaults.standard.object(forKey: Self.defaultSkippingEnabledKey) as? Bool ?? true
+        isTimeUpSoundEnabled = UserDefaults.standard.object(forKey: Self.isTimeUpSoundEnabledKey) as? Bool ?? true
     }
 
     func applyStoredAppIcon() {

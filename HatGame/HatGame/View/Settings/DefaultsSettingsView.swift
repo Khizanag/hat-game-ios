@@ -29,6 +29,7 @@ private extension DefaultsSettingsView {
                 roundDurationSection
                 duplicateWordsSection
                 skippingSection
+                soundSection
             }
             .paddingHorizontalDefault()
             .padding(.top, DesignBook.Spacing.lg)
@@ -182,6 +183,34 @@ private extension DefaultsSettingsView {
         }
     }
 
+    // MARK: - Time's Up Sound
+    var soundSection: some View {
+        SettingsSection(
+            title: String(localized: "settings.timeUpSound.title"),
+            footer: String(localized: "settings.timeUpSound.description")
+        ) {
+            VStack(spacing: DesignBook.Spacing.md) {
+                Toggle(isOn: Binding(
+                    get: { appConfiguration.isTimeUpSoundEnabled },
+                    set: { appConfiguration.isTimeUpSoundEnabled = $0 }
+                )) {
+                    HStack(spacing: DesignBook.Spacing.sm) {
+                        Image(systemName: "speaker.wave.2.fill")
+                            .font(DesignBook.Font.body)
+                            .foregroundStyle(.green)
+
+                        Text("settings.timeUpSound.title")
+                            .font(DesignBook.Font.headline)
+                            .foregroundStyle(DesignBook.Color.Text.primary)
+                    }
+                }
+                .tint(.green)
+            }
+            .padding(DesignBook.Spacing.md)
+            .background(DesignBook.Color.Background.card)
+            .cornerRadius(DesignBook.Size.cardCornerRadius)
+        }
+    }
 }
 
 // MARK: - Preview

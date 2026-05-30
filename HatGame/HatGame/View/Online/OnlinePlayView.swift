@@ -232,6 +232,9 @@ private extension OnlinePlayView {
         let previous = remainingSeconds
         syncRemainingSeconds()
         playUrgencyHaptics(from: previous, to: remainingSeconds)
+        if previous > 0, remainingSeconds == 0 {
+            SoundPlayer.shared.playTimeUp()
+        }
         guard remainingSeconds == 0, isActivePlayer else { return }
         endTurn()
     }
