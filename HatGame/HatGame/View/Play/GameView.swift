@@ -88,7 +88,7 @@ private extension GameView {
                 teamTint: gameManager.currentTeam.color,
                 onGuessed: markCurrentWordGuessed,
                 onSkip: skipCurrentWord,
-                isSkipEnabled: gameManager.remainingWordCount > 1
+                isSkipEnabled: isSkipAllowed && gameManager.remainingWordCount > 1
             )
             .id(word.id)
             .transition(
@@ -108,16 +108,18 @@ private extension GameView {
 
     var actionButtons: some View {
         HStack(spacing: DesignBook.Spacing.md) {
-            Button(action: skipCurrentWord) {
-                Label("game.skip", systemImage: "arrow.uturn.forward")
-                    .font(DesignBook.Font.headline)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, DesignBook.Spacing.sm)
+            if isSkipAllowed {
+                Button(action: skipCurrentWord) {
+                    Label("game.skip", systemImage: "arrow.uturn.forward")
+                        .font(DesignBook.Font.headline)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, DesignBook.Spacing.sm)
+                }
+                .buttonStyle(.glass)
+                .tint(DesignBook.Color.Status.warning)
+                .disabled(isSkipDisabled)
+                .opacity(isSkipDisabled ? DesignBook.Opacity.disabled : DesignBook.Opacity.enabled)
             }
-            .buttonStyle(.glass)
-            .tint(DesignBook.Color.Status.warning)
-            .disabled(isSkipDisabled)
-            .opacity(isSkipDisabled ? DesignBook.Opacity.disabled : DesignBook.Opacity.enabled)
 
             Button(action: markCurrentWordGuessed) {
                 Label("game.gotIt", systemImage: "checkmark.circle.fill")
@@ -171,6 +173,11 @@ private extension GameView {
 
 // MARK: - Derived state
 private extension GameView {
+    /// Whether this game permits skipping at all (configured before the game starts).
+    var isSkipAllowed: Bool {
+        gameManager.configuration.isSkippingEnabled
+    }
+
     var isSkipDisabled: Bool {
         gameManager.remainingWordCount <= 1 || isPaused || gameManager.currentWord == nil
     }
@@ -206,7 +213,8 @@ private extension GameView {
         stopTimer()
         isPaused = false
         hasPlayedFinalWarning = false
-        remainingSeconds = gameManager.getRemainingTime(for: gameManager.currentTeam) ?? gameManager.configuration.roundDuration
+        remainingSeconds = gameManager.getRemainingTime(for: gameManager.currentTeam)
+            ?? gameManager.configuration.roundDuration
         gameManager.clearRemainingTime(for: gameManager.currentTeam)
         timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
             tickTimer()

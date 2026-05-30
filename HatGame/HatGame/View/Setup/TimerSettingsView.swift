@@ -17,6 +17,7 @@ struct TimerSettingsView: View {
     private let appConfiguration = AppConfiguration.shared
 
     @State private var selectedDuration: Int = 60
+    @State private var isSkippingEnabled: Bool = true
 
     var body: some View {
         content
@@ -24,6 +25,7 @@ struct TimerSettingsView: View {
             .setDefaultStyle()
             .onAppear {
                 selectedDuration = appConfiguration.defaultRoundDuration
+                isSkippingEnabled = appConfiguration.defaultSkippingEnabled
             }
     }
 }
@@ -35,6 +37,7 @@ private extension TimerSettingsView {
             VStack(spacing: DesignBook.Spacing.lg) {
                 heroValueCard
                 controlsCard
+                rulesCard
             }
             .paddingHorizontalDefault()
             .padding(.bottom, DesignBook.Spacing.xxl)
@@ -128,6 +131,41 @@ private extension TimerSettingsView {
         }
     }
 
+    var rulesCard: some View {
+        GameCard {
+            VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
+                Text("timerSettings.rules.title")
+                    .font(DesignBook.Font.caption)
+                    .textCase(.uppercase)
+                    .tracking(1.2)
+                    .foregroundStyle(DesignBook.Color.Text.tertiary)
+
+                Toggle(isOn: $isSkippingEnabled) {
+                    HStack(spacing: DesignBook.Spacing.md) {
+                        Image(systemName: "arrow.uturn.forward")
+                            .font(DesignBook.Font.body)
+                            .foregroundStyle(DesignBook.Color.Status.warning)
+                            .frame(width: 24)
+
+                        VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
+                            Text("timerSettings.allowSkipping.title")
+                                .font(DesignBook.Font.headline)
+                                .foregroundStyle(DesignBook.Color.Text.primary)
+                            Text("timerSettings.allowSkipping.description")
+                                .font(DesignBook.Font.caption)
+                                .foregroundStyle(DesignBook.Color.Text.secondary)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                    }
+                }
+                .tint(DesignBook.Color.Status.warning)
+                .onChange(of: isSkippingEnabled) { _, _ in
+                    DesignBook.Haptics.selection()
+                }
+            }
+        }
+    }
+
     var continueButton: some View {
         PrimaryButton(title: String(localized: "common.buttons.continue"), icon: "arrow.right.circle.fill") {
             DesignBook.Haptics.tap()
@@ -149,6 +187,7 @@ private extension TimerSettingsView {
 
     func handleContinue() {
         gameManager.configuration.roundDuration = selectedDuration
+        gameManager.configuration.isSkippingEnabled = isSkippingEnabled
         navigator.push(.wordInput)
     }
 }

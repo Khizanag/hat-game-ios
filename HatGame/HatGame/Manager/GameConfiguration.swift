@@ -17,6 +17,7 @@ final class GameConfiguration {
     var playersPerTeam: Int // Fixed number of players each team must have
     var wordsPerPlayer: Int
     var roundDuration: Int
+    var isSkippingEnabled: Bool
     var teams: [Team] = []
     var words: [Word] = []
 
@@ -36,6 +37,7 @@ final class GameConfiguration {
         playersPerTeam: Int = 2,
         wordsPerPlayer: Int? = nil,
         roundDuration: Int? = nil,
+        isSkippingEnabled: Bool? = nil,
         teams: [Team] = [],
         words: [Word] = []
     ) {
@@ -44,6 +46,7 @@ final class GameConfiguration {
         self.playersPerTeam = playersPerTeam
         self.wordsPerPlayer = wordsPerPlayer ?? AppConfiguration.shared.defaultWordsPerPlayer
         self.roundDuration = roundDuration ?? AppConfiguration.shared.defaultRoundDuration
+        self.isSkippingEnabled = isSkippingEnabled ?? AppConfiguration.shared.defaultSkippingEnabled
         self.teams = teams
         self.words = words
     }

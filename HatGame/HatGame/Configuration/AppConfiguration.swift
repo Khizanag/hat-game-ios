@@ -22,6 +22,7 @@ final class AppConfiguration {
     private static let colorSchemeKey = "HatGame.colorScheme"
     private static let appIconKey = "HatGame.appIcon"
     private static let allowDuplicateWordsKey = "HatGame.allowDuplicateWords"
+    private static let defaultSkippingEnabledKey = "HatGame.defaultSkippingEnabled"
 
     var isTestMode: Bool {
         didSet {
@@ -66,6 +67,14 @@ final class AppConfiguration {
         }
     }
 
+    /// Default value of the per-game "allow skipping" toggle for newly created games.
+    var defaultSkippingEnabled: Bool {
+        didSet {
+            UserDefaults.standard.set(defaultSkippingEnabled, forKey: Self.defaultSkippingEnabledKey)
+        }
+    }
+
+
     private init() {
         isTestMode = UserDefaults.standard.bool(forKey: Self.testModeKey)
         defaultWordsPerPlayer = UserDefaults.standard.object(forKey: Self.defaultWordsPerPlayerKey) as? Int ?? 10
@@ -87,6 +96,7 @@ final class AppConfiguration {
         }
 
         allowDuplicateWords = UserDefaults.standard.object(forKey: Self.allowDuplicateWordsKey) as? Bool ?? false
+        defaultSkippingEnabled = UserDefaults.standard.object(forKey: Self.defaultSkippingEnabledKey) as? Bool ?? true
     }
 
     func applyStoredAppIcon() {

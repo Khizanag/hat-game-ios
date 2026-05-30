@@ -1,6 +1,91 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "timerSettings.rules.title" : {
+      "comment" : "Section title above in-game rule toggles on the timer settings screen.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Game Rules"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "თამაშის წესები"
+          }
+        }
+      }
+    },
+    "timerSettings.allowSkipping.title" : {
+      "comment" : "Toggle title: whether players may skip words during this game.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allow Skipping"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "გამოტოვების დაშვება"
+          }
+        }
+      }
+    },
+    "timerSettings.allowSkipping.description" : {
+      "comment" : "Explanation under the allow-skipping toggle.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Let players pass on a word and return it to the hat."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "მიეცით მოთამაშეებს უფლება გამოტოვონ სიტყვა და დააბრუნონ ქუდში."
+          }
+        }
+      }
+    },
+    "settings.defaultSkipping.title" : {
+      "comment" : "Defaults screen: default value of the allow-skipping toggle for new games.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allow Skipping"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "გამოტოვების დაშვება"
+          }
+        }
+      }
+    },
+    "settings.defaultSkipping.description" : {
+      "comment" : "Footer explaining the default allow-skipping setting.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New games let players skip words by default."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ახალ თამაშებში მოთამაშეებს ნაგულისხმევად შეუძლიათ სიტყვის გამოტოვება."
+          }
+        }
+      }
+    },
     "" : {
 
     },

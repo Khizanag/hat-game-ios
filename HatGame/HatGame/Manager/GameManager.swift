@@ -81,9 +81,10 @@ final class GameManager {
 
     /// Skip the current word without scoring it.
     /// The word stays in the hat for the next try; the next word is chosen randomly.
-    /// If only one word remains, the same word stays (nothing to swap with).
+    /// No-op when skipping is disabled for this game, or if only one word remains
+    /// (nothing to swap with).
     func skipCurrentWord() {
-        guard let currentWord, remainingWords.count > 1 else { return }
+        guard configuration.isSkippingEnabled, let currentWord, remainingWords.count > 1 else { return }
 
         // Pick a different word so the player isn't handed the same one back.
         let candidates = remainingWords.subtracting([currentWord])

@@ -28,6 +28,7 @@ private extension DefaultsSettingsView {
                 wordsPerPlayerSection
                 roundDurationSection
                 duplicateWordsSection
+                skippingSection
             }
             .paddingHorizontalDefault()
             .padding(.top, DesignBook.Spacing.lg)
@@ -151,6 +152,36 @@ private extension DefaultsSettingsView {
             .cornerRadius(DesignBook.Size.cardCornerRadius)
         }
     }
+
+    // MARK: - Skipping
+    var skippingSection: some View {
+        SettingsSection(
+            title: String(localized: "settings.defaultSkipping.title"),
+            footer: String(localized: "settings.defaultSkipping.description")
+        ) {
+            VStack(spacing: DesignBook.Spacing.md) {
+                Toggle(isOn: Binding(
+                    get: { appConfiguration.defaultSkippingEnabled },
+                    set: { appConfiguration.defaultSkippingEnabled = $0 }
+                )) {
+                    HStack(spacing: DesignBook.Spacing.sm) {
+                        Image(systemName: "arrow.uturn.forward")
+                            .font(DesignBook.Font.body)
+                            .foregroundStyle(.orange)
+
+                        Text("settings.defaultSkipping.title")
+                            .font(DesignBook.Font.headline)
+                            .foregroundStyle(DesignBook.Color.Text.primary)
+                    }
+                }
+                .tint(.orange)
+            }
+            .padding(DesignBook.Spacing.md)
+            .background(DesignBook.Color.Background.card)
+            .cornerRadius(DesignBook.Size.cardCornerRadius)
+        }
+    }
+
 }
 
 // MARK: - Preview
