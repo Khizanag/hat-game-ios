@@ -47,6 +47,19 @@ struct HatGameTests {
         #expect(manager.currentWord != wordBeforeSkip)
     }
 
+    // MARK: - Word database
+    /// The curated Georgian word list ships as a bundled resource; verify it loads,
+    /// is substantial, has no duplicates, and contains only Mkhedruli letters.
+    @Test func wordDatabaseLoadsCuratedResource() {
+        let words = WordDatabase.words
+        #expect(words.count > 3000)
+        #expect(Set(words).count == words.count)
+        let isMkhedruli = words.allSatisfy { word in
+            word.unicodeScalars.allSatisfy { (0x10D0...0x10F0).contains(Int($0.value)) }
+        }
+        #expect(isMkhedruli)
+    }
+
     // MARK: - Helpers
     private func makeManager(isSkippingEnabled: Bool) -> GameManager {
         let teamId = UUID()
