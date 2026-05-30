@@ -60,6 +60,20 @@ struct HatGameTests {
         #expect(isMkhedruli)
     }
 
+    // MARK: - Automatic word source
+    /// The automatic word source fills the hat with the requested number of
+    /// distinct words drawn from the bundled database.
+    @Test func fillRandomWordsPopulatesDistinctDatabaseWords() {
+        let manager = makeManager(isSkippingEnabled: true)
+        manager.fillRandomWords(count: 20)
+
+        let texts = manager.configuration.words.map(\.text)
+        #expect(texts.count == 20)
+        #expect(Set(texts).count == 20)
+        let database = Set(WordDatabase.words)
+        #expect(texts.allSatisfy { database.contains($0) })
+    }
+
     // MARK: - Helpers
     private func makeManager(isSkippingEnabled: Bool) -> GameManager {
         let teamId = UUID()

@@ -1,6 +1,210 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "wordSource.navTitle" : {
+      "comment" : "Navigation title for the word-source choice screen.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Words"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "სიტყვები"
+          }
+        }
+      }
+    },
+    "wordSource.question" : {
+      "comment" : "Header on the word-source choice screen.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "How do you want to add words?"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "როგორ გსურთ სიტყვების დამატება?"
+          }
+        }
+      }
+    },
+    "wordSource.description" : {
+      "comment" : "Header subtitle on the word-source choice screen.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Type your own words, or let the app pick them for you."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "შეიყვანეთ საკუთარი სიტყვები, ან მიანდეთ აპს არჩევა."
+          }
+        }
+      }
+    },
+    "wordSource.manual.title" : {
+      "comment" : "Title of the manual word-entry option.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter manually"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ხელით შეყვანა"
+          }
+        }
+      }
+    },
+    "wordSource.manual.description" : {
+      "comment" : "Description of the manual word-entry option.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Each player types in their own words."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "თითოეული მოთამაშე თავის სიტყვებს თავად შეიყვანს."
+          }
+        }
+      }
+    },
+    "wordSource.automatic.title" : {
+      "comment" : "Title of the automatic word option.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pick for me"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ავტომატური არჩევა"
+          }
+        }
+      }
+    },
+    "wordSource.automatic.description" : {
+      "comment" : "Description of the automatic word option.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We'll choose words from our database — no typing needed."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "სიტყვებს ჩვენი ბაზიდან ავირჩევთ — შეყვანა არ დაგჭირდებათ."
+          }
+        }
+      }
+    },
+    "wordGeneration.navTitle" : {
+      "comment" : "Navigation title for the automatic word-generation screen.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Words"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "სიტყვები"
+          }
+        }
+      }
+    },
+    "wordGeneration.title" : {
+      "comment" : "Status title while words are being generated.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choosing words"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ვირჩევთ სიტყვებს"
+          }
+        }
+      }
+    },
+    "wordGeneration.subtitle" : {
+      "comment" : "Status subtitle while words are being generated.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drawing words from the hat…"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "სიტყვებს ქუდიდან ვიღებთ…"
+          }
+        }
+      }
+    },
+    "wordGeneration.ready" : {
+      "comment" : "Status title once words are generated.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ready!"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "მზადაა!"
+          }
+        }
+      }
+    },
+    "wordGeneration.count" : {
+      "comment" : "Count of generated words; %lld is the number.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld words ready"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld სიტყვა მზადაა"
+          }
+        }
+      }
+    },
     "timerSettings.rules.title" : {
       "comment" : "Section title above in-game rule toggles on the timer settings screen.",
       "localizations" : {

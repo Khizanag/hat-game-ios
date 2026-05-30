@@ -58,9 +58,21 @@ extension Page {
         }
     }
 
+    static var wordSource: Page<WordSourceView> {
+        Page<WordSourceView>(id: "wordSource") {
+            WordSourceView()
+        }
+    }
+
     static var wordInput: Page<WordInputView> {
         Page<WordInputView>(id: "wordInput") {
             WordInputView()
+        }
+    }
+
+    static var wordGeneration: Page<WordGenerationView> {
+        Page<WordGenerationView>(id: "wordGeneration") {
+            WordGenerationView()
         }
     }
 

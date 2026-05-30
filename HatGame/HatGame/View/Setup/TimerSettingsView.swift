@@ -188,7 +188,7 @@ private extension TimerSettingsView {
     func handleContinue() {
         gameManager.configuration.roundDuration = selectedDuration
         gameManager.configuration.isSkippingEnabled = isSkippingEnabled
-        navigator.push(.wordInput)
+        navigator.push(.wordSource)
     }
 }
 

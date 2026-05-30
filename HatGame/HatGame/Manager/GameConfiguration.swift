@@ -8,6 +8,14 @@
 import Observation
 import SwiftUI
 
+/// Where a game's words come from.
+enum WordSource: CaseIterable {
+    /// Players type in their own words (the word-input flow).
+    case manual
+    /// Words are chosen automatically from the bundled database.
+    case automatic
+}
+
 @Observable
 final class GameConfiguration {
     let minTeams = 2
@@ -18,6 +26,7 @@ final class GameConfiguration {
     var wordsPerPlayer: Int
     var roundDuration: Int
     var isSkippingEnabled: Bool
+    var wordSource: WordSource
     var teams: [Team] = []
     var words: [Word] = []
 
@@ -38,6 +47,7 @@ final class GameConfiguration {
         wordsPerPlayer: Int? = nil,
         roundDuration: Int? = nil,
         isSkippingEnabled: Bool? = nil,
+        wordSource: WordSource = .manual,
         teams: [Team] = [],
         words: [Word] = []
     ) {
@@ -47,6 +57,7 @@ final class GameConfiguration {
         self.wordsPerPlayer = wordsPerPlayer ?? AppConfiguration.shared.defaultWordsPerPlayer
         self.roundDuration = roundDuration ?? AppConfiguration.shared.defaultRoundDuration
         self.isSkippingEnabled = isSkippingEnabled ?? AppConfiguration.shared.defaultSkippingEnabled
+        self.wordSource = wordSource
         self.teams = teams
         self.words = words
     }

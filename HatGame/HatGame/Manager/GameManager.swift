@@ -204,6 +204,12 @@ extension GameManager {
         )
     }
 
+    /// Replaces the word list with `count` random words from the bundled database.
+    /// Used by the automatic word-source flow, where players don't type words in.
+    func fillRandomWords(count: Int) {
+        configuration.words = WordDatabase.randomWords(count: count).map { Word(text: $0) }
+    }
+
     func addTeam(_ team: Team) {
         configuration.teams.append(team)
     }
