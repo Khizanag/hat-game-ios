@@ -51,7 +51,11 @@ final class GameConfiguration {
 
 // MARK: - Mock data
 extension GameConfiguration {
-    static let mockForTesting = makeMockForTesting()
+    /// A *fresh* mock configuration on every access. Must not be a stored
+    /// `static let`: `GameConfiguration` is a reference type, so a shared
+    /// instance would leak one game's words (and other mutable state) into
+    /// the next game played in test mode.
+    static var mockForTesting: GameConfiguration { makeMockForTesting() }
 
     private static func makeMockForTesting() -> GameConfiguration {
         let team1Id = UUID()
